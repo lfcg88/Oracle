@@ -1,0 +1,27 @@
+create or replace Procedure Realiza_shrink is
+   Cursor c_rollback Is
+     select SEGMENT_NAME
+     from DBA_ROLLBACK_SEGS
+     where OWNER not in ('SYS','SYSTEM') AND STATUS='ONLINE'; 
+   l_cursor    int default dbms_sql.open_cursor;
+   l_status    int;
+   vsql varchar2(100);
+--   
+Begin
+   For r_rollback in c_rollback Loop
+      vsql := 'alter rollback segment '||r_rollback.segment_name||' shrink';
+      dbms_sql.parse( l_cursor,vsql,dbms_sql.native );
+      l_status := dbms_sql.execute(l_cursor);
+   End Loop;
+   dbms_sql.close_cursor(l_cursor); 
+--
+end;
+/
+
+ed c:\analise_indice4536526352.lst
+
+
+
+
+
+

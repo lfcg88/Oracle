@@ -1,0 +1,12 @@
+VBoxManage modifyhd "C:\Documents and Settings\lfantoni\VirtualBox VMs\Oracle Developer Days\Oracle_Developer_Day-disk2.vmdk" -resize 21024
+
+
+cd "C:\Arquivos de programas\VMware\VMware Workstation\"
+Vmware-vdiskmanager.exe  -x 20Gb "C:\Documents and Settings\lfantoni\VirtualBox VMs\Oracle Developer Days\Oracle_Developer_Day-disk2.vmdk"
+
+
+
+
+
+
+

@@ -1,0 +1,981 @@
+
+
+***********************************************************************
+Fatal NI connect error 12560, connecting to:
+ (DESCRIPTION=(ADDRESS=(PROTOCOL=BEQ)(PROGRAM=oracle)(ARGV0=oracleORCL)(ARGS='(DESCRIPTION=(LOCAL=YES)(ADDRESS=(PROTOCOL=beq)))'))(CONNECT_DATA=(SID=ORCL)(CID=(PROGRAM=C:\oracle\product\10.2.0\client_2\BIN\sqlplusw.exe)(HOST=E04696)(USER=andre.ramos))))
+
+  VERSION INFORMATION:
+	TNS for 64-bit Windows: Version 10.2.0.4.0 - Production
+	Oracle Bequeath NT Protocol Adapter for 64-bit Windows: Version 10.2.0.4.0 - Production
+	Windows NT TCP/IP NT Protocol Adapter for 64-bit Windows: Version 10.2.0.4.0 - Production
+  Time: 07-DEZ-2010 14:19:28
+  Tracing not turned on.
+  Tns error struct:
+    ns main err code: 12560
+    TNS-12560: TNS:erro de adaptador de protocolo
+    ns secondary err code: 0
+    nt main err code: 530
+    TNS-00530: Erro de adaptador de protocolo
+    nt secondary err code: 126
+    nt OS err code: 0
+
+
+***********************************************************************
+Fatal NI connect error 12519, connecting to:
+ (DESCRIPTION=(ADDRESS=(PROTOCOL=TCP)(HOST=fgvrj53.fgv.br)(PORT=1528))(CONNECT_DATA=(SID=db02)(SERVER=SHARED)(CID=(PROGRAM=C:\oracle\product\10.2.0\client_2\BIN\sqlplusw.exe)(HOST=E04696)(USER=andre.ramos))))
+
+  VERSION INFORMATION:
+	TNS for 64-bit Windows: Version 10.2.0.4.0 - Production
+	Windows NT TCP/IP NT Protocol Adapter for 64-bit Windows: Version 10.2.0.4.0 - Production
+  Time: 29-DEZ-2010 16:03:35
+  Tracing not turned on.
+  Tns error struct:
+    ns main err code: 12564
+    TNS-12564: TNS:conexão recusada
+    ns secondary err code: 0
+    nt main err code: 0
+    nt secondary err code: 0
+    nt OS err code: 0
+
+
+***********************************************************************
+Fatal NI connect error 12519, connecting to:
+ (DESCRIPTION=(ADDRESS=(PROTOCOL=TCP)(HOST=fgvrj53.fgv.br)(PORT=1528))(CONNECT_DATA=(SID=db02)(SERVER=SHARED)(CID=(PROGRAM=C:\oracle\product\10.2.0\client_2\BIN\sqlplusw.exe)(HOST=E04696)(USER=andre.ramos))))
+
+  VERSION INFORMATION:
+	TNS for 64-bit Windows: Version 10.2.0.4.0 - Production
+	Windows NT TCP/IP NT Protocol Adapter for 64-bit Windows: Version 10.2.0.4.0 - Production
+  Time: 29-DEZ-2010 16:05:25
+  Tracing not turned on.
+  Tns error struct:
+    ns main err code: 12564
+    TNS-12564: TNS:conexão recusada
+    ns secondary err code: 0
+    nt main err code: 0
+    nt secondary err code: 0
+    nt OS err code: 0
+
+
+***********************************************************************
+Fatal NI connect error 12519, connecting to:
+ (DESCRIPTION=(ADDRESS=(PROTOCOL=TCP)(HOST=fgvrj53.fgv.br)(PORT=1528))(CONNECT_DATA=(SID=db02)(SERVER=SHARED)(CID=(PROGRAM=C:\oracle\product\10.2.0\client_2\BIN\sqlplusw.exe)(HOST=E04696)(USER=andre.ramos))))
+
+  VERSION INFORMATION:
+	TNS for 64-bit Windows: Version 10.2.0.4.0 - Production
+	Windows NT TCP/IP NT Protocol Adapter for 64-bit Windows: Version 10.2.0.4.0 - Production
+  Time: 29-DEZ-2010 16:10:39
+  Tracing not turned on.
+  Tns error struct:
+    ns main err code: 12564
+    TNS-12564: TNS:conexão recusada
+    ns secondary err code: 0
+    nt main err code: 0
+    nt secondary err code: 0
+    nt OS err code: 0
+
+
+***********************************************************************
+Fatal NI connect error 12519, connecting to:
+ (DESCRIPTION=(ADDRESS=(PROTOCOL=TCP)(HOST=fgvrj53.fgv.br)(PORT=1528))(CONNECT_DATA=(SID=db02)(SERVER=SHARED)(CID=(PROGRAM=C:\oracle\product\10.2.0\client_2\BIN\sqlplusw.exe)(HOST=E04696)(USER=andre.ramos))))
+
+  VERSION INFORMATION:
+	TNS for 64-bit Windows: Version 10.2.0.4.0 - Production
+	Windows NT TCP/IP NT Protocol Adapter for 64-bit Windows: Version 10.2.0.4.0 - Production
+  Time: 29-DEZ-2010 16:16:00
+  Tracing not turned on.
+  Tns error struct:
+    ns main err code: 12564
+    TNS-12564: TNS:conexão recusada
+    ns secondary err code: 0
+    nt main err code: 0
+    nt secondary err code: 0
+    nt OS err code: 0
+
+
+***********************************************************************
+Fatal NI connect error 12519, connecting to:
+ (DESCRIPTION=(ADDRESS=(PROTOCOL=TCP)(HOST=fgvrj53.fgv.br)(PORT=1528))(CONNECT_DATA=(SID=db02)(SERVER=SHARED)(CID=(PROGRAM=C:\oracle\product\10.2.0\client_2\BIN\sqlplusw.exe)(HOST=E04696)(USER=andre.ramos))))
+
+  VERSION INFORMATION:
+	TNS for 64-bit Windows: Version 10.2.0.4.0 - Production
+	Windows NT TCP/IP NT Protocol Adapter for 64-bit Windows: Version 10.2.0.4.0 - Production
+  Time: 29-DEZ-2010 16:16:11
+  Tracing not turned on.
+  Tns error struct:
+    ns main err code: 12564
+    TNS-12564: TNS:conexão recusada
+    ns secondary err code: 0
+    nt main err code: 0
+    nt secondary err code: 0
+    nt OS err code: 0
+
+
+***********************************************************************
+Fatal NI connect error 12519, connecting to:
+ (DESCRIPTION=(ADDRESS=(PROTOCOL=TCP)(HOST=fgvrj53.fgv.br)(PORT=1528))(CONNECT_DATA=(SID=db02)(SERVER=SHARED)(CID=(PROGRAM=C:\oracle\product\10.2.0\client_2\BIN\sqlplusw.exe)(HOST=E04696)(USER=andre.ramos))))
+
+  VERSION INFORMATION:
+	TNS for 64-bit Windows: Version 10.2.0.4.0 - Production
+	Windows NT TCP/IP NT Protocol Adapter for 64-bit Windows: Version 10.2.0.4.0 - Production
+  Time: 29-DEZ-2010 16:18:53
+  Tracing not turned on.
+  Tns error struct:
+    ns main err code: 12564
+    TNS-12564: TNS:conexão recusada
+    ns secondary err code: 0
+    nt main err code: 0
+    nt secondary err code: 0
+    nt OS err code: 0
+
+
+***********************************************************************
+Fatal NI connect error 12519, connecting to:
+ (DESCRIPTION=(ADDRESS=(PROTOCOL=TCP)(HOST=fgvrj53.fgv.br)(PORT=1528))(CONNECT_DATA=(SID=db02)(SERVER=SHARED)(CID=(PROGRAM=C:\oracle\product\10.2.0\client_2\BIN\sqlplusw.exe)(HOST=E04696)(USER=andre.ramos))))
+
+  VERSION INFORMATION:
+	TNS for 64-bit Windows: Version 10.2.0.4.0 - Production
+	Windows NT TCP/IP NT Protocol Adapter for 64-bit Windows: Version 10.2.0.4.0 - Production
+  Time: 29-DEZ-2010 16:25:58
+  Tracing not turned on.
+  Tns error struct:
+    ns main err code: 12564
+    TNS-12564: TNS:conexão recusada
+    ns secondary err code: 0
+    nt main err code: 0
+    nt secondary err code: 0
+    nt OS err code: 0
+
+
+***********************************************************************
+Fatal NI connect error 12519, connecting to:
+ (DESCRIPTION=(ADDRESS=(PROTOCOL=TCP)(HOST=fgvrj53.fgv.br)(PORT=1528))(CONNECT_DATA=(SID=db02)(SERVER=SHARED)(CID=(PROGRAM=C:\oracle\product\10.2.0\client_2\BIN\sqlplusw.exe)(HOST=E04696)(USER=andre.ramos))))
+
+  VERSION INFORMATION:
+	TNS for 64-bit Windows: Version 10.2.0.4.0 - Production
+	Windows NT TCP/IP NT Protocol Adapter for 64-bit Windows: Version 10.2.0.4.0 - Production
+  Time: 29-DEZ-2010 16:28:36
+  Tracing not turned on.
+  Tns error struct:
+    ns main err code: 12564
+    TNS-12564: TNS:conexão recusada
+    ns secondary err code: 0
+    nt main err code: 0
+    nt secondary err code: 0
+    nt OS err code: 0
+
+
+***********************************************************************
+Fatal NI connect error 12519, connecting to:
+ (DESCRIPTION=(ADDRESS=(PROTOCOL=TCP)(HOST=fgvrj53.fgv.br)(PORT=1528))(CONNECT_DATA=(SID=db02)(SERVER=SHARED)(CID=(PROGRAM=C:\oracle\product\10.2.0\client_2\BIN\sqlplusw.exe)(HOST=E04696)(USER=andre.ramos))))
+
+  VERSION INFORMATION:
+	TNS for 64-bit Windows: Version 10.2.0.4.0 - Production
+	Windows NT TCP/IP NT Protocol Adapter for 64-bit Windows: Version 10.2.0.4.0 - Production
+  Time: 29-DEZ-2010 16:29:58
+  Tracing not turned on.
+  Tns error struct:
+    ns main err code: 12564
+    TNS-12564: TNS:conexão recusada
+    ns secondary err code: 0
+    nt main err code: 0
+    nt secondary err code: 0
+    nt OS err code: 0
+
+
+***********************************************************************
+Fatal NI connect error 12519, connecting to:
+ (DESCRIPTION=(ADDRESS=(PROTOCOL=TCP)(HOST=fgvrj53.fgv.br)(PORT=1528))(CONNECT_DATA=(SID=db02)(SERVER=SHARED)(CID=(PROGRAM=C:\oracle\product\10.2.0\client_2\BIN\sqlplusw.exe)(HOST=E04696)(USER=andre.ramos))))
+
+  VERSION INFORMATION:
+	TNS for 64-bit Windows: Version 10.2.0.4.0 - Production
+	Windows NT TCP/IP NT Protocol Adapter for 64-bit Windows: Version 10.2.0.4.0 - Production
+  Time: 29-DEZ-2010 16:38:00
+  Tracing not turned on.
+  Tns error struct:
+    ns main err code: 12564
+    TNS-12564: TNS:conexão recusada
+    ns secondary err code: 0
+    nt main err code: 0
+    nt secondary err code: 0
+    nt OS err code: 0
+
+
+***********************************************************************
+Fatal NI connect error 12519, connecting to:
+ (DESCRIPTION=(ADDRESS=(PROTOCOL=TCP)(HOST=fgvrj53.fgv.br)(PORT=1528))(CONNECT_DATA=(SID=db02)(SERVER=SHARED)(CID=(PROGRAM=C:\oracle\product\10.2.0\client_2\BIN\sqlplusw.exe)(HOST=E04696)(USER=andre.ramos))))
+
+  VERSION INFORMATION:
+	TNS for 64-bit Windows: Version 10.2.0.4.0 - Production
+	Windows NT TCP/IP NT Protocol Adapter for 64-bit Windows: Version 10.2.0.4.0 - Production
+  Time: 29-DEZ-2010 16:43:15
+  Tracing not turned on.
+  Tns error struct:
+    ns main err code: 12564
+    TNS-12564: TNS:conexão recusada
+    ns secondary err code: 0
+    nt main err code: 0
+    nt secondary err code: 0
+    nt OS err code: 0
+
+
+***********************************************************************
+Fatal NI connect error 12519, connecting to:
+ (DESCRIPTION=(ADDRESS=(PROTOCOL=TCP)(HOST=fgvrj53.fgv.br)(PORT=1528))(CONNECT_DATA=(SID=db02)(SERVER=SHARED)(CID=(PROGRAM=C:\oracle\product\10.2.0\client_2\BIN\sqlplusw.exe)(HOST=E04696)(USER=andre.ramos))))
+
+  VERSION INFORMATION:
+	TNS for 64-bit Windows: Version 10.2.0.4.0 - Production
+	Windows NT TCP/IP NT Protocol Adapter for 64-bit Windows: Version 10.2.0.4.0 - Production
+  Time: 23-JAN-2011 10:38:00
+  Tracing not turned on.
+  Tns error struct:
+    ns main err code: 12564
+    TNS-12564: TNS:conexão recusada
+    ns secondary err code: 0
+    nt main err code: 0
+    nt secondary err code: 0
+    nt OS err code: 0
+
+
+***********************************************************************
+Fatal NI connect error 12519, connecting to:
+ (DESCRIPTION=(ADDRESS=(PROTOCOL=TCP)(HOST=fgvrj53.fgv.br)(PORT=1528))(CONNECT_DATA=(SID=db02)(SERVER=SHARED)(CID=(PROGRAM=C:\oracle\product\10.2.0\client_2\BIN\sqlplusw.exe)(HOST=E04696)(USER=andre.ramos))))
+
+  VERSION INFORMATION:
+	TNS for 64-bit Windows: Version 10.2.0.4.0 - Production
+	Windows NT TCP/IP NT Protocol Adapter for 64-bit Windows: Version 10.2.0.4.0 - Production
+  Time: 23-JAN-2011 10:41:40
+  Tracing not turned on.
+  Tns error struct:
+    ns main err code: 12564
+    TNS-12564: TNS:conexão recusada
+    ns secondary err code: 0
+    nt main err code: 0
+    nt secondary err code: 0
+    nt OS err code: 0
+
+
+***********************************************************************
+Fatal NI connect error 12170.
+
+  VERSION INFORMATION:
+	TNS for 64-bit Windows: Version 10.2.0.4.0 - Production
+	Windows NT TCP/IP NT Protocol Adapter for 64-bit Windows: Version 10.2.0.4.0 - Production
+  Time: 26-JAN-2011 18:38:22
+  Tracing not turned on.
+  Tns error struct:
+    ns main err code: 12535
+    TNS-12535: TNS:operação sofreu timeout
+    ns secondary err code: 12560
+    nt main err code: 505
+    TNS-00505: Operação sofreu timeout
+    nt secondary err code: 60
+    nt OS err code: 0
+  Client address: <unknown>
+
+
+***********************************************************************
+Fatal NI connect error 12170.
+
+  VERSION INFORMATION:
+	TNS for 64-bit Windows: Version 10.2.0.4.0 - Production
+	Windows NT TCP/IP NT Protocol Adapter for 64-bit Windows: Version 10.2.0.4.0 - Production
+  Time: 26-JAN-2011 19:04:11
+  Tracing not turned on.
+  Tns error struct:
+    ns main err code: 12535
+    TNS-12535: TNS:operação sofreu timeout
+    ns secondary err code: 12560
+    nt main err code: 505
+    TNS-00505: Operação sofreu timeout
+    nt secondary err code: 60
+    nt OS err code: 0
+  Client address: <unknown>
+
+
+***********************************************************************
+Fatal NI connect error 12170.
+
+  VERSION INFORMATION:
+	TNS for 64-bit Windows: Version 10.2.0.4.0 - Production
+	Windows NT TCP/IP NT Protocol Adapter for 64-bit Windows: Version 10.2.0.4.0 - Production
+  Time: 26-JAN-2011 19:05:09
+  Tracing not turned on.
+  Tns error struct:
+    ns main err code: 12535
+    TNS-12535: TNS:operação sofreu timeout
+    ns secondary err code: 12560
+    nt main err code: 505
+    TNS-00505: Operação sofreu timeout
+    nt secondary err code: 60
+    nt OS err code: 0
+  Client address: <unknown>
+
+
+***********************************************************************
+Fatal NI connect error 12519, connecting to:
+ (DESCRIPTION=(ADDRESS=(PROTOCOL=TCP)(HOST=fgvrj53.fgv.br)(PORT=1528))(CONNECT_DATA=(SID=db02)(SERVER=SHARED)(CID=(PROGRAM=C:\oracle\product\10.2.0\client_2\BIN\sqlplusw.exe)(HOST=E04696)(USER=andre.ramos))))
+
+  VERSION INFORMATION:
+	TNS for 64-bit Windows: Version 10.2.0.4.0 - Production
+	Windows NT TCP/IP NT Protocol Adapter for 64-bit Windows: Version 10.2.0.4.0 - Production
+  Time: 02-FEV-2011 19:01:29
+  Tracing not turned on.
+  Tns error struct:
+    ns main err code: 12564
+    TNS-12564: TNS:conexão recusada
+    ns secondary err code: 0
+    nt main err code: 0
+    nt secondary err code: 0
+    nt OS err code: 0
+
+
+***********************************************************************
+Fatal NI connect error 12519, connecting to:
+ (DESCRIPTION=(ADDRESS=(PROTOCOL=TCP)(HOST=fgvrj53.fgv.br)(PORT=1528))(CONNECT_DATA=(SID=db02)(SERVER=SHARED)(CID=(PROGRAM=C:\oracle\product\10.2.0\client_2\BIN\sqlplusw.exe)(HOST=E04696)(USER=andre.ramos))))
+
+  VERSION INFORMATION:
+	TNS for 64-bit Windows: Version 10.2.0.4.0 - Production
+	Windows NT TCP/IP NT Protocol Adapter for 64-bit Windows: Version 10.2.0.4.0 - Production
+  Time: 16-FEV-2011 16:13:45
+  Tracing not turned on.
+  Tns error struct:
+    ns main err code: 12564
+    TNS-12564: TNS:conexão recusada
+    ns secondary err code: 0
+    nt main err code: 0
+    nt secondary err code: 0
+    nt OS err code: 0
+
+
+***********************************************************************
+Fatal NI connect error 12519, connecting to:
+ (DESCRIPTION=(ADDRESS=(PROTOCOL=TCP)(HOST=fgvrj53.fgv.br)(PORT=1528))(CONNECT_DATA=(SID=db02)(SERVER=SHARED)(CID=(PROGRAM=C:\oracle\product\10.2.0\client_2\BIN\sqlplusw.exe)(HOST=E04696)(USER=andre.ramos))))
+
+  VERSION INFORMATION:
+	TNS for 64-bit Windows: Version 10.2.0.4.0 - Production
+	Windows NT TCP/IP NT Protocol Adapter for 64-bit Windows: Version 10.2.0.4.0 - Production
+  Time: 16-FEV-2011 16:18:10
+  Tracing not turned on.
+  Tns error struct:
+    ns main err code: 12564
+    TNS-12564: TNS:conexão recusada
+    ns secondary err code: 0
+    nt main err code: 0
+    nt secondary err code: 0
+    nt OS err code: 0
+
+
+***********************************************************************
+Fatal NI connect error 12519, connecting to:
+ (DESCRIPTION=(ADDRESS=(PROTOCOL=TCP)(HOST=fgvrj53.fgv.br)(PORT=1528))(CONNECT_DATA=(SID=db02)(SERVER=SHARED)(CID=(PROGRAM=C:\oracle\product\10.2.0\client_2\BIN\sqlplusw.exe)(HOST=E04696)(USER=andre.ramos))))
+
+  VERSION INFORMATION:
+	TNS for 64-bit Windows: Version 10.2.0.4.0 - Production
+	Windows NT TCP/IP NT Protocol Adapter for 64-bit Windows: Version 10.2.0.4.0 - Production
+  Time: 16-FEV-2011 16:19:44
+  Tracing not turned on.
+  Tns error struct:
+    ns main err code: 12564
+    TNS-12564: TNS:conexão recusada
+    ns secondary err code: 0
+    nt main err code: 0
+    nt secondary err code: 0
+    nt OS err code: 0
+
+
+***********************************************************************
+Fatal NI connect error 12519, connecting to:
+ (DESCRIPTION=(ADDRESS=(PROTOCOL=TCP)(HOST=fgvrj53.fgv.br)(PORT=1528))(CONNECT_DATA=(SID=db02)(SERVER=SHARED)(CID=(PROGRAM=C:\oracle\product\10.2.0\client_2\BIN\sqlplusw.exe)(HOST=E04696)(USER=andre.ramos))))
+
+  VERSION INFORMATION:
+	TNS for 64-bit Windows: Version 10.2.0.4.0 - Production
+	Windows NT TCP/IP NT Protocol Adapter for 64-bit Windows: Version 10.2.0.4.0 - Production
+  Time: 16-FEV-2011 16:30:51
+  Tracing not turned on.
+  Tns error struct:
+    ns main err code: 12564
+    TNS-12564: TNS:conexão recusada
+    ns secondary err code: 0
+    nt main err code: 0
+    nt secondary err code: 0
+    nt OS err code: 0
+
+
+***********************************************************************
+Fatal NI connect error 12519, connecting to:
+ (DESCRIPTION=(ADDRESS=(PROTOCOL=TCP)(HOST=fgvrj53.fgv.br)(PORT=1528))(CONNECT_DATA=(SID=db02)(SERVER=SHARED)(CID=(PROGRAM=C:\oracle\product\10.2.0\client_2\BIN\sqlplusw.exe)(HOST=E04696)(USER=andre.ramos))))
+
+  VERSION INFORMATION:
+	TNS for 64-bit Windows: Version 10.2.0.4.0 - Production
+	Windows NT TCP/IP NT Protocol Adapter for 64-bit Windows: Version 10.2.0.4.0 - Production
+  Time: 17-FEV-2011 12:31:06
+  Tracing not turned on.
+  Tns error struct:
+    ns main err code: 12564
+    TNS-12564: TNS:conexão recusada
+    ns secondary err code: 0
+    nt main err code: 0
+    nt secondary err code: 0
+    nt OS err code: 0
+
+
+***********************************************************************
+Fatal NI connect error 12519, connecting to:
+ (DESCRIPTION=(ADDRESS=(PROTOCOL=TCP)(HOST=fgvrj53.fgv.br)(PORT=1528))(CONNECT_DATA=(SID=db02)(SERVER=SHARED)(CID=(PROGRAM=C:\oracle\product\10.2.0\client_2\BIN\sqlplusw.exe)(HOST=E04696)(USER=andre.ramos))))
+
+  VERSION INFORMATION:
+	TNS for 64-bit Windows: Version 10.2.0.4.0 - Production
+	Windows NT TCP/IP NT Protocol Adapter for 64-bit Windows: Version 10.2.0.4.0 - Production
+  Time: 18-FEV-2011 10:31:02
+  Tracing not turned on.
+  Tns error struct:
+    ns main err code: 12564
+    TNS-12564: TNS:conexão recusada
+    ns secondary err code: 0
+    nt main err code: 0
+    nt secondary err code: 0
+    nt OS err code: 0
+
+
+***********************************************************************
+Fatal NI connect error 12519, connecting to:
+ (DESCRIPTION=(ADDRESS=(PROTOCOL=TCP)(HOST=fgvrj53.fgv.br)(PORT=1528))(CONNECT_DATA=(SID=db02)(SERVER=SHARED)(CID=(PROGRAM=C:\oracle\product\10.2.0\client_2\BIN\sqlplusw.exe)(HOST=E04696)(USER=andre.ramos))))
+
+  VERSION INFORMATION:
+	TNS for 64-bit Windows: Version 10.2.0.4.0 - Production
+	Windows NT TCP/IP NT Protocol Adapter for 64-bit Windows: Version 10.2.0.4.0 - Production
+  Time: 18-FEV-2011 10:31:50
+  Tracing not turned on.
+  Tns error struct:
+    ns main err code: 12564
+    TNS-12564: TNS:conexão recusada
+    ns secondary err code: 0
+    nt main err code: 0
+    nt secondary err code: 0
+    nt OS err code: 0
+
+
+***********************************************************************
+Fatal NI connect error 12537, connecting to:
+ (DESCRIPTION=(ADDRESS=(PROTOCOL=TCP)(HOST=fgv246.fgv.br)(PORT=16675))(CONNECT_DATA=(SERVICE_NAME=HSYNC02.fgv.br)(CID=(PROGRAM=C:\oracle\product\10.2.0\client_2\BIN\sqlplusw.exe)(HOST=E04696)(USER=andre.ramos))))
+
+  VERSION INFORMATION:
+	TNS for 64-bit Windows: Version 10.2.0.4.0 - Production
+	Windows NT TCP/IP NT Protocol Adapter for 64-bit Windows: Version 10.2.0.4.0 - Production
+  Time: 15-ABR-2011 08:53:44
+  Tracing not turned on.
+  Tns error struct:
+    ns main err code: 12537
+    TNS-12537: TNS:conexão fechada
+    ns secondary err code: 12560
+    nt main err code: 507
+    TNS-00507: Conexão fechada
+    nt secondary err code: 0
+    nt OS err code: 0
+
+
+***********************************************************************
+Fatal NI connect error 12505, connecting to:
+ (DESCRIPTION=(ADDRESS=(PROTOCOL=TCP)(HOST=DC8005.fgv.br)(PORT=1521))(CONNECT_DATA=(SID=dcorp)(SERVER=DEDICATED)(CID=(PROGRAM=C:\oracle\product\10.2.0\client_2\BIN\sqlplusw.exe)(HOST=E04696)(USER=andre.ramos))))
+
+  VERSION INFORMATION:
+	TNS for 64-bit Windows: Version 10.2.0.4.0 - Production
+	Windows NT TCP/IP NT Protocol Adapter for 64-bit Windows: Version 10.2.0.4.0 - Production
+  Time: 15-ABR-2011 09:54:21
+  Tracing not turned on.
+  Tns error struct:
+    ns main err code: 12564
+    TNS-12564: TNS:conexão recusada
+    ns secondary err code: 0
+    nt main err code: 0
+    nt secondary err code: 0
+    nt OS err code: 0
+
+
+***********************************************************************
+Fatal NI connect error 12170.
+
+  VERSION INFORMATION:
+	TNS for 64-bit Windows: Version 10.2.0.4.0 - Production
+	Windows NT TCP/IP NT Protocol Adapter for 64-bit Windows: Version 10.2.0.4.0 - Production
+  Time: 19-ABR-2011 09:44:53
+  Tracing not turned on.
+  Tns error struct:
+    ns main err code: 12535
+    TNS-12535: TNS:operação sofreu timeout
+    ns secondary err code: 12560
+    nt main err code: 505
+    TNS-00505: Operação sofreu timeout
+    nt secondary err code: 60
+    nt OS err code: 0
+  Client address: <unknown>
+
+
+***********************************************************************
+Fatal NI connect error 12505, connecting to:
+ (DESCRIPTION=(ADDRESS=(PROTOCOL=TCP)(HOST=DC8005.fgv.br)(PORT=1521))(CONNECT_DATA=(SID=dcorp)(SERVER=DEDICATED)(CID=(PROGRAM=C:\oracle\product\10.2.0\client_2\BIN\sqlplusw.exe)(HOST=E04696)(USER=andre.ramos))))
+
+  VERSION INFORMATION:
+	TNS for 64-bit Windows: Version 10.2.0.4.0 - Production
+	Windows NT TCP/IP NT Protocol Adapter for 64-bit Windows: Version 10.2.0.4.0 - Production
+  Time: 19-ABR-2011 16:39:17
+  Tracing not turned on.
+  Tns error struct:
+    ns main err code: 12564
+    TNS-12564: TNS:conexão recusada
+    ns secondary err code: 0
+    nt main err code: 0
+    nt secondary err code: 0
+    nt OS err code: 0
+
+
+***********************************************************************
+Fatal NI connect error 12514, connecting to:
+ (DESCRIPTION=(ADDRESS=(PROTOCOL=TCP)(HOST=dc8005.fgv.br)(PORT=5375))(CONNECT_DATA=(SERVER=DEDICATED)(SERVICE_NAME=DCORP2)(CID=(PROGRAM=C:\oracle\product\10.2.0\client_2\BIN\sqlplusw.exe)(HOST=E04696)(USER=andre.ramos))))
+
+  VERSION INFORMATION:
+	TNS for 64-bit Windows: Version 10.2.0.4.0 - Production
+	Windows NT TCP/IP NT Protocol Adapter for 64-bit Windows: Version 10.2.0.4.0 - Production
+  Time: 20-ABR-2011 11:53:05
+  Tracing not turned on.
+  Tns error struct:
+    ns main err code: 12564
+    TNS-12564: TNS:conexão recusada
+    ns secondary err code: 0
+    nt main err code: 0
+    nt secondary err code: 0
+    nt OS err code: 0
+
+
+***********************************************************************
+Fatal NI connect error 12170.
+
+  VERSION INFORMATION:
+	TNS for 64-bit Windows: Version 10.2.0.4.0 - Production
+	Windows NT TCP/IP NT Protocol Adapter for 64-bit Windows: Version 10.2.0.4.0 - Production
+  Time: 05-MAI-2011 18:02:58
+  Tracing to file: C:\TEMP\client_5124_1.trc
+  Tns error struct:
+    ns main err code: 12535
+    TNS-12535: TNS:operação sofreu timeout
+    ns secondary err code: 12560
+    nt main err code: 505
+    TNS-00505: Operação sofreu timeout
+    nt secondary err code: 60
+    nt OS err code: 0
+  Client address: <unknown>
+
+
+***********************************************************************
+Fatal NI connect error 12523, connecting to:
+ (DESCRIPTION=(ADDRESS=(PROTOCOL=TCP)(HOST=dc8003)(PORT=5480))(CONNECT_DATA=(SERVER=shared)(SERVICE_NAME=PCORP2)(CID=(PROGRAM=C:\oracle\product\10.2.0\client_2\BIN\sqlplusw.exe)(HOST=E04696)(USER=andre.ramos))))
+
+  VERSION INFORMATION:
+	TNS for 64-bit Windows: Version 10.2.0.4.0 - Production
+	Windows NT TCP/IP NT Protocol Adapter for 64-bit Windows: Version 10.2.0.4.0 - Production
+  Time: 05-MAI-2011 18:10:50
+  Tracing to file: C:\TEMP\client_6668_1.trc
+  Tns error struct:
+    ns main err code: 12564
+    TNS-12564: TNS:conexão recusada
+    ns secondary err code: 0
+    nt main err code: 0
+    nt secondary err code: 0
+    nt OS err code: 0
+
+
+***********************************************************************
+Fatal NI connect error 12523, connecting to:
+ (DESCRIPTION=(ADDRESS=(PROTOCOL=TCP)(HOST=dc8003)(PORT=5480))(CONNECT_DATA=(SERVER=shared)(SERVICE_NAME=PCORP2)(CID=(PROGRAM=C:\oracle\product\10.2.0\client_2\BIN\sqlplusw.exe)(HOST=E04696)(USER=andre.ramos))))
+
+  VERSION INFORMATION:
+	TNS for 64-bit Windows: Version 10.2.0.4.0 - Production
+	Windows NT TCP/IP NT Protocol Adapter for 64-bit Windows: Version 10.2.0.4.0 - Production
+  Time: 05-MAI-2011 18:11:19
+  Tracing to file: C:\TEMP\client_5516_1.trc
+  Tns error struct:
+    ns main err code: 12564
+    TNS-12564: TNS:conexão recusada
+    ns secondary err code: 0
+    nt main err code: 0
+    nt secondary err code: 0
+    nt OS err code: 0
+
+
+***********************************************************************
+Fatal NI connect error 12170.
+
+  VERSION INFORMATION:
+	TNS for 32-bit Windows: Version 10.2.0.3.0 - Production
+	Windows NT TCP/IP NT Protocol Adapter for 32-bit Windows: Version 10.2.0.3.0 - Production
+  Time: 04-JUL-2011 18:28:30
+  Tracing not turned on.
+  Tns error struct:
+    ns main err code: 12535
+    TNS-12535: TNS:operação sofreu timeout
+    ns secondary err code: 12560
+    nt main err code: 505
+    TNS-00505: Operação sofreu timeout
+    nt secondary err code: 60
+    nt OS err code: 0
+  Client address: (ADDRESS=(PROTOCOL=tcp)(HOST=10.252.3.244)(PORT=1525))
+
+
+***********************************************************************
+Fatal NI connect error 12541, connecting to:
+ (DESCRIPTION=(ADDRESS=(PROTOCOL=TCP)(HOST=dc8003)(PORT=5480))(CONNECT_DATA=(SERVER=SHARED)(SERVICE_NAME=PCORP2)(CID=(PROGRAM=C:\oracle\product\10.2.0\client_1\bin\sqlplusw.exe)(HOST=RAMOS-PC)(USER=ramos))))
+
+  VERSION INFORMATION:
+	TNS for 32-bit Windows: Version 10.2.0.3.0 - Production
+	Windows NT TCP/IP NT Protocol Adapter for 32-bit Windows: Version 10.2.0.3.0 - Production
+  Time: 27-JUL-2011 09:52:31
+  Tracing not turned on.
+  Tns error struct:
+    ns main err code: 12541
+    TNS-12541: TNS:não há listener
+    ns secondary err code: 12560
+    nt main err code: 511
+    TNS-00511: Não há listener
+    nt secondary err code: 61
+    nt OS err code: 0
+
+
+***********************************************************************
+Fatal NI connect error 12523, connecting to:
+ (DESCRIPTION=(ADDRESS=(PROTOCOL=TCP)(HOST=dc8003)(PORT=5480))(CONNECT_DATA=(SERVER=SHARED)(SERVICE_NAME=PCORP2)(CID=(PROGRAM=C:\oracle\product\10.2.0\client_1\bin\sqlplusw.exe)(HOST=RAMOS-PC)(USER=ramos))))
+
+  VERSION INFORMATION:
+	TNS for 32-bit Windows: Version 10.2.0.3.0 - Production
+	Windows NT TCP/IP NT Protocol Adapter for 32-bit Windows: Version 10.2.0.3.0 - Production
+  Time: 27-JUL-2011 10:00:36
+  Tracing not turned on.
+  Tns error struct:
+    ns main err code: 12564
+    TNS-12564: TNS:conexão recusada
+    ns secondary err code: 0
+    nt main err code: 0
+    nt secondary err code: 0
+    nt OS err code: 0
+
+
+***********************************************************************
+Fatal NI connect error 12523, connecting to:
+ (DESCRIPTION=(ADDRESS=(PROTOCOL=TCP)(HOST=dc8003)(PORT=5480))(CONNECT_DATA=(SERVER=SHARED)(SERVICE_NAME=PCORP2)(CID=(PROGRAM=C:\oracle\product\10.2.0\client_1\bin\sqlplusw.exe)(HOST=RAMOS-PC)(USER=ramos))))
+
+  VERSION INFORMATION:
+	TNS for 32-bit Windows: Version 10.2.0.3.0 - Production
+	Windows NT TCP/IP NT Protocol Adapter for 32-bit Windows: Version 10.2.0.3.0 - Production
+  Time: 27-JUL-2011 10:01:03
+  Tracing not turned on.
+  Tns error struct:
+    ns main err code: 12564
+    TNS-12564: TNS:conexão recusada
+    ns secondary err code: 0
+    nt main err code: 0
+    nt secondary err code: 0
+    nt OS err code: 0
+
+
+***********************************************************************
+Fatal NI connect error 12541, connecting to:
+ (DESCRIPTION=(ADDRESS=(PROTOCOL=TCP)(HOST=dc8003)(PORT=5480))(CONNECT_DATA=(SERVER=DEDICATED)(SERVICE_NAME=PCORP2)(CID=(PROGRAM=C:\oracle\product\10.2.0\client_1\bin\sqlplusw.exe)(HOST=RAMOS-PC)(USER=ramos))))
+
+  VERSION INFORMATION:
+	TNS for 32-bit Windows: Version 10.2.0.3.0 - Production
+	Windows NT TCP/IP NT Protocol Adapter for 32-bit Windows: Version 10.2.0.3.0 - Production
+  Time: 08-AGO-2011 12:20:46
+  Tracing not turned on.
+  Tns error struct:
+    ns main err code: 12541
+    TNS-12541: TNS:não há listener
+    ns secondary err code: 12560
+    nt main err code: 511
+    TNS-00511: Não há listener
+    nt secondary err code: 61
+    nt OS err code: 0
+
+
+***********************************************************************
+Fatal NI connect error 12541, connecting to:
+ (DESCRIPTION=(ADDRESS=(PROTOCOL=TCP)(HOST=dc8003)(PORT=5480))(CONNECT_DATA=(SERVER=DEDICATED)(SERVICE_NAME=PCORP2)(CID=(PROGRAM=C:\oracle\product\10.2.0\client_1\bin\sqlplusw.exe)(HOST=RAMOS-PC)(USER=ramos))))
+
+  VERSION INFORMATION:
+	TNS for 32-bit Windows: Version 10.2.0.3.0 - Production
+	Windows NT TCP/IP NT Protocol Adapter for 32-bit Windows: Version 10.2.0.3.0 - Production
+  Time: 08-AGO-2011 12:21:20
+  Tracing not turned on.
+  Tns error struct:
+    ns main err code: 12541
+    TNS-12541: TNS:não há listener
+    ns secondary err code: 12560
+    nt main err code: 511
+    TNS-00511: Não há listener
+    nt secondary err code: 61
+    nt OS err code: 0
+
+
+***********************************************************************
+Fatal NI connect error 12541, connecting to:
+ (DESCRIPTION=(ADDRESS=(PROTOCOL=TCP)(HOST=dc8003)(PORT=5480))(CONNECT_DATA=(SERVER=SHARED)(SERVICE_NAME=PCORP2)(CID=(PROGRAM=C:\oracle\product\10.2.0\client_1\bin\sqlplusw.exe)(HOST=RAMOS-PC)(USER=ramos))))
+
+  VERSION INFORMATION:
+	TNS for 32-bit Windows: Version 10.2.0.3.0 - Production
+	Windows NT TCP/IP NT Protocol Adapter for 32-bit Windows: Version 10.2.0.3.0 - Production
+  Time: 08-AGO-2011 12:24:38
+  Tracing not turned on.
+  Tns error struct:
+    ns main err code: 12541
+    TNS-12541: TNS:não há listener
+    ns secondary err code: 12560
+    nt main err code: 511
+    TNS-00511: Não há listener
+    nt secondary err code: 61
+    nt OS err code: 0
+
+
+***********************************************************************
+Fatal NI connect error 12541, connecting to:
+ (DESCRIPTION=(ADDRESS=(PROTOCOL=TCP)(HOST=dc8003)(PORT=5480))(CONNECT_DATA=(SERVER=SHARED)(SERVICE_NAME=PCORP2)(CID=(PROGRAM=C:\oracle\product\10.2.0\client_1\bin\sqlplusw.exe)(HOST=RAMOS-PC)(USER=ramos))))
+
+  VERSION INFORMATION:
+	TNS for 32-bit Windows: Version 10.2.0.3.0 - Production
+	Windows NT TCP/IP NT Protocol Adapter for 32-bit Windows: Version 10.2.0.3.0 - Production
+  Time: 31-AGO-2011 11:46:10
+  Tracing not turned on.
+  Tns error struct:
+    ns main err code: 12541
+    TNS-12541: TNS:não há listener
+    ns secondary err code: 12560
+    nt main err code: 511
+    TNS-00511: Não há listener
+    nt secondary err code: 61
+    nt OS err code: 0
+
+
+***********************************************************************
+Fatal NI connect error 12541, connecting to:
+ (DESCRIPTION=(ADDRESS=(PROTOCOL=TCP)(HOST=dc8003)(PORT=5480))(CONNECT_DATA=(SERVER=SHARED)(SERVICE_NAME=PCORP2)(CID=(PROGRAM=C:\oracle\product\10.2.0\client_1\bin\sqlplusw.exe)(HOST=RAMOS-PC)(USER=ramos))))
+
+  VERSION INFORMATION:
+	TNS for 32-bit Windows: Version 10.2.0.3.0 - Production
+	Windows NT TCP/IP NT Protocol Adapter for 32-bit Windows: Version 10.2.0.3.0 - Production
+  Time: 05-SET-2011 15:58:42
+  Tracing not turned on.
+  Tns error struct:
+    ns main err code: 12541
+    TNS-12541: TNS:não há listener
+    ns secondary err code: 12560
+    nt main err code: 511
+    TNS-00511: Não há listener
+    nt secondary err code: 61
+    nt OS err code: 0
+
+
+***********************************************************************
+Fatal NI connect error 12541, connecting to:
+ (DESCRIPTION=(ADDRESS=(PROTOCOL=TCP)(HOST=dc8003)(PORT=5480))(CONNECT_DATA=(SERVER=SHARED)(SERVICE_NAME=PCORP2)(CID=(PROGRAM=C:\oracle\product\10.2.0\client_1\bin\sqlplusw.exe)(HOST=RAMOS-PC)(USER=ramos))))
+
+  VERSION INFORMATION:
+	TNS for 32-bit Windows: Version 10.2.0.3.0 - Production
+	Windows NT TCP/IP NT Protocol Adapter for 32-bit Windows: Version 10.2.0.3.0 - Production
+  Time: 05-SET-2011 15:59:04
+  Tracing not turned on.
+  Tns error struct:
+    ns main err code: 12541
+    TNS-12541: TNS:não há listener
+    ns secondary err code: 12560
+    nt main err code: 511
+    TNS-00511: Não há listener
+    nt secondary err code: 61
+    nt OS err code: 0
+
+
+***********************************************************************
+Fatal NI connect error 12560, connecting to:
+ (DESCRIPTION=(ADDRESS=(PROTOCOL=BEQ)(PROGRAM=oracle)(ARGV0=oracleORCL)(ARGS='(DESCRIPTION=(LOCAL=YES)(ADDRESS=(PROTOCOL=beq)))'))(CONNECT_DATA=(SID=ORCL)(CID=(PROGRAM=C:\oracle\product\10.2.0\client_1\bin\sqlplusw.exe)(HOST=RAMOS-PC)(USER=ramos))))
+
+  VERSION INFORMATION:
+	TNS for 32-bit Windows: Version 10.2.0.3.0 - Production
+	Oracle Bequeath NT Protocol Adapter for 32-bit Windows: Version 10.2.0.3.0 - Production
+	Windows NT TCP/IP NT Protocol Adapter for 32-bit Windows: Version 10.2.0.3.0 - Production
+  Time: 26-SET-2011 10:15:02
+  Tracing not turned on.
+  Tns error struct:
+    ns main err code: 12560
+    TNS-12560: TNS:erro de adaptador de protocolo
+    ns secondary err code: 0
+    nt main err code: 530
+    TNS-00530: Erro de adaptador de protocolo
+    nt secondary err code: 126
+    nt OS err code: 0
+
+
+***********************************************************************
+Fatal NI connect error 12541, connecting to:
+ (DESCRIPTION=(ADDRESS=(PROTOCOL=TCP)(HOST=DC8005.fgv.br)(PORT=1521))(CONNECT_DATA=(SID=dcorp1)(SERVER=DEDICATED)(CID=(PROGRAM=C:\oracle\product\10.2.0\client_1\bin\sqlplusw.exe)(HOST=RAMOS-PC)(USER=ramos))))
+
+  VERSION INFORMATION:
+	TNS for 32-bit Windows: Version 10.2.0.3.0 - Production
+	Windows NT TCP/IP NT Protocol Adapter for 32-bit Windows: Version 10.2.0.3.0 - Production
+  Time: 27-SET-2011 08:19:43
+  Tracing not turned on.
+  Tns error struct:
+    ns main err code: 12541
+    TNS-12541: TNS:não há listener
+    ns secondary err code: 12560
+    nt main err code: 511
+    TNS-00511: Não há listener
+    nt secondary err code: 61
+    nt OS err code: 0
+
+
+***********************************************************************
+Fatal NI connect error 12545, connecting to:
+ (DESCRIPTION=(ADDRESS=(PROTOCOL=TCP)(HOST=dc8003)(PORT=5480))(CONNECT_DATA=(SERVER=SHARED)(SERVICE_NAME=PCORP2)(CID=(PROGRAM=C:\oracle\product\10.2.0\client_1\bin\sqlplusw.exe)(HOST=RAMOS-PC)(USER=ramos))))
+
+  VERSION INFORMATION:
+	TNS for 32-bit Windows: Version 10.2.0.3.0 - Production
+	Windows NT TCP/IP NT Protocol Adapter for 32-bit Windows: Version 10.2.0.3.0 - Production
+  Time: 06-NOV-2011 09:28:36
+  Tracing not turned on.
+  Tns error struct:
+    ns main err code: 12545
+    TNS-12545: A conexão falhou porque o objeto ou host de destino não existe
+    ns secondary err code: 12560
+    nt main err code: 515
+    TNS-00515: A conexão falhou porque o objeto ou host de destino não existe
+    nt secondary err code: 1004
+    nt OS err code: 0
+
+
+***********************************************************************
+Fatal NI connect error 12545, connecting to:
+ (DESCRIPTION=(ADDRESS=(PROTOCOL=TCP)(HOST=dc8003)(PORT=5480))(CONNECT_DATA=(SERVER=SHARED)(SERVICE_NAME=PCORP2)(CID=(PROGRAM=C:\oracle\product\10.2.0\client_1\bin\sqlplusw.exe)(HOST=RAMOS-PC)(USER=ramos))))
+
+  VERSION INFORMATION:
+	TNS for 32-bit Windows: Version 10.2.0.3.0 - Production
+	Windows NT TCP/IP NT Protocol Adapter for 32-bit Windows: Version 10.2.0.3.0 - Production
+  Time: 06-NOV-2011 09:31:47
+  Tracing not turned on.
+  Tns error struct:
+    ns main err code: 12545
+    TNS-12545: A conexão falhou porque o objeto ou host de destino não existe
+    ns secondary err code: 12560
+    nt main err code: 515
+    TNS-00515: A conexão falhou porque o objeto ou host de destino não existe
+    nt secondary err code: 1004
+    nt OS err code: 0
+
+
+***********************************************************************
+Fatal NI connect error 12545, connecting to:
+ (DESCRIPTION=(ADDRESS=(PROTOCOL=TCP)(HOST=dc8003)(PORT=5480))(CONNECT_DATA=(SERVER=SHARED)(SERVICE_NAME=PCORP2)(CID=(PROGRAM=C:\oracle\product\10.2.0\client_1\bin\sqlplusw.exe)(HOST=RAMOS-PC)(USER=ramos))))
+
+  VERSION INFORMATION:
+	TNS for 32-bit Windows: Version 10.2.0.3.0 - Production
+	Windows NT TCP/IP NT Protocol Adapter for 32-bit Windows: Version 10.2.0.3.0 - Production
+  Time: 27-FEV-2012 11:53:16
+  Tracing not turned on.
+  Tns error struct:
+    ns main err code: 12545
+    TNS-12545: A conexão falhou porque o objeto ou host de destino não existe
+    ns secondary err code: 12560
+    nt main err code: 515
+    TNS-00515: A conexão falhou porque o objeto ou host de destino não existe
+    nt secondary err code: 1004
+    nt OS err code: 0
+
+
+***********************************************************************
+Fatal NI connect error 12170.
+
+  VERSION INFORMATION:
+	TNS for 32-bit Windows: Version 10.2.0.3.0 - Production
+	Windows NT TCP/IP NT Protocol Adapter for 32-bit Windows: Version 10.2.0.3.0 - Production
+  Time: 14-ABR-2012 14:44:18
+  Tracing not turned on.
+  Tns error struct:
+    ns main err code: 12535
+    TNS-12535: TNS:operação sofreu timeout
+    ns secondary err code: 12560
+    nt main err code: 505
+    TNS-00505: Operação sofreu timeout
+    nt secondary err code: 60
+    nt OS err code: 0
+  Client address: <unknown>
+
+
+***********************************************************************
+Fatal NI connect error 12170.
+
+  VERSION INFORMATION:
+	TNS for 32-bit Windows: Version 10.2.0.3.0 - Production
+	Windows NT TCP/IP NT Protocol Adapter for 32-bit Windows: Version 10.2.0.3.0 - Production
+  Time: 14-ABR-2012 14:44:51
+  Tracing not turned on.
+  Tns error struct:
+    ns main err code: 12535
+    TNS-12535: TNS:operação sofreu timeout
+    ns secondary err code: 12560
+    nt main err code: 505
+    TNS-00505: Operação sofreu timeout
+    nt secondary err code: 60
+    nt OS err code: 0
+  Client address: <unknown>
+
+
+***********************************************************************
+Fatal NI connect error 12170.
+
+  VERSION INFORMATION:
+	TNS for 32-bit Windows: Version 10.2.0.3.0 - Production
+	Windows NT TCP/IP NT Protocol Adapter for 32-bit Windows: Version 10.2.0.3.0 - Production
+  Time: 09-AGO-2012 18:02:24
+  Tracing not turned on.
+  Tns error struct:
+    ns main err code: 12535
+    TNS-12535: TNS:operação sofreu timeout
+    ns secondary err code: 12560
+    nt main err code: 505
+    TNS-00505: Operação sofreu timeout
+    nt secondary err code: 60
+    nt OS err code: 0
+  Client address: <unknown>
+
+
+***********************************************************************
+Fatal NI connect error 12545, connecting to:
+ (DESCRIPTION=(ADDRESS=(PROTOCOL=TCP)(HOST=dc8003)(PORT=5480))(CONNECT_DATA=(SERVER=SHARED)(SERVICE_NAME=PCORP2)(CID=(PROGRAM=C:\oracle\product\10.2.0\client_1\bin\sqlplusw.exe)(HOST=RAMOS-PC)(USER=ramos))))
+
+  VERSION INFORMATION:
+	TNS for 32-bit Windows: Version 10.2.0.3.0 - Production
+	Windows NT TCP/IP NT Protocol Adapter for 32-bit Windows: Version 10.2.0.3.0 - Production
+  Time: 23-OUT-2012 09:57:58
+  Tracing not turned on.
+  Tns error struct:
+    ns main err code: 12545
+    TNS-12545: A conexão falhou porque o objeto ou host de destino não existe
+    ns secondary err code: 12560
+    nt main err code: 515
+    TNS-00515: A conexão falhou porque o objeto ou host de destino não existe
+    nt secondary err code: 1004
+    nt OS err code: 0
+
+
+***********************************************************************
+Fatal NI connect error 12541, connecting to:
+ (DESCRIPTION=(ADDRESS=(PROTOCOL=TCP)(HOST=172.19.0.14)(PORT=1521))(CONNECT_DATA=(SERVICE_NAME=orcl)(CID=(PROGRAM=D:\oracle\product\10.2.0\client_2\BIN\sqlplusw.exe)(HOST=INPI01232)(USER=arlima))))
+
+  VERSION INFORMATION:
+	TNS for 32-bit Windows: Version 10.2.0.1.0 - Production
+	Windows NT TCP/IP NT Protocol Adapter for 32-bit Windows: Version 10.2.0.1.0 - Production
+  Time: 27-AGO-2014 09:01:29
+  Tracing not turned on.
+  Tns error struct:
+    ns main err code: 12541
+    TNS-12541: TNS:não há listener
+    ns secondary err code: 12560
+    nt main err code: 511
+    TNS-00511: Não há listener
+    nt secondary err code: 61
+    nt OS err code: 0

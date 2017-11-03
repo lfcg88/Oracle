@@ -1,0 +1,22 @@
+
+SQL> select
+  2  status
+  3  from
+  4  v$block_change_tracking;
+v$block_change_tracking
+*
+ERRO na linha 4:
+ORA-19755: nÒo foi possÝvel abrir o arquivo de rastreamento de alteraþ§es
+ORA-19750: arquivo de rastreamento de alteraþ§es:
+'C:\ORACLE\ORADATA\ORCL\CHANGETRACKING\RMAN_CHANGE_TRACK.F'
+ORA-27041: nÒo Ú possÝvel abrir arquivo
+OSD-04002: nÒo Ú possÝvel abrir arquivo
+O/S-Error: (OS 3) O sistema nÒo pode encontrar o caminho especificado.
+
+
+SQL> ALTER DATABASE RENAME FILE 'C:\ORACLE\ORADATA\ORCL\CHANGETRACKING\RMAN_CHANGE_TRACK.F' TO 'C:\APP\ORACLE\ORADATA\ORCL\RMAN_CHANGE_TRACK.F';
+
+Banco de dados alterado.
+
+
+alter database disable block change tracking;

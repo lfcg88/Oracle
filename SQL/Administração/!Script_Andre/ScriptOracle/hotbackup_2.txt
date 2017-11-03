@@ -1,0 +1,36 @@
+Overview: ---------  This script is able to take a backup online.   
+Instructions: -------------  >> 
+Create the bkp.sql file with the informations bellow:  
+Rem The connection with the server should be with a SYSDBA user  conn / as sysdba  
+set feed off 
+set serveroutput on 
+set linesize 300   
+
+Rem Verify the directory where the script .sql to be created, will be executed.  
+spool %ORACLE_BASE%\admin\scripts\hotbkp.sql  
+exec HotBkp;  
+spool off  set feed on  
+Rem Check the location of the SPOOL file because it will be called now  exit;  
+
+--------------------------------------------------------------------------------  >> 
+Create a CodHotBkp.sql file with the commands bellow:  
+create or replace procedure HotBkp is   /* cursor to capture Tablespaces 
+that it will be put in the Backup, accessing Temporary Tablespaces Managed Locally */  
+
+cursor cTbs is   select ts# tId, name tName   from v$tablespace   
+where ts# not in (select distinct ts# from v$tempfile);   
+
+/* Cursor to capture Data Files that it will be put in the Backup */  
+cursor cDtfl is   select ts# tId, name dName, substr(name,  instr(name,decode('\',NULL,'/','\'),-1)+1,          instr(name,'.',-1)-instr(name,decode('\',NULL,'/','\'),-1)-1) DestName   
+from v$datafile;   
+
+/* Default backup directory. It should be compatible with your environment. */  
+CBkpDir constant varchar2(100):='c:\orabkp\';   
+/* Default extension's backup files */  CBkpExt constant varchar2(4):='.bkp';   
+/* Default extension's control file logical backup */  
+CBkpCtflExt constant varchar2(4):='.sql';    
+/* Files name generated throught Logical Backup and Control Files's Backup Online */ 
+ CBkpCtfl constant varchar2(7):='control';   VSpid varchar2(100);   VUdump varchar2(100); 
+ begin  dbms_output.enable(50000);   
+dbms_output.put_line('spool '||CBkpDir||'hotbkp.log');   /* Capture the start hour of Backup Online execution */  dbms_output.put_line('select to_char(sysdate, ''dd/mm/rrrr hh24:mi:ss'')  Start_Time'||chr(10)||                       'from dual;');   /* Starting the LOOP to take a Tablespaces's Backup Online */  for rTbs in cTbs loop    dbms_output.put_line('alter tablespace '||rTbs.tName||' begin backup;');   for rDtfl in cDtfl loop     if (rDtfl.tId=rTbs.tId) then     dbms_output.put_line('HOST ocopy '||rDtfl.dName||'  '||CBkpDir||rDtfl.DestName||CBkpExt);    end if;   end loop;    dbms_output.put_line('alter tablespace '||rTbs.tName||' end backup;');    dbms_output.put_line('alter system checkpoint;');  end loop;   select value into VUdump from v$parameter  where lower(name) = 'user_dump_dest';  select '*'||p.spid||'*.trc' into VSpid from v$process p, v$session s  where s.paddr=p.addr and s.audsid=userenv('SessionId') and s.username='SYS' and  s.status='ACTIVE';  dbms_output.put_line('alter database backup controlfile to trace;');  dbms_output.put_line('HOST copy '||VUdump||'\'||VSpid||'  '||CBkpDir||CBkpCtfl||CBkpCtflExt);   dbms_output.put_line('alter database backup controlfile to  '''||CBkpDir||CBkpCtfl||CBkpExt||''';');    dbms_output.put_line('alter system archive log current;');   /* Capture the end hour of Backup Online execution */  dbms_output.put_line('select to_char(sysdate, ''dd/mm/rrrr hh24:mi:ss'')  End_Time'||chr(10)||                       'from dual;');   /* Closing the log */  dbms_output.put_line('spool off');  end; 
+. 

@@ -1,0 +1,10 @@
+select S.sid
+, P.SPID
+, S.SERIAL#
+, P.TERMINAL
+, S.STATUS
+, S.MACHINE
+, S.OSUSER
+from GV$SESSION S, GV$PROCESS P
+where S.type = 'BACKGROUND'
+and S.PADDR = P.ADDR

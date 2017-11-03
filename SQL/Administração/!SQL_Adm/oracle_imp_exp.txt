@@ -1,0 +1,66 @@
+----- FPW -----
+
+exp 'operador@orades' owner=fpw statistics=none file=/backup/orades/fpw_orades_0902.dmp log=/backup/orades/fpw_orades_0902.log
+exp 'operador@orahom' owner=fpw statistics=none file=/backup/orahom/fpw_orahom_1502.dmp log=/backup/orahom/fpw_orahom_1502.log
+exp 'operador@oraprod' owner=fpw statistics=none file=/backup/oraprod/fpw_oraprod_1402.dmp log=/backup/oraprod/fpw_oraprod_0902.log
+
+imp 'operador@orades' file=/backup/orades/fpw_oraprod_3009.dmp log=/backup/orades/fpw_orades_3009.log fromuser=fpw touser=fpw ignore=y
+imp 'operador@oraprod' file=/backup/oraprod/fpw_oraprod_1402.dmp log=/backup/oraprod/imp_fpw_oraprod_1402.log fromuser=fpw touser=fpw ignore=y
+
+---- CRMO -----
+
+exp 'operador@orahom' owner=pluscep statistics=none file=/backup/orahom/pluscep_2405.dmp log=/backup/orahom/pluscep_2405.log
+exp 'operador@orahom' owner=plusoftcrm statistics=none file=/backup/orahom/plusoftcrm_2405.dmp log=/backup/orahom/plusoftcrm_2405.log
+exp 'operador@orahom' owner=plusinfo statistics=none file=/backup/orahom/plusinfo_2405.dmp log=/backup/orahom/plusinfo_2405.log
+
+imp 'operador@orades' file=/backup/pluscep_0505.dmp log=/backup/imp_pluscep_0505.log fromuser=pluscep touser=pluscep ignore=y
+imp 'operador@orades' file=/backup/plusoftcrm_0505.dmp log=/backup/imp_plusoftcrm_0505.log fromuser=plusoftcrm touser=plusoftcrm ignore=y
+imp 'operador@orades' file=/backup/plusinfo_0505.dmp log=/backup/imp_plusinfo_0505.log fromuser=plusinfo touser=plusinfo ignore=y
+
+----- NFE -----
+
+exp 'operador@orahom' owner=nfe statistics=none file=/backup/orahom/nfe_orahom_1502.dmp log=/backup/orahom/nfe_orahom_1502.log
+
+---------------
+
+exp operador@seaprod owner=goldencross file=F:\goldencross_prod.dmp log=F:\goldencross_prod.log
+exp operador@seaprod owner=his_transacao file=F:\his_transacao_prod.dmp log=F:\his_transacao_prod.log
+
+exp 'sysadm@fs89prd' statistics=none file=/backup/tables_0102.dmp log=/backup/exp_tables_0102.log tables=PS_LEDGER,PS_JRNL_LN
+imp 'sysadm@fs89prd' file=/backup/tables_1801.dmp log=/backup/imp_tables_1801.log tables=PS_LEDGER,PS_JRNL_LN,PS_JRNL_HEADER
+
+exp 'sysadm@fs89prd' statistics=none file=/backup/PSPRSMDEFN_FS89PRD_2012.dmp log=/backup/PSPRSMDEFN_FS89PRD_2012.log tables=PSPRSMDEFN
+exp 'sysadm@hcm9prd' statistics=none file=/backup/PSPRSMDEFN_HCM9PRD_2012.dmp log=/backup/PSPRSMDEFN_HCM99PRD_2012.log tables=PSPRSMDEFN
+
+imp 'sysadm@fs89prd' file=/backup/PSPRSMDEFN_FS89PRD_2012.dmp log=/backup/imp_PSPRSMDEFN_FS89PRD_2012.log tables=PSPRSMDEFN
+imp 'sysadm@hcm9hom' file=/backup/PSPRSMDEFN_HCM9PRD_2012.dmp log=/backup/imp_PSPRSMDEFN_HCM99PRD_2012.log tables=PSPRSMDEFN
+
+exp goldencross/queen full=yes statistics=none consistent=yes direct=y file=f:\exp_PRES_ESP_LOG.dmp log=exp_PRES_ESP_LOG.log tables=PRESTADORES_ESPECIAIS_LOG
+
+exp goldencross/gc#seaprod@seaprod full=yes statistics=none consistent=yes direct=y file=f:\AMB_EVENTOS.dmp log=exp_AMB_EVENTOS.log tables=AMB_EVENTOS
+exp goldencross/gc#seaprod@seaprod file=f:\AMB_EVENTOS.dmp log=f:\exp_AMB_EVENTOS.log tables=AMB_EVENTOS
+exp goldencross/gc#seaprod@seaprod file=f:\AMB_CBHPM.dmp log=f:\exp_AMB_CBHPM.log tables=AMB_CBHPM
+
+---------------
+
+exp 'wf_mpe@wfprod' statistics=none file=/backup/EMPRESA_ANDAMENTOs_2902.dmp log=/backup/EMPRESA_ANDAMENTO_2902.log tables=EMPRESA_ANDAMENTO
+exp 'wf_vendas@wfprod' statistics=none file=/backup/PROPOSTA_EMPRESA_2902.dmp log=/backup/PROPOSTA_EMPRESA_2902.log tables=PROPOSTA_EMPRESA
+
+exp 'wf_vendas@wfprod' statistics=none file=/backup/PROPOSTA_0203.dmp log=/backup/PROPOSTA_0203.log tables=PROPOSTA
+exp 'wf_vendas@wfprod' statistics=none file=/backup/PROPOSTA_ANDAMENTO_0203.dmp log=/backup/PROPOSTA_ANDAMENTO_0203.log tables=PROPOSTA_ANDAMENTO
+exp 'wf_vendas@wfprod' statistics=none file=/backup/PROPOSTA_ANDAMENTO_DET_0203.dmp log=/backup/PROPOSTA_ANDAMENTO_DET_0203.log tables=PROPOSTA_ANDAMENTO_DET
+exp 'wf_vendas@wfprod' statistics=none file=/backup/NOTIFICACAO_CONCESSIONARIA_0203.dmp log=/backup/NOTIFICACAO_CONCESSIONARIA_0203.log tables=NOTIFICACAO_CONCESSIONARIA
+exp 'wf_vendas@wfprod' statistics=none file=/backup/CHECKLIST_CADASTRO_0203.dmp log=/backup/CHECKLIST_CADASTRO_0203.log tables=CHECKLIST_CADASTRO
+
+imp 'historico@wfprod' file=/backup/EMPRESA_ANDAMENTOs_2902.dmp log=/backup/imp_EMPRESA_ANDAMENTO_2902.log tables=EMPRESA_ANDAMENTO
+imp 'historico@wfprod' file=/backup/PROPOSTA_EMPRESA_2902.dmp log=/backup/imp_PROPOSTA_EMPRESA_2902.log tables=PROPOSTA_EMPRESA
+
+imp 'historico@wfprod' statistics=none file=/backup/PROPOSTA_0203.dmp log=/backup/imp_PROPOSTA_0203.log tables=PROPOSTA
+imp 'historico@wfprod' statistics=none file=/backup/PROPOSTA_ANDAMENTO_0203.dmp log=/backup/imp_PROPOSTA_ANDAMENTO_0203.log tables=PROPOSTA_ANDAMENTO
+imp 'historico@wfprod' statistics=none file=/backup/PROPOSTA_ANDAMENTO_DET_0203.dmp log=/backup/imp_PROPOSTA_ANDAMENTO_DET_0203.log tables=PROPOSTA_ANDAMENTO_DET
+imp 'historico@wfprod' statistics=none file=/backup/NOTIFICACAO_CONCESSIONARIA_0203.dmp log=/backup/imp_NOTIFICACAO_CONCESSIONARIA_0203.log tables=NOTIFICACAO_CONCESSIONARIA
+imp 'historico@wfprod' statistics=none file=/backup/CHECKLIST_CADASTRO_0203.dmp log=/backup/imp_CHECKLIST_CADASTRO_0203.log tables=CHECKLIST_CADASTRO
+
+---------------
+
+imp 'dwsinistro@dwprod' file=/backup/DWPROD/22h/DWPROD.dmp log=/backup/DWPROD/22h/imp_SINISTRO_EMPRESA_DET_MENSAL_0903.log tables=SINISTRO_EMPRESA_DET_MENSAL

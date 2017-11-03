@@ -1,0 +1,54 @@
+OLTP compression saves you storage by reducing space consumption by 50 to 75
+percent.
+
+
+Oracle’s new OLTP compression technology doesn’t degrade
+write performance, while improving the read performance. Write performance
+doesn’t degrade because of Oracle’s batched compression strategy. The read
+performance is better because Oracle reads compressed data directly without first uncompressing the data.
+
+When new data comes in, the database inserts that data into a data block, but
+in an uncompressed format. Once the block reaches its PCTFREE level, Oracle
+compresses the data in the block. This compression strategy is efficient and also uses space efficiently by eliminating the holes made by the deleted data in the data blocks.
+
+
+The following examples show how to specify the compress
+and the compress for direct_load operations clauses in a create
+table statement:
+
+SQL> create table sales_history ( ... )
+compress;
+
+SQL> create table sales_history
+( ... ) compress for direct_load operations;
+
+
+The previous two create table statements show how to set up traditional
+compression for a data warehouse table. To enable the new compression for DML
+operations, you must specify the compress for all operations clause, as
+shown here:
+
+SQL> create table sales_history ( ... )
+compress for all operations;
+
+The compress for all operations clause compresses data during all
+DML operations.
+
+
+Monitoring Table Compression Use the columns COMPRESSION and
+COMPRESS_FOR in the DBA_TABLES view to find out information about
+whether compression is enabled for a table and, if so, the type of compression.
+Here’s the query:
+SQL> select table_name, compression, compress_for
+from dba_tables;
+TABLE_NAME COMPRESS COMPRESS_FOR
+----------- -------- ------------------
+T1 DISABLED
+T2 ENABLED DIRECT LOAD ONLY
+T3 ENABLED FOR ALL OPERATIONS
+The previous query shows that compression is enabled for tables T2 and T3.
+The COMPRESSED_FOR column shows that table T3 is enabled for compression
+for all operations including DML operations, whereas table T2 is enabled only for
+compression for direct load operations.
+
+

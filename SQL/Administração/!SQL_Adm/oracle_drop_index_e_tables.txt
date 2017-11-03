@@ -1,0 +1,37 @@
+Logado no esquema a ter seus obj excluidos:
+
+select 'drop table '||table_name||';' from user_tables;
+
+select 'drop index '||table_name||';' from user_indexes;
+
+select 'drop view '||view_name||';' from user_views;
+
+
+
+select 'drop table FPW.'||table_name||';' from all_tables
+where owner = 'FPW'
+order by table_name;
+
+select 'drop index FPW.'||index_name||';' from all_indexes
+where owner = 'FPW'
+order by index_name;
+
+select 'drop view FPW.'||view_name||';' from all_views
+where owner = 'FPW'
+order by view_name;
+
+
+
+
+
+select 'drop table SYSADM.'||table_name||';' from all_tables
+where owner = 'SYSADM'
+order by table_name;
+
+select 'drop index SYSADM.'||index_name||';' from all_indexes
+where owner = 'SYSADM'
+order by index_name;
+
+select 'drop view SYSADM.'||view_name||';' from all_views
+where owner = 'SYSADM'
+order by view_name;

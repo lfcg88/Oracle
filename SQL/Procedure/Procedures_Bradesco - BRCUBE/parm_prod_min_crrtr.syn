@@ -1,0 +1,3 @@
+create or replace synonym SGPB_PROC.PARM_PROD_MIN_CRRTR
+  for SGPB.PARM_PROD_MIN_CRRTR;
+

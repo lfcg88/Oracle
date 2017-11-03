@@ -1,0 +1,1 @@
+alter table bdi.BDI_IM_al move partition BDI_IM_AL_P0001 tablespace TS_BDI_D_02  lob (IM_IM) store as BDI_IM_LOB_0001 (tablespace TS_BDI_B_01)

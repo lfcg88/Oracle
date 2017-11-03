@@ -1,0 +1,35 @@
+accept vSid prompt 'SID =>  ';
+
+
+-- This is the handle of the library cache object which the 
+-- waiting session wants to acquire a pin on. 
+-- The actual object being waited on can be found using 
+
+SELECT kglnaown "Owner", kglnaobj "Object"
+    FROM x$kglob
+   WHERE kglhdadr in ( select P1RAW from v$session_wait where sid=&vSid and event like '%lib%pin%' ) 
+  ;
+
+
+-- The following SQL can be used to show the sessions which are holding and/or 
+-- requesting pins on the object that given in P1 in the wait: 
+
+  SELECT s.sid, kglpnmod "Mode", kglpnreq "Req"
+    FROM x$kglpn p, v$session s
+   WHERE p.kglpnuse=s.saddr
+     AND kglpnhdl in ( select P1RAW from v$session_wait where sid=&vSid and event like '%lib%pin%' ) 
+  ;
+
+-- Diagnosis of why there is a blocking scenario will usually need help from 
+-- Oracle support. If you just want to clear the immediate issue then the SID 
+-- information above should allow you to kill off any blocking sessions. Proper 
+-- diagnosis will usually require you to collect 3 SYSTEMSTATE dumps at 30 seconds 
+-- intervals then submit these to Oracle support with full details of the sessions and 
+-- objects involved. To take a SYSTEMSTATE dump connect to the instance a user with 
+-- ALTER SYSTEM privilege and issue the command: 
+
+--  ALTER SESSION SET max_dump_file_size = UNLIMITED;
+--  ALTER SYSTEM SET EVENTS 'immediate trace name systemstate level 10';
+
+--This will produce a trace file in USER_DUMP_DEST (or BACKGROUND_DUMP_DEST if connected to a shared server).
+--In a Parallel Server or RAC environment SYSTEMSTATE dumps should be taken 3 times on each node. 

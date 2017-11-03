@@ -1,0 +1,27 @@
+# SETA O DIRETÓRIO
+ALTER SYSTEM SET USER_DUMP_DEST= '/home/oracle/rightway'
+
+# HABILITA NA SESSÃO
+ALTER SESSION SET SQL_TRACE = true
+ALTER SESSION SET SQL_TRACE = false
+
+# HABILITA EM TODO BANCO
+ALTER SYSTEM SET sql_trace = true SCOPE=MEMORY
+ALTER SYSTEM SET sql_trace = false SCOPE=MEMORY
+#### Gerar Trace ####
+Arquivos são gerados no diretório do user_dump_file
+
+select sid, serial#, terminal from v$session where username = 'SAP_PROD_IG'
+########################################################################################
+ALTER SESSION SET sql_trace=TRUE;
+ALTER SESSION SET sql_trace=FALSE;
+OU 
+EXEC DBMS_SESSION.set_sql_trace(sql_trace => TRUE);
+EXEC DBMS_SESSION.set_sql_trace(sql_trace => FALSE);
+########################################################################################
+ALTER SESSION SET EVENTS '10046 trace name context forever, level 8';
+ALTER SESSION SET EVENTS '10046 trace name context off';
+OU 
+EXEC DBMS_SYSTEM.set_sql_trace_in_session(sid=>123, serial#=>1234, sql_trace=>TRUE);
+EXEC DBMS_SYSTEM.set_sql_trace_in_session(sid=>123, serial#=>1234, sql_trace=>FALSE);
+#########################################################################################

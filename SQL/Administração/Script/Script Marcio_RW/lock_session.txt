@@ -1,0 +1,31 @@
+Usuários que estão com o lock, e usuário que estão aguardando a outra transação.
+
+
+select sid, username, blocking_session
+from v$session where blocking_session is not null
+ UNION ALL
+ select A.sid, A.username, A.blocking_session
+ from v$session A, v$session B
+ where A.sid = B.blocking_session;
+
+################## Matar Sessão Através do Sid #######################
+
+SELECT 'alter system kill session '||''''|| sid ||', ' || serial# ||''''|| ' immediate;'
+ from v$session where sid = 174; 
+
+################# Matar todas as Sessões de um usuário ######################
+
+SELECT 'alter system kill session '||''''|| sid ||', ' || serial# ||''''|| ' immediate;'
+ from v$session where username = 'FUSION'; 
+
+
+alter system kill session '364, 4' immediate;  
+
+
+select sid, serial#
+ from v$session where username = 'FUSION';
+
+
+
+
+

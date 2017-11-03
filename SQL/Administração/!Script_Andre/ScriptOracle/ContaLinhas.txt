@@ -1,0 +1,37 @@
+
+SET PAGESIZE 1000
+SET LINESIZE 105
+SET HEAD OFF
+
+
+set escape '/' 
+
+
+spool c:\contlinhas.sql
+
+select 'select '||''''||rpad( table_name,40 ,' ') ||'  --->   '||''''||'/|'||'/|'||'  count(*) from '||OWNER||'.'||table_name||';'
+from all_tables where owner='ICDBOWN'
+order by table_name
+/
+
+
+
+--select 'select '||''''||rpad( table_name,40 ,' ') ||'  --->   '||''''||'  count(*) from '||OWNER||'.'||table_name||';'
+--from all_tables where owner='ICDBOWN'
+--order by table_name
+--/
+
+
+spool off
+
+
+spool c:\resultado_conta_linhs.txt
+
+@c:\contlinhas.sql
+
+spool off
+
+
+
+
+

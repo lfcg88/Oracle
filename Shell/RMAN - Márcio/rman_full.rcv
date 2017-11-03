@@ -1,0 +1,28 @@
+RUN{
+#CONFIGURACAO DE PARAMETROS
+Configure retention policy to recovery window of 5 days;
+#Configure retention policy to redundancy 2;
+Configure controlfile autobackup off;
+sql 'alter system archive log current';
+allocate channel t1 type disk;
+allocate channel t2 type disk;
+allocate channel t3 type disk;
+#BACKUP FULL DO BANCO DE DADOS
+backup as COMPRESSED BACKUPSET
+format '/u04/orabackup/rman_full/otcdb01/rman_full_%t_%s.dbf' tag "Bkp_Database" database;
+#Backup do ControlFile
+backup format '/u04/orabackup/rman_controlfile/otcdb01/rman_ctl_%d_%s_%t_%p.ctl' tag "Bkp_Ctl" current controlfile;
+#Backup do Spfile
+backup format '/u04/orabackup/rman_controlfile/otcdb01/rman_spfile_%d_%s_%t_%p.spl' tag "Bkp_Spfile" spfile;
+#BACKUP ARCHIVELOG
+backup as COMPRESSED BACKUPSET format '/u04/orabackup/rman_arch/otcdb01/rman_arch_%t_%s.arc'
+tag "Bkp_archive" archivelog all delete all input;
+release channel t1;
+release channel t2;
+release channel t3;
+crosscheck backup;
+crosscheck archivelog all;
+Delete noprompt expired backup;
+Delete noprompt expired archivelog all;
+Delete noprompt obsolete;
+}

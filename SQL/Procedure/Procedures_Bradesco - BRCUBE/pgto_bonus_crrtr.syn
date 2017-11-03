@@ -1,0 +1,3 @@
+create or replace synonym SGPB_PROC.PGTO_BONUS_CRRTR
+  for SGPB.PGTO_BONUS_CRRTR;
+

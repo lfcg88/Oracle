@@ -1,0 +1,44 @@
+EXEC DBMS_DDL.alter_compile('PACKAGE', 'MY_SCHEMA', 'MY_PACKAGE');
+EXEC DBMS_DDL.alter_compile('PACKAGE BODY', 'MY_SCHEMA', 'MY_PACKAGE');
+EXEC DBMS_DDL.alter_compile('PROCEDURE', 'MY_SCHEMA', 'MY_PROCEDURE');
+EXEC DBMS_DDL.alter_compile('FUNCTION', 'MY_SCHEMA', 'MY_FUNCTION');
+EXEC DBMS_DDL.alter_compile('TRIGGER', 'MY_SCHEMA', 'MY_TRIGGER');
+
+
+ALTER PACKAGE my_package COMPILE;
+ALTER PACKAGE my_package COMPILE BODY;
+ALTER PROCEDURE my_procedure COMPILE;
+ALTER FUNCTION my_function COMPILE;
+ALTER TRIGGER my_trigger COMPILE;
+ALTER VIEW my_view COMPILE;
+
+
+
+Set heading off;
+set feedback off;
+set echo off;
+Set lines 999;
+
+Spool C:\run_invalid.sql
+ 
+select 
+   'ALTER ' || OBJECT_TYPE || ' ' ||
+   OWNER || '.' || OBJECT_NAME || ' COMPILE;'
+from
+   dba_objects
+where
+   status = 'INVALID'
+and object_type in ('PACKAGE','PACKAGE BODY','FUNCTION','PROCEDURE','VIEW','TRIGGER')
+and owner = 'GOLDENCROSS'
+or owner = 'AMBGOLDEN'
+or owner = 'FRONTEND'
+or owner = 'HIS_TRANSACAO'
+or owner = 'IMP_GOLDEN';
+ 
+spool off;
+
+set heading on;
+set feedback on;
+set echo on;
+
+@run_invalid.sql

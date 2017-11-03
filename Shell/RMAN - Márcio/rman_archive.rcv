@@ -1,0 +1,12 @@
+run
+{
+ALLOCATE CHANNEL t1 TYPE disk;
+sql 'alter system archive log current';
+crosscheck archivelog all;
+#Backup e delecao dos Archives da Flash Recovery Area
+backup as COMPRESSED BACKUPSET format '/u04/orabackup/rman_arch/otcdb01/rman_arch_%t_%s.arc'
+tag "Bkp_archive" archivelog all delete all input;
+release channel t1;
+delete noprompt expired archivelog all;
+crosscheck archivelog all;
+}

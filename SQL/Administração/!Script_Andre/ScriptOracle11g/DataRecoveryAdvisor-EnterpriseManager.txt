@@ -1,0 +1,21 @@
+Here are the steps in the Oracle advised recovery strategy:
+1. Click Availability on the Database Home page.
+2. On the Availability page, click Perform Recovery under the Manage section.
+3. The Perform Recovery page appears, as shown in Figure 2-7. Based on the
+failures listed in the Oracle Advised Recovery section, you can follow
+the next steps.
+4. Click Advise and Recover.
+5. Click the number next to the failure status.
+6. In the View and Manage Failures page, click All in the Priority list and click Go.
+7. Select Data Failures from the navigation tree.
+8. Select the failure you’re interested in and click Advise.
+9. Click Continue. You’ll see the Review page next, which summarizes the
+proposed data recovery actions.
+
+Note that the Perform Recovery page has two sections titled Oracle Advised
+Recovery and User Directed Recovery. To access the Data Recovery Advisor, go to
+the new Oracle Advised Recovery section. In the Oracle Advised Recovery section, the Advise and Recover button is grayed out if the Data Recovery Advisor hasn’t trapped any failures. However, when the DRA detects a failure, you can click the Advise and Recover button.
+Oracle recommends that when dealing with data corruption or other data failures, to access the Data Recovery Advisor through the Support Workbench. From the Support Workbench, you can access the Data Recovery Advisor in either of these ways:
+¦ From the Checker findings subpage on the Support Workbench home page
+¦ From the Problem Details page
+

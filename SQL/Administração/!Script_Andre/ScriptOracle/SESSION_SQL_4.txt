@@ -1,0 +1,13 @@
+SET LINESIZE 100
+SET PAGESIZE 0
+
+column sql_text format A30 word_wrapped
+
+select SID,username,DISK_READS,BUFFER_GETS,ROWS_PROCESSED,sql_text
+from v$session s, v$sqlarea sql
+where s.sql_address = sql.address and
+s.sql_hash_value = sql.hash_value aNd
+s.status='ACTIVE' and
+s.username is not null
+/
+

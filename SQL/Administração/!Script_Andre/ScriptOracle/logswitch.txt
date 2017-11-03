@@ -1,0 +1,20 @@
+--Oracle 7 syntax
+
+SELECT trunc(to_date(first_time,'mm/dd/yy hh24:mi:ss')) DAY,
+     count(*) NB_SWITCHS,
+     trunc(count(*)*log_size/1024) TOTAL_SIZE_KB,
+     to_char(count(*)/24,'9999.9') AVG_SWITCHS_PER_HOUR
+FROM v$loghist,(select avg(bytes) log_size from v$log)
+GROUP BY trunc(to_date(first_time,'mm/dd/yy hh24:mi:ss')),log_size
+/
+
+--Oracle 8 syntax
+
+SELECT trunc(first_time) DAY,
+     count(*) NB_SWITCHS,
+     trunc(count(*)*log_size/1024) TOTAL_SIZE_KB,
+     to_char(count(*)/24,'9999.9') AVG_SWITCHS_PER_HOUR
+FROM v$loghist,(select avg(bytes) log_size from v$log)
+GROUP BY trunc(first_time),log_size
+/
+

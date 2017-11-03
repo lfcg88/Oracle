@@ -1,0 +1,19 @@
+show parameter dump;
+
+ORAPROD
+/oracle/ora10/admin/oraprod/bdump/alert_oraprod.log
+
+ORAHOM
+/oracle/ora10/product/10.2.0/db_1/rdbms/log/alert_orahom.log
+
+ORADES
+/oracle/ora10/product/10.2.0/db_1/rdbms/log/alert_orades.log
+
+FS89PRD
+/oracle/ora10/admin/fs89prd/bdump/alert_fs89prd.log
+
+HCM9PRD
+/oracle/ora10/admin/hcm9prd/bdump/alert_hcm9prd.log
+
+
+

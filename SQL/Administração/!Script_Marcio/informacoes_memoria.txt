@@ -1,0 +1,29 @@
+-- Uma visão da PGA
+SELECT name, ROUND(value/1024/1024,2) MB FROM v$pgastat where unit = 'bytes';
+
+
+-- Uma visão da SGA
+SELECT * FROM v$sgastat;
+
+
+-- Distribuição de memória por áreas ("pools")
+SELECT pool, ROUND(SUM(bytes)/1024/1024,2) MB FROM v$sgastat GROUP BY pool;
+
+-- Onde a memória não está em "pools"
+SELECT name, ROUND(bytes/1024/1024,2) MB FROM v$sgastat WHERE pool IS NULL;
+
+
+-- Uma visão da SGA mais simples
+SELECT name, ROUND(value/1024/1024,2) MB FROM v$sga;
+
+-- Área Total da SGA
+SELECT ROUND(sum(value)/1024/1024,2) MB FROM v$sga;
+
+-- Componentes cujos tamanhos podem ser mudados dinamicamente
+SELECT component,
+  round(current_size/1024/1024) Current_Size,
+  round(min_size/1024/1024) Min_Size,
+  round(max_size/1024/1024) Max_Size,
+  last_oper_type,
+  TO_CHAR(last_oper_time, 'dd/mm/yyyy hh24:mi:ss') Last_oper_Time
+FROM v$sga_dynamic_components;

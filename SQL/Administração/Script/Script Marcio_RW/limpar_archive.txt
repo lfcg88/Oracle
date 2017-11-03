@@ -1,0 +1,40 @@
+--limpando archive
+
+CASO A INTÂNCIA SEJA DE TESTE
+
+DELETAR TODAS AS PASTAS DO DIRETÓRIO DA FLASH_RECOVERY_AREA
+
+show parameter recovery_file_dest 
+
+/u01/app/oracle/flash_recovery_area
+
+rm -rf *
+
+rman target /
+
+crosscheck archivelog all;
+
+delete noprompt expired archivelog all;
+
+CASO A INSTÂNCIA SEJA DE PRODUÇÃO
+
+AUMENTAR ESPAÇO NA AREA DE FLASH RECOVERY SE HOUVER ESPAÇO
+
+alter system set db_recovery_file_dest_size=4G scope=both 
+
+FAZER BACKUP DOS ARCHIVES.
+
+DELETAR TODAS AS PASTAS DO DIRETÓRIO DA FLASH_RECOVERY_AREA 
+
+show parameter recovery_file_dest 
+
+/u01/app/oracle/flash_recovery_area
+
+rm -rf *
+
+rman target /
+
+crosscheck archivelog all;
+
+delete noprompt expired archivelog all;
+

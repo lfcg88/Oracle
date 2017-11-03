@@ -1,0 +1,140 @@
+
+Recovery Manager: Release 9.2.0.4.0 - Production
+
+Copyright (c) 1995, 2002, Oracle Corporation.  All rights reserved.
+
+RMAN> CONNECT TARGET sys/dontknow; 
+2> CONNECT CATALOG rman/rman@metdb01;
+3> 
+4> crosscheck archivelog all;
+5> 
+6> run
+7> {
+8> allocate channel ch1 type DISK format '/oracle/backup/diario/db_%d_%t_%s_%p_%T'; 
+9> backup incremental 
+10> level 0 
+11> cumulative 
+12> TAG "Full Diario" 
+13> (database  setsize 3145728 include current controlfile channel ch1); 
+14> # arquiva log corrente 
+15> sql 'alter system archive log current'; 
+16> release channel ch1; 
+17> allocate channel ch1 type DISK format '/oracle/backup/diario/al_%d_%t_%s_%p_%T'; 
+18> backup 
+19> (archivelog all delete input setsize 3145728 channel ch1); 
+20> release channel ch1; 
+21> }
+22> 
+connected to target database: GRPLAN (DBID=3880388427)
+
+connected to recovery catalog database
+
+allocated channel: ORA_DISK_1
+channel ORA_DISK_1: sid=17 devtype=DISK
+allocated channel: ORA_DISK_2
+channel ORA_DISK_2: sid=18 devtype=DISK
+allocated channel: ORA_DISK_3
+channel ORA_DISK_3: sid=20 devtype=DISK
+validation succeeded for archived log
+archive log filename=/oracle/oradata/GRPLAN/archive/1_269.dbf recid=269 stamp=515088910
+Crosschecked 1 objects
+
+validation failed for archived log
+archive log filename=/oracle/oradata/GRPLAN/archive/1_1.dbf recid=260 stamp=513884081
+validation failed for archived log
+archive log filename=/oracle/oradata/GRPLAN/archive/1_210.dbf recid=210 stamp=511580026
+validation failed for archived log
+archive log filename=/oracle/oradata/GRPLAN/archive/1_211.dbf recid=211 stamp=511613392
+validation failed for archived log
+archive log filename=/oracle/oradata/GRPLAN/archive/1_212.dbf recid=212 stamp=511711334
+validation failed for archived log
+archive log filename=/oracle/oradata/GRPLAN/archive/1_213.dbf recid=213 stamp=511809922
+validation failed for archived log
+archive log filename=/oracle/oradata/GRPLAN/archive/1_214.dbf recid=214 stamp=511909808
+validation failed for archived log
+archive log filename=/oracle/oradata/GRPLAN/archive/1_215.dbf recid=215 stamp=512011099
+validation failed for archived log
+archive log filename=/oracle/oradata/GRPLAN/archive/1_216.dbf recid=216 stamp=512062669
+validation failed for archived log
+archive log filename=/oracle/oradata/GRPLAN/archive/1_217.dbf recid=217 stamp=512063965
+validation failed for archived log
+archive log filename=/oracle/oradata/GRPLAN/archive/1_227.dbf recid=227 stamp=512698769
+validation failed for archived log
+archive log filename=/oracle/oradata/GRPLAN/archive/1_237.dbf recid=237 stamp=513277698
+validation failed for archived log
+archive log filename=/oracle/oradata/GRPLAN/archive/1_257.dbf recid=257 stamp=513864097
+validation failed for archived log
+archive log filename=/oracle/oradata/GRPLAN/archive/1_258.dbf recid=257 stamp=513864971
+validation failed for archived log
+archive log filename=/oracle/oradata/GRPLAN/archive/1_260.dbf recid=260 stamp=513879821
+validation failed for archived log
+archive log filename=/oracle/oradata/GRPLAN/archive/1_261.dbf recid=261 stamp=513879821
+validation failed for archived log
+archive log filename=/oracle/oradata/GRPLAN/archive/1_262.dbf recid=262 stamp=513880405
+validation failed for archived log
+archive log filename=/oracle/oradata/GRPLAN/archive/1_263.dbf recid=263 stamp=513890434
+validation failed for archived log
+archive log filename=/oracle/oradata/GRPLAN/archive/1_264.dbf recid=265 stamp=514660728
+validation failed for archived log
+archive log filename=/oracle/oradata/GRPLAN/archive/1_265.dbf recid=264 stamp=514660723
+Crosschecked 19 objects
+
+
+released channel: ORA_DISK_1
+released channel: ORA_DISK_2
+released channel: ORA_DISK_3
+allocated channel: ch1
+channel ch1: sid=17 devtype=DISK
+
+Starting backup at 10-JAN-04
+channel ch1: starting incremental level 0 datafile backupset
+channel ch1: specifying datafile(s) in backupset
+including current SPFILE in backupset
+including current controlfile in backupset
+input datafile fno=00001 name=/oracle/oradata/GRPLAN/system01.dbf
+input datafile fno=00002 name=/oracle/oradata/GRPLAN/undotbs01.dbf
+input datafile fno=00005 name=/oracle/oradata/GRPLAN/example01.dbf
+input datafile fno=00012 name=/oracle/oradata/GRPLAN/pcorp_tmp/PCORP_TMPv2.dbf
+input datafile fno=00010 name=/oracle/oradata/GRPLAN/xdb01.dbf
+input datafile fno=00011 name=/oracle/oradata/GRPLAN/pcorp_prd/pcorp_prd.dbf
+input datafile fno=00006 name=/oracle/oradata/GRPLAN/indx01.dbf
+input datafile fno=00009 name=/oracle/oradata/GRPLAN/users01.dbf
+input datafile fno=00003 name=/oracle/oradata/GRPLAN/cwmlite01.dbf
+input datafile fno=00004 name=/oracle/oradata/GRPLAN/drsys01.dbf
+input datafile fno=00007 name=/oracle/oradata/GRPLAN/odm01.dbf
+input datafile fno=00014 name=/oracle/oradata/GRPLAN/catalog/catalog.dbf
+input datafile fno=00008 name=/oracle/oradata/GRPLAN/tools01.dbf
+input datafile fno=00013 name=/oracle/oradata/GRPLAN/example02.dbf
+channel ch1: starting piece 1 at 10-JAN-04
+channel ch1: finished piece 1 at 10-JAN-04
+piece handle=/oracle/backup/diario/db_GRPLAN_515088973_47_1_20040110 comment=NONE
+channel ch1: backup set complete, elapsed time: 00:01:46
+Finished backup at 10-JAN-04
+
+sql statement: alter system archive log current
+
+released channel: ch1
+
+allocated channel: ch1
+channel ch1: sid=17 devtype=DISK
+
+Starting backup at 10-JAN-04
+current log archived
+channel ch1: starting archive log backupset
+channel ch1: specifying archive log(s) in backup set
+input archive log thread=1 sequence=269 recid=269 stamp=515088910
+input archive log thread=1 sequence=270 recid=270 stamp=515089081
+input archive log thread=1 sequence=271 recid=271 stamp=515089082
+channel ch1: starting piece 1 at 10-JAN-04
+channel ch1: finished piece 1 at 10-JAN-04
+piece handle=/oracle/backup/diario/al_GRPLAN_515089083_48_1_20040110 comment=NONE
+channel ch1: backup set complete, elapsed time: 00:00:02
+channel ch1: deleting archive log(s)
+archive log filename=/oracle/oradata/GRPLAN/archive/1_269.dbf recid=269 stamp=515088910
+archive log filename=/oracle/oradata/GRPLAN/archive/1_270.dbf recid=270 stamp=515089081
+archive log filename=/oracle/oradata/GRPLAN/archive/1_271.dbf recid=271 stamp=515089082
+Finished backup at 10-JAN-04
+
+released channel: ch1
+
+Recovery Manager complete.

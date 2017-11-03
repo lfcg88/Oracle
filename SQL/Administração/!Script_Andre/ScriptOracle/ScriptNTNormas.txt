@@ -1,0 +1,52 @@
+This month, I look at 10 essential Windows NT command-script techniques. Command scripts are ASCII text files that contain a group of NT commands. Command scripts can help you automate administrative tasks, such as creating users or shares or running a backup.
+
+10. Adding comments to a script lets you help others understand what your script does and helps you remember the purpose of older scripts. Use double colons (::) or a Rem statement to add comments to a script.
+
+:: Filename: myfile.bat
+rem This batch was created on 03/12/99
+
+
+9. The Echo command lets you control NT's default echo functionality. By default, NT displays all commands onscreen unless you explicitly turn off the capability. Echo Off turns off all echoing, except those commands that start with Echo. @Echo Off turns off echoing for the command that follows.
+
+@echo off
+echo Command file processing is starting
+
+8. The Goto command and tags let you add structure to your command files. Goto branches to the tag that the Goto statement specifies.
+
+goto error
+:error
+
+7. Command-line parameters let you give command files flexibility and reusability. For instance, a command file that adds users might accept a username as a parameter so that different users can use the same script. Command-line parameters start with the percent sign (%), followed by the ordinal number of the parameter.
+
+net user %1 /add
+
+6. Environment variables let you retrieve settings from the system's environment and substitute values when the script runs. You use the Set command to create a new environment variable. You use the variable name between % symbols to retrieve the contents of an environment variable.
+
+set user=tempuser
+net user %user% /add
+
+5. Subroutines let you organize your scripts. You use subroutines with the Call command, which directs your script's execution to the tag you specify after Call. When the subroutine completes, execution returns to the line following Call.
+
+call :init_files
+:init_files
+del C:\temp\tempfile.txt
+goto :eof
+
+4. Redirection lets you change the input source and output destination for your scripts. For instance, combining re direction and Echo lets you write text files. Using one redirection symbol (>) creates a new file; using two redirection symbols (>>) appends text to an existing file.
+
+echo text line 1 > C:\temp\sample.txt
+echo text line 2 >> C:\temp\sample.txt
+
+3. The If command lets you add programmatical control to your scripts' execution. You can use If to test the contents of an environment variable and to check whether a file exists.
+
+if not %os% == "Windows_NT" goto error
+if exist C:\temp\sample.txt del C:\temp\sample.txt
+
+2. The Choice command lets you prompt users to input a character. You can override Choice's default Y or N prompts with the /c switch. Choice sets the %errorlevel% environment variable to the ordinal number that corresponds to the user's choice.
+
+choice /cABC
+if %errorlevel%==1 echo You choose A
+
+1. The For statement lets you repeat a command, each time using a different value from a set of values. For also has advanced capabilities, including the ability to read and parse the contents of files, directories, and the system environment. Two % symbols must precede For's replaceable variable.
+
+for %%i in (file1, file2, file3) do if exist %%i del %%i 

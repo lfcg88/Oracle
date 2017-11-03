@@ -1,0 +1,33 @@
+
++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+You must enable supplemental logging  to enable the flashback transaction backout feature.
++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+
+SQL> alter database add supplemental log data;
+SQL> alter database add supplemental log data (primary key) columns;
+
+
++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ privileges to any user that wants to use the flashback transaction backout feature. 
++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+SQL> grant execute on dbms_flashback to hr;
+SQL> grant select any transaction to hr;
+
+
++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+Executando dbms_flashback.transaction_backout 
++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+declare
+trans_arr xid_array;
+begin
+trans_arr := xid_array('030003000D02540','D10001000D02550');
+dbms_flashback.transaction_backout (
+numtxns => 1,
+xids => trans_arr,
+options => dbms_flashback.nocascade
+);
+end;
+

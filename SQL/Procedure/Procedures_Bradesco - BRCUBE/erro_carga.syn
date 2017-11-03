@@ -1,0 +1,3 @@
+create or replace synonym SGPB_PROC.ERRO_CARGA
+  for DWMF.ERRO_CARGA;
+

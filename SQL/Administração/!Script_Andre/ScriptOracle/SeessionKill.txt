@@ -1,0 +1,134 @@
+select 'alter system kill session '||chr(39)||sid||','||serial#||chr(39)||';'
+from v$session
+where username like upper('&&1')
+and ltrim(to_char(sid))||','||ltrim(to_char(serial#)) like '&&2'
+and status != 'KILLED';
+
+
+
+=============== matando baseado no last kall ========================
+
+SELECT 'alter system kill session '||chr(39)||sid||','||serial#||chr(39)||';'
+  FROM v$session
+  where username is not null and status='ACTIVE'  and last_call_et/60 > 100
+  order by last_call_et/60 desc
+
+======================= kill processo ===========================
+
+select distinct 'kill -9 '||p.spid
+from sys.v_$process p, v$session s
+where p.addr = s.paddr and s.username is not null and s.status='ACTIVE' and  s.last_call_et/60 > 100
+;
+
+kill -9 10014
+kill -9 10075
+kill -9 11759
+kill -9 12062
+kill -9 12123
+kill -9 13998
+kill -9 14142
+kill -9 14375
+kill -9 15795
+kill -9 15927
+kill -9 16125
+kill -9 17833
+kill -9 18018
+kill -9 18116
+kill -9 19869
+kill -9 20222
+kill -9 20294
+kill -9 2156    
+kill -9 21709
+kill -9 21990
+kill -9 22118
+kill -9 2372    
+kill -9 23775
+kill -9 23996
+kill -9 24149
+kill -9 2528    
+kill -9 26029
+kill -9 26436
+kill -9 26536
+kill -9 26911
+kill -9 271     
+kill -9 27848
+kill -9 28261
+kill -9 28291
+kill -9 28734
+kill -9 2901    
+kill -9 29864
+kill -9 336     
+kill -9 3931    
+kill -9 4173    
+kill -9 4305    
+kill -9 4722    
+kill -9 5953    
+kill -9 6127    
+kill -9 6296    
+kill -9 6768    
+kill -9 777     
+kill -9 7937    
+kill -9 8240    
+kill -9 8252    
+kill -9 8951    
+kill -9 9751    
+
+
+SELECT 'alter system kill session '||chr(39)||sid||','||serial#||chr(39)||';'
+  FROM v$session
+  where username = 'OPS$ORADBA' and status='ACTIVE'  and last_call_et/60 > 100
+  order by last_call_et/60 desc
+
+
+alter system kill session '94,19960';
+alter system kill session '44,55774';
+alter system kill session '60,7169';
+alter system kill session '93,36969';
+alter system kill session '55,50315';
+alter system kill session '23,58203';
+alter system kill session '87,34608';
+alter system kill session '15,21866';
+alter system kill session '48,613';
+alter system kill session '95,4197';
+alter system kill session '91,38646';
+alter system kill session '33,45083';
+alter system kill session '86,46820';
+alter system kill session '66,44589';
+alter system kill session '19,9711';
+alter system kill session '30,48129';
+alter system kill session '68,56439';
+alter system kill session '69,11400';
+alter system kill session '63,4227';
+alter system kill session '39,55440';
+alter system kill session '9,7028';
+alter system kill session '61,17622';
+alter system kill session '85,3108';
+alter system kill session '21,18833';
+alter system kill session '41,34951';
+alter system kill session '51,61040';
+alter system kill session '90,55326';
+alter system kill session '37,32580';
+alter system kill session '98,27446';
+alter system kill session '32,50541';
+alter system kill session '34,21973';
+alter system kill session '64,16007';
+alter system kill session '35,64922';
+alter system kill session '67,55624';
+alter system kill session '24,8095';
+alter system kill session '36,2370';
+alter system kill session '92,64592';
+alter system kill session '49,61414';
+alter system kill session '73,33982';
+alter system kill session '26,36438';
+alter system kill session '76,25489';
+alter system kill session '43,41327';
+alter system kill session '88,61590';
+alter system kill session '10,3876';
+alter system kill session '50,22196';
+alter system kill session '40,4072';
+alter system kill session '56,3';
+alter system kill session '80,60988';
+alter system kill session '84,44832';
+alter system kill session '52,52608';
+alter system kill session '89,28748';
+alter system kill session '77,25477';

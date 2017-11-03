@@ -1,0 +1,2 @@
+00 7 * * * /export/home/oracle/vmstat/run_vmstat.ksh > /export/home/oracle/vmstat/r.lst
+00 7 * * * /export/home/oracle/vmstat/run_vmstat_alert.ksh prodb1 > /export/home/oracle/vmstat/v.lst

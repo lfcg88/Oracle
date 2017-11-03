@@ -1,0 +1,22 @@
+/*
+Monitora uso por sessão da tablespace temporária
+Esta query indica quantos blocos cada sessão está usando. Para converter em bytes, multiplicar pelo db_block_size (nosso padrão é 8kb)
+*/
+
+select s.sid, s.serial#, s.username, s.program, s.machine,
+       t.tablespace, t.contents, t.segtype, 
+       t.segfile#, t.blocks
+from  v$tempseg_usage t,
+      v$session s
+where t.session_addr = s.saddr;
+
+
+/* 
+Exibe o percentual de uso da tablespace temporaria
+*/
+SELECT (s.tot_used_blocks / f.total_blocks) * 100 as pctused
+FROM   (SELECT sum(used_blocks) tot_used_blocks
+        FROM v$sort_segment
+        WHERE tablespace_name in (SELECT tablespace_name FROM dba_tablespaces WHERE contents='TEMPORARY')) s,
+       (SELECT sum(blocks) total_blocks
+        FROM dba_temp_files) f;

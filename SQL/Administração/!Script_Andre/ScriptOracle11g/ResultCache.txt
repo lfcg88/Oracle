@@ -1,0 +1,100 @@
+
+
++++++++++++++++++++++++++++++++++++++
+ result_cache_mode parameter 
++++++++++++++++++++++++++++++++++++++++
+
+SQL> show parameter result_cache_mode
+
+NAME TYPE VALUE
+------------------ ------- -------
+result_cache_mode string MANUAL
+SQL>
+
++++++++++++++++++++++++++++++++++++++++++++++++++
+dynamically change the setting at the session
++++++++++++++++++++++++++++++++++++++++++++++++++
+
+SQL> alter session set result_cache_mode=force;
+
+
+++++++++++++++++++++++++++++++++++++
+You can disable the result cache
+++++++++++++++++++++++++++++++++++++
+
+SQL> alter system set result_cache_max_size=0;
+
+
++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+hint to direct the database to cache the query results in the result cache ( result_cache_mode=MANUAL )
+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+SQL> select /*+ result_cache +*/
+2 department_id, avg(salary)
+3 from hr.employees
+4* group by department_id;
+
++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+hint to direct the database to NO cache the query results in the result cache ( result_cache_mode=force )
+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+select /*+ no_result_cache */ department_id, avg(salary)
+from employees
+group by department_id;
+
+
+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+view the current result cache memory allocation
+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+SQL> set serveroutput on
+SQL> exec dbms_result_cache.memory_report
+
+
+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+DBMS_RESULT_CACHE.STATUS function to ascertain whether the result cache is enabled:
+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+SQL> SELECT dbms_result_cache.status() FROM dual;
+DBMS_RESULT_CACHE.STATUS()
+---------------------------
+ENABLED
+
+
+
+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+Use the FLUSH procedure to remove the contents of the result cache
+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+SQL> begin
+2 dbms_result_cache.flush;
+3 end;
+4 /
+PL/SQL procedure successfully completed.
+SQL>
+
+
+SQL> begin
+2 dbms_result_cache.bypass(TRUE);
+3 dbms_result_cache.flush;
+4 end;
+5 /
+PL/SQL procedure successfully completed.
+SQL>
+
+
+SQL> begin
+2 dbms_result_cache.bypass(FALSE);
+3 end;
+4 /
+PL/SQL procedure successfully completed.
+SQL>
+
+
+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+You can find out information about the objects currently in the result cache by
+using the following query:
++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+SQL> select type,status,name from v$result_cache_objects;
+

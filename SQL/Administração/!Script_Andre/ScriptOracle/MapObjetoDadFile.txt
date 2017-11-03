@@ -1,0 +1,70 @@
+REM --------------------------------------------------------------------------  
+REM PURPOSE:  REM    The purpose of this script is to provide a block-level mapping of tables  
+REM    inside one or more tablespaces.  
+REM ---------------------------------------------------------------------------  
+REM EXPLANATION:  REM    Provides a block-level mapping of tables inside of a given tablespace.  
+REM ---------------------------------------------------------------------------  
+REM ================ Version Testing: ================  
+REM This script was tested on Oracle Versions 7.3.4.X - 8.1.6.XX. 
+REM 
+REM This script provides a block-level mapping of the tables inside one or  more tablespaces.  
+REM You will be prompted for the name of the tablespace. 
+REM 
+REM  --------------------------------------------------------------------------- 
+
+def ts = &&1 
+col tablespace form a15 head 'Tablespace' just c trunc 
+col file_id form 990 head 'File' just c 
+col block_id form 9,999,990 head 'Block Id' just c 
+col blocks form 999,990 head 'Size' just c 
+col segment form a38 head 'Segment' just c trunc 
+break - 
+on tablespace skip page - 
+on file_id skip 1 
+select 
+tablespace_name tablespace, 
+file_id, 
+1 block_id, 
+1 blocks, 
+'<file hdr>' segment 
+from 
+dba_extents 
+where 
+tablespace_name = upper('&ts') 
+union 
+select 
+tablespace_name tablespace, 
+file_id, 
+1 block_id, 
+1 blocks, 
+'<file hdr>' segment 
+from 
+dba_free_space 
+where 
+tablespace_name = upper('&ts') 
+union 
+select 
+tablespace_name tablespace, 
+file_id, 
+block_id, 
+blocks, 
+owner||'.'||segment_name segment 
+from 
+dba_extents 
+where 
+tablespace_name = upper('&ts') 
+union 
+select 
+tablespace_name tablespace, 
+file_id, 
+block_id, 
+blocks, 
+'<free>' 
+from 
+dba_free_space 
+where 
+tablespace_name = upper('&ts') 
+order by 
+1,2,3 
+/ 
+undef ts 

@@ -1,0 +1,38 @@
+alter system set <parâmetro>=<valor> scope=both;
+
+conn sys/oracle@fs89hom;
+
+
+alter system set sort_area_size=314572800 scope=spfile;
+alter system set sort_area_retained_size=157286400 scope=spfile;
+
+alter system set open_links=10 scope=both;
+alter system set open_links_per_instance=10 scope=both;
+
+alter system set open_cursors=500 scope=both;
+
+alter system set optimizer_mode=choose scope=spfile;
+
+alter system set log_archive_dest_1='LOCATION=/oracle/oradata/crmoprd/archive' scope=spfile;
+
+------------------------------------------------------
+alter system set sga_max_size=6442450944 scope=spfile;
+alter system set sga_target=6442450944 scope=spfile;
+
+alter system set sga_max_size=3072M scope=spfile;
+alter system set sga_target=3072M scope=spfile;
+------------------------------------------------------
+
+alter system set open_cursors=500 scope=spfile;
+alter system set processes=350 scope=spfile;
+
+
+SELECT COUNT(*) FROM v$session
+
+------------------------------------------------------
+alter system set db_16k_cache_size=512M scope=spfile;
+alter system set DB_CACHE_SIZE=512M scope=spfile;
+------------------------------------------------------
+
+DB_CACHE_SIZE=524288000
+db_16k_cache_size=524288000

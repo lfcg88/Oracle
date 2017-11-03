@@ -1,0 +1,135 @@
+
+SELECT /*+ RULE */ o.owner owner, o.object_name name, o.object_type type 
+FROM public_dependency d, ALL_OBJECTS o, ALL_OBJECTS r
+WHERE r.owner='OWNRECUP2' 
+AND r.object_name='PG_AUX_SMBD'
+AND r.object_type='PACKAGE'
+AND 
+r.object_id = d.referenced_object_id
+AND d.object_id = o.object_id
+
+
+=================
+
+select 'alter '||decode(object_type,'PACKAGE BODY',' PACKAGE ',object_type)||
+' '||owner||'.'||object_name||' compile '||decode(object_type,'PACKAGE BODY','BODY;',';')
+from dba_objects
+where status='INVALID' and owner in ('OWNRECUP')
+ ;
+
+
+select 'alter public synonym '||object_name||' compile ;'
+from dba_objects
+where status='INVALID' and object_type='SYNONYM';
+ ;
+
+
+
+select 'alter '||decode(object_type,'PACKAGE BODY',' PACKAGE ',object_type)||
+' '||owner||'.'||object_name||' compile '||decode(object_type,'PACKAGE BODY','BODY;',';')
+from dba_objects
+where OBJECT_TYPE='TRIGGER' and owner in ('SGP') 
+ ;
+
+
+
+SQL> SELECT TRIGGER_NAME , STATUS FROM  DBA_TRIGGERS WHERE OWNER='SGP' AND STATUS='DISABLED';
+
+TRIGGER_NAME                   STATUS
+------------------------------ --------
+DEL_CASCADE_T06                DISABLED
+DEL_CASCADE_T08                DISABLED
+
+SELECT TRIGGER_NAME , STATUS FROM  DBA_TRIGGERS WHERE OWNER='REPADMIN' AND STATUS='DISABLED';
+
+
+
+select 'alter '||decode(object_type,'PACKAGE BODY',' PACKAGE ',object_type)||
+' '||owner||'.'||object_name||' compile '||decode(object_type,'PACKAGE BODY','BODY;',';')
+from dba_objects
+where owner in ('SGP') and OBJECT_TYPE='TRIGGER'  
+ union
+select 'alter '||decode(object_type,'PACKAGE BODY',' PACKAGE ',object_type)||
+' '||owner||'.'||object_name||' compile '||decode(object_type,'PACKAGE BODY','BODY;',';')
+from dba_objects
+where OBJECT_TYPE in ('PROCEDURE','PACKAGE') and owner in ('SGP') 
+ ;
+
+
+=================
+
+select 'alter  '||decode(object_type,'PACKAGE BODY',' PACKAGE ',object_type)||
+' '||OWNER||'.'||object_name||' compile '||decode(object_type,'PACKAGE BODY','BODY;',';')
+from DBA_objects
+where 
+status='INVALID' 
+ AND
+ owner like  'OWNINVT'
+and object_type in ('PACKAGE BODY',' PACKAGE ','FUNCTION','PROCEDURE')
+ ;
+
+
+
+select 'alter '||decode(object_type,'PACKAGE BODY',' PACKAGE ',object_type)||
+' '||object_name||' compile '||decode(object_type,'PACKAGE BODY','BODY;',';')
+from user_objects
+where status='INVALID'  
+
+
+
+
+
+
+ select OBJECT_NAME from dba_OBJECTS
+  where owner='OWNFAST_F1' and Object_type='VIEW' AND status='INVALID'
+   minus
+  4  select OBJECT_NAME from Dba_OBJECTS where owner='FASTNET'
+  5  and Object_type='VIEW' and status='INVALID';
+
+OBJECT_NAME
+--------------------------------------------------------------------------------
+VW_FACILIDADES_ALOCADAS
+VW_FACILIDADES_ALOCADAS_GTEMP
+VW_FACILIDADES_ALOCADAS_TEMP
+VW_INTERF_CF_RECUPERACAO
+VW_REL_PENDENCIA
+VW_REL_PONTOS_PENDENTES
+
+
+
+
+
+
+select owner,object_type,count(*) from dba_objects
+ where owner in ('FASTNET','OWNFAST_F1','OWNFAST_M1','OWNFAST_M2')
+ GROUP BY owner,object_type
+/
+
+
+==========================================================================
+
+
+select 'alter '||object_type||' '||owner||'.'||object_name||' compile;'
+from dba_objects
+where  status='INVALID' AND object_type <> 'PACKAGE BODY'
+union
+select 'alter package '||' '||owner||'.'||object_name||' compile body;'
+from dba_objects
+WHERE status='INVALID' AND object_type = 'PACKAGE BODY'
+
+
+
+
+
+select 'alter '||decode(object_type,'PACKAGE BODY',' PACKAGE ',object_type)||
+' '||owner||'.'||object_name||' compile '||decode(object_type,'PACKAGE BODY','BODY;',';')
+from dba_objects
+where status='INVALID' and owner in ('OWNINVT')
+ ;
+
+
+select 'drop public synonym '||synonym_name||';'
+from dba_synonyms
+ where TABLE_OWNER    in ('OWNBHOST1','OWNCORP1','OWNINVT1')
+/
+

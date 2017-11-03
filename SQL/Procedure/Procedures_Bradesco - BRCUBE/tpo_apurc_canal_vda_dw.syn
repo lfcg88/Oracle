@@ -1,0 +1,3 @@
+create or replace synonym SGPB_PROC.TPO_APURC_CANAL_VDA_DW
+  for SGPB.TPO_APURC_CANAL_VDA;
+

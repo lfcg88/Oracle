@@ -1,0 +1,33 @@
+DECLARE
+v_tab   varchar2(30):= 'AGENTE';
+v_col1  varchar2(32000);
+v_col2  varchar2(32000);
+v_schema varchar2(100):= 'RECEPCAO_DSV';
+cursor c1 is
+ select ' '||column_name || decode(data_type,'DATE',' DATE "yyyy-mm-dd hh24:mi:ss"') ||
+decode(lead(owner) over (partition by owner order by column_id),null,'',',') tabdesc 
+         from dba_tab_columns t
+         where owner=v_schema
+         AND TABLE_NAME=v_tab
+         order by column_id;
+BEGIN
+   dbms_output.put_line('load data');
+   dbms_output.put_line('CHARACTERSET WE8MSWIN1252');
+   dbms_output.put_line('infile '||'''/home/oracle/migracao/unl/'||v_tab ||'.unl''');
+   dbms_output.put_line('badfile '||'''/home/oracle/migracao/logs_loader/'||v_tab ||'_bad.unl''');
+   dbms_output.put_line('insert');
+   dbms_output.put_line('continueif last preserve != ''|''');
+   dbms_output.put_line('into table '||v_schema||'.'||v_tab);
+   dbms_output.put_line ('fields TERMINATED BY "|" trailing nullcols ');
+   dbms_output.put_line('(');
+   for reg in c1 loop
+      if v_tab = 'AGENTE' and reg.tabdesc = ' OBS' then
+        dbms_output.put_line(reg.tabdesc|| ' VARCHAR2(3000) TERMINATED BY ''|''');
+      else
+        dbms_output.put_line (reg.tabdesc);
+      end if;
+   end loop;
+   dbms_output.put_line(')');
+end;
+/
+

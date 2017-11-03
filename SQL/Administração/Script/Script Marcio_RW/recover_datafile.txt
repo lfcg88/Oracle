@@ -1,0 +1,58 @@
+select status from v$datafile
+
+
+select status, name from v$datafile where status = 'RECOVER'
+ 
+
+STATUS
+-------
+NAME
+--------------------------------------------------------------------------------
+RECOVER
+/oracle/oradata/DWPROD/dados02/OWF_MGR_IND05.dbf
+
+RECOVER
+/oracle/oradata/DWPROD/dados02/WF_VENDAS01.dbf
+
+RECOVER
+/oracle/oradata/DWPROD/dados02/undotbs2.01.dbf
+
+RECOVER
+/oracle/oradata/DWPROD/dados02/HISTORICO.dbf
+
+
+RECOVER DATAFILE '/oracle/oradata/DWPROD/dados02/OWF_MGR_IND05.dbf'
+
+
+RECOVER DATAFILE '/oracle/oradata/DWPROD/dados02/WF_VENDAS01.dbf'
+
+
+RECOVER DATAFILE '/oracle/oradata/DWPROD/dados02/undotbs2.01.dbf'
+
+RECOVER DATAFILE '/oracle/oradata/DWPROD/dados02/HISTORICO.dbf'
+
+
+
+select status, name from v$datafile where status = 'OFFLINE'
+
+
+STATUS
+-------
+NAME
+--------------------------------------------------------------------------------
+OFFLINE
+/oracle/oradata/DWPROD/dados02/user03.dbf
+
+OFFLINE
+/oracle/oradata/DWPROD/dados02/OWF_MGR_IND05.dbf
+
+OFFLINE
+/oracle/oradata/DWPROD/dados02/OWF_MGR_DAT_05.DBF
+
+
+
+ALTER DATABASE DATAFILE '/oracle/oradata/DWPROD/dados02/user03.dbf' online;
+
+ALTER DATABASE DATAFILE '/oracle/oradata/DWPROD/dados02/OWF_MGR_IND05.dbf' online;
+
+ALTER DATABASE DATAFILE '/oracle/oradata/DWPROD/dados02/OWF_MGR_DAT_05.DBF' online;

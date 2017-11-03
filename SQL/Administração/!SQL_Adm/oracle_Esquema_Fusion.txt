@@ -1,0 +1,4 @@
+/oracle/oradata/orades/fusion
+
+fusion_dat01.ora
+fusion_ind01.ora

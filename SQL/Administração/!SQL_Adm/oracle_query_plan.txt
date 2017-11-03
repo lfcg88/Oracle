@@ -1,0 +1,16 @@
+--
+-- Exibir Plano de Execução no Oracle
+-- 
+
+-- Executar o comando abaixo:
+
+explain plan
+for
+<select>;
+
+
+-- Após a execução e retorno do comando (Explicado), rodar a query abaixo para exibir o plano.
+
+
+select * from table(DBMS_XPLAN.DISPLAY);
+

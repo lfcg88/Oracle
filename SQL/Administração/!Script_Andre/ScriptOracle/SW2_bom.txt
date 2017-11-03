@@ -1,0 +1,53 @@
+/********************************************************************
+ * File:        sw.sql
+ * Type:        SQL*Plus script
+ * Author:      Tim Gorman (Evergreen Database Technologies, Inc.)
+ * Date:        01-Dec-99
+ *
+ * Description:
+ *      Script to display *extremely* detailed information from
+ *	V$SESSION_WAIT and V$SESSION_EVENT about sessions waiting
+ *	on wait-events specified by user...
+ *
+ *	The report shows "current" information for sessions (taken
+ *	from the V$SESSION_WAIT view) as well as cumulative summary
+ *	wait-event information (taken from the V$SESSION_EVENT view).
+ *
+ * Modification:
+ *
+ ********************************************************************/
+set echo off feedback off timing off recsep off verify off pause off
+set pagesize 100 linesize 500 trimspool on trimout on
+col sid format 990 heading "Sid"
+col event format a15 word_wrap heading "Current|Event"
+col seq format 99990 heading "Current|Event|Seq#"
+col state format a8 word_wrap heading "Current|State"
+col events format a14 word_wrap heading "Summary|Events"
+col time_waited format 999,999,990 heading "Sum|Time|Waited"
+col average_wait format 999,990.00 heading "Sum|Avg|Waited"
+col max_wait format 999,999,990 heading "Sum|Max|Waited"
+break on sid skip 1 on event on seq on state
+select	w.sid,
+	w.event || ' ' ||
+		decode(w.p1text,'','',w.p1text||' = '||w.p1) ||
+		decode(w.p2text,'','',', '||w.p2text||' = '||w.p2) ||
+		decode(w.p3text,'','',', '||w.p3text||' = '||w.p3) event,
+	w.seq# seq,
+	w.state ||
+		decode(w.state,
+			'WAITING', ' (' || w.seconds_in_wait || ' s)',
+			'WAITED KNOWN TIME', ' (' || w.wait_time || ' s)',
+			'') state,
+	e.event events,
+	e.time_waited,
+	e.average_wait,
+	e.max_wait
+from	sys.v_$session_wait	w,
+	sys.v_$session_event	e
+where	w.event like '%&EVENT%'
+and	e.sid = w.sid
+order by 1, 2, 3, 4, 6 desc
+
+spool sw
+/
+spool off

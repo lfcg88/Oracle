@@ -1,0 +1,55 @@
+Habilitar Auditoria:
+
+PROMPT> sqlplus / as sysdba
+SQL> show parameter AUDIT_TRAIL;
+
+Se o resultado diferente de ‘DB’, execuatar:
+
+SQL> ALTER SYSTEM SET audit_trail=DB SCOPE=SPFILE;
+SQL> shutdown immediate;
+SQL> startup;
+SQL> show parameter AUDIT_TRAIL;
+
+
+
+
+Novo resultado tem que ser igual ‘DB’
+SQL> audit session whenever not successful;
+SQL> audit session whenever successful;
+
+
+
+Depende do objetivo qualquer um acima, ou os dois.
+Resultados Auditoria:
+SQL>
+Select Username, Userhost, To_Char(Timestamp, ‘DD/MM/YYYY HH24:MI:SS’) Timestamp, Returncode, Action_Name
+From Dba_Audit_Trail
+Where Action_Name In (‘LOGON’, ‘LOGOFF’);
+
+
+
+Desabilitar Auditoria:
+
+SQL> noaudit session whenever not successful;
+SQL> noaudit session whenever successful;
+
+
+
+Obs.: OPCIONAL: Pode ou não voltar ao parâmetros antigos  AUDIT_TRAIL = NONE, executando o inverso:
+ALTER SYSTEM SET AUDIT_TRAIL = NONE  SCOPE=SPFILE;
+
+SQL> ALTER SYSTEM SET audit_trail=DB SCOPE=SPFILE;
+Outras Views:
+DBA_AUDIT_EXISTS
+DBA_AUDIT_OBJECT
+DBA_AUDIT_SESSION
+DBA_AUDIT_STATEMENT
+DBA_AUDIT_TRAIL
+DBA_OBJ_AUDIT_OPTS
+DBA_PRIV_AUDIT_OPTS
+DBA_STMT_AUDIT_OPTS
+Para Limpar Table:
+PROMPT> sqlplus / as sysdba
+SQL> Delete From aud$;
+SQL> commit;
+capin

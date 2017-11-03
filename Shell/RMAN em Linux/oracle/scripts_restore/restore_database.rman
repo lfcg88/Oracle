@@ -1,0 +1,34 @@
+
+CONNECT TARGET sys/dontknow; 
+CONNECT CATALOG rman/rman@rcvcat;
+
+# Novo bloco para realizar o restore do pfile
+
+#coloca instância em nomount com dummy PFILE que aponta para dummy SPFILE
+startup force nomount PFILE=/oracle/product/9.2/dbs/pfile_GRPLAN.ora
+
+# restaura último spfile com nome padrão
+
+run
+{
+  allocate channel ch1 type disk;
+  restore spfile to '/oracle/product/9.2/dbs/spfileGRPLAN.ora';
+  release channel ch1;
+}
+
+startup force nomount;
+
+run
+{
+SET UNTIL SEQUENCE 421 thread 1;
+allocate channel ch1 type DISK;
+restore controlfile;
+restore database;
+alter database mount;
+recover database;
+# É utilizado SQL para que o rman não crie uma nova incarnation no catalogo 
+sql 'alter database open resetlogs';
+release channel ch1;
+}
+SQL "ALTER TABLESPACE TEMP ADD TEMPFILE ''/oracle/oradata/GRPLAN/temp01.dbf'' size 70m REUSE";
+

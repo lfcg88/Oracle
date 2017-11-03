@@ -1,0 +1,28 @@
+/**********************************************************************
+ * File:	unparm.sql
+ * Type:	SQL*Plus script
+ * Author:	Tim Gorman (Evergreen Database Technologies, Inc.)
+ * Date:	20-May-99
+ *
+ * Description:
+ *	Report against the X$ tables which displays information about
+ *	un-documented "init.ora" parameters which have been set to
+ *	to a non-default value.
+ *
+ * Modifications:
+ *********************************************************************/
+col parameter format a50 word_wrapped
+col description format a25 word_wrapped
+select	rpad(i.ksppinm, 35) || ' = ' || v.ksppstvl parameter,
+	i.ksppdesc description
+from	x$ksppi		i,
+	x$ksppcv	v
+where	v.indx = i.indx
+and	v.inst_id = i.inst_id
+and	v.ksppstdf = 'FALSE'
+and	substr(i.ksppinm,1,1) = '_'
+order by i.ksppinm
+
+spool unparm
+/
+spool off

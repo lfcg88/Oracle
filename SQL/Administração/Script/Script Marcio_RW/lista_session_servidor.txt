@@ -1,0 +1,48 @@
+set lines 500
+column username format a10
+column pid_serial format a10
+column MACHINE format a30
+column PROGRAM format a30
+column sql_text format a80
+
+SELECT DISTINCT 
+       SID_SERIAL,
+       PID_SERIAL,
+       USERNAME, 
+       MACHINE, 
+       to_char (LOGON_TIME, 'dd/mm/yyyy hh24:mi:ss') logon_time,
+       MAX(CPU)  MX_CPU, 
+       SUM(EXECs) NU_EXE , --numero de execuções do sql desde que foi para o shared pool
+       PROGRAM,
+	   SQL_TEXT
+  FROM (SELECT TRIM(SQ.SQL_TEXT) SQL_TEXT, 
+              SE.SID SID_SERIAL,
+              NVL(SE.CLIENT_INFO, SE.USERNAME) USERNAME, 
+              TO_CHAR(SQ.CPU_TIME/DECODE(SQ.EXECUTIONS, 0, 1, SQ.EXECUTIONS)/1000000, '999,990.0000') CPU,
+              (SELECT SPID
+                 FROM V$PROCESS 
+                WHERE ADDR = SE.PADDR) PID_SERIAL, 
+              (SELECT MAX(EXECUTIONS)
+                 FROM V$SQL S
+                WHERE S.ADDRESS = SQ.ADDRESS
+                      AND S.HASH_VALUE = SQ.HASH_VALUE) EXECs,
+              SE.MACHINE, SE.LOGON_TIME,
+              SE.PROGRAM
+         FROM V$SQL SQ, V$SESSION SE
+        WHERE SQ.ADDRESS (+) = SE.SQL_ADDRESS
+              AND SQ.HASH_VALUE (+) = SE.SQL_HASH_VALUE
+              AND SE.STATUS IN ('ACTIVE', 'PSEUDO', 'KILLED')
+              AND SE.TYPE = 'USER'
+              AND SE.USERNAME IS NOT NULL
+              AND SE.SID NOT IN (SELECT DISTINCT SID FROM V$MYSTAT))
+ HAVING MAX(CPU) IS NOT NULL
+  GROUP BY
+        SQL_TEXT, 
+        SID_SERIAL, 
+        USERNAME,  
+        MACHINE, 
+        LOGON_TIME,
+        PROGRAM,
+        PID_SERIAL
+  ORDER BY 
+        MX_CPU desc

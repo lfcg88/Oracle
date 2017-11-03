@@ -1,0 +1,42 @@
++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+You can create an invisible index by specifying the invisible clause, as shown here:
++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+
+SQL> create index invib_idx1 on test_tab(name) invisible;
+
++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+You can also modify a regular index into an invisible index 
++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+SQL> alter index indx1 invisible;
+
++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+You can also modify a regular index into an visible index 
++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+SQL> alter index indx1 visible;
+
+
++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+When you set the optimizer_use_invisible_indexes parameter to true,
+the database treats all invisible indexes as visible
++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+SQL> alter system set optimizer_use_invisible_indexes = true
+scope=spfile;
+
+
++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+You can check whether an index is visible or not by issuing a query such as the
+one shown in this example:
++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+SQL> select index_name, visibility from dba_indexes
+where index_name like '%NAME_IDX%';
+
+INDEX_NAME VISIBILITY
+------------ -----------
+NAME_IDX2 INVISIBLE
+NAME_IDX1 INVISIBLE
+SQL>

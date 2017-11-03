@@ -1,0 +1,2 @@
+Memory Advisors page in Database Control, which shows a history of the memory
+allocation between the SGA and the PGA over time

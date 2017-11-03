@@ -1,0 +1,109 @@
+#!/bin/ksh
+
+#--------------------------------------------------------------------------
+# Sanjay Ganvkar - 16-Jul-2003 First Cut
+#
+# This script is applicable for users of StatsPack and want to 
+# automate generation of statspack reports in a logical manner.
+# Script will loop thru the stats$snapshot and generate compressed
+# reports in the DDMM_StartTimeInHH24MI_EndTimeInHH24MI format
+# The script will also delete the snapIds once the report is generated
+# Note that the 'deletion' is an integral part of the script, since
+# the reports are generated using the existing snapIds in the stats$snapshot table.
+# Changing the script to rem-out the deletion will result in the reports getting
+# re-generated every time.
+#
+# The statspack original sppurge.sql has been altered to remove the undef for lo/hisnapid
+# since it interferes with the batch purging
+#
+# Setup
+#      1. Ensure that the sppurge.sql & spreport.sql are present in $STATSDIR
+#      2. Change the STATSDIR/STATSREP/DBMS_UID/DBMS_PWD as required
+#      3. Alter the sppurge.sql script to remove the undef for lo/hisnapid
+#      4. Run the script (no arguments)
+#---------------------------------------------------------------------------
+
+# ----------  Change the values below as required
+
+# <--------------------------------------------------
+
+. ~/.profile
+
+# Directory where this script resides
+STATSDIR=/export/home/oracle/statspack/scripts
+
+# Directory where the reports are created
+STATSREP=/export/home/oracle/statspack/reports
+
+DBMS_UID=perfstat
+DBMS_PWD=perfstat
+SQLSCRIPTFILE=snap.sql
+
+# -------------------------------------------------->
+
+# ---------- Start of program
+
+cd $STATSDIR
+mkdir -p $STATSREP
+
+rm  $SQLSCRIPTFILE
+echo "Generating reports in $STATSREP ... Pls wait ..."
+sqlplus -s > /dev/null <<!
+$DBMS_UID/$DBMS_PWD
+
+set serveroutput on size 1000000
+set feed off term off trims on linesize 300
+spool $SQLSCRIPTFILE
+declare 
+    min_snap number;
+    next_snap number;
+    min_snap_time varchar2(20);
+    next_snap_time varchar2(20);
+    fileName varchar2(255);
+    cursor c1 is select snap_id, to_char(snap_time,'ddmm_hh24mi') snap_time
+            from stats\$snapshot order by snap_id;
+    c1_rec c1%rowtype;
+
+begin
+    for c1_rec in c1 loop
+        select min(snap_id) into next_snap from stats\$snapshot 
+            where snap_id > c1_rec.snap_id;
+        select to_char(snap_time,'hh24mi') into 
+            next_snap_time from stats\$snapshot where snap_id = next_snap;
+        
+        fileName := '$STATSREP'||'/'||c1_rec.snap_time||'_'||next_snap_time||'.lst';
+
+        -- Following for generating the reports
+
+        dbms_output.put_line('define begin_snap='||c1_rec.snap_id);
+        dbms_output.put_line('define end_snap='||next_snap);
+        dbms_output.put_line('define report_name='||fileName);
+        dbms_output.put_line('@spreport');
+
+        -- Following for Purging
+
+        dbms_output.put_line('define losnapid='||c1_rec.snap_id);
+        dbms_output.put_line('define hisnapid='||c1_rec.snap_id);
+        dbms_output.put_line('@sppurge');
+        dbms_output.put_line('commit;');
+
+        -- Compress the reports
+
+        dbms_output.put_line('host compress -f '||fileName);
+
+    end loop;
+exception
+    when no_data_found then
+        -- Only last snap remaining
+        null;
+    when others then
+        dbms_output.put_line(sqlerrm);
+end;
+/
+spool off
+!
+
+sqlplus -s > /dev/null <<!
+$DBMS_UID/$DBMS_PWD
+        @$SQLSCRIPTFILE
+!

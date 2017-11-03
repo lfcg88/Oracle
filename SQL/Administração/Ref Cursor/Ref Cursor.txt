@@ -1,0 +1,70 @@
+CREATE OR REPLACE PACKAGE CURSPKG AS 
+    TYPE T_CURSOR IS REF CURSOR; 
+    TYPE T_REG is record (
+      v_empno EMP.EMPNO%type,
+      v_ENAME emp.ename%type,
+      v_deptno DEPT.DEPTNO%type,
+      v_dname DEPT.DNAME%type);
+
+    PROCEDURE OPEN_ONE_CURSOR (N_EMPNO IN NUMBER, 
+                               IO_CURSOR IN OUT T_CURSOR); 
+    PROCEDURE OPEN_TWO_CURSORS (EMPCURSOR OUT T_CURSOR, 
+                                DEPTCURSOR OUT T_CURSOR);
+END CURSPKG;
+/ 
+
+Create the following Oracle package body on the Oracle server. 
+
+CREATE OR REPLACE PACKAGE BODY CURSPKG AS
+    PROCEDURE OPEN_ONE_CURSOR (N_EMPNO IN NUMBER,
+                               IO_CURSOR IN OUT T_CURSOR)
+    IS 
+        V_CURSOR T_CURSOR; 
+    BEGIN 
+        IF N_EMPNO <> 0 
+        THEN
+             OPEN V_CURSOR FOR 
+             SELECT EMP.EMPNO, EMP.ENAME, DEPT.DEPTNO, DEPT.DNAME 
+                  FROM EMP, DEPT 
+                  WHERE EMP.DEPTNO = DEPT.DEPTNO 
+                  AND EMP.EMPNO = N_EMPNO;
+
+        ELSE 
+             OPEN V_CURSOR FOR 
+             SELECT EMP.EMPNO, EMP.ENAME, DEPT.DEPTNO, DEPT.DNAME 
+                  FROM EMP, DEPT 
+                  WHERE EMP.DEPTNO = DEPT.DEPTNO;
+
+        END IF;
+        IO_CURSOR := V_CURSOR; 
+    END OPEN_ONE_CURSOR; 
+
+    PROCEDURE OPEN_TWO_CURSORS (EMPCURSOR OUT T_CURSOR,
+                                DEPTCURSOR OUT T_CURSOR)
+    IS 
+        V_CURSOR1 T_CURSOR; 
+        V_CURSOR2 T_CURSOR; 
+    BEGIN 
+        OPEN V_CURSOR1 FOR SELECT * FROM EMP;
+        OPEN V_CURSOR2 FOR SELECT * FROM DEPT;
+        EMPCURSOR  := V_CURSOR1; 
+        DEPTCURSOR := V_CURSOR2; 
+    END OPEN_TWO_CURSORS; 
+END CURSPKG;
+
+
+Execução
+
+declare
+  V_CURSOR curspkg.t_cursor;
+  reg CURSPKG.T_REG;
+BEGIN
+  CURSPKG.OPEN_ONE_CURSOR (0,V_CURSOR);
+  loop
+    fetch v_cursor into  reg;
+    exit when v_cursor%notfound;
+    dbms_output.put_line (reg.v_ename);
+  end loop;
+END;
+
+

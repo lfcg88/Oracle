@@ -1,0 +1,42 @@
+
++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+select Current and Recent SQL Activity
++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+1. In the Database Home page, click the Advisor Central link at the bottom of the page, under Related Links.
+2. In the Advisor central page, click SQL Advisors under the Advisors section.
+3. In the SQL Advisors page, click SQL Access Advisor.
+4. In the Initial Options page, select Recommend new access structures. The other option will merely verify the use of existing access structures such as indexes, but doesn’t recommend new access structures. Click Next.
+5. In the Workload Source page, select Current and Recent SQL Activity. This means that the advisor will select the SQL statements to analyze from the SQL cache. Click Next.
+6. In the Recommendations Options page, shown in Figure 4-1, select all three access structures: indexes, materialized views, and the new partitioning recommendation option. Click Next.
+You can customize the task name and description and the scheduling of the task on the Schedule page. By default, the SQL Access Advisor runs the job immediately. Click Next.
+7. The Review page shows the options you selected for the SQL Access Advisor
+task. Click Submit after verifying the options.
+8. The Confirmation page appears, indicating that your job was submitted successfully.
+9. Once the STATUS column shows that the access advisor job is completed, click View Result after selecting the task first. You can view the potential for improvement in a graphical form. 
+10. Click Schedule Implementation if you want to accept the recommendations.
+If you want to modify the recommendations, click SQL to view the actual SQL statements to implement the recommendations, which can consist of new indexes, new materialized views, new materialized view logs, or recommendations to partition existing base tables.
+Using the Cursor Cache to Get SQL Access Advisor Recommendations
+
+
++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+Using the Cursor Cache to Get SQL Access Advisor Recommendations 
++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+
+1. On the bottom of the Database Home page, click Advisor Central under Related Links.
+2. Click the SQL Advisors link.
+3. Click the SQL Access Advisor link.
+4. Select Recommend new access structures. Click Continue.
+5. Make sure that the Current and Recent SQL Activity shows up in the box.
+Expand Filter Options and select Filer Workload Based on these Options. In
+the Users field, select the name of the user who is the owner of the structures.
+Click Next.
+6. Select indexes, materialized views, and partitioning, and then click Next.
+7. Enter the task name and, under Scheduling Options, select Standard as the
+schedule type.
+8. Click Submit in the Review page.
+9. The Confirmation page appears, showing that your SQL Access Advisor job
+was submitted successfully.
+10. Monitor the task to ensure it’s completed and click on the task name on the
+SQL Access Advisor main page to view the recommendations.

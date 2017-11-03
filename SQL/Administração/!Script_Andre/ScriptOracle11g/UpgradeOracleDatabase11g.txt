@@ -1,0 +1,48 @@
+
+
++++++++++++++++++++++++++++++++++++++
+automatic memory management
++++++++++++++++++++++++++++++++++++++
+
+DBCA and Automatic Memory Management
+When you upgrade to Oracle Database 11g using the DBUA (Database Upgrade
+Assistant), by default, the memory_target parameter is set to zero, meaning
+automatic memory management is disabled by default. However, when you create
+a new database using the DBCA (Database Creation Assistant), you can specify
+automatic memory management.
+
++++++++++++++++++++++++++++++++++++++
+SQL PLAIN BASELINE
++++++++++++++++++++++++++++++++++++++
+
+You can use the automatic SQL plan capturing mechanism to retain good execution plans for
+use after a database upgrade. Once you complete the upgrade to Oracle Database
+11g, for example, leave the optimizer_features_enable parameter set to
+10.2 (or whatever release you upgraded from, as long as it’s at least equal to 10.0.0,
+which is the minimum level you can set the compatible parameter to). The SQL
+Plan Management feature will collect the pre-Oracle Database 11g execution plans
+and store them as SQL plan baselines in the upgraded database. Once you’re sure
+that the database has had a chance to capture all the necessary SQL plan baselines,
+you can set the optimizer_features_enable parameter to 11.1, to take
+advantage of the new features offered by Oracle Database 11g.
+
+You can also use the SQL Performance
+Analyzer that you learned about in Chapter 1 to help you seed a newly upgraded
+database with known SQL plans that don’t cause a performance regression upon
+upgrading to a new release of the Oracle database. For example, you can use the SQL
+Performance Analyzer to find out which SQL statements are likely to regress following
+an upgrade to Oracle Database 11g Release 1 from Oracle Database 10g Release 2. You
+can then capture all the execution plans for the likely-to-regress SQL statements from
+the 10.2 release database and load them manually into the SQL Management Base in
+the 11g release database.
+
+
+One of the biggest worries when upgrading to a new release of the Oracle database is
+the possibility of SQL plan regressions following the use of the new optimizer. You can
+now cross this hurdle either by capturing the current SQL plans manually and exporting
+them to the target database after the upgrade or by first capturing your SQL workload
+into SQL tuning sets before upgrading the database. Once the database upgrade is
+completed, you can bulk load the SQL plans into the SQL plan baselines. Note that
+even though you start off with manual bulk loading of the SQL execution plans, you
+can still have the database automatically capture SQL plans from that point on.
+

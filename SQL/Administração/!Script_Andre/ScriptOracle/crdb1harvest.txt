@@ -1,0 +1,29 @@
+---********INTEGRIS********INTEGRIS********INTEGRIS********INTEGRIS*********
+---****************** Uma empresa da holding ALGAR BULL ********************
+---
+--- Embratel - Empresa Brasileira de Telecomunicacoes
+--- Arquivo de Geracao do Database
+--- Database Instance - harvest
+--- Nome do No: 10.13.54.3
+--- Maquina: SUN
+--- Modelo: F450
+--- Sistema Operacional: SUN Solaris 
+--- Versao: 2.6
+--- Server: Oracle 8.0.5.0
+--- *****************************************************
+
+set echo on
+create database harvest
+    maxinstances 8
+    maxlogfiles  32
+    maxdatafiles 200
+    character set WE8ISO8859P1
+    noarchivelog
+    datafile
+	'/u001/oradata/harvest/system_01.dbf'       size    100M
+    logfile 
+     group 1 ('/u00/oradata/harvest/redo_01a.log','/u001/oradata/harvest/redo_01a.log')   size    90M,
+     group 2 ('/u00/oradata/harvest/redo_02a.log','/u001/oradata/harvest/redo_01a.log')   size    90M,
+     group 3 ('/u00/oradata/harvest/redo_03a.log','/u001/oradata/harvest/redo_01a.log')   size    90M,
+     group 4 ('/u00/oradata/harvest/redo_04a.log','/u001/oradata/harvest/redo_01a.log')   size    90M;
+

@@ -1,0 +1,112 @@
+-- Author - Arul kumar
+-- Date   - 11-Oct-2002
+-- This script can be used to generate Create Tablespace Script.
+
+set pages 0;
+set head off;
+
+Create table ts_gen_scripts(line int, text varchar2(2000));
+
+Truncate table ts_gen_scripts;
+
+DECLARE
+  
+  cursor cur_ts is select * from dba_Tablespaces where tablespace_name !='SYSTEM';
+  
+  cursor cur_ts_files (ts_name varchar2) is select * from dba_data_files where  tablespace_name=ts_name 
+ order by tablespace_name, file_id;
+  
+  cur_ts_files_rec cur_ts_files%rowtype;
+  
+  create_ts_string varchar2(2000);
+
+  counter int := 0; 
+  count_files int := 0;
+    
+BEGIN
+
+  for cur_ts_rec in cur_ts loop
+  
+  create_ts_string:='CREATE TABLESPACE '||cur_ts_rec.tablespace_name||CHR(10)||'DATAFILE ';
+          
+   open cur_ts_files(cur_ts_rec.tablespace_name);
+    
+   Loop
+   
+     fetch cur_Ts_files into cur_ts_files_rec;  
+     Exit when cur_ts_files%notfound; 
+   
+   IF count_files >= 1 THEN
+
+     create_ts_string:=create_ts_string|| CHR(10) ||'         '''||cur_ts_files_rec.file_name||''''||
+        ' SIZE '||cur_ts_files_rec.bytes/1024||' K '||' , ';
+      ELSE 
+           create_ts_string:=create_ts_string||''''||cur_ts_files_rec.file_name||''''||
+       ' SIZE '||cur_ts_files_rec.bytes/1024||' K '||' , ';
+   
+   END IF;
+      
+   count_files := count_files + 1 ;
+  
+    End Loop;
+   count_files := 0;
+   
+   Close Cur_TS_Files;
+   
+  Create_Ts_String := RTRIM(Create_Ts_String,' , '); -- trim the trailing ',' 
+  
+  -- attach other parameters
+
+  -- extent management  ? local / dictionary
+  -- if locaL -  ? UNIFORM / AUTOALLOCATE      
+
+  IF Cur_Ts_Rec.extent_management = 'LOCAL' THEN
+  
+   IF Cur_Ts_Rec.Allocation_Type = 'UNIFORM' THEN
+     Create_Ts_String := Create_Ts_String||CHR(10)||'EXTENT MANAGEMENT LOCAL UNIFORM SIZE '||Cur_Ts_Rec.Initial_Extent||' ;' ;
+  
+  ELSE
+     Create_Ts_String := Create_Ts_String||CHR(10)||'EXTENT MANAGEMENT LOCAL AUTOALLOCATE '||' ;' ;
+  
+  END IF;
+
+ ELSE
+   Create_Ts_String := Create_Ts_String|| CHR(10) ||' DEFAULT STORAGE ( '||CHR(10) ||
+         ' INITIAL       '||Cur_Ts_Rec.Initial_Extent  || CHR(10) ||
+        ' NEXT          '||Cur_Ts_Rec.Next_Extent   || CHR(10) ||
+        ' MINEXTENTS    '||Cur_Ts_Rec.Min_Extents   || CHR(10) ||
+        ' PCTINCREASE   '||Cur_Ts_Rec.Pct_Increase||' ) ;' ;
+        
+ END IF;                 
+ IF Cur_Ts_Rec.contents = 'TEMPORARY' THEN
+  Create_Ts_String := RTRIM ( Create_Ts_String, ';');
+  Create_Ts_String := Create_Ts_String||' TEMPORARY ; ';
+ END IF;
+      
+ --DBMS_Output.Put_Line(Create_Ts_String);
+
+ counter := counter + 1;
+
+ Insert into ts_gen_scripts values(counter, Create_Ts_String);
+  
+  End Loop;
+  
+ commit;
+
+Exception
+
+When Others Then
+
+Raise_Application_Error(-20999,'Something Wrong..'||SQLERRM);
+  
+END;
+/
+
+spool c:\ts_gen_scripts.sql;
+prompt spool err.log;
+select text from ts_gen_scripts order by line;
+prompt spool off;
+prompt 
+spool off;
+
+prompt chk in ts_gen_scripts.sql !

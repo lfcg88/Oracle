@@ -1,0 +1,29 @@
+Mudanças:
+
+conn m9016970/m9016970@seaprod
+
+ALTER USER "GOLDENCROSS" IDENTIFIED BY "gcsea#prod";
+ALTER USER "AMBGOLDEN" IDENTIFIED BY "agsea#prod";
+ALTER USER "HIS_TRANSACAO" IDENTIFIED BY "htsea#prod";
+ALTER USER "IMP_GOLDEN" IDENTIFIED BY "igsea#prod";
+ALTER USER "FRONTEND" IDENTIFIED BY "fesea#prod";
+COMMIT;
+
+Voltar:
+
+conn m9016970/m9016970@seaprod
+
+ALTER USER "GOLDENCROSS" IDENTIFIED BY "queen";
+ALTER USER "AMBGOLDEN" IDENTIFIED BY "ambgolden";
+ALTER USER "HIS_TRANSACAO" IDENTIFIED BY "his_transacao#prod";
+ALTER USER "IMP_GOLDEN" IDENTIFIED BY "imp_golden#prod";
+ALTER USER "FRONTEND" IDENTIFIED BY "queen";
+COMMIT;
+
+
+frontend         fesea#prod
+fe_golden        fegsea#prod
+goldencross      gc#seaprod
+his_transacao    htsea_prod
+imp_golden       igsea_prod
+ambgolden        agsea_prod

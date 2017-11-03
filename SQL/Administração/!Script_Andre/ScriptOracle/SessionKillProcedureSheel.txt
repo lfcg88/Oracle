@@ -1,0 +1,219 @@
+
+The owner of this procedure needs to have
+
+o SELECT on v_$session granted to them by SYS.  This grant must be 
+directly to them, not via a role.
+
+o ALTER SYSTEM granted directly to them -- not via a role.
+
+To see why the caveat on granting directly to them is needed, please see:
+
+- execute para dbms_sql
+
+
+
+
+----------------------------------------------------------------
+sheel ( funciona)
+----------------------------------------------------------------
+#
+# a conexao ao sqlplus internal so funciona no 8i para cima
+#
+#!/usr/bin/ksh                                                                  
+#set -xv                                                                        
+export ORACLE_SID=hmg4                                                          
+export ORACLE_HOME=/u00/app/oracle/product/8.1.7                                
+export PATH=/u00/app/oracle/product/8.1.7/bin:/usr/sbin:/usr/bin:/usr/ccs/bin:/u
+sr/bin:                                                                         
+if [  `ps -ef | grep ora_pmon_$ORACLE_SID | grep -v grep | wc -l` =  0 ]        
+then                                                                            
+   exit 0;                                                                      
+fi                                                                              
+DIR_LOG=/u00/app/oracle/admin/script/log                                        
+export DIR_LOG                                                                  
+ARQ_LOG=kill_session_$ORACLE_SID.log                                            
+export ARQ_LOG                                                                  
+SQLPLUS="$ORACLE_HOME/bin/sqlplus -s internal "                                 
+export SQLPLUS                                                                  
+DIR_TEMP=/tmp                                                                   
+ARQ_TEMP=Kill_session_temp_01                                                   
+TO_KILL=$1                                                                      
+export TO_KILL                                                                  
+#                                                                               
+> $DIR_TEMP/$ARQ_TEMP                                                           
+#echo "passo1"    
+#                                                                               
+echo "set echo off                                                              
+            set pause off                                                       
+            set scan off                                                        
+            set pagesize 0                                                      
+            set linesize 500                                                    
+            set recsep off                                                      
+            set feedback off                                                    
+            select s.serial#,p.spid,s.sid                                       
+            from v\$session s,v\$process p                                      
+            where s.username = '$TO_KILL' and s.paddr =  p.addr;                
+            exit" | $SQLPLUS >> $DIR_TEMP/$ARQ_TEMP                             
+#                                                                               
+#echo "====="                                                                   
+#echo passo1                                                                    
+#cat $DIR_TEMP/$ARQ_TEMP                                                        
+cat $DIR_TEMP/$ARQ_TEMP | while read LINE                                       
+do                                                                              
+   serial=`echo $LINE | awk '{print $1}'`                                       
+   ppid=`echo $LINE | awk '{print $2}'`                                         
+   sid=`echo $LINE | awk '{print $3}'`                                          
+#   echo $serial                                                                
+#   echo $ppid                                                                  
+#   echo $sid                                                                   
+#                                                                               
+#echo passo2                                                                    
+#if $SBINS/yesno.sh "to kill Session $TO_KILL, serial $serial" DO N             
+#  then                                                                         
+   echo " alter system kill session '$sid,$serial' ;" | $SQLPLUS >> $DIR_LOG/$AR
+Q_LOG                                                                           
+     if [ ! "x-$ppid" = "x-" ];then                                             
+       if ps -ef | grep $ppid | grep -v grep                                    
+         then                                                                   
+ #          if $SBINS/yesno.sh "I try to get rid of $ppid also" DO Y            
+ #            then                                                              
+                kill -9 $ppid                                                   
+                num=`ps -ef | grep $ppid | grep -v grep |wc -l`                 
+                if [ $num -gt 0 ];then                                          
+                  echo " Could not get rid of $ppid using kill -9 as \"`who am i
+`\"" >> $DIR_LOG/$ARQ_LOG                                                       
+                else                                                            
+                  echo " $ppid is gone ! " >> $DIR_LOG/$ARQ_LOG                 
+                fi                                                              
+  #          fi                                                                 
+        fi                                                                      
+     fi                                                                         
+##fi  
+done                                                               
+
+
+
+
+
+
+
+-----------------------------------------------------------------
+
+CREATE OR REPLACE
+procedure kill_session( puser in varchar2, pcod out varchar2 , pmen out varchar2)
+is
+    cursor_name     pls_integer default dbms_sql.open_cursor;
+    ignore          pls_integer;
+    --vserial         varchar2(60);
+    vserial#       varchar2(60);
+    vuser    varchar2(60);
+    cmd      varchar2(200);
+BEGIN
+   -- select count(*) into ignore
+   --   from V$session
+   --  where username = USER
+   --    and sid = psid
+   --    and serial# = pserial# ;
+   vuser := upper(puser);
+    if ( vuser <>  USER )
+    then
+      -- cmd := 'alter system kill session ''' ||':x'||','||':y'||'''';
+      --cmd := 'alter system kill session ''' :x,'||':y'||'''';
+      --dbms_sql.parse(cursor_name,cmd,dbms_sql.native);
+       begin
+          for i in ( select sid,serial# from V$session where username=vuser ) loop
+            cmd :=  'ALTER SYSTEM KILL SESSION '''|| to_char(i.sid) ||',' || to_char(i.serial#) || '''';
+            dbms_sql.parse(cursor_name,cmd,dbms_sql.native);
+    --     dbms_sql.bind_variable( cursor_name, ':x', to_char(i.sid) );
+    --     dbms_sql.bind_variable( cursor_name, ':y', to_char(i.serial#) );
+            ignore := dbms_sql.execute(cursor_name);
+          end loop;
+       exception
+         when no_data_found then
+           null;            -- no authority to kill sessions
+       end;
+ --   else
+ --       raise_application_error( -20001,
+ --                              'You do not own session ''' ||
+ --                               p_sid || ',' || p_serial# ||
+ --                              '''' );
+  --     dbms_sql.close_cursor(cursor_name);
+    end if;
+    --dbms_sql.close_cursor(cursor_name);
+END;
+
+
+
+
+----------------------------------------
+
+
+SET SERVEROUTPUT ON 
+
+DECLARE 
+
+SNIPE_COUNT NUMBER (9); 
+CURSOR SNIPE_CUR IS SELECT USERNAME, SID, SERIAL# FROM V$SESSION WHERE STATUS = 'SNIPED'; 
+SNIPE_REC SNIPE_CUR%ROWTYPE; 
+V_SQLSTRING VARCHAR2 (100); 
+
+BEGIN 
+SELECT COUNT STATUS INTO SNIPE_COUNT FROM V$SESSION WHERE STATUS = 'SNIPED'; 
+IF SNIPE_COUNT = 0 
+THEN 
+DBMS_OUTPUT.PUT_LINE ('THERE ARE NO SNIPED SESSIONS'); 
+ELSE 
+FOR SNIPE_REC IN SNIPE_CUR 
+LOOP 
+DBMS_OUTPUT.PUT_LINE ('SNIPED SESSION FOR '|| SNIPE_REC.USERNAME || ' WILL BE KILLED'); 
+V_SQLSTRING := 'ALTER SYSTEM KILL SESSION '''|| SNIPE_REC.SID ||', '|| SNIPE_REC.SERIAL# ||''' '; 
+-- ALTERNATIVELY COMMENT OUT THE EXECUTE IMMEDIATELY COMMAND AND REMOVE THE COMMENT LINES FROM THE NEXT 
+-- "DBMS_OUTPUT... " LINE FOR A REPORT ONLY, AND THE ALTER SYSTEM STRING NEEDED TO KILL SPECIFIC SNIPES 
+-- DBMS_OUTPUT.PUT_LINE (V_SQLSTRING); 
+EXECUTE IMMEDIATE V_SQLSTRING; 
+END LOOP; 
+END IF; 
+END; 
+
+
+-------------------------------------------
+
+
+procedure KILL_SESSION( sid in number, serial in number ) as
+      dummy char(1);
+      command varchar2(100);
+      crsno integer;
+      i integer;
+   begin
+      --
+      -- ensure that user has the DBA_KILL_SESSION role
+      --
+      select 'x' into dummy
+         from sys.dba_role_privs
+         where grantee = user
+         and granted_role = 'DBA_KILL_SESSION';
+      --
+      -- build the 'kill session' command
+      --
+      crsno := dbms_sql.open_cursor;
+      command := 'ALTER SYSTEM KILL SESSION '''|| to_char(sid) ||',' ||
+                      to_char(serial) || '''';
+      dbms_sql.parse( crsno, command, dbms_sql.v7 );
+      --
+      -- execute the command (and kill the session)
+      --
+      i := dbms_sql.execute( crsno );
+   exception
+      when no_data_found then
+         null;            -- no authority to kill sessions
+   end KILL_SESSION;
+
+end DBA_ADMIN;
+
+====================================================================
+
+
+
+select 'kill -9 '|| p.spid                                       
+            from v$session s,v$process p                                      
+            where s.username = 'RECUP_PRD5' AND   s.paddr =  p.addr;  

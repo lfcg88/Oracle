@@ -1,0 +1,79 @@
+--
+-- Estrai fonte de procedure, function e package
+--
+Declare
+--
+   vdir  Varchar2(100);
+   varq  Varchar2(100);
+   vfile  utl_file.file_type;
+   vowner Varchar2(30);
+   vtexto sys.all_source.text%TYPE;
+--   text   sys.all_source.text%TYPE;
+--  
+--
+--
+Cursor c_objetos (powner Varchar2) Is
+   Select object_name,object_type 
+   From dba_objects
+   Where owner=powner and object_type in ('FUNCTION','PROCEDURE','PACKAGE','PACKAGE BODY');
+--
+--
+Cursor c_fonte (powner Varchar2,pobjeto Varchar2,ptype Varchar2) Is
+   Select text 
+   From dba_source
+   Where owner=powner and name=pobjeto and type=ptype
+   order by line;
+--
+--
+Begin
+  vowner :='OWNRECUP';
+--  Select value into vdir From v$parameter Where name = 'utl_file_dir';
+  vdir := '/u00/app/oracle/admin/prd5/utl_file';
+  For r_objeto In c_objetos(vowner) Loop
+    If r_objeto.object_type = 'PACKAGE BODY' Then
+     -- varq := vowner||'.'||r_objeto.object_name||'.'||lower(substr(r_objeto.object_type,1,4))||'b';
+        varq := r_objeto.object_name||'.'||lower(substr(r_objeto.object_type,1,4))||'b';
+    Else
+     --  varq := vowner||'.'||r_objeto.object_name||'.'||lower(substr(r_objeto.object_type,1,4));
+         varq := r_objeto.object_name||'.'||lower(substr(r_objeto.object_type,1,4));
+    End If;
+  --  varq := varq||'substr(.sql';
+    vfile := Utl_File.Fopen(vdir,varq,'W');
+--
+--
+ --   For r_fonte In c_fonte(vowner,r_objeto.object_name,r_objeto.object_type) Loop
+ --      If c_fonte%RowCount = 1  THEN
+ --        vtexto := 'CREATE OR REPLACE '||r_fonte.text;
+ --      Else
+ --        vtexto :=r_fonte.text;
+ --      End If;
+ --      Utl_File.Putf(vfile,'%s',vtexto);
+ --   End Loop;
+--
+--
+     Utl_File.Putf(vfile,'%s','CREATE OR REPLACE ');
+     open c_fonte(vowner,r_objeto.object_name,r_objeto.object_type);
+      loop
+         fetch c_fonte into vtexto;
+         exit when c_fonte%NOTFOUND;
+         Utl_File.Putf(vfile,'%s',vtexto);
+         utl_file.fflush(vfile);
+      End Loop;
+     Utl_File.Putf(vfile,'\n%s','/');
+     Utl_File.Putf(vfile,'\n%s','exit');
+     close c_fonte;
+--
+     utl_file.fclose(vfile);
+  End Loop;
+End;
+/
+
+
+
+       
+    
+  
+   
+
+
+        

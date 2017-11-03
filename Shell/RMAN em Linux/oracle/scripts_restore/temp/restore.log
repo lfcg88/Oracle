@@ -1,0 +1,143 @@
+
+Recovery Manager: Release 9.2.0.4.0 - Production
+
+Copyright (c) 1995, 2002, Oracle Corporation.  All rights reserved.
+
+RMAN> CONNECT TARGET sys/dontknow; 
+2> CONNECT CATALOG rman/rman@metdb01;
+3> 
+4> # Novo bloco para realizar o restore do pfile
+5> 
+6> #coloca instância em nomount com dummy PFILE que aponta para dummy SPFILE
+7> startup force nomount PFILE=/oracle/product/9.2/dbs/pfile_GRPLAN.ora
+8> 
+9> # restaura último spfile com nome padrão
+10> 
+11> run
+12> {
+13>   allocate channel ch1 type disk;
+14>   restore spfile to '/oracle/product/9.2/dbs/spfileGRPLAN.ora';
+15>   release channel ch1;
+16> }
+17> 
+18> startup force nomount;
+19> 
+20> run
+21> {
+22> SET UNTIL SEQUENCE 259 thread 1;
+23> allocate channel ch1 type DISK;
+24> restore controlfile;
+25> restore database;
+26> alter database mount;
+27> recover database;
+28> sql 'alter database open resetlogs';
+29> release channel ch1;
+30> }
+31> SQL "ALTER TABLESPACE TEMP ADD TEMPFILE ''/oracle/oradata/GRPLAN/temp01.dbf'' size 70m REUSE";
+32> 
+connected to target database: GRPLAN (DBID=3880388427)
+
+connected to recovery catalog database
+
+Oracle instance started
+
+Total System Global Area     236000356 bytes
+
+Fixed Size                      451684 bytes
+Variable Size                201326592 bytes
+Database Buffers              33554432 bytes
+Redo Buffers                    667648 bytes
+
+allocated channel: ch1
+channel ch1: sid=13 devtype=DISK
+
+Starting restore at 27-DEC-03
+
+channel ch1: starting datafile backupset restore
+channel ch1: restoring SPFILE
+output filename=/oracle/product/9.2/dbs/spfileGRPLAN.ora
+channel ch1: restored backup piece 1
+piece handle=/oracle/backup/semanal/db_GRPLAN_513858235_39_1_20031227 tag=FULL DIARIO params=NULL
+channel ch1: restore complete
+Finished restore at 27-DEC-03
+
+released channel: ch1
+
+Oracle instance started
+
+Total System Global Area     236000356 bytes
+
+Fixed Size                      451684 bytes
+Variable Size                201326592 bytes
+Database Buffers              33554432 bytes
+Redo Buffers                    667648 bytes
+
+executing command: SET until clause
+
+allocated channel: ch1
+channel ch1: sid=13 devtype=DISK
+
+Starting restore at 27-DEC-03
+
+channel ch1: starting datafile backupset restore
+channel ch1: restoring controlfile
+output filename=/oracle/oradata/GRPLAN/control01.ctl
+channel ch1: restored backup piece 1
+piece handle=/oracle/backup/semanal/db_GRPLAN_513858138_38_1_20031227 tag=FULL DIARIO params=NULL
+channel ch1: restore complete
+replicating controlfile
+input filename=/oracle/oradata/GRPLAN/control01.ctl
+output filename=/oracle/oradata/GRPLAN/control02.ctl
+output filename=/oracle/oradata/GRPLAN/control03.ctl
+Finished restore at 27-DEC-03
+
+Starting restore at 27-DEC-03
+
+datafile 5 not processed because file is offline
+datafile 13 not processed because file is offline
+channel ch1: starting datafile backupset restore
+channel ch1: specifying datafile(s) to restore from backup set
+restoring datafile 00001 to /oracle/oradata/GRPLAN/system01.dbf
+restoring datafile 00002 to /oracle/oradata/GRPLAN/undotbs01.dbf
+restoring datafile 00003 to /oracle/oradata/GRPLAN/cwmlite01.dbf
+restoring datafile 00004 to /oracle/oradata/GRPLAN/drsys01.dbf
+restoring datafile 00006 to /oracle/oradata/GRPLAN/indx01.dbf
+restoring datafile 00007 to /oracle/oradata/GRPLAN/odm01.dbf
+restoring datafile 00008 to /oracle/oradata/GRPLAN/tools01.dbf
+restoring datafile 00009 to /oracle/oradata/GRPLAN/users01.dbf
+restoring datafile 00010 to /oracle/oradata/GRPLAN/xdb01.dbf
+restoring datafile 00011 to /oracle/oradata/GRPLAN/pcorp_prd/pcorp_prd.dbf
+restoring datafile 00012 to /oracle/oradata/GRPLAN/pcorp_tmp/PCORP_TMPv2.dbf
+restoring datafile 00014 to /oracle/oradata/GRPLAN/catalog/catalog.dbf
+channel ch1: restored backup piece 1
+piece handle=/oracle/backup/semanal/db_GRPLAN_513858138_38_1_20031227 tag=FULL DIARIO params=NULL
+channel ch1: restore complete
+Finished restore at 27-DEC-03
+
+database mounted
+
+Starting recover at 27-DEC-03
+datafile 5 not processed because file is offline
+datafile 13 not processed because file is offline
+
+starting media recovery
+
+archive log thread 1 sequence 257 is already on disk as file /oracle/oradata/GRPLAN/archive/1_257.dbf
+archive log filename=/oracle/oradata/GRPLAN/archive/1_257.dbf thread=1 sequence=257
+channel ch1: starting archive log restore to default destination
+channel ch1: restoring archive log
+archive log thread=1 sequence=258
+channel ch1: restored backup piece 1
+piece handle=/oracle/backup/semanal/al_GRPLAN_513858242_40_1_20031227 tag=TAG20031227T102402 params=NULL
+channel ch1: restore complete
+archive log filename=/oracle/oradata/GRPLAN/archive/1_258.dbf thread=1 sequence=258
+media recovery complete
+Finished recover at 27-DEC-03
+
+sql statement: alter database open resetlogs
+
+released channel: ch1
+
+sql statement: ALTER TABLESPACE TEMP ADD TEMPFILE ''/oracle/oradata/GRPLAN/temp01.dbf'' size 70m REUSE
+
+Recovery Manager complete.

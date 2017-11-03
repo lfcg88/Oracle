@@ -1,0 +1,36 @@
+REM Copyright (C) Think Forward.com 1998, 2004. All rights reserved. 
+rem Author : Duncan Ainsworth
+rem Company : Adelante Ltd
+rem 
+rem Description : List all tables/indexes,extents in a given tablespace
+rem 
+rem Usage : sqlplus dbauser/pw @monroll
+rem 
+rem History:
+rem          01-apr-98  Initial Version
+
+set pages 0
+set heading off
+
+col col0 newline
+
+spool c:\genroll.lst
+
+SELECT
+'CREATE ROLLBACK SEGMENT '||rn.name||' TABLESPACE '||rs.tablespace_name col0,
+'STORAGE ' col0,
+'(INITIAL '||rs.initial_extent col0,
+'NEXT '||rs.next_extent col0,
+'MINEXTENTS '||rs.min_extents col0,
+'MAXEXTENTS '||rs.max_extents col0,
+'OPTIMAL '
+||DECODE(r.optsize,null,rs.initial_extent+rs.next_extent,r.optsize)||');'
+FROM sys.dba_rollback_segs rs, v$rollstat r, v$rollname rn
+WHERE rn.name = rs.segment_name 
+AND rn.usn = r.usn 
+AND rn.name != 'SYSTEM'
+order by rn.name
+/
+
+spool off
+

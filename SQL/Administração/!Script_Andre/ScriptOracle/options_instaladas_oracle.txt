@@ -1,0 +1,26 @@
+rem Author:  Mark Lang, 1998
+rem Name:    ver.sql
+rem Purpose: Show product version information and installed options
+rem Usage:   @ver
+rem Subject: database
+rem Attrib:  sql
+rem Descr:
+rem Notes:
+rem SeeAlso:
+rem History:
+rem          01-feb-98  Initial release
+
+@setup
+set heading off
+
+column banner format a60 wrap
+
+select banner from v$version;
+select 'With '||parameter||' option'
+from v$option
+where value = 'TRUE';
+select '('||parameter||' option not installed'||')'
+from v$option
+where value <> 'TRUE';
+
+@setdefs

@@ -1,0 +1,6 @@
+
+
+In Oracle Database 11g, Enterprise Manager Database Control provides an interface
+to the LogMiner. Select Availability | Manage | View and Manage Transactions to
+access LogMiner. 
+

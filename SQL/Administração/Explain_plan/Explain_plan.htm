@@ -1,0 +1,2523 @@
+<HTML>
+<HEAD>
+
+<META NAME="Generator" CONTENT="Quadralay WebWorks Publisher 3.5.0">
+<META NAME="NewFiles" CONTENT="DefaultSingle">
+<META NAME="Title" CONTENT=" Using EXPLAIN PLAN ">
+
+<TITLE> Using EXPLAIN PLAN </TITLE>
+
+<LINK REL="home" HREF="../../products.htm" TITLE="Library"
+<LINK REL="toc" HREF="toc.htm" TITLE="Contents">
+<LINK REL="index" HREF="index.htm" TITLE="Index">
+
+<LINK REL="up" HREF="ch13_exp.htm" TITLE="Up">
+<LINK REL="next" HREF="ch14_str.htm" TITLE="Next">
+<LINK REL="previous" HREF="ch12_too.htm" TITLE="Previous">
+</HEAD>
+
+<BODY BGCOLOR="#ffffff">
+
+<A NAME="top"></A>
+
+<TABLE CELLSPACING="0" CELLPADDING="0" WIDTH="100%">
+<TR>
+<TD ALIGN="LEFT" VALIGN="TOP"><FONT COLOR="#330099" FACE="Helvetica, Arial, sans-serif"><B>Oracle8<i>i</i> Tuning<BR>Release 8.1.5</B><BR>A67775-01</FONT></B></TD>
+
+
+<TD VALIGN="BOTTOM" ALIGN="RIGHT">
+<TABLE CELLSPACING="0" CELLPADDING="0">
+<TR>
+<TD ALIGN="CENTER" VALIGN="TOP" WIDTH="25%"><A HREF="../../products.htm"><IMG SRC="../../dcommon/gifs/prodicon.gif" ALT="" BORDER="0" HEIGHT="30" WIDTH="30"><BR>
+<FONT SIZE="-2">Library</FONT></A></TD>
+
+
+
+<TD ALIGN="CENTER" VALIGN="TOP" WIDTH="25%"><A HREF="../../server815.htm"><IMG SRC="../../dcommon/gifs/bookicon.gif" ALT="" BORDER="0" HEIGHT="30" WIDTH="30"><BR>
+<FONT SIZE="-2">Product</FONT></A></TD>
+
+
+
+<TD ALIGN="CENTER" VALIGN="TOP" WIDTH="25%"><A HREF="toc.htm"><IMG SRC="../../dcommon/gifs/conticon.gif" ALT="" BORDER="0" HEIGHT="30"
+WIDTH="30"><BR>
+<FONT SIZE="-2">Contents</FONT></A></TD>
+
+
+<TD ALIGN="CENTER" VALIGN="TOP" WIDTH="25%"><A HREF="index.htm"><IMG SRC="../../dcommon/gifs/indxicon.gif" ALT="" BORDER="0" HEIGHT="30"
+WIDTH="30"><BR>
+<FONT SIZE="-2">Index</FONT></A></TD>
+
+</TR>
+</TABLE>
+</TD>
+</TR>
+
+</TABLE>
+
+
+<HR>
+
+<P>
+<A HREF="ch12_too.htm"><IMG SRC="../../dcommon/gifs/larrow.gif" ALT="Prev" BORDER="0" HEIGHT="30" WIDTH="30"></A>
+<A HREF="ch14_str.htm"><IMG SRC="../../dcommon/gifs/rarrow.gif" ALT="Next" BORDER="0" HEIGHT="30" WIDTH="30"></A>
+
+
+
+
+
+<DIV CLASS="IND">
+
+<!-- End Header -->
+
+
+<A NAME="822"></A>
+<!--TOC=Title-"822"-->
+<H1 CLASS="Title"><FONT FACE="Arial, Helvetica, sans-serif" COLOR="#330099">13<BR> Using EXPLAIN PLAN </FONT></H1>
+<!--/TOC=Title-->
+
+<A NAME="825"></A>
+<P CLASS="BP">
+This chapter introduces execution plans, the SQL statement EXPLAIN PLAN, and describes how to interpret its output. This chapter also explains plan stability features and the use of stored outlines to preserve your tuning investment for particular SQL statements. This chapter also provides procedures for managing outlines to control application performance characteristics. This chapter covers the following topics: 
+</P>
+
+<UL CLASS="LB1">
+
+<LI CLASS="LB1" TYPE="DISC"><A NAME="827"></A><a href="ch13_exp.htm#838">Introduction to EXPLAIN PLAN</A>
+<P>
+
+<LI CLASS="LB1" TYPE="DISC"><A NAME="829"></A><a href="ch13_exp.htm#4952">Creating the Output Table</A>
+<P>
+
+<LI CLASS="LB1" TYPE="DISC"><A NAME="6843"></A><a href="ch13_exp.htm#6709">Displaying PLAN_TABLE Output</A>
+<P>
+
+<LI CLASS="LB1" TYPE="DISC"><A NAME="831"></A><a href="ch13_exp.htm#891">Output Table Columns</A>
+<P>
+
+<LI CLASS="LB1" TYPE="DISC"><A NAME="833"></A><a href="ch13_exp.htm#1060">Formatting EXPLAIN PLAN Output</A>
+<P>
+
+<LI CLASS="LB1" TYPE="DISC"><A NAME="3603"></A><a href="ch13_exp.htm#3604">EXPLAIN PLAN Restrictions</A>
+<P>
+  
+<A NAME="835"><STRONG CLASS="Bold">
+<DIV ALIGN="CENTER">
+<P>
+<TABLE CLASS="NoteAlso" BORDER="0" WIDTH="80%" CELLPADDING="0" CELLSPACING="0">
+<TR CLASS="NoteAlso"><TD CLASS="NoteAlso">
+<A NAME="8899"></A><FONT FACE="Arial, Helvetica, sans-serif"><STRONG CLASS="NH"><STRONG CLASS="Bold">See Also</STRONG>:</STRONG></FONT>
+
+<A NAME="8919"></A>
+<P CLASS="NB">
+For the syntax of EXPLAIN PLAN, see the <EM CLASS="Italic"><A HREF="../../server.815/a67779/toc.htm">Oracle8i SQL Reference</A>.</EM> &nbsp;
+</TD>
+</TR>
+
+</TABLE>
+
+<TABLE CLASS="TableNote" CELLPADDING="3">
+<TR CLASS="TableNote" ALIGN=LEFT VALIGN=TOP><TD CLASS="TableNote">
+
+</TD></TR>
+</TABLE>
+</DIV>
+
+</STRONG></A>
+  </UL>
+
+<A NAME="838"></A>
+<!--TOC=h1-"838"-->
+<H2 CLASS="H1"><FONT FACE="Arial, Helvetica, sans-serif" COLOR="#330099"> Introduction to EXPLAIN PLAN </FONT></H2>
+<!--/TOC=h1-->
+
+<A NAME="844"></A>
+<P CLASS="BP">
+The EXPLAIN PLAN statement displays execution plans chosen by the Oracle optimizer for SELECT, UPDATE, INSERT, and DELETE statements. A statement's execution plan is the sequence of operations Oracle performs to execute the statement. The components of execution plans include: 
+</P>
+
+<UL CLASS="LB1">
+
+<LI CLASS="LB1" TYPE="DISC"><A NAME="8995"></A>An ordering of the tables referenced by the statement
+<P>
+
+<LI CLASS="LB1" TYPE="DISC"><A NAME="8999"></A>An access method for each table mentioned in the statement
+<P>
+
+<LI CLASS="LB1" TYPE="DISC"><A NAME="9000"></A>A join method for tables affected by join operations in the statement 
+<P>
+</UL>
+
+<A NAME="8996"></A>
+<P CLASS="BP">
+EXPLAIN PLAN output shows how Oracle executes SQL statements. EXPLAIN PLAN results alone, however, cannot differentiate between well-tuned statements and those that perform poorly. For example, if EXPLAIN PLAN output shows that a statement uses an index, this does not mean the statement runs efficiently. Sometimes using indexes can be extremely inefficient. It is thus best to use EXPLAIN PLAN to determine an access plan and later prove it is the optimal plan through testing. 
+</P>
+
+<A NAME="4097"></A>
+<P CLASS="BP">
+When evaluating a plan, always examine the statement's actual resource consumption. For best results, use the Oracle Trace or SQL trace facility and TKPROF to examine individual SQL statement performance. 
+</P>
+
+<A NAME="9102"></A>
+<P CLASS="BP">
+<STRONG CLASS="Bold">
+<DIV ALIGN="CENTER">
+<P>
+<TABLE CLASS="NoteAlso" BORDER="0" WIDTH="80%" CELLPADDING="0" CELLSPACING="0">
+<TR CLASS="NoteAlso"><TD CLASS="NoteAlso">
+<A NAME="9087"></A><FONT FACE="Arial, Helvetica, sans-serif"><STRONG CLASS="NH"><STRONG CLASS="Bold">See Also</STRONG>:</STRONG></FONT>
+
+<A NAME="9091"></A>
+<P CLASS="NB">
+<a href="ch14_str.htm#1018">Chapter &#32;14, "The SQL Trace Facility and TKPROF"</A> and <a href="ch15_otr.htm#3016">Chapter &#32;15, "Using Oracle Trace"</A>. &nbsp;
+</TD>
+</TR>
+
+</TABLE>
+
+<TABLE CLASS="TableNote" CELLPADDING="3">
+<TR CLASS="TableNote" ALIGN=LEFT VALIGN=TOP><TD CLASS="TableNote">
+
+</TD></TR>
+</TABLE>
+</DIV>
+</STRONG>
+</P>
+
+<A NAME="4952"></A>
+<!--TOC=h1-"4952"-->
+<H2 CLASS="H1"><FONT FACE="Arial, Helvetica, sans-serif" COLOR="#330099"> Creating the Output Table</FONT></H2>
+<!--/TOC=h1-->
+
+<A NAME="872"></A>
+<P CLASS="BP">
+Before issuing an EXPLAIN PLAN statement, create a table to hold its output. Use one of the following approaches:
+</P>
+
+<UL CLASS="LB1">
+
+<LI CLASS="LB1" TYPE="DISC"><A NAME="878"></A>Run the SQL script UTLXPLAN.SQL to create a sample output table called PLAN_TABLE in your schema. The exact name and location of this script depends on your operating system. PLAN_TABLE is the default table into which the EXPLAIN PLAN statement inserts rows describing execution plans.
+<P>
+
+<LI CLASS="LB1" TYPE="DISC"><A NAME="880"></A>Issue a CREATE TABLE statement to create an output table with any name you choose. When you issue an EXPLAIN PLAN statement you can direct its output to this table.
+<P>
+</UL>
+
+<A NAME="884"></A>
+<P CLASS="BP">
+Any table used to store the output of the EXPLAIN PLAN statement must have the same column names and datatypes as the PLAN_TABLE:
+</P>
+    
+<PRE CLASS="CE">
+<A NAME="4235"></A>   CREATE TABLE plan_table 
+<A NAME="4660"></A>   (statement_id     VARCHAR2(30),
+<A NAME="4659"></A>    timestamp        DATE,
+<A NAME="4658"></A>    remarks          VARCHAR2(80),
+<A NAME="4657"></A>    operation        VARCHAR2(30),
+<A NAME="4656"></A>    options          VARCHAR2(30),
+<A NAME="4655"></A>    object_node      VARCHAR2(128),
+<A NAME="4662"></A>    object_owner     VARCHAR2(30),
+<A NAME="4654"></A>    object_name      VARCHAR2(30),
+<A NAME="4653"></A>    object_instance  NUMERIC,
+<A NAME="4652"></A>    object_type      VARCHAR2(30),
+<A NAME="4651"></A>    optimizer        VARCHAR2(255),
+<A NAME="4650"></A>    search_columns   NUMERIC,
+<A NAME="4661"></A>    id               NUMERIC,
+<A NAME="4649"></A>    parent_id        NUMERIC,
+<A NAME="4648"></A>    position         NUMERIC,
+<A NAME="4647"></A>    cost             NUMERIC,
+<A NAME="4646"></A>    cardinality      NUMERIC,
+<A NAME="4645"></A>    bytes            NUMERIC,
+<A NAME="4644"></A>    other_tag        VARCHAR2(255)
+<A NAME="4643"></A>    other            LONG);
+</PRE>    
+<A NAME="6709"></A>
+<!--TOC=h1-"6709"-->
+<H2 CLASS="H1"><FONT FACE="Arial, Helvetica, sans-serif" COLOR="#330099"> Displaying PLAN_TABLE Output</FONT></H2>
+<!--/TOC=h1-->
+
+<A NAME="6726"></A>
+<P CLASS="BP">
+Display the most recent plan table output using the scripts:
+</P>
+
+<UL CLASS="LB1">
+
+<LI CLASS="LB1" TYPE="DISC"><A NAME="6728"></A>UTLPLS.SQL - To show plan table output for serial processing.
+<P>
+
+<LI CLASS="LB1" TYPE="DISC"><A NAME="6727"></A>UTLXPLP.SQL - To show plan table output with parallel execution columns. 
+<P>
+</UL>
+
+<A NAME="9124"></A>
+<P CLASS="BP">
+The row source count values in EXPLAIN PLAN output identify the number of rows processed by each step in the plan. This helps you identify inefficiencies in the query, for example, the row source with an access plan that is performing inefficient operations. 
+</P>
+   
+<A NAME="6730"><STRONG CLASS="Bold">
+<DIV ALIGN="CENTER">
+<P>
+<TABLE CLASS="NoteAlso" BORDER="0" WIDTH="80%" CELLPADDING="0" CELLSPACING="0">
+<TR CLASS="NoteAlso"><TD CLASS="NoteAlso">
+<A NAME="8825"></A><FONT FACE="Arial, Helvetica, sans-serif"><STRONG CLASS="NH"><STRONG CLASS="Bold">See Also</STRONG>:</STRONG></FONT>
+
+<A NAME="8928"></A>
+<P CLASS="NB">
+<a href="ch13_exp.htm#1110">"Selecting PLAN_TABLE Output in Nested Format"</A><a href="ch13_exp.htm#1110"></A>.  &nbsp;
+</TD>
+</TR>
+
+</TABLE>
+
+<TABLE CLASS="TableNote" CELLPADDING="3">
+<TR CLASS="TableNote" ALIGN=LEFT VALIGN=TOP><TD CLASS="TableNote">
+
+</TD></TR>
+</TABLE>
+</DIV>
+
+</STRONG></A>
+   
+<A NAME="891"></A>
+<!--TOC=h1-"891"-->
+<H2 CLASS="H1"><FONT FACE="Arial, Helvetica, sans-serif" COLOR="#330099"> Output Table Columns</FONT></H2>
+<!--/TOC=h1-->
+
+<A NAME="3261"></A>
+<P CLASS="BP">
+The PLAN_TABLE used by the EXPLAIN PLAN statement contains the following columns:
+</P>
+   
+<A NAME="7139">
+
+<H5 CLASS="Formal"><FONT FACE="Helvetica,Arial,sans-serif"><EM>
+<A NAME="6994"></A>
+<STRONG><FONT FACE="Arial, Helvetica, sans-serif"><EM>Table 13-1 &#32;PLAN_TABLE Columns</EM></FONT></STRONG>
+ </EM></FONT></H5>
+
+<TABLE CLASS="Formal" BORDER="1" FRAME="HSIDES" RULES="GROUPS" WIDTH="100%" CELLPADDING="3" CELLSPACING="0">
+<TR CLASS="Formal" ALIGN="LEFT" VALIGN="TOP"><TD CLASS="Formal">
+<A NAME="6998"></A>
+<FONT FACE="Arial, Helvetica, sans-serif"><STRONG>Column</STRONG></FONT> &nbsp;</TD>
+<TD CLASS="Formal">
+<A NAME="7000"></A>
+<FONT FACE="Arial, Helvetica, sans-serif"><STRONG>Description</STRONG></FONT> &nbsp;</TD>
+</TR>
+<TR CLASS="Formal" ALIGN="LEFT" VALIGN="TOP"><TD CLASS="Formal">
+<A NAME="7002"></A>
+<P CLASS="TB">
+STATEMENT_ID &nbsp;</TD>
+<TD CLASS="Formal">
+<A NAME="7006"></A>
+<P CLASS="TB">
+The value of the optional STATEMENT_ID parameter specified in the EXPLAIN PLAN statement.  &nbsp;</TD>
+</TR>
+<TR CLASS="Formal" ALIGN="LEFT" VALIGN="TOP"><TD CLASS="Formal">
+<A NAME="7008"></A>
+<P CLASS="TB">
+TIMESTAMP &nbsp;</TD>
+<TD CLASS="Formal">
+<A NAME="7012"></A>
+<P CLASS="TB">
+The date and time when the EXPLAIN PLAN statement was issued.  &nbsp;</TD>
+</TR>
+<TR CLASS="Formal" ALIGN="LEFT" VALIGN="TOP"><TD CLASS="Formal">
+<A NAME="7014"></A>
+<P CLASS="TB">
+REMARKS &nbsp;</TD>
+<TD CLASS="Formal">
+<A NAME="7018"></A>
+<P CLASS="TB">
+Any comment (of up to 80 bytes) you wish to associate with each step of the explained plan. If you need to add or change a remark on any row of the PLAN_TABLE, use the UPDATE statement to modify the rows of the PLAN_TABLE.  &nbsp;</TD>
+</TR>
+<TR CLASS="Formal" ALIGN="LEFT" VALIGN="TOP"><TD CLASS="Formal">
+<A NAME="7020"></A>
+<P CLASS="TB">
+OPERATION &nbsp;</TD>
+<TD CLASS="Formal">
+<A NAME="7024"></A>
+<P CLASS="TB">
+The name of the internal operation performed in this step. In the first row generated for a statement, the column contains one of the following values: 
+<A NAME="7025"></A>
+<P CLASS="TB">
+DELETE STATEMENT
+<A NAME="7026"></A>
+<P CLASS="TB">
+INSERT STATEMENT
+<A NAME="7027"></A>
+<P CLASS="TB">
+SELECT STATEMENT
+<A NAME="7028"></A>
+<P CLASS="TB">
+UPDATE STATEMENT
+<A NAME="14024"></A>
+<P CLASS="TB">
+See <a href="ch13_exp.htm#5957">Table &#32;13-4</A> for more information on values for this column.  &nbsp;</TD>
+</TR>
+<TR CLASS="Formal" ALIGN="LEFT" VALIGN="TOP"><TD CLASS="Formal">
+<A NAME="7030"></A>
+<P CLASS="TB">
+OPTIONS &nbsp;</TD>
+<TD CLASS="Formal">
+<A NAME="7034"></A>
+<P CLASS="TB">
+A variation on the operation described in the OPERATION column. 
+<A NAME="14041"></A>
+<P CLASS="TB">
+See <a href="ch13_exp.htm#5957">Table &#32;13-4</A> for more information on values for this column.  &nbsp;</TD>
+</TR>
+<TR CLASS="Formal" ALIGN="LEFT" VALIGN="TOP"><TD CLASS="Formal">
+<A NAME="7036"></A>
+<P CLASS="TB">
+OBJECT_NODE &nbsp;</TD>
+<TD CLASS="Formal">
+<A NAME="7040"></A>
+<P CLASS="TB">
+The name of the database link used to reference the object (a table name or view name). For local queries using parallel execution, this column describes the order in which output from operations is consumed. &nbsp;</TD>
+</TR>
+<TR CLASS="Formal" ALIGN="LEFT" VALIGN="TOP"><TD CLASS="Formal">
+<A NAME="7042"></A>
+<P CLASS="TB">
+OBJECT_OWNER &nbsp;</TD>
+<TD CLASS="Formal">
+<A NAME="7046"></A>
+<P CLASS="TB">
+The name of the user who owns the schema containing the table or index.  &nbsp;</TD>
+</TR>
+<TR CLASS="Formal" ALIGN="LEFT" VALIGN="TOP"><TD CLASS="Formal">
+<A NAME="7048"></A>
+<P CLASS="TB">
+OBJECT_NAME &nbsp;</TD>
+<TD CLASS="Formal">
+<A NAME="7052"></A>
+<P CLASS="TB">
+The name of the table or index.  &nbsp;</TD>
+</TR>
+<TR CLASS="Formal" ALIGN="LEFT" VALIGN="TOP"><TD CLASS="Formal">
+<A NAME="7054"></A>
+<P CLASS="TB">
+OBJECT_INSTANCE &nbsp;</TD>
+<TD CLASS="Formal">
+<A NAME="7058"></A>
+<P CLASS="TB">
+A number corresponding to the ordinal position of the object as it appears in the original statement. The numbering proceeds from left to right, outer to inner with respect to the original statement text. View expansion will result in unpredictable numbers.  &nbsp;</TD>
+</TR>
+<TR CLASS="Formal" ALIGN="LEFT" VALIGN="TOP"><TD CLASS="Formal">
+<A NAME="7060"></A>
+<P CLASS="TB">
+OBJECT_TYPE &nbsp;</TD>
+<TD CLASS="Formal">
+<A NAME="7064"></A>
+<P CLASS="TB">
+A modifier that provides descriptive information about the object; for example, NON-UNIQUE for indexes.  &nbsp;</TD>
+</TR>
+<TR CLASS="Formal" ALIGN="LEFT" VALIGN="TOP"><TD CLASS="Formal">
+<A NAME="7066"></A>
+<P CLASS="TB">
+OPTIMIZER &nbsp;</TD>
+<TD CLASS="Formal">
+<A NAME="7070"></A>
+<P CLASS="TB">
+The current mode of the optimizer. &nbsp;</TD>
+</TR>
+<TR CLASS="Formal" ALIGN="LEFT" VALIGN="TOP"><TD CLASS="Formal">
+<A NAME="7072"></A>
+<P CLASS="TB">
+SEARCH_COLUMNS &nbsp;</TD>
+<TD CLASS="Formal">
+<A NAME="7076"></A>
+<P CLASS="TB">
+Not currently used.  &nbsp;</TD>
+</TR>
+<TR CLASS="Formal" ALIGN="LEFT" VALIGN="TOP"><TD CLASS="Formal">
+<A NAME="7078"></A>
+<P CLASS="TB">
+ID &nbsp;</TD>
+<TD CLASS="Formal">
+<A NAME="7082"></A>
+<P CLASS="TB">
+A number assigned to each step in the execution plan.  &nbsp;</TD>
+</TR>
+<TR CLASS="Formal" ALIGN="LEFT" VALIGN="TOP"><TD CLASS="Formal">
+<A NAME="7084"></A>
+<P CLASS="TB">
+PARENT_ID &nbsp;</TD>
+<TD CLASS="Formal">
+<A NAME="7088"></A>
+<P CLASS="TB">
+The ID of the next execution step that operates on the output of the ID step. &nbsp;</TD>
+</TR>
+<TR CLASS="Formal" ALIGN="LEFT" VALIGN="TOP"><TD CLASS="Formal">
+<A NAME="7090"></A>
+<P CLASS="TB">
+POSITION &nbsp;</TD>
+<TD CLASS="Formal">
+<A NAME="7094"></A>
+<P CLASS="TB">
+The order of processing for steps that all have the same PARENT_ID.  &nbsp;</TD>
+</TR>
+<TR CLASS="Formal" ALIGN="LEFT" VALIGN="TOP"><TD CLASS="Formal">
+<A NAME="7096"></A>
+<P CLASS="TB">
+OTHER &nbsp;</TD>
+<TD CLASS="Formal">
+<A NAME="7100"></A>
+<P CLASS="TB">
+Other information that is specific to the execution step that a user may find useful. &nbsp;</TD>
+</TR>
+<TR CLASS="Formal" ALIGN="LEFT" VALIGN="TOP"><TD CLASS="Formal">
+<A NAME="7102"></A>
+<P CLASS="TB">
+OTHER_TAG &nbsp;</TD>
+<TD CLASS="Formal">
+<A NAME="7107"></A>
+<P CLASS="TB">
+Describes the contents of the OTHER column. See <a href="ch13_exp.htm#7147">Table &#32;13-2</A> for more information on the possible values for this column. &nbsp;</TD>
+</TR>
+<TR CLASS="Formal" ALIGN="LEFT" VALIGN="TOP"><TD CLASS="Formal">
+<A NAME="7109"></A>
+<P CLASS="TB">
+DISTRIBUTION &nbsp;</TD>
+<TD CLASS="Formal">
+<A NAME="7111"></A>
+<P CLASS="TB">
+Stores the method used to distribute rows from "producer" query servers to "consumer" query servers. For more information about consumer and producer query servers, please see<EM CLASS="Italic"> <A HREF="../../server.815/a67781/toc.htm">Oracle8i Concepts</A>. </EM> &nbsp;</TD>
+</TR>
+<TR CLASS="Formal" ALIGN="LEFT" VALIGN="TOP"><TD CLASS="Formal">
+<A NAME="7116"></A>
+<P CLASS="TB">
+Pstart &nbsp;</TD>
+<TD CLASS="Formal">
+<A NAME="7118"></A>
+<P CLASS="TB">
+The start partition of a range of accessed partitions. It can take one of the following values:
+<A NAME="8506"></A>
+<P CLASS="TB">
+<EM CLASS="Italic">n </EM>indicates that the start partition has been identified by the SQL compiler and its partition number is given by <EM CLASS="Italic">n</EM>.
+<A NAME="8507"></A>
+<P CLASS="TB">
+KEY indicates that the start partition will be identified at execution time from partitioning key values.
+<A NAME="8508"></A>
+<P CLASS="TB">
+ROW LOCATION indicates that the start partition (same as the stop partition) will be computed at execution time from the location of each record being retrieved. The record location is obtained by a user or from a global index.
+<A NAME="8509"></A>
+<P CLASS="TB">
+INVALID indicates that the range of accessed partitions is empty.  &nbsp;</TD>
+</TR>
+<TR CLASS="Formal" ALIGN="LEFT" VALIGN="TOP"><TD CLASS="Formal">
+<A NAME="7120"></A>
+<P CLASS="TB">
+Pstop &nbsp;</TD>
+<TD CLASS="Formal">
+<A NAME="7122"></A>
+<P CLASS="TB">
+The stop partition of a range of accessed partitions. It can take one of the following values: 
+<A NAME="8527"></A>
+<P CLASS="TB">
+<EM CLASS="Italic">n</EM> indicates that the stop partition has been identified by the SQL compiler and its partition number is given by <EM CLASS="Italic">n</EM>.
+<A NAME="8528"></A>
+<P CLASS="TB">
+KEY indicates that the stop partition will be identified at execution time from partitioning key values.
+<A NAME="8529"></A>
+<P CLASS="TB">
+ROW LOCATION indicates that the stop partition (same as the start partition) will be computed at execution time from the location of each record being retrieved. The record location is obtained by a user or from a global index.
+<A NAME="8530"></A>
+<P CLASS="TB">
+INVALID indicates that the range of accessed partitions is empty.  &nbsp;</TD>
+</TR>
+<TR CLASS="Formal" ALIGN="LEFT" VALIGN="TOP"><TD CLASS="Formal">
+<A NAME="7124"></A>
+<P CLASS="TB">
+PID &nbsp;</TD>
+<TD CLASS="Formal">
+<A NAME="7126"></A>
+<P CLASS="TB">
+The step that has computed the pair of values of the Pstart and Pstop columns.  &nbsp;</TD>
+</TR>
+<TR CLASS="Formal" ALIGN="LEFT" VALIGN="TOP"><TD CLASS="Formal">
+<A NAME="7128"></A>
+<P CLASS="TB">
+COST &nbsp;</TD>
+<TD CLASS="Formal">
+<A NAME="7130"></A>
+<P CLASS="TB">
+The cost of the operation as estimated by the optimizer's cost-based approach. For statements that use the rule-based approach, this column is null. Cost is not determined for table access operations. The value of this column does not have any particular unit of measurement, it is merely a weighted value used to compare costs of execution plans.  &nbsp;</TD>
+</TR>
+<TR CLASS="Formal" ALIGN="LEFT" VALIGN="TOP"><TD CLASS="Formal">
+<A NAME="7132"></A>
+<P CLASS="TB">
+CARDINALITY &nbsp;</TD>
+<TD CLASS="Formal">
+<A NAME="7134"></A>
+<P CLASS="TB">
+The estimate by the cost-based approach of the number of rows accessed by the operation.  &nbsp;</TD>
+</TR>
+<TR CLASS="Formal" ALIGN="LEFT" VALIGN="TOP"><TD CLASS="Formal">
+<A NAME="7136"></A>
+<P CLASS="TB">
+BYTES &nbsp;</TD>
+<TD CLASS="Formal">
+<A NAME="7138"></A>
+<P CLASS="TB">
+The estimate by the cost-based approach of the number of bytes accessed by the operation.  &nbsp;</TD>
+</TR>
+
+</TABLE>
+
+<TABLE CLASS="TableNote" WIDTH="100%" CELLPADDING="3" CELLSPACING="0">
+<TR CLASS="TableNote" ALIGN=LEFT VALIGN=TOP><TD CLASS="TableNote">
+
+</TD></TR>
+</TABLE>
+
+</A>
+   
+<A NAME="7143"></A>
+<P CLASS="BP">
+<a href="ch13_exp.htm#7147">Table &#32;13-2</A> describes the values that may appear in the OTHER_TAG column.
+</P>
+   
+<A NAME="7182">
+
+<H5 CLASS="Formal"><FONT FACE="Helvetica,Arial,sans-serif"><EM>
+<A NAME="7147"></A>
+<STRONG><FONT FACE="Arial, Helvetica, sans-serif"><EM>Table 13-2 &#32; Values of OTHER_TAG Column of the PLAN_TABLE</EM></FONT></STRONG>
+ </EM></FONT></H5>
+
+<TABLE CLASS="Formal" BORDER="1" FRAME="HSIDES" RULES="GROUPS" WIDTH="100%" CELLPADDING="3" CELLSPACING="0">
+<TR CLASS="Formal" ALIGN="LEFT" VALIGN="TOP"><TD CLASS="Formal">
+<A NAME="14056"></A>
+<FONT FACE="Arial, Helvetica, sans-serif"><STRONG>OTHER_TAG Text (examples)</STRONG></FONT> &nbsp;</TD>
+<TD CLASS="Formal">
+<A NAME="7151"></A>
+<FONT FACE="Arial, Helvetica, sans-serif"><STRONG>Meaning </STRONG></FONT> &nbsp;</TD>
+<TD CLASS="Formal">
+<A NAME="7153"></A>
+<FONT FACE="Arial, Helvetica, sans-serif"><STRONG>Interpretation</STRONG></FONT> &nbsp;</TD>
+</TR>
+<TR CLASS="Formal" ALIGN="LEFT" VALIGN="TOP"><TD CLASS="Formal">
+<A NAME="14058"></A>
+<P CLASS="TB">
+blank  &nbsp;</TD>
+<TD CLASS="Formal">
+<A NAME="7155"></A>
+<P CLASS="TB">
+ &nbsp;</TD>
+<TD CLASS="Formal">
+<A NAME="7157"></A>
+<P CLASS="TB">
+Serial execution. &nbsp;</TD>
+</TR>
+<TR CLASS="Formal" ALIGN="LEFT" VALIGN="TOP"><TD CLASS="Formal">
+<A NAME="14060"></A>
+<P CLASS="TB">
+serial_from_remote
+<A NAME="14230"></A>
+<P CLASS="TB">
+ (S -&gt; R) &nbsp;</TD>
+<TD CLASS="Formal">
+<A NAME="7159"></A>
+<P CLASS="TB">
+Serial from remote &nbsp;</TD>
+<TD CLASS="Formal">
+<A NAME="7161"></A>
+<P CLASS="TB">
+Serial execution at a remote site. &nbsp;</TD>
+</TR>
+<TR CLASS="Formal" ALIGN="LEFT" VALIGN="TOP"><TD CLASS="Formal">
+<A NAME="14062"></A>
+<P CLASS="TB">
+serial_to_parallel
+<A NAME="14229"></A>
+<P CLASS="TB">
+ (S -&gt; P) &nbsp;</TD>
+<TD CLASS="Formal">
+<A NAME="7163"></A>
+<P CLASS="TB">
+Serial to parallel &nbsp;</TD>
+<TD CLASS="Formal">
+<A NAME="7165"></A>
+<P CLASS="TB">
+Serial execution; output of step is partitioned or broadcast to parallel execution servers. &nbsp;</TD>
+</TR>
+<TR CLASS="Formal" ALIGN="LEFT" VALIGN="TOP"><TD CLASS="Formal">
+<A NAME="14064"></A>
+<P CLASS="TB">
+parallel_to_parallel
+<A NAME="14228"></A>
+<P CLASS="TB">
+ (P - &gt; P) &nbsp;</TD>
+<TD CLASS="Formal">
+<A NAME="7167"></A>
+<P CLASS="TB">
+Parallel to parallel &nbsp;</TD>
+<TD CLASS="Formal">
+<A NAME="7169"></A>
+<P CLASS="TB">
+Parallel execution; output of step is repartitioned to second set of parallel execution servers. &nbsp;</TD>
+</TR>
+<TR CLASS="Formal" ALIGN="LEFT" VALIGN="TOP"><TD CLASS="Formal">
+<A NAME="14066"></A>
+<P CLASS="TB">
+parallel_to_serial
+<A NAME="14235"></A>
+<P CLASS="TB">
+ (P -&gt; S) &nbsp;</TD>
+<TD CLASS="Formal">
+<A NAME="7171"></A>
+<P CLASS="TB">
+Parallel to serial &nbsp;</TD>
+<TD CLASS="Formal">
+<A NAME="7173"></A>
+<P CLASS="TB">
+Parallel execution; output of step is returned to serial "query coordinator" process. &nbsp;</TD>
+</TR>
+<TR CLASS="Formal" ALIGN="LEFT" VALIGN="TOP"><TD CLASS="Formal">
+<A NAME="14068"></A>
+<P CLASS="TB">
+ parallel_combined_with_parent
+<A NAME="14243"></A>
+<P CLASS="TB">
+(PwP) &nbsp;</TD>
+<TD CLASS="Formal">
+<A NAME="7175"></A>
+<P CLASS="TB">
+Parallel combined with parent &nbsp;</TD>
+<TD CLASS="Formal">
+<A NAME="7177"></A>
+<P CLASS="TB">
+Parallel execution; output of step goes to next step in same parallel process. No interprocess communication to parent. &nbsp;</TD>
+</TR>
+<TR CLASS="Formal" ALIGN="LEFT" VALIGN="TOP"><TD CLASS="Formal">parallel_combined_with_child
+<A NAME="14244"></A>
+<P CLASS="TB">
+(PwC) &nbsp;</TD>
+<TD CLASS="Formal">
+<A NAME="7179"></A>
+<P CLASS="TB">
+Parallel combined with child &nbsp;</TD>
+<TD CLASS="Formal">
+<A NAME="7181"></A>
+<P CLASS="TB">
+Parallel execution; input of step comes from prior step in same parallel process. No interprocess communication from child. &nbsp;</TD>
+</TR>
+
+</TABLE>
+
+<TABLE CLASS="TableNote" WIDTH="100%" CELLPADDING="3" CELLSPACING="0">
+<TR CLASS="TableNote" ALIGN=LEFT VALIGN=TOP><TD CLASS="TableNote">
+
+</TD></TR>
+</TABLE>
+
+</A>
+   
+<A NAME="6983"></A>
+<P CLASS="BP">
+<a href="ch13_exp.htm#6104">Table &#32;13-3</A> describes the values that can appear in the DISTRIBUTION column:
+</P>
+   
+<A NAME="6595">
+
+<H5 CLASS="Formal"><FONT FACE="Helvetica,Arial,sans-serif"><EM>
+<A NAME="6104"></A>
+<STRONG><FONT FACE="Arial, Helvetica, sans-serif"><EM>Table 13-3 &#32;Values of DISTRIBUTION Column of the PLAN_TABLE</EM></FONT></STRONG>
+ </EM></FONT></H5>
+
+<TABLE CLASS="Formal" BORDER="1" FRAME="HSIDES" RULES="GROUPS" WIDTH="100%" CELLPADDING="3" CELLSPACING="0">
+<THEAD>
+<TR CLASS="Formal"><TH CLASS="Formal" align="left" valign="bottom">
+<A NAME="6068"></A>
+<FONT FACE="Arial, Helvetica, sans-serif"><STRONG>DISTRIBUTION Text </STRONG></FONT>&nbsp;</TH>
+<TH CLASS="Formal" align="left" valign="bottom">
+<A NAME="6070"></A>
+<FONT FACE="Arial, Helvetica, sans-serif"><STRONG>Interpretation</STRONG></FONT>&nbsp;</TH>
+</TR>
+<TBODY>
+<TR CLASS="Formal" ALIGN="LEFT" VALIGN="TOP"><TD CLASS="Formal">
+<A NAME="6072"></A>
+<P CLASS="TS">
+PARTITION (ROWID) &nbsp;</TD>
+<TD CLASS="Formal">
+<A NAME="6074"></A>
+<P CLASS="TS">
+Maps rows to query servers based on the partitioning of a table/index using the rowid of the row to UPDATE/DELETE.  &nbsp;</TD>
+</TR>
+<TR CLASS="Formal" ALIGN="LEFT" VALIGN="TOP"><TD CLASS="Formal">
+<A NAME="6076"></A>
+<P CLASS="TS">
+PARTITION (KEY)  &nbsp;</TD>
+<TD CLASS="Formal">
+<A NAME="6078"></A>
+<P CLASS="TS">
+Maps rows to query servers based on the partitioning of a table/index using a set of columns. Used for partial partition-wise join, PARALLEL INSERT, CREATE TABLE AS SELECT of a partitioned table, and CREATE PARTITIONED GLOBAL INDEX.  &nbsp;</TD>
+</TR>
+<TR CLASS="Formal" ALIGN="LEFT" VALIGN="TOP"><TD CLASS="Formal">
+<A NAME="6080"></A>
+<P CLASS="TS">
+HASH  &nbsp;</TD>
+<TD CLASS="Formal">
+<A NAME="6082"></A>
+<P CLASS="TS">
+Maps rows to query servers using a hash function on the join key. Used for PARALLEL JOIN or PARALLEL GROUP BY.  &nbsp;</TD>
+</TR>
+<TR CLASS="Formal" ALIGN="LEFT" VALIGN="TOP"><TD CLASS="Formal">
+<A NAME="6084"></A>
+<P CLASS="TS">
+RANGE  &nbsp;</TD>
+<TD CLASS="Formal">
+<A NAME="6086"></A>
+<P CLASS="TS">
+Maps rows to query servers using ranges of the sort key. Used when the statement contains an ORDER BY clause.  &nbsp;</TD>
+</TR>
+<TR CLASS="Formal" ALIGN="LEFT" VALIGN="TOP"><TD CLASS="Formal">
+<A NAME="6088"></A>
+<P CLASS="TS">
+ROUND-ROBIN  &nbsp;</TD>
+<TD CLASS="Formal">
+<A NAME="6090"></A>
+<P CLASS="TS">
+Randomly maps rows to query servers.  &nbsp;</TD>
+</TR>
+<TR CLASS="Formal" ALIGN="LEFT" VALIGN="TOP"><TD CLASS="Formal">
+<A NAME="6092"></A>
+<P CLASS="TS">
+BROADCAST  &nbsp;</TD>
+<TD CLASS="Formal">
+<A NAME="6094"></A>
+<P CLASS="TS">
+Broadcasts the rows of the entire table to each query server. Used for a parallel join when one table is very small compared to the other.  &nbsp;</TD>
+</TR>
+<TR CLASS="Formal" ALIGN="LEFT" VALIGN="TOP"><TD CLASS="Formal">
+<A NAME="6096"></A>
+<P CLASS="TS">
+QC (ORDER)  &nbsp;</TD>
+<TD CLASS="Formal">
+<A NAME="6098"></A>
+<P CLASS="TS">
+The query coordinator consumes the input in order, from the first to the last query server. Used when the statement contains an ORDER BY clause.  &nbsp;</TD>
+</TR>
+<TR CLASS="Formal" ALIGN="LEFT" VALIGN="TOP"><TD CLASS="Formal">
+<A NAME="6100"></A>
+<P CLASS="TS">
+QC (RANDOM)  &nbsp;</TD>
+<TD CLASS="Formal">
+<A NAME="6102"></A>
+<P CLASS="TS">
+The query coordinator consumes the input randomly. Used when the statement does not have an ORDER BY clause.  &nbsp;</TD>
+</TR>
+
+</TABLE>
+
+<TABLE CLASS="TableNote" WIDTH="100%" CELLPADDING="3" CELLSPACING="0">
+<TR CLASS="TableNote" ALIGN=LEFT VALIGN=TOP><TD CLASS="TableNote">
+
+</TD></TR>
+</TABLE>
+
+</A>
+   
+<A NAME="5953"></A>
+<P CLASS="BP">
+<a href="ch13_exp.htm#5957">Table &#32;13-4</A> lists each combination of OPERATION and OPTION produced by the EXPLAIN PLAN statement and its meaning within an execution plan.
+</P>
+   
+<A NAME="6600">
+
+<H5 CLASS="FormalW"><FONT FACE="Helvetica,Arial,sans-serif"><EM>
+<A NAME="5957"></A>
+<STRONG><FONT FACE="Arial, Helvetica, sans-serif"><EM>Table 13-4 &#32;OPERATION and OPTION Values Produced by EXPLAIN PLAN</EM></FONT></STRONG>
+ </EM></FONT></H5>
+
+<TABLE CLASS="FormalW" BORDER="1" FRAME="HSIDES" RULES="GROUPS" WIDTH="100%" CELLPADDING="3" CELLSPACING="0">
+<THEAD>
+<TR CLASS="FormalW"><TH CLASS="FormalW" align="left" valign="bottom">
+<A NAME="5963"></A>
+<FONT FACE="Arial, Helvetica, sans-serif"><STRONG>OPERATION</STRONG></FONT>&nbsp;</TH>
+<TH CLASS="FormalW" align="left" valign="bottom">
+<A NAME="5965"></A>
+<FONT FACE="Arial, Helvetica, sans-serif"><STRONG>OPTION</STRONG></FONT>&nbsp;</TH>
+<TH CLASS="FormalW" align="left" valign="bottom">
+<A NAME="5967"></A>
+<FONT FACE="Arial, Helvetica, sans-serif"><STRONG>Description</STRONG></FONT>&nbsp;</TH>
+</TR>
+<TBODY>
+<TR CLASS="FormalW" ALIGN="LEFT" VALIGN="TOP"><TD CLASS="FormalW">
+<A NAME="5969"></A>
+<P CLASS="TB">
+AND-EQUAL &nbsp;</TD>
+<TD CLASS="FormalW">
+<A NAME="5971"></A>
+<P CLASS="TB">
+ &nbsp;</TD>
+<TD CLASS="FormalW">
+<A NAME="5973"></A>
+<P CLASS="TB">
+Operation accepting multiple sets of rowids, returning the intersection of the sets, eliminating duplicates. Used for the single-column indexes access path. &nbsp;</TD>
+</TR>
+<TR CLASS="FormalW" ALIGN="LEFT" VALIGN="TOP"><TD CLASS="FormalW">
+<A NAME="5975"></A>
+<P CLASS="TB">
+
+<A NAME="6681"></A>
+<P CLASS="TB">
+ &nbsp;</TD>
+<TD CLASS="FormalW">
+<A NAME="5977"></A>
+<P CLASS="TB">
+CONVERSION &nbsp;</TD>
+<TD CLASS="FormalW">
+<A NAME="5979"></A>
+<P CLASS="TB">
+TO ROWIDS converts bitmap representations to actual rowids that can be used to access the table.
+<A NAME="5980"></A>
+<P CLASS="TB">
+FROM ROWIDS converts the rowids to a bitmap representation.
+<A NAME="5981"></A>
+<P CLASS="TB">
+COUNT returns the number of rowids if the actual values are not needed. &nbsp;</TD>
+</TR>
+<TR CLASS="FormalW" ALIGN="LEFT" VALIGN="TOP"><TD CLASS="FormalW">
+<A NAME="5983"></A>
+<P CLASS="TB">
+ &nbsp;</TD>
+<TD CLASS="FormalW">
+<A NAME="5985"></A>
+<P CLASS="TB">
+INDEX &nbsp;</TD>
+<TD CLASS="FormalW">
+<A NAME="5987"></A>
+<P CLASS="TB">
+SINGLE VALUE looks up the bitmap for a single key value in the index.
+<A NAME="5988"></A>
+<P CLASS="TB">
+RANGE SCAN retrieves bitmaps for a key value range.
+<A NAME="5989"></A>
+<P CLASS="TB">
+FULL SCAN: Performs a full scan of a bitmap index if there is no start or stop key. &nbsp;</TD>
+</TR>
+<TR CLASS="FormalW" ALIGN="LEFT" VALIGN="TOP"><TD CLASS="FormalW">
+<A NAME="5991"></A>
+<P CLASS="TB">
+ &nbsp;</TD>
+<TD CLASS="FormalW">
+<A NAME="5993"></A>
+<P CLASS="TB">
+MERGE &nbsp;</TD>
+<TD CLASS="FormalW">
+<A NAME="5995"></A>
+<P CLASS="TB">
+Merges several bitmaps resulting from a range scan into one bitmap. &nbsp;</TD>
+</TR>
+<TR CLASS="FormalW" ALIGN="LEFT" VALIGN="TOP"><TD CLASS="FormalW">
+<A NAME="5997"></A>
+<P CLASS="TB">
+ &nbsp;</TD>
+<TD CLASS="FormalW">
+<A NAME="5999"></A>
+<P CLASS="TB">
+MINUS &nbsp;</TD>
+<TD CLASS="FormalW">
+<A NAME="6001"></A>
+<P CLASS="TB">
+Subtracts bits of one bitmap from another. Row source is used for negated predicates. Can be used only if there are nonnegated predicates yielding a bitmap from which the subtraction can take place. An example appears in <a href="ch13_exp.htm#3719">"Bitmap Indexes and EXPLAIN PLAN"</A>. &nbsp;</TD>
+</TR>
+<TR CLASS="FormalW" ALIGN="LEFT" VALIGN="TOP"><TD CLASS="FormalW">
+<A NAME="6006"></A>
+<P CLASS="TB">
+ &nbsp;</TD>
+<TD CLASS="FormalW">
+<A NAME="6008"></A>
+<P CLASS="TB">
+OR &nbsp;</TD>
+<TD CLASS="FormalW">
+<A NAME="6010"></A>
+<P CLASS="TB">
+Computes the bitwise OR of two bitmaps. &nbsp;</TD>
+</TR>
+<TR CLASS="FormalW" ALIGN="LEFT" VALIGN="TOP"><TD CLASS="FormalW">
+<A NAME="6012"></A>
+<P CLASS="TB">
+CONNECT BY &nbsp;</TD>
+<TD CLASS="FormalW">
+<A NAME="6014"></A>
+<P CLASS="TB">
+ &nbsp;</TD>
+<TD CLASS="FormalW">
+<A NAME="6016"></A>
+<P CLASS="TB">
+Retrieves rows in hierarchical order for a query containing a CONNECT BY clause.  &nbsp;</TD>
+</TR>
+<TR CLASS="FormalW" ALIGN="LEFT" VALIGN="TOP"><TD CLASS="FormalW">
+<A NAME="6018"></A>
+<P CLASS="TB">
+CONCATENATION &nbsp;</TD>
+<TD CLASS="FormalW">
+<A NAME="6020"></A>
+<P CLASS="TB">
+ &nbsp;</TD>
+<TD CLASS="FormalW">
+<A NAME="6022"></A>
+<P CLASS="TB">
+Operation accepting multiple sets of rows returning the union-all of the sets. &nbsp;</TD>
+</TR>
+<TR CLASS="FormalW" ALIGN="LEFT" VALIGN="TOP"><TD CLASS="FormalW" COLSPAN="1" ROWSPAN="2">
+<A NAME="6024"></A>
+<P CLASS="TB">
+COUNT &nbsp;</TD>
+<TD CLASS="FormalW">
+<A NAME="6026"></A>
+<P CLASS="TB">
+ &nbsp;</TD>
+<TD CLASS="FormalW">
+<A NAME="6028"></A>
+<P CLASS="TB">
+Operation counting the number of rows selected from a table. &nbsp;</TD>
+</TR>
+<TR CLASS="FormalW" ALIGN="LEFT" VALIGN="TOP"><TD CLASS="FormalW">
+<A NAME="6032"></A>
+<P CLASS="TB">
+STOPKEY &nbsp;</TD>
+<TD CLASS="FormalW">
+<A NAME="6034"></A>
+<P CLASS="TB">
+Count operation where the number of rows returned is limited by the ROWNUM expression in the WHERE clause. &nbsp;</TD>
+</TR>
+<TR CLASS="FormalW" ALIGN="LEFT" VALIGN="TOP"><TD CLASS="FormalW">
+<A NAME="6036"></A>
+<P CLASS="TB">
+DOMAIN INDEX &nbsp;</TD>
+<TD CLASS="FormalW">
+<A NAME="6038"></A>
+<P CLASS="TB">
+ &nbsp;</TD>
+<TD CLASS="FormalW">
+<A NAME="6040"></A>
+<P CLASS="TB">
+Retrieval of one or more rowids from a domain index.    &nbsp;</TD>
+</TR>
+<TR CLASS="FormalW" ALIGN="LEFT" VALIGN="TOP"><TD CLASS="FormalW">
+<A NAME="13264"></A>
+<P CLASS="TB">
+FILTER &nbsp;</TD>
+<TD CLASS="FormalW">
+<A NAME="13266"></A>
+<P CLASS="TB">
+ &nbsp;</TD>
+<TD CLASS="FormalW">
+<A NAME="13268"></A>
+<P CLASS="TB">
+Operation accepting a set of rows, eliminates some of them, and returns the rest. &nbsp;</TD>
+</TR>
+<TR CLASS="FormalW" ALIGN="LEFT" VALIGN="TOP"><TD CLASS="FormalW">
+<A NAME="13258"></A>
+<P CLASS="TB">
+FIRST ROW &nbsp;</TD>
+<TD CLASS="FormalW">
+<A NAME="13260"></A>
+<P CLASS="TB">
+ &nbsp;</TD>
+<TD CLASS="FormalW">
+<A NAME="13262"></A>
+<P CLASS="TB">
+Retrieval on only the first row selected by a query. &nbsp;</TD>
+</TR>
+<TR CLASS="FormalW" ALIGN="LEFT" VALIGN="TOP"><TD CLASS="FormalW">
+<A NAME="13252"></A>
+<P CLASS="TB">
+FOR UPDATE &nbsp;</TD>
+<TD CLASS="FormalW">
+<A NAME="13254"></A>
+<P CLASS="TB">
+ &nbsp;</TD>
+<TD CLASS="FormalW">
+<A NAME="13256"></A>
+<P CLASS="TB">
+Operation retrieving and locking the rows selected by a query containing a FOR UPDATE clause. &nbsp;</TD>
+</TR>
+<TR CLASS="FormalW" ALIGN="LEFT" VALIGN="TOP"><TD CLASS="FormalW" COLSPAN="1" ROWSPAN="3">
+<A NAME="13244"></A>
+<P CLASS="TB">
+HASH JOIN
+<A NAME="13245"></A>
+<P CLASS="TB">
+
+<A NAME="13246"></A>
+<P CLASS="TB">
+(These are join operations.) &nbsp;</TD>
+<TD CLASS="FormalW">
+<A NAME="13248"></A>
+<P CLASS="TB">
+ &nbsp;</TD>
+<TD CLASS="FormalW">
+<A NAME="13250"></A>
+<P CLASS="TB">
+Operation joining two sets of rows and returning the result. &nbsp;</TD>
+</TR>
+<TR CLASS="FormalW" ALIGN="LEFT" VALIGN="TOP"><TD CLASS="FormalW">
+<A NAME="13240"></A>
+<P CLASS="TB">
+ANTI &nbsp;</TD>
+<TD CLASS="FormalW">
+<A NAME="13242"></A>
+<P CLASS="TB">
+Hash anti-join. &nbsp;</TD>
+</TR>
+<TR CLASS="FormalW" ALIGN="LEFT" VALIGN="TOP"><TD CLASS="FormalW">
+<A NAME="13234"></A>
+<P CLASS="TB">
+SEMI &nbsp;</TD>
+<TD CLASS="FormalW">
+<A NAME="13236"></A>
+<P CLASS="TB">
+Hash semi-join. &nbsp;</TD>
+</TR>
+<TR CLASS="FormalW" ALIGN="LEFT" VALIGN="TOP"><TD CLASS="FormalW" COLSPAN="1" ROWSPAN="3">
+<A NAME="13224"></A>
+<P CLASS="TB">
+INDEX
+<A NAME="13225"></A>
+<P CLASS="TB">
+
+<A NAME="13226"></A>
+<P CLASS="TB">
+(These operations are access methods.) &nbsp;</TD>
+<TD CLASS="FormalW">
+<A NAME="13228"></A>
+<P CLASS="TB">
+UNIQUE SCAN &nbsp;</TD>
+<TD CLASS="FormalW">
+<A NAME="13230"></A>
+<P CLASS="TB">
+Retrieval of a single rowid from an index. &nbsp;</TD>
+</TR>
+<TR CLASS="FormalW" ALIGN="LEFT" VALIGN="TOP"><TD CLASS="FormalW">
+<A NAME="13220"></A>
+<P CLASS="TB">
+RANGE SCAN &nbsp;</TD>
+<TD CLASS="FormalW">
+<A NAME="13222"></A>
+<P CLASS="TB">
+Retrieval of one or more rowids from an index. Indexed values are scanned in ascending order. &nbsp;</TD>
+</TR>
+<TR CLASS="FormalW" ALIGN="LEFT" VALIGN="TOP"><TD CLASS="FormalW">
+<A NAME="13214"></A>
+<P CLASS="TB">
+RANGE SCAN DESCENDING &nbsp;</TD>
+<TD CLASS="FormalW">
+<A NAME="13216"></A>
+<P CLASS="TB">
+Retrieval of one or more rowids from an index. Indexed values are scanned in descending order. &nbsp;</TD>
+</TR>
+<TR CLASS="FormalW" ALIGN="LEFT" VALIGN="TOP"><TD CLASS="FormalW">
+<A NAME="13206"></A>
+<P CLASS="TB">
+INLIST ITERATOR &nbsp;</TD>
+<TD CLASS="FormalW">
+<A NAME="13208"></A>
+<P CLASS="TB">
+ &nbsp;</TD>
+<TD CLASS="FormalW">
+<A NAME="13210"></A>
+<P CLASS="TB">
+Iterates over the operation below it, for each value in the IN list predicate. &nbsp;</TD>
+</TR>
+<TR CLASS="FormalW" ALIGN="LEFT" VALIGN="TOP"><TD CLASS="FormalW">
+<A NAME="13200"></A>
+<P CLASS="TB">
+INTERSECTION &nbsp;</TD>
+<TD CLASS="FormalW">
+<A NAME="13202"></A>
+<P CLASS="TB">
+ &nbsp;</TD>
+<TD CLASS="FormalW">
+<A NAME="13204"></A>
+<P CLASS="TB">
+Operation accepting two sets of rows and returning the intersection of the sets, eliminating duplicates. &nbsp;</TD>
+</TR>
+<TR CLASS="FormalW" ALIGN="LEFT" VALIGN="TOP"><TD CLASS="FormalW" COLSPAN="1" ROWSPAN="4">
+<A NAME="13192"></A>
+<P CLASS="TB">
+MERGE JOIN
+<A NAME="13193"></A>
+<P CLASS="TB">
+
+<A NAME="13194"></A>
+<P CLASS="TB">
+(These are join operations.) &nbsp;</TD>
+<TD CLASS="FormalW">
+<A NAME="13196"></A>
+<P CLASS="TB">
+ &nbsp;</TD>
+<TD CLASS="FormalW">
+<A NAME="13198"></A>
+<P CLASS="TB">
+Operation accepting two sets of rows, each sorted by a specific value, combining each row from one set with the matching rows from the other, and returning the result. &nbsp;</TD>
+</TR>
+<TR CLASS="FormalW" ALIGN="LEFT" VALIGN="TOP"><TD CLASS="FormalW">
+<A NAME="13188"></A>
+<P CLASS="TB">
+OUTER &nbsp;</TD>
+<TD CLASS="FormalW">
+<A NAME="13190"></A>
+<P CLASS="TB">
+Merge join operation to perform an outer join statement. &nbsp;</TD>
+</TR>
+<TR CLASS="FormalW" ALIGN="LEFT" VALIGN="TOP"><TD CLASS="FormalW">
+<A NAME="13182"></A>
+<P CLASS="TB">
+ANTI &nbsp;</TD>
+<TD CLASS="FormalW">
+<A NAME="13184"></A>
+<P CLASS="TB">
+Merge anti-join. &nbsp;</TD>
+</TR>
+<TR CLASS="FormalW" ALIGN="LEFT" VALIGN="TOP"><TD CLASS="FormalW">
+<A NAME="13176"></A>
+<P CLASS="TB">
+SEMI &nbsp;</TD>
+<TD CLASS="FormalW">
+<A NAME="13178"></A>
+<P CLASS="TB">
+Merge semi-join. &nbsp;</TD>
+</TR>
+<TR CLASS="FormalW" ALIGN="LEFT" VALIGN="TOP"><TD CLASS="FormalW">
+<A NAME="13168"></A>
+<P CLASS="TB">
+CONNECT BY &nbsp;</TD>
+<TD CLASS="FormalW">
+<A NAME="13170"></A>
+<P CLASS="TB">
+ &nbsp;</TD>
+<TD CLASS="FormalW">
+<A NAME="13172"></A>
+<P CLASS="TB">
+Retrieval of rows in hierarchical order for a query containing a CONNECT BY clause. &nbsp;</TD>
+</TR>
+<TR CLASS="FormalW" ALIGN="LEFT" VALIGN="TOP"><TD CLASS="FormalW">
+<A NAME="13162"></A>
+<P CLASS="TB">
+MINUS &nbsp;</TD>
+<TD CLASS="FormalW">
+<A NAME="13164"></A>
+<P CLASS="TB">
+ &nbsp;</TD>
+<TD CLASS="FormalW">
+<A NAME="13166"></A>
+<P CLASS="TB">
+Operation accepting two sets of rows and returning rows appearing in the first set but not in the second, eliminating duplicates. &nbsp;</TD>
+</TR>
+<TR CLASS="FormalW" ALIGN="LEFT" VALIGN="TOP"><TD CLASS="FormalW" COLSPAN="1" ROWSPAN="2">
+<A NAME="13435"></A>
+<P CLASS="TB">
+NESTED LOOPS
+<A NAME="13436"></A>
+<P CLASS="TB">
+
+<A NAME="13437"></A>
+<P CLASS="TB">
+(These are join operations.) &nbsp;</TD>
+<TD CLASS="FormalW">
+<A NAME="13439"></A>
+<P CLASS="TB">
+ &nbsp;</TD>
+<TD CLASS="FormalW">
+<A NAME="13441"></A>
+<P CLASS="TB">
+Operation accepting two sets of rows, an outer set and an inner set. Oracle compares each row of the outer set with each row of the inner set, returning rows that satisfy a condition. &nbsp;</TD>
+</TR>
+<TR CLASS="FormalW" ALIGN="LEFT" VALIGN="TOP"><TD CLASS="FormalW">
+<A NAME="13431"></A>
+<P CLASS="TB">
+OUTER &nbsp;</TD>
+<TD CLASS="FormalW">
+<A NAME="13433"></A>
+<P CLASS="TB">
+Nested loops operation to perform an outer join statement. &nbsp;</TD>
+</TR>
+<TR CLASS="FormalW" ALIGN="LEFT" VALIGN="TOP"><TD CLASS="FormalW">
+<A NAME="13423"></A>
+<P CLASS="TB">
+PARTITION &nbsp;</TD>
+<TD CLASS="FormalW">
+<A NAME="13425"></A>
+<P CLASS="TB">
+SINGLE &nbsp;</TD>
+<TD CLASS="FormalW">
+<A NAME="13427"></A>
+<P CLASS="TB">
+Access one partition. &nbsp;</TD>
+</TR>
+<TR CLASS="FormalW" ALIGN="LEFT" VALIGN="TOP"><TD CLASS="FormalW">
+<A NAME="13417"></A>
+<P CLASS="TB">
+ &nbsp;</TD>
+<TD CLASS="FormalW">
+<A NAME="13419"></A>
+<P CLASS="TB">
+ITERATOR  &nbsp;</TD>
+<TD CLASS="FormalW">
+<A NAME="13421"></A>
+<P CLASS="TB">
+Access many partitions (a subset).  &nbsp;</TD>
+</TR>
+<TR CLASS="FormalW" ALIGN="LEFT" VALIGN="TOP"><TD CLASS="FormalW">
+<A NAME="13411"></A>
+<P CLASS="TB">
+ &nbsp;</TD>
+<TD CLASS="FormalW">
+<A NAME="13413"></A>
+<P CLASS="TB">
+ALL &nbsp;</TD>
+<TD CLASS="FormalW">
+<A NAME="13415"></A>
+<P CLASS="TB">
+Access all partitions. &nbsp;</TD>
+</TR>
+<TR CLASS="FormalW" ALIGN="LEFT" VALIGN="TOP"><TD CLASS="FormalW">
+<A NAME="13405"></A>
+<P CLASS="TB">
+ &nbsp;</TD>
+<TD CLASS="FormalW">
+<A NAME="13407"></A>
+<P CLASS="TB">
+INLIST &nbsp;</TD>
+<TD CLASS="FormalW">
+<A NAME="13409"></A>
+<P CLASS="TB">
+Similar to iterator but based on an inlist predicate.  &nbsp;</TD>
+</TR>
+<TR CLASS="FormalW" ALIGN="LEFT" VALIGN="TOP"><TD CLASS="FormalW">
+<A NAME="13399"></A>
+<P CLASS="TB">
+ &nbsp;</TD>
+<TD CLASS="FormalW">
+<A NAME="13401"></A>
+<P CLASS="TB">
+INVALID &nbsp;</TD>
+<TD CLASS="FormalW">
+<A NAME="13403"></A>
+<P CLASS="TB">
+Indicates that the partition set to be accessed is empty.  &nbsp;</TD>
+</TR>
+<TR CLASS="FormalW" ALIGN="LEFT" VALIGN="TOP"><TD CLASS="FormalW">
+<A NAME="13389"></A>
+<P CLASS="TB">
+ &nbsp;</TD>
+<TD CLASS="FormalW">
+<A NAME="13391"></A>
+<P CLASS="TB">
+ &nbsp;</TD>
+<TD CLASS="FormalW">
+<A NAME="13393"></A>
+<P CLASS="TB">
+Iterates over the operation below it, for each partition in the range given by the PARTITION_START and PARTITION_STOP columns. 
+<A NAME="13394"></A>
+<P CLASS="TB">
+PARTITION describes partition boundaries applicable to a single partitioned object (table or index) or to a set of equi-partitioned objects (a partitioned table and its local indexes). The partition boundaries are provided by the values of pstart and pstop of the PARTITION. Refer to <a href="ch13_exp.htm#6994">Table &#32;13-1</A> for valid values of partition start/stop. &nbsp;</TD>
+</TR>
+<TR CLASS="FormalW" ALIGN="LEFT" VALIGN="TOP"><TD CLASS="FormalW">
+<A NAME="13383"></A>
+<P CLASS="TB">
+PROJECTION &nbsp;</TD>
+<TD CLASS="FormalW">
+<A NAME="13385"></A>
+<P CLASS="TB">
+ &nbsp;</TD>
+<TD CLASS="FormalW">
+<A NAME="13387"></A>
+<P CLASS="TB">
+Internal operation. &nbsp;</TD>
+</TR>
+<TR CLASS="FormalW" ALIGN="LEFT" VALIGN="TOP"><TD CLASS="FormalW">
+<A NAME="13377"></A>
+<P CLASS="TB">
+REMOTE &nbsp;</TD>
+<TD CLASS="FormalW">
+<A NAME="13379"></A>
+<P CLASS="TB">
+ &nbsp;</TD>
+<TD CLASS="FormalW">
+<A NAME="13381"></A>
+<P CLASS="TB">
+Retrieval of data from a remote database. &nbsp;</TD>
+</TR>
+<TR CLASS="FormalW" ALIGN="LEFT" VALIGN="TOP"><TD CLASS="FormalW">
+<A NAME="13371"></A>
+<P CLASS="TB">
+SEQUENCE &nbsp;</TD>
+<TD CLASS="FormalW">
+<A NAME="13373"></A>
+<P CLASS="TB">
+ &nbsp;</TD>
+<TD CLASS="FormalW">
+<A NAME="13375"></A>
+<P CLASS="TB">
+Operation involving accessing values of a sequence. &nbsp;</TD>
+</TR>
+<TR CLASS="FormalW" ALIGN="LEFT" VALIGN="TOP"><TD CLASS="FormalW" COLSPAN="1" ROWSPAN="5">
+<A NAME="13365"></A>
+<P CLASS="TB">
+SORT &nbsp;</TD>
+<TD CLASS="FormalW">
+<A NAME="13367"></A>
+<P CLASS="TB">
+AGGREGATE &nbsp;</TD>
+<TD CLASS="FormalW">
+<A NAME="13369"></A>
+<P CLASS="TB">
+Retrieval of a single row that is the result of applying a group function to a group of selected rows. &nbsp;</TD>
+</TR>
+<TR CLASS="FormalW" ALIGN="LEFT" VALIGN="TOP"><TD CLASS="FormalW">
+<A NAME="13361"></A>
+<P CLASS="TB">
+UNIQUE &nbsp;</TD>
+<TD CLASS="FormalW">
+<A NAME="13363"></A>
+<P CLASS="TB">
+Operation sorting a set of rows to eliminate duplicates. &nbsp;</TD>
+</TR>
+<TR CLASS="FormalW" ALIGN="LEFT" VALIGN="TOP"><TD CLASS="FormalW">
+<A NAME="13355"></A>
+<P CLASS="TB">
+GROUP BY &nbsp;</TD>
+<TD CLASS="FormalW">
+<A NAME="13357"></A>
+<P CLASS="TB">
+Operation sorting a set of rows into groups for a query with a GROUP BY clause. &nbsp;</TD>
+</TR>
+<TR CLASS="FormalW" ALIGN="LEFT" VALIGN="TOP"><TD CLASS="FormalW">
+<A NAME="13349"></A>
+<P CLASS="TB">
+JOIN &nbsp;</TD>
+<TD CLASS="FormalW">
+<A NAME="13351"></A>
+<P CLASS="TB">
+Operation sorting a set of rows before a merge-join. &nbsp;</TD>
+</TR>
+<TR CLASS="FormalW" ALIGN="LEFT" VALIGN="TOP"><TD CLASS="FormalW">
+<A NAME="13343"></A>
+<P CLASS="TB">
+ORDER BY &nbsp;</TD>
+<TD CLASS="FormalW">
+<A NAME="13345"></A>
+<P CLASS="TB">
+Operation sorting a set of rows for a query with an ORDER BY clause. &nbsp;</TD>
+</TR>
+<TR CLASS="FormalW" ALIGN="LEFT" VALIGN="TOP"><TD CLASS="FormalW" COLSPAN="1" ROWSPAN="4">
+<A NAME="13333"></A>
+<P CLASS="TB">
+TABLE ACCESS
+<A NAME="13334"></A>
+<P CLASS="TB">
+
+<A NAME="13335"></A>
+<P CLASS="TB">
+(These operations are access methods.) &nbsp;</TD>
+<TD CLASS="FormalW">
+<A NAME="13337"></A>
+<P CLASS="TB">
+FULL &nbsp;</TD>
+<TD CLASS="FormalW">
+<A NAME="13339"></A>
+<P CLASS="TB">
+Retrieval of all rows from a table. &nbsp;</TD>
+</TR>
+<TR CLASS="FormalW" ALIGN="LEFT" VALIGN="TOP"><TD CLASS="FormalW">
+<A NAME="13329"></A>
+<P CLASS="TB">
+CLUSTER &nbsp;</TD>
+<TD CLASS="FormalW">
+<A NAME="13331"></A>
+<P CLASS="TB">
+Retrieval of rows from a table based on a value of an indexed cluster key. &nbsp;</TD>
+</TR>
+<TR CLASS="FormalW" ALIGN="LEFT" VALIGN="TOP"><TD CLASS="FormalW">
+<A NAME="13323"></A>
+<P CLASS="TB">
+HASH &nbsp;</TD>
+<TD CLASS="FormalW">
+<A NAME="13325"></A>
+<P CLASS="TB">
+Retrieval of rows from table based on hash cluster key value. &nbsp;</TD>
+</TR>
+<TR CLASS="FormalW" ALIGN="LEFT" VALIGN="TOP"><TD CLASS="FormalW">
+<A NAME="13317"></A>
+<P CLASS="TB">
+BY ROWID &nbsp;</TD>
+<TD CLASS="FormalW">
+<A NAME="13319"></A>
+<P CLASS="TB">
+Retrieval of a row from a table based on its rowid. &nbsp;</TD>
+</TR>
+<TR CLASS="FormalW" ALIGN="LEFT" VALIGN="TOP"><TD CLASS="FormalW">
+<A NAME="13309"></A>
+<P CLASS="TB">
+ &nbsp;</TD>
+<TD CLASS="FormalW">
+<A NAME="13311"></A>
+<P CLASS="TB">
+BY USER ROWID &nbsp;</TD>
+<TD CLASS="FormalW">
+<A NAME="13313"></A>
+<P CLASS="TB">
+ If the table rows are located using user-supplied rowids. &nbsp;</TD>
+</TR>
+<TR CLASS="FormalW" ALIGN="LEFT" VALIGN="TOP"><TD CLASS="FormalW">
+<A NAME="13303"></A>
+<P CLASS="TB">
+ &nbsp;</TD>
+<TD CLASS="FormalW">
+<A NAME="13305"></A>
+<P CLASS="TB">
+BY INDEX ROWID  &nbsp;</TD>
+<TD CLASS="FormalW">
+<A NAME="13307"></A>
+<P CLASS="TB">
+If the table is nonpartitioned and rows are located using index(es). &nbsp;</TD>
+</TR>
+<TR CLASS="FormalW" ALIGN="LEFT" VALIGN="TOP"><TD CLASS="FormalW">
+<A NAME="13297"></A>
+<P CLASS="TB">
+ &nbsp;</TD>
+<TD CLASS="FormalW">
+<A NAME="13299"></A>
+<P CLASS="TB">
+BY GLOBAL INDEX ROWID  &nbsp;</TD>
+<TD CLASS="FormalW">
+<A NAME="13301"></A>
+<P CLASS="TB">
+If the table is partitioned and rows are located using only global indexes. &nbsp;</TD>
+</TR>
+<TR CLASS="FormalW" ALIGN="LEFT" VALIGN="TOP"><TD CLASS="FormalW">
+<A NAME="13291"></A>
+<P CLASS="TB">
+ &nbsp;</TD>
+<TD CLASS="FormalW">
+<A NAME="13293"></A>
+<P CLASS="TB">
+BY LOCAL INDEX ROWID &nbsp;</TD>
+<TD CLASS="FormalW">
+<A NAME="13295"></A>
+<P CLASS="TB">
+If the table is partitioned and rows are located using one or more local indexes and possibly some global indexes.  &nbsp;</TD>
+</TR>
+<TR CLASS="FormalW" ALIGN="LEFT" VALIGN="TOP"><TD CLASS="FormalW">
+<A NAME="13282"></A>
+<P CLASS="TB">
+ &nbsp;</TD>
+<TD CLASS="FormalW">
+<A NAME="13284"></A>
+<P CLASS="TB">
+ &nbsp;</TD>
+<TD CLASS="FormalW">
+<A NAME="13286"></A>
+<P CLASS="TB">
+Partition Boundaries: 
+<A NAME="13287"></A>
+<P CLASS="TB">
+The partition boundaries may have been computed by:
+<A NAME="13288"></A>
+<P CLASS="TB">
+a previous PARTITION step, in which case the partition_start and partition_stop column values replicate the values present in the PARTITION step, and the partition_id contains the ID of the PARTITION step. Possible values for partition_start and partition_stop are NUMBER(n), KEY, INVALID.
+<A NAME="13289"></A>
+<P CLASS="TB">
+the TABLE ACCESS or INDEX step itself, in which case the partition_id contains the ID of the step. Possible values for partition_start and partition_stop are NUMBER(n), KEY, ROW LOCATION (TABLE ACCESS only), and INVALID. &nbsp;</TD>
+</TR>
+<TR CLASS="FormalW" ALIGN="LEFT" VALIGN="TOP"><TD CLASS="FormalW">
+<A NAME="13276"></A>
+<P CLASS="TB">
+UNION &nbsp;</TD>
+<TD CLASS="FormalW">
+<A NAME="13278"></A>
+<P CLASS="TB">
+ &nbsp;</TD>
+<TD CLASS="FormalW">
+<A NAME="13280"></A>
+<P CLASS="TB">
+Operation accepting two sets of rows and returns the union of the sets, eliminating duplicates. &nbsp;</TD>
+</TR>
+<TR CLASS="FormalW" ALIGN="LEFT" VALIGN="TOP"><TD CLASS="FormalW">
+<A NAME="13270"></A>
+<P CLASS="TB">
+VIEW &nbsp;</TD>
+<TD CLASS="FormalW">
+<A NAME="13272"></A>
+<P CLASS="TB">
+ &nbsp;</TD>
+<TD CLASS="FormalW">
+<A NAME="13274"></A>
+<P CLASS="TB">
+Operation performing a view's query and then returning the resulting rows to another operation. &nbsp;</TD>
+</TR>
+
+</TABLE>
+
+<TABLE CLASS="TableNote" WIDTH="100%" CELLPADDING="3" CELLSPACING="0">
+<TR CLASS="TableNote" ALIGN=LEFT VALIGN=TOP><TD CLASS="TableNote">
+
+</TD></TR>
+</TABLE>
+
+</A>
+
+<A NAME="14264"><STRONG CLASS="Bold">
+<DIV ALIGN="CENTER">
+<P>
+<TABLE CLASS="Note" BORDER="0" WIDTH="80%" CELLPADDING="0" CELLSPACING="0">
+<TR CLASS="Note"><TD CLASS="Note">
+<HR>
+<A NAME="8755"></A><FONT FACE="Arial, Helvetica, sans-serif"><STRONG CLASS="NH"><STRONG CLASS="Bold">Note</STRONG>:</STRONG></FONT>
+
+<A NAME="8986"></A>
+<P CLASS="NB">
+Access methods and join operations are discussed in<EM CLASS="Italic"> <A HREF="../../server.815/a67781/toc.htm">Oracle8i Concepts</A>. </EM> &nbsp;
+<HR>
+</TD>
+</TR>
+
+</TABLE>
+
+<TABLE CLASS="TableNote" CELLPADDING="3" >
+<TR CLASS="TableNote" ALIGN=LEFT VALIGN=TOP><TD CLASS="TableNote">
+
+</TD></TR>
+</TABLE>
+</DIV>
+</STRONG></A>
+   
+<A NAME="3719"></A>
+<!--TOC=h2-"3719"-->
+<H3 CLASS="H2"><FONT FACE="Arial, Helvetica, sans-serif" COLOR="#330099"> Bitmap Indexes and EXPLAIN PLAN</FONT></H3>
+<!--/TOC=h2-->
+
+<A NAME="3720"></A>
+<P CLASS="BP">
+Index row sources appear in the EXPLAIN PLAN output with the word BITMAP indicating the type. Consider the following sample query and plan, in which the TO ROWIDS option is used to generate the ROWIDs that are necessary for table access.
+</P>
+    
+<PRE CLASS="CE">
+<A NAME="3729"></A>   EXPLAIN PLAN FOR
+<A NAME="4692"></A>    SELECT * FROM T
+<A NAME="4691"></A>    WHERE
+<A NAME="4690"></A>    C1 = 2 AND C2 &lt;&gt; 6 
+<A NAME="4689"></A>    OR
+<A NAME="4688"></A>    C3 BETWEEN 10 AND 20;
+<A NAME="12374"></A>   
+<A NAME="4687"></A>   SELECT STATEMENT 
+<A NAME="14115"></A>    TABLE ACCESS  T  BY ROWID
+<A NAME="4685"></A>    BITMAP CONVERSION TO ROWIDS
+<A NAME="4684"></A>    BITMAP OR
+<A NAME="4683"></A>    BITMAP MINUS
+<A NAME="4682"></A>    BITMAP MINUS
+<A NAME="4681"></A>      BITMAP INDEX  C1_IND  SINGLE VALUE
+<A NAME="4680"></A>      BITMAP INDEX  C2_IND  SINGLE VALUE
+<A NAME="4679"></A>      BITMAP INDEX  C2_IND  SINGLE VALUE
+<A NAME="4678"></A>      BITMAP MERGE
+<A NAME="4677"></A>      BITMAP INDEX  C3_IND  RANGE SCAN
+<A NAME="4676"></A>
+</PRE>    
+<A NAME="4152"></A>
+<P CLASS="BP">
+In this example, the predicate C1=2 yields a bitmap from which a subtraction can take place. From this bitmap, the bits in the bitmap for C2 = 6 are subtracted. Also, the bits in the bitmap for C2 IS NULL are subtracted, explaining why there are two MINUS row sources in the plan. The NULL subtraction is necessary for semantic correctness unless the column has a NOT NULL constraint.
+</P>
+
+<A NAME="7211"></A>
+<!--TOC=h1-"7211"-->
+<H2 CLASS="H1"><FONT FACE="Arial, Helvetica, sans-serif" COLOR="#330099"> EXPLAIN PLAN and Partitioned Objects</FONT></H2>
+<!--/TOC=h1-->
+
+<A NAME="7594"></A>
+<P CLASS="BP">
+Use EXPLAIN PLAN to see how Oracle will access partitioned objects for specific queries. 
+</P>
+
+<A NAME="8026"></A>
+<P CLASS="BP">
+Partitions accessed after pruning are shown in the PARTITION START and PARTITION STOP columns. The row source name for the range partition is "PARTITION RANGE". For hash partitions, the row source name is "PARTITION HASH". 
+</P>
+
+<A NAME="8000"></A>
+<P CLASS="BP">
+A join is implemented using partial partition-wise join if the DISTRIBUTION column of the plan table of one of the joined tables contains "PARTITION(KEY)". Partial partition-wise join is possible if one of the joined tables is partitioned on its join column and the table is parallelized. 
+</P>
+
+<A NAME="8298"></A>
+<P CLASS="BP">
+A join is implemented using full partition-wise join if the partition row source appears before the join row source in the EXPLAIN PLAN output. Full partition-wise joins are possible only if both joined tables are equi-partitioned on their respective join columns. Examples of execution plans for several types of partitioning follow. 
+</P>
+
+<A NAME="7531"></A>
+<!--TOC=h2-"7531"-->
+<H3 CLASS="H2"><FONT FACE="Arial, Helvetica, sans-serif" COLOR="#330099"> Examples of How EXPLAIN PLAN Displays Range and Hash Partitioning</FONT></H3>
+<!--/TOC=h2-->
+
+<A NAME="7213"></A>
+<P CLASS="BP">
+Consider the following table, EMP_RANGE, partitioned by range on HIREDATE to illustrate how pruning is displayed. Assume that the tables EMP and DEPT from a standard Oracle schema exist.
+</P>
+    
+<PRE CLASS="CE">
+<A NAME="7215"></A>   CREATE TABLE EMP_RANGE 
+<A NAME="7216"></A>    PARTITION BY RANGE(HIREDATE) 
+<A NAME="7217"></A>    ( 
+<A NAME="7218"></A>    PARTITION EMP_P1 VALUES LESS THAN (TO_DATE('1-JAN-1981','DD-MON-YYYY')),
+<A NAME="7220"></A>    PARTITION EMP_P2 VALUES LESS THAN (TO_DATE('1-JAN-1983','DD-MON-YYYY')),
+<A NAME="13859"></A>    PARTITION EMP_P3 VALUES LESS THAN (TO_DATE('1-JAN-1985','DD-MON-YYYY')),
+<A NAME="13866"></A>    PARTITION EMP_P4 VALUES LESS THAN (TO_DATE('1-JAN-1987','DD-MON-YYYY')),
+<A NAME="13860"></A>    PARTITION EMP_P5 VALUES LESS THAN (TO_DATE('1-JAN-1989','DD-MON-YYYY')) 
+<A NAME="7228"></A>    ) 
+<A NAME="7229"></A>    AS SELECT * FROM EMP; 
+<A NAME="8035"></A><STRONG CLASS="Bold">
+</STRONG></PRE>    
+<A NAME="14267"></A>
+<P CLASS="BP">
+<STRONG CLASS="Bold">Example 1:</STRONG> 
+</P>
+    
+<PRE CLASS="CE">
+<A NAME="7232"></A>   EXPLAIN PLAN FOR SELECT * FROM EMP_RANGE; 
+<A NAME="7233"></A>
+</PRE>    
+<A NAME="7234"></A>
+<P CLASS="BP">
+Then enter the following to display the EXPLAIN PLAN output: 
+</P>
+    
+<PRE CLASS="CE">
+<A NAME="7235"></A>        @?/RDBMS/ADMIN/UTLXPLS 
+<A NAME="7236"></A>
+</PRE>    
+<A NAME="7237"></A>
+<P CLASS="BP">
+Oracle displays something similar to: 
+</P>
+    
+<PRE CLASS="CE">
+<A NAME="7238"></A>Plan Table 
+<A NAME="7239"></A>-------------------------------------------------------------------------------
+<A NAME="7240"></A>| Operation               |  Name    |  Rows | Bytes|  Cost  | Pstart |  Pstop|
+<A NAME="7241"></A>-------------------------------------------------------------------------------
+<A NAME="7242"></A>| SELECT STATEMENT        |          |   105 |    8K|      1 |        |       |
+<A NAME="7243"></A>|  PARTITION RANGE ALL    |          |       |      |        |     1  |     5 |
+<A NAME="7244"></A>|   TABLE ACCESS FULL     |EMP_RANGE |   105 |    8K|      1 |     1  |     5 |
+<A NAME="7245"></A>-------------------------------------------------------------------------------
+<A NAME="7246"></A>6 rows selected. 
+<A NAME="8045"></A>
+</PRE>    
+<A NAME="8040"></A>
+<P CLASS="BP">
+A partition row source is created on top of the table access row source. It iterates over the set of partitions to be accessed. 
+</P>
+
+<A NAME="7248"></A>
+<P CLASS="BP">
+In example 1, the partition iterator covers all partitions (option ALL) because a predicate was not used for pruning. The PARTITION_START and PARTITION STOP columns of the plan table show access to all partitions from 1 to 5.
+</P>
+
+<A NAME="8055"></A>
+<P CLASS="BP">
+<STRONG CLASS="Bold">Example 2: </STRONG>
+</P>
+    
+<PRE CLASS="CE">
+<A NAME="7249"></A>   EXPLAIN PLAN FOR SELECT * FROM EMP_RANGE 
+<A NAME="12400"></A>   WHERE HIREDATE &gt;= TO_DATE('1-JAN-1985','DD-MON-YYYY'); 
+<A NAME="12402"></A>
+<A NAME="8061"></A>Plan Table 
+<A NAME="7255"></A>--------------------------------------------------------------------------------
+<A NAME="7256"></A>| Operation                 | Name    |  Rows  | Bytes|  Cost  | Pstart| Pstop |
+<A NAME="7257"></A>--------------------------------------------------------------------------------
+<A NAME="7258"></A>| SELECT STATEMENT          |          |     3 |   54 |      1 |       |       |
+<A NAME="7259"></A>|  PARTITION RANGE ITERATOR |          |       |      |        |     4 |     5 |
+<A NAME="7260"></A>|   TABLE ACCESS FULL       |EMP_RANGE |     3 |   54 |      1 |     4 |     5 |
+<A NAME="7261"></A>--------------------------------------------------------------------------------
+<A NAME="7262"></A>6 rows selected. 
+</PRE>    
+<A NAME="7263"></A>
+<P CLASS="BP">
+ 
+</P>
+
+<A NAME="7264"></A>
+<P CLASS="BP">
+In example 2, the partition row source iterates from partition 4 to 5 because we prune the other partitions using a predicate on HIREDATE. 
+</P>
+
+<A NAME="8058"></A>
+<P CLASS="BP">
+<STRONG CLASS="Bold">Example 3:</STRONG>
+</P>
+    
+<PRE CLASS="CE">
+<A NAME="7265"></A>   EXPLAIN PLAN FOR SELECT * FROM EMP_RANGE 
+<A NAME="7266"></A>   WHERE HIREDATE &lt; TO_DATE('1-JAN-1981','DD-MON-YYYY'); 
+<A NAME="7268"></A>
+<A NAME="7270"></A>Plan Table 
+<A NAME="7271"></A>--------------------------------------------------------------------------------
+<A NAME="7272"></A>| Operation                 |  Name    |  Rows | Bytes|  Cost  | Pstart| Pstop |
+<A NAME="7273"></A>--------------------------------------------------------------------------------
+<A NAME="7274"></A>| SELECT STATEMENT          |          |     2 |   36 |      1 |       |       |
+<A NAME="7275"></A>|  TABLE ACCESS FULL        |EMP_RANGE |     2 |   36 |      1 |     1 |     1 |
+<A NAME="7276"></A>--------------------------------------------------------------------------------
+<A NAME="7277"></A>5 rows selected. 
+<A NAME="7278"></A>
+</PRE>    
+<A NAME="7279"></A>
+<P CLASS="BP">
+In example 3, only partition 1 is accessed and known at compile time, thus there is no need for a partition row source. 
+</P>
+
+<A NAME="7280"></A>
+<!--TOC=h3-"7280"-->
+<H4 CLASS="H3"><FONT FACE="Arial, Helvetica, sans-serif" COLOR="#330099"> Plans for Hash Partitioning </FONT></H4>
+<!--/TOC=h3-->
+
+<A NAME="7608"></A>
+<P CLASS="BP">
+Oracle displays the same information for hash partitioned objects except that the partition row source name is "PARTITION HASH" instead of "PARTITION RANGE". Also, with hash partitioning, pruning is only possible using equality or in-list predicates. 
+</P>
+
+<A NAME="7281"></A>
+<!--TOC=h2-"7281"-->
+<H3 CLASS="H2"><FONT FACE="Arial, Helvetica, sans-serif" COLOR="#330099"> Pruning Information with Composite Partitioned Objects</FONT></H3>
+<!--/TOC=h2-->
+
+<A NAME="7282"></A>
+<P CLASS="BP">
+To illustrate how Oracle displays pruning information for composite partitioned objects, consider the table EMP_COMP that is range partitioned on HIREDATE and subpartitioned by hash on DEPTNO. 
+</P>
+    
+<PRE CLASS="CE">
+<A NAME="7283"></A> CREATE TABLE EMP_COMP PARTITION BY RANGE(HIREDATE) SUBPARTITION BY HASH(DEPTNO) 
+<A NAME="7286"></A>  SUBPARTITIONS 3 
+<A NAME="7287"></A>  ( 
+<A NAME="7288"></A>  PARTITION EMP_P1 VALUES LESS THAN (TO_DATE('1-JAN-1981','DD-MON-YYYY')),
+<A NAME="7290"></A>  PARTITION EMP_P2 VALUES LESS THAN (TO_DATE('1-JAN-1983','DD-MON-YYYY')),
+<A NAME="7292"></A>  PARTITION EMP_P3 VALUES LESS THAN (TO_DATE('1-JAN-1985','DD-MON-YYYY')),
+<A NAME="7294"></A>  PARTITION EMP_P4 VALUES LESS THAN (TO_DATE('1-JAN-1987','DD-MON-YYYY')),
+<A NAME="7296"></A>  PARTITION EMP_P5 VALUES LESS THAN (TO_DATE('1-JAN-1989','DD-MON-YYYY')) 
+<A NAME="7298"></A>   ) 
+<A NAME="7299"></A>  AS SELECT * FROM EMP; 
+<A NAME="7300"></A>
+</PRE>    
+<A NAME="12433"></A>
+<P CLASS="BP">
+<STRONG CLASS="Bold">Example 1: </STRONG>
+</P>
+    
+<PRE CLASS="CE">
+<A NAME="12434"></A>   EXPLAIN PLAN FOR SELECT * FROM EMP_COMP; 
+<A NAME="12435"></A>
+<A NAME="7305"></A>Plan Table 
+<A NAME="7306"></A>--------------------------------------------------------------------------------
+<A NAME="7307"></A>| Operation                 |  Name   |  Rows | Bytes|  Cost  | Pstart | Pstop |
+<A NAME="7308"></A>--------------------------------------------------------------------------------
+<A NAME="7309"></A>| SELECT STATEMENT          |         |   105 |    8K|      1 |        |       |
+<A NAME="7310"></A>|  PARTITION RANGE ALL      |         |       |      |        |     1  |     5 |
+<A NAME="7311"></A>|   PARTITION HASH ALL      |         |       |      |        |     1  |     3 |
+<A NAME="7312"></A>|    TABLE ACCESS FULL      |EMP_COMP |   105 |    8K|      1 |     1  |     15|
+<A NAME="7313"></A>--------------------------------------------------------------------------------
+<A NAME="7314"></A>7 rows selected. 
+<A NAME="7315"></A>
+</PRE>    
+<A NAME="7316"></A>
+<P CLASS="BP">
+Example 1 shows the explain plan when Oracle accesses all subpartitions of all partitions of a composite object. Two partition row sources are used for that purpose: a range partition row source to iterate over the partitions and a hash partition row source to iterate over the subpartitions of each accessed partition. 
+</P>
+
+<A NAME="7624"></A>
+<P CLASS="BP">
+In this example, since no pruning is performed, the range partition row source iterates from partition 1 to 5. Within each partition, the hash partition row source iterates over subpartitions 1 to 3 of the current partition. As a result, the table access row source accesses subpartitions 1 to 15. In other words, it accesses all subpartitions of the composite object. 
+</P>
+
+<A NAME="8098"></A>
+<P CLASS="BP">
+<STRONG CLASS="Bold">Example 2:</STRONG>
+</P>
+    
+<PRE CLASS="CE">
+<A NAME="7317"></A>   EXPLAIN PLAN FOR SELECT * FROM EMP_COMP WHERE HIREDATE = 
+<A NAME="7318"></A>   TO_DATE('15-FEB-1987', 'DD-MON-YYYY'); 
+<A NAME="7319"></A>
+<A NAME="7321"></A>Plan Table 
+<A NAME="7322"></A>--------------------------------------------------------------------------------
+<A NAME="7323"></A>| Operation                 |  Name    |  Rows | Bytes|  Cost  | Pstart| Pstop |
+<A NAME="13853"></A>--------------------------------------------------------------------------------
+<A NAME="7324"></A>| SELECT STATEMENT          |          |     1 |   96 |      1 |       |       |
+<A NAME="7325"></A>|  PARTITION HASH ALL       |          |       |      |        |     1 |     3 |
+<A NAME="7326"></A>|   TABLE ACCESS FULL       |EMP_COMP  |     1 |   96 |      1 |    13 |    15 |
+<A NAME="7327"></A>--------------------------------------------------------------------------------
+<A NAME="7328"></A>6 rows selected. 
+<A NAME="7329"></A> 
+</PRE>    
+<A NAME="7330"></A>
+<P CLASS="BP">
+In example 2, only the last partition, partition 5, is accessed. This partition is known at compile time so we do not need to show it in the plan. The hash partition row source shows accessing of all subpartitions within that partition, that is, subpartitions 1 to 3, which translates into subpartitions 13 to 15 of the EMP_COMP table. 
+</P>
+
+<A NAME="8104"></A>
+<P CLASS="BP">
+<STRONG CLASS="Bold">Example 3:</STRONG>
+</P>
+    
+<PRE CLASS="CE">
+<A NAME="7331"></A>   EXPLAIN PLAN FOR SELECT * FROM EMP_COMP WHERE DEPTNO = 20; 
+<A NAME="7332"></A>
+<A NAME="7334"></A>Plan Table 
+<A NAME="7335"></A>--------------------------------------------------------------------------------
+<A NAME="7336"></A>| Operation                 |  Name    |  Rows | Bytes|  Cost  | Pstart| Pstop |
+<A NAME="7337"></A>--------------------------------------------------------------------------------
+<A NAME="7338"></A>| SELECT STATEMENT          |          |     2 |  200 |      1 |       |       |
+<A NAME="7339"></A>|  PARTITION RANGE ALL      |          |       |      |        |     1 |     5 |
+<A NAME="7340"></A>|   TABLE ACCESS FULL       |EMP_COMP  |     2 |  200 |      1 |       |       |
+<A NAME="7341"></A>--------------------------------------------------------------------------------
+<A NAME="7342"></A>6 rows selected. 
+<A NAME="7343"></A>
+</PRE>    
+<A NAME="7344"></A>
+<P CLASS="BP">
+In this example, the predicate "DEPTNO = 20" enables pruning on the hash dimension within each partition, so Oracle only needs to access a single subpartition. The number of that subpartition is known at compile time so the hash partition row source is not needed. 
+</P>
+
+<A NAME="8109"></A>
+<P CLASS="BP">
+<STRONG CLASS="Bold">Example 4:</STRONG>
+</P>
+    
+<PRE CLASS="CE">
+<A NAME="7345"></A>   VARIABLE DNO NUMBER; 
+<A NAME="7346"></A>   EXPLAIN PLAN FOR SELECT * FROM EMP_COMP WHERE DEPTNO = :DNO; 
+<A NAME="7347"></A>
+<A NAME="7350"></A>Plan Table 
+<A NAME="7351"></A>--------------------------------------------------------------------------------
+<A NAME="7352"></A>| Operation                 |  Name    |  Rows | Bytes|  Cost  | Pstart| Pstop |
+<A NAME="7353"></A>--------------------------------------------------------------------------------
+<A NAME="7354"></A>| SELECT STATEMENT          |          |     2 |  200 |      1 |       |       |
+<A NAME="7355"></A>|  PARTITION RANGE ALL      |          |       |      |        |     1 |     5 |
+<A NAME="7356"></A>|   PARTITION HASH SINGLE   |          |       |      |        |   KEY |   KEY |
+<A NAME="7357"></A>|    TABLE ACCESS FULL      |EMP_COMP  |     2 |  200 |      1 |       |       |
+<A NAME="7358"></A>--------------------------------------------------------------------------------
+<A NAME="7359"></A> 7 rows selected. 
+<A NAME="7360"></A>
+</PRE>    
+<A NAME="7361"></A>
+<P CLASS="BP">
+Example 4 is the same as example 3 except that "DEPTNO = 20" has been replaced by "DEPTNO = :DNO". In this case, the subpartition number is unknown at compile time and a hash partition row source is allocated. The option is SINGLE for that row source because Oracle accesses only one subpartition within each partition. The PARTITION START and PARTITION STOP is set to "KEY". This means Oracle will determine the number of the subpartition at run time. 
+</P>
+
+<A NAME="7362"></A>
+<!--TOC=h2-"7362"-->
+<H3 CLASS="H2"><FONT FACE="Arial, Helvetica, sans-serif" COLOR="#330099"> Partial Partition-wise Joins</FONT></H3>
+<!--/TOC=h2-->
+
+<A NAME="7363"></A>
+<P CLASS="BP">
+<STRONG CLASS="Bold">Example 1: </STRONG>
+</P>
+
+<A NAME="8169"></A>
+<P CLASS="BP">
+In the following example, EMP_RANGE is joined on the partitioning column and is parallelized. This enables use of partial partition-wise join because the DEPT table is not partitioned. Oracle dynamically partitions the DEPT table before the join. 
+</P>
+    
+<PRE CLASS="CE">
+<A NAME="7364"></A>   ALTER TABLE EMP PARALLEL 2; 
+<A NAME="7365"></A>      STATEMENT PROCESSED.
+<A NAME="7366"></A>   ALTER TABLE DEPT PARALLEL 2; 
+<A NAME="7367"></A>      STATEMENT PROCESSED. 
+<A NAME="7368"></A>
+</PRE>    
+<A NAME="7369"></A>
+<P CLASS="BP">
+To show the plan for the query, enter:
+</P>
+    
+<PRE CLASS="CE">
+<A NAME="7370"></A>   EXPLAIN PLAN FOR SELECT /*+ ORDERED USE_HASH(D) */ ENAME, DNAME 
+<A NAME="7371"></A>     FROM EMP_RANGE E, DEPT D 
+<A NAME="7372"></A>     WHERE E.DEPTNO = D.DEPTNO 
+<A NAME="7373"></A>     AND E.HIREDATE &gt; TO_DATE('29-JUN-1986','DD-MON-YYYY'); 
+<A NAME="7375"></A>
+    
+<PRE CLASS="CEWM">
+<A NAME="7377"></A>Plan Table 
+<A NAME="7378"></A>------------------------------------------------------------------------------------------------------------ 
+<A NAME="7379"></A>| Operation                  |  Name    |  Rows | Bytes|  Cost  |  TQ  |IN-OUT| PQ Distrib | Pstart| Pstop | 
+<A NAME="7380"></A>------------------------------------------------------------------------------------------------------------ 
+<A NAME="7381"></A>| SELECT STATEMENT           |          |     1 |   51 |      3 |      |      |            |       |       | 
+<A NAME="7382"></A>|  HASH JOIN                 |          |     1 |   51 |      3 | 2,02 | P-&gt;S | QC (RANDOM)|       |       | 
+<A NAME="7383"></A>|   PARTITION RANGE ITERATOR |          |       |      |        | 2,02 | PCWP |            |     4 |     5 | 
+<A NAME="9326"></A>|    TABLE ACCESS FULL       |EMP_RANGE |     3 |   87 |      1 | 2,00 | PCWP |            |     4 |     5 | 
+<A NAME="9327"></A>|    TABLE ACCESS FULL       |DEPT      |    21 |  462 |      1 | 2,01 | P-&gt;P |PART (KEY)  |       |       | 
+<A NAME="9328"></A>------------------------------------------------------------------------------------------------------------ 
+<A NAME="7387"></A>8 rows selected.
+</PRE>        </PRE>
+<A NAME="12452"></A>
+<P CLASS="BP">
+The plan shows that the optimizer select partition-wise join because the DIST column contains the text "PART (KEY)", or, partition key.
+</P>
+
+<A NAME="8164"></A>
+<P CLASS="BP">
+<STRONG CLASS="Bold">Example 2:</STRONG> 
+</P>
+
+<A NAME="8170"></A>
+<P CLASS="BP">
+In example 2, EMP_COMP is joined on its hash partitioning column, DEPTNO, and is parallelized. This enables use of partial partition-wise join because the DEPT table is not partitioned. Again, Oracle dynamically partitions the DEPT table.
+</P>
+    
+<PRE CLASS="CE">
+<A NAME="8165"></A>   ALTER TABLE EMP_COMP PARALLEL 2; 
+<A NAME="8166"></A>     STATEMENT PROCESSED. 
+<A NAME="7391"></A>   EXPLAIN PLAN FOR SELECT /*+ ORDERED USE_HASH(D) */ ENAME, DNAME 
+<A NAME="7392"></A>     FROM EMP_COMP E, DEPT D 
+<A NAME="12463"></A>     WHERE E.DEPTNO = D.DEPTNO 
+<A NAME="12504"></A>     AND E.HIREDATE &gt; TO_DATE('13-MAR-1985','DD-MON-YYYY'); 
+<A NAME="14270"></A>
+    
+<PRE CLASS="CEWM">
+<A NAME="7808"></A>Plan Table
+<A NAME="7810"></A>------------------------------------------------------------------------------------------------------------ 
+<A NAME="7813"></A>| Operation                  |  Name    |  Rows | Bytes|  Cost  |  TQ  |IN-OUT| PQ Distrib | Pstart| Pstop | 
+<A NAME="7816"></A>------------------------------------------------------------------------------------------------------------ 
+<A NAME="7819"></A>| SELECT STATEMENT           |          |    1  |  51  |      3 |      |      |            |       |       |
+<A NAME="7821"></A>|  HASH JOIN                 |          |     1 |   51 |      3 | 0,01 | P-&gt;S | QC (RANDOM)|       |       | 
+<A NAME="7823"></A>|   PARTITION RANGE ITERATOR |          |       |      |        | 0,01 | PCWP |            |     4 |     5 | 
+<A NAME="7825"></A>|    PARTITION HASH ALL      |          |       |      |        | 0,01 | PCWP |            |     1 |     3 | 
+<A NAME="7827"></A>|     TABLE ACCESS FULL      |EMP_COMP  |     3 |   87 |      1 | 0,01 | PCWP |            |    10 |    15 | 
+<A NAME="7829"></A>|   TABLE ACCESS FULL        |DEPT      |    21 |  462 |      1 | 0,00 | P-&gt;P | PART (KEY) |       |       | 
+<A NAME="7832"></A>------------------------------------------------------------------------------------------------------------ 
+<A NAME="7804"></A>9 rows selected.
+</PRE>        </PRE>
+<A NAME="7795"></A>
+<!--TOC=h2-"7795"-->
+<H3 CLASS="H2"><FONT FACE="Arial, Helvetica, sans-serif" COLOR="#330099"> Full Partition-wise Joins</FONT></H3>
+<!--/TOC=h2-->
+
+<A NAME="8181"></A>
+<P CLASS="BP">
+In the following example, EMP_COMP and DEPT_HASH are joined on their hash partitioning columns. This enables use of full partition-wise join. The "PARTITION HASH" row source appears on top of the join row source in the plan table output. 
+</P>
+
+<A NAME="12505"></A>
+<P CLASS="BP">
+To create the table DEPT_HASH, enter:
+</P>
+    
+<PRE CLASS="CE">
+<A NAME="7410"></A>   CREATE TABLE DEPT_HASH 
+<A NAME="7411"></A>     PARTITION BY HASH(deptno) 
+<A NAME="7412"></A>     PARTITIONS 3 
+<A NAME="7413"></A>     PARALLEL 
+<A NAME="7414"></A>     AS SELECT * FROM DEPT; 
+<A NAME="12506"></A>
+</PRE>    
+<A NAME="12507"></A>
+<P CLASS="BP">
+To show the plan for the query, enter:
+</P>
+    
+<PRE CLASS="CE">
+<A NAME="7415"></A>   EXPLAIN PLAN FOR SELECT /*+ ORDERED USE_HASH(D) */ ENAME, DNAME 
+<A NAME="7416"></A>     FROM EMP_COMP E, DEPT_HASH D 
+<A NAME="7417"></A>     WHERE E.DEPTNO = D.DEPTNO 
+<A NAME="7418"></A>     AND E.HIREDATE &gt; TO_DATE('29-JUN-1986','DD-MON-YYYY'); 
+<A NAME="7649"></A>
+    
+<PRE CLASS="CEWM">
+<A NAME="7423"></A>Plan Table 
+<A NAME="7424"></A>------------------------------------------------------------------------------------------------------------ 
+<A NAME="7425"></A>| Operation                   |  Name    |  Rows | Bytes|  Cost  |  TQ |IN-OUT| PQ Distrib | Pstart| Pstop | 
+<A NAME="7426"></A>------------------------------------------------------------------------------------------------------------ 
+| SELECT STATEMENT            |          |     2 |   102|      2 |     |      |            |       |       |
+<A NAME="7427"></A>|  PARTITION HASH ALL         |          |       |      |        | 4,00| PCWP |            |     1 |     3 | 
+<A NAME="7428"></A>|   HASH JOIN                 |          |     2 |  102 |      2 | 4,00| P-&gt;S | QC (RANDOM)|       |       | 
+<A NAME="7429"></A>|    PARTITION RANGE ITERATOR |          |       |      |        | 4,00| PCWP |            |     4 |     5 | 
+<A NAME="7430"></A>|     TABLE ACCESS FULL       |EMP_COMP  |     3 |   87 |      1 | 4,00| PCWP |            |    10 |    15 | 
+<A NAME="7431"></A>|    TABLE ACCESS FULL        |DEPT_HASH |    63 |    1K|      1 | 4,00| PCWP |            |     1 |     3 | 
+<A NAME="7432"></A>------------------------------------------------------------------------------------------------------------ 
+<A NAME="7433"></A>9 rows selected. 
+</PRE>        </PRE>
+<A NAME="3730"></A>
+<!--TOC=h2-"3730"-->
+<H3 CLASS="H2"><FONT FACE="Arial, Helvetica, sans-serif" COLOR="#330099"> INLIST ITERATOR and EXPLAIN PLAN</FONT></H3>
+<!--/TOC=h2-->
+
+<A NAME="3731"></A>
+<P CLASS="BP">
+An INLIST ITERATOR operation appears in the EXPLAIN PLAN output if an index implements an IN list predicate. For example, for the query:
+</P>
+    
+<PRE CLASS="CE">
+<A NAME="3733"></A>   SELECT * FROM EMP WHERE EMPNO IN (7876, 7900, 7902); 
+<A NAME="4747"></A>
+</PRE>    
+<A NAME="3732"></A>
+<P CLASS="BP">
+The EXPLAIN PLAN output appears as follows:
+</P>
+    
+<PRE CLASS="CE">
+<A NAME="3737"></A>   OPERATION          OPTIONS           OBJECT_NAME
+<A NAME="4732"></A>   ----------------   ---------------   -------------- 
+<A NAME="4731"></A>   SELECT STATEMENT
+<A NAME="4730"></A>   INLIST ITERATOR
+<A NAME="4729"></A>   TABLE ACCESS       BY ROWID          EMP
+<A NAME="4728"></A>   INDEX              RANGE SCAN        EMP_EMPNO
+<A NAME="4974"></A>
+</PRE>    
+<A NAME="3742"></A>
+<P CLASS="BP">
+The INLIST ITERATOR operation iterates over the operation below it for each value in the IN list predicate. For partitioned tables and indexes, the three possible types of IN list columns are described in the following sections.
+</P>
+
+<A NAME="3852"></A>
+<!--TOC=h3-"3852"-->
+<H4 CLASS="H3"><FONT FACE="Arial, Helvetica, sans-serif" COLOR="#330099"> Index Column</FONT></H4>
+<!--/TOC=h3-->
+
+<A NAME="3749"></A>
+<P CLASS="BP">
+If the IN list column EMPNO is an index column but not a partition column, then the plan is as follows (the IN list operator appears above the table operation but below the partition operation):
+</P>
+    
+<PRE CLASS="CE">
+<A NAME="3778"></A> OPERATION         OPTIONS        OBJECT_NAME   PARTITION_START   PARTITION_STOP
+<A NAME="4727"></A> ----------------  ------------   -----------   ---------------   --------------
+<A NAME="4726"></A> SELECT STATEMENT 
+<A NAME="14121"></A> PARTITION         INLIST                       KEY(INLIST)       KEY(INLIST)
+<A NAME="4724"></A> INLIST ITERATOR
+<A NAME="4723"></A> TABLE ACCESS      BY ROWID       EMP           KEY(INLIST)       KEY(INLIST)
+<A NAME="4722"></A> INDEX             RANGE SCAN     EMP_EMPNO     KEY(INLIST)       KEY(INLIST)
+<A NAME="4973"></A>
+</PRE>    
+<A NAME="3744"></A>
+<P CLASS="BP">
+The KEY(INLIST) designation for the partition start and stop keys specifies that an IN list predicate appears on the index start/stop keys.
+</P>
+
+<A NAME="3853"></A>
+<!--TOC=h3-"3853"-->
+<H4 CLASS="H3"><FONT FACE="Arial, Helvetica, sans-serif" COLOR="#330099"> Index and Partition Column</FONT></H4>
+<!--/TOC=h3-->
+
+<A NAME="4718"></A>
+<P CLASS="BP">
+If EMPNO is an indexed and a partition column, then the plan contains an INLIST ITERATOR operation above the partition operation:
+</P>
+    
+<PRE CLASS="CE">
+<A NAME="5448"></A> OPERATION         OPTIONS        OBJECT_NAME   PARTITION_START   PARTITION_STOP
+<A NAME="5449"></A> ----------------  ------------   -----------   ---------------   --------------
+<A NAME="5450"></A> SELECT STATEMENT
+<A NAME="4712"></A> INLIST ITERATOR
+<A NAME="4711"></A> PARTITION         ITERATOR                     KEY(INLIST)       KEY(INLIST)
+<A NAME="4710"></A> TABLE ACCESS      BY ROWID       EMP           KEY(INLIST)       KEY(INLIST)
+<A NAME="4709"></A> INDEX             RANGE SCAN     EMP_EMPNO     KEY(INLIST)       KEY(INLIST)
+</PRE>    
+<A NAME="3756"></A>
+<!--TOC=h3-"3756"-->
+<H4 CLASS="H3"><FONT FACE="Arial, Helvetica, sans-serif" COLOR="#330099"> Partition Column</FONT></H4>
+<!--/TOC=h3-->
+
+<A NAME="3854"></A>
+<P CLASS="BP">
+If EMPNO is a partition column and there are no indexes, then no INLIST ITERATOR operation is allocated:
+</P>
+    
+<PRE CLASS="CE">
+<A NAME="3799"></A> OPERATION         OPTIONS        OBJECT_NAME   PARTITION_START   PARTITION_STOP
+<A NAME="4707"></A> ----------------  ------------   -----------   ---------------   --------------
+<A NAME="4706"></A> SELECT STATEMENT
+<A NAME="4705"></A> PARTITION                                      KEY(INLIST)       KEY(INLIST)
+<A NAME="4704"></A> TABLE ACCESS      BY ROWID       EMP           KEY(INLIST)       KEY(INLIST)
+<A NAME="4703"></A> INDEX             RANGE SCAN     EMP_EMPNO     KEY(INLIST)       KEY(INLIST)
+<A NAME="4702"></A>
+</PRE>    
+<A NAME="4699"></A>
+<P CLASS="BP">
+If EMP_EMPNO is a bitmap index, then the plan is as follows:
+</P>
+    
+<PRE CLASS="CE">
+<A NAME="3803"></A> OPERATION          OPTIONS           OBJECT_NAME
+<A NAME="4698"></A> ----------------   ---------------   -------------- 
+<A NAME="4697"></A> SELECT STATEMENT
+<A NAME="4696"></A> INLIST ITERATOR
+<A NAME="4695"></A> TABLE ACCESS       BY INDEX ROWID    EMP
+<A NAME="4694"></A> BITMAP CONVERSION  TO ROWIDS
+<A NAME="4693"></A> BITMAP INDEX       SINGLE VALUE      EMP_EMPNO
+</PRE>    
+<A NAME="5393"></A>
+<!--TOC=h2-"5393"-->
+<H3 CLASS="H2"><FONT FACE="Arial, Helvetica, sans-serif" COLOR="#330099"> DOMAIN INDEX and EXPLAIN PLAN</FONT></H3>
+<!--/TOC=h2-->
+
+<A NAME="5442"></A>
+<P CLASS="BP">
+You can also use EXPLAIN PLAN to derive user-defined CPU and I/O costs for domain indexes. EXPLAIN PLAN displays these statistics in the "OTHER" column of PLAN_TABLE. 
+</P>
+
+<A NAME="5472"></A>
+<P CLASS="BP">
+For example, assume table EMP has user-defined operator CONTAINS with a domain index EMP_RESUME on the RESUME column and the index type of EMP_RESUME supports the operator CONTAINS. Then the query:
+</P>
+    
+<PRE CLASS="CE">
+<A NAME="5443"></A> SELECT * from EMP where Contains(resume, 'Oracle') = 1 
+<A NAME="5445"></A>
+</PRE>    
+<A NAME="5444"></A>
+<P CLASS="BP">
+might display the following plan:
+</P>
+    
+<PRE CLASS="CE">
+<A NAME="5454"></A>     OPERATION            OPTIONS      OBJECT_NAME     OTHER 
+<A NAME="5455"></A> -----------------    -----------  ------------    ----------------
+<A NAME="5459"></A> SELECT STATEMENT 
+<A NAME="5464"></A> TABLE ACCESS         BY ROWID     EMP
+<A NAME="5467"></A> DOMAIN INDEX                      EMP_RESUME      CPU: 300, I/O: 4
+</PRE>    
+<A NAME="1060"></A>
+<!--TOC=h1-"1060"-->
+<H2 CLASS="H1"><FONT FACE="Arial, Helvetica, sans-serif" COLOR="#330099"> Formatting EXPLAIN PLAN Output</FONT></H2>
+<!--/TOC=h1-->
+
+<A NAME="1062"></A>
+<P CLASS="BP">
+This section shows options for formatting EXPLAIN PLAN output
+</P>
+
+<UL CLASS="LB1">
+
+<LI CLASS="LB1" TYPE="DISC"><A NAME="1064"></A><a href="ch13_exp.htm#9340">Using the EXPLAIN PLAN Statement</A>
+<P>
+
+<LI CLASS="LB1" TYPE="DISC"><A NAME="1066"></A><a href="ch13_exp.htm#1088">Selecting PLAN_TABLE Output in Table Format</A>
+<P>
+
+<LI CLASS="LB1" TYPE="DISC"><A NAME="1068"></A><a href="ch13_exp.htm#1110">Selecting PLAN_TABLE Output in Nested Format</A>
+<P>
+  
+<A NAME="9339"><STRONG CLASS="Bold">
+<DIV ALIGN="CENTER">
+<P>
+<TABLE CLASS="Note" BORDER="0" WIDTH="80%" CELLPADDING="0" CELLSPACING="0">
+<TR CLASS="Note"><TD CLASS="Note">
+<HR>
+<A NAME="9337"></A><FONT FACE="Arial, Helvetica, sans-serif"><STRONG CLASS="NH"><STRONG CLASS="Bold">Note</STRONG>:</STRONG></FONT>
+
+<A NAME="9338"></A>
+<P CLASS="NB">
+The output of the EXPLAIN PLAN statement reflects the behavior of the Oracle optimizer. As the optimizer evolves between releases of the Oracle server, output from the EXPLAIN PLAN statement is also likely to evolve. &nbsp;
+<HR>
+</TD>
+</TR>
+
+</TABLE>
+
+<TABLE CLASS="TableNote" CELLPADDING="3" >
+<TR CLASS="TableNote" ALIGN=LEFT VALIGN=TOP><TD CLASS="TableNote">
+
+</TD></TR>
+</TABLE>
+</DIV>
+</STRONG></A>
+  </UL>
+
+<A NAME="9340"></A>
+<!--TOC=h2-"9340"-->
+<H3 CLASS="H2"><FONT FACE="Arial, Helvetica, sans-serif" COLOR="#330099"> Using the EXPLAIN PLAN Statement</FONT></H3>
+<!--/TOC=h2-->
+
+<A NAME="9343"></A>
+<P CLASS="BP">
+The following example shows a SQL statement and its corresponding execution plan generated by EXPLAIN PLAN. The sample query retrieves names and related information for employees whose salary is not within any range of the SALGRADE table:
+</P>
+    
+<PRE CLASS="CE">
+<A NAME="1082"></A> SELECT ename, job, sal, dname
+<A NAME="4746"></A>   FROM emp, dept
+<A NAME="4745"></A>   WHERE emp.deptno = dept.deptno
+<A NAME="4744"></A>      AND NOT EXISTS
+<A NAME="4743"></A>         (SELECT *
+<A NAME="4742"></A>            FROM salgrade
+<A NAME="4741"></A>            WHERE emp.sal BETWEEN losal AND hisal);
+<A NAME="6627"></A>
+</PRE>    
+<A NAME="14124"></A>
+<P CLASS="BP">
+This EXPLAIN PLAN statement generates an execution plan and places the output in PLAN_TABLE:
+</P>
+    
+<PRE CLASS="CE">
+<A NAME="14125"></A> EXPLAIN PLAN
+<A NAME="14126"></A>   SET STATEMENT_ID = 'Emp_Sal'
+<A NAME="4739"></A>   FOR SELECT ename, job, sal, dname
+<A NAME="4738"></A>      FROM emp, dept
+<A NAME="4737"></A>      WHERE emp.deptno = dept.deptno
+<A NAME="4736"></A>         AND NOT EXISTS
+<A NAME="4735"></A>            (SELECT *
+<A NAME="4734"></A>               FROM salgrade
+<A NAME="4733"></A>               WHERE emp.sal BETWEEN losal AND hisal);
+</PRE>    
+<A NAME="1088"></A>
+<!--TOC=h2-"1088"-->
+<H3 CLASS="H2"><FONT FACE="Arial, Helvetica, sans-serif" COLOR="#330099"> Selecting PLAN_TABLE Output in Table Format</FONT></H3>
+<!--/TOC=h2-->
+
+<A NAME="1090"></A>
+<P CLASS="BP">
+This SELECT statement: 
+</P>
+    
+<PRE CLASS="CEW">
+<A NAME="1092"></A><CODE>            SELECT operation, options, object_name, id, parent_id, position, cost, cardinality,
+</CODE><A NAME="14132"></A>            other_tag, optimizer 
+<A NAME="4768"></A><CODE>               FROM plan_table
+</CODE><A NAME="4767"></A><CODE>               WHERE statement_id = 'Emp_Sal'
+</CODE><A NAME="14424"></A><CODE>               ORDER BY id;
+</CODE></PRE>    
+<A NAME="14425"></A>
+<P CLASS="BP">
+Generates this output:
+</P>
+    
+<PRE CLASS="CEW">
+<A NAME="14426"></A><CODE>  OPERATION  OPTIONS OBJECT_NAME ID PARENT_ID POSITION COST CARDINALITY BYTES OTHER_TAG 
+OPTIMIZER
+</CODE><A NAME="14129"></A><CODE>  
+-----------------------------------------------------------------------------------------------
+</CODE><A NAME="4861"></A><CODE>  SELECT STATEMENT                    0                    2    2            1    62       
+CHOOSE
+</CODE><A NAME="4857"></A><CODE>  FILTER                              1          0         1
+</CODE><A NAME="4854"></A><CODE>  NESTED LOOPS                        2          1         1    2            1    62
+</CODE><A NAME="4851"></A><CODE>  TABLE ACCESS FULL    EMP            3          2         1    1            1    40     
+ANALYZED
+</CODE><A NAME="4847"></A><CODE>  TABLE ACCESS FULL    DEPT           4          2         2                 4    88     
+ANALYZED
+</CODE><A NAME="4843"></A><CODE>  TABLE ACCESS FULL    SALGRADE       5          1         2    1            1    13     
+ANALYZED
+</CODE><A NAME="4839"></A>
+</PRE>    
+<A NAME="1104"></A>
+<P CLASS="BP">
+The ORDER BY clause returns the steps of the execution plan sequentially by ID value. However, Oracle does not perform the steps in this order. PARENT_ID receives information from ID, yet more than one ID step fed into PARENT_ID. 
+</P>
+
+<A NAME="4053"></A>
+<P CLASS="BP">
+For example, step 2, a merge join, and step 6, a table access, both fed into step 1. A nested, visual representation of the processing sequence is shown in the next section. 
+</P>
+
+<A NAME="1106"></A>
+<P CLASS="BP">
+The value of the POSITION column for the first row of output indicates the optimizer's estimated cost of executing the statement with this plan to be 5. For the other rows, it indicates the position relative to the other children of the same parent.
+</P>
+   
+<A NAME="4061"><STRONG CLASS="Bold">
+<DIV ALIGN="CENTER">
+<P>
+<TABLE CLASS="Note" BORDER="0" WIDTH="80%" CELLPADDING="0" CELLSPACING="0">
+<TR CLASS="Note"><TD CLASS="Note">
+<HR>
+<A NAME="8778"></A><FONT FACE="Arial, Helvetica, sans-serif"><STRONG CLASS="NH"><STRONG CLASS="Bold">Note</STRONG>:</STRONG></FONT>
+
+<A NAME="8961"></A>
+<P CLASS="NB">
+A CONNECT BY does not preserve ordering. To have rows come out in the correct order in this example, you must either truncate the table first, or else create a view and select from the view. For example: &nbsp;
+<HR>
+</TD>
+</TR>
+
+</TABLE>
+
+<TABLE CLASS="TableNote" CELLPADDING="3" >
+<TR CLASS="TableNote" ALIGN=LEFT VALIGN=TOP><TD CLASS="TableNote">
+
+</TD></TR>
+</TABLE>
+</DIV>
+</STRONG></A>
+    
+<PRE CLASS="CE">
+<A NAME="3862"></A>CREATE VIEW test AS
+<A NAME="4782"></A>SELECT id, parent_id,
+<A NAME="4781"></A>lpad(' ', 2*(level-1))||operation||' '||options||' '||object_name||' '||
+<A NAME="4780"></A>       decode(id, 0, 'Cost = '||position) "Query Plan"
+<A NAME="4779"></A>FROM plan_table
+<A NAME="4778"></A>START WITH id = 0 and statement_id = 'TST'
+<A NAME="4777"></A>CONNECT BY prior id = parent_id and statement_id = 'TST';
+<A NAME="4776"></A>SELECT * FROM foo ORDER BY id, parent_id;
+<A NAME="4775"></A>
+</PRE>       
+<A NAME="3874"></A>
+<P CLASS="BP">
+This yields results as follows:
+</P>
+    
+<PRE CLASS="CE">
+<A NAME="4062"></A> ID  PAR Query Plan
+<A NAME="4794"></A> --- --- --------------------------------------------------
+<A NAME="4793"></A>  0     Select Statement   Cost = 69602
+<A NAME="4792"></A>  1   0   Nested Loops
+<A NAME="4791"></A>  2   1     Nested Loops
+<A NAME="4790"></A>  3   2       Merge Join
+<A NAME="4789"></A>  4   3         Sort Join
+<A NAME="4788"></A>  5   4           Table Access Full T3
+<A NAME="4787"></A>  6   3         Sort Join
+<A NAME="4786"></A>  7   6           Table Access Full T4
+<A NAME="4785"></A>  8   2       Index Unique Scan T2
+<A NAME="4784"></A>  9   1     Table Access Full T1
+<A NAME="4783"></A>10 rows selected.
+</PRE>    
+<A NAME="1110"></A>
+<!--TOC=h2-"1110"-->
+<H3 CLASS="H2"><FONT FACE="Arial, Helvetica, sans-serif" COLOR="#330099"> Selecting PLAN_TABLE Output in Nested Format</FONT></H3>
+<!--/TOC=h2-->
+
+<A NAME="1112"></A>
+<P CLASS="BP">
+This type of SELECT statement generates a nested representation of the output that more closely depicts the processing order used for the SQL statement. 
+</P>
+    
+<PRE CLASS="CE">
+<A NAME="1114"></A> SELECT LPAD(' ',2*(LEVEL-1))||operation||' '||options
+<A NAME="4809"></A>   ||' '||object_name
+<A NAME="4808"></A>   ||' '||DECODE(id, 0, 'Cost = '||position) "Query Plan"
+<A NAME="4807"></A>   FROM plan_table
+<A NAME="4806"></A>   START WITH id = 0 AND statement_id = 'Emp_Sal'
+<A NAME="4805"></A>   CONNECT BY PRIOR id = parent_id AND statement_id ='Emp_Sal';
+<A NAME="4804"></A> 
+<A NAME="4803"></A> Query Plan
+<A NAME="4802"></A> ------------------------------
+<A NAME="4801"></A> SELECT STATEMENT   Cost = 5
+<A NAME="4800"></A>   FILTER
+<A NAME="4799"></A>      NESTED LOOPS
+<A NAME="4798"></A>         TABLE ACCESS FULL EMP
+<A NAME="4797"></A>         TABLE ACCESS FULL DEPT
+<A NAME="4796"></A>      TABLE ACCESS FULL SALGRADE  
+<A NAME="14352"></A>
+</PRE>    
+<A NAME="3234"></A>
+<P CLASS="BP">
+The order resembles a tree structure, as illustrated in <a href="ch13_exp.htm#3524">Figure &#32;13-1</A>.
+</P>
+
+<A NAME="3524"></A>
+<H4 CLASS="FT"><FONT FACE="Arial, Helvetica, sans-serif"><EM>Figure 13-1 &#32; Tree Structure of an Execution Plan</EM></FONT></H4>
+   
+<BR><A NAME="3081"><IMG SRC="ch13_exa.gif">
+</A>
+   
+<A NAME="1123"></A>
+<P CLASS="BP">
+Tree structures illustrate how SQL statement execution operations feed one another. Oracle assigns each step in the execution plan a number representing the ID column of the PLAN_TABLE. Each step is depicted by a "node". The result of each node's operation passes to its parent node, which uses it as input.
+</P>
+
+<A NAME="3604"></A>
+<!--TOC=h2-"3604"-->
+<H3 CLASS="H2"><FONT FACE="Arial, Helvetica, sans-serif" COLOR="#330099"> EXPLAIN PLAN Restrictions</FONT></H3>
+<!--/TOC=h2-->
+
+<A NAME="3609"></A>
+<P CLASS="BP">
+Oracle does not support EXPLAIN PLAN for statements performing implicit type conversion of date bind variables. With bind variables in general, the EXPLAIN PLAN output may not represent the real execution plan. 
+</P>
+
+<A NAME="14470"></A>
+<P CLASS="BP">
+From the text of a SQL statement, TKPROF cannot determine the types of the bind variables. It assumes that the type is CHARACTER, and gives an error message if this is not the case. You can avoid this limitation by putting appropriate type conversions in the SQL statement.
+</P>
+   
+<A NAME="6411"><STRONG CLASS="Bold">
+<DIV ALIGN="CENTER">
+<P>
+<TABLE CLASS="NoteAlso" BORDER="0" WIDTH="80%" CELLPADDING="0" CELLSPACING="0">
+<TR CLASS="NoteAlso"><TD CLASS="NoteAlso">
+<A NAME="8855"></A><FONT FACE="Arial, Helvetica, sans-serif"><STRONG CLASS="NH"><STRONG CLASS="Bold">See Also</STRONG>:</STRONG></FONT>
+
+<A NAME="8935"></A>
+<P CLASS="NB">
+<a href="ch14_str.htm#1018">Chapter &#32;14, "The SQL Trace Facility and TKPROF"</A>.  &nbsp;
+</TD>
+</TR>
+
+</TABLE>
+
+<TABLE CLASS="TableNote" CELLPADDING="3">
+<TR CLASS="TableNote" ALIGN=LEFT VALIGN=TOP><TD CLASS="TableNote">
+
+</TD></TR>
+</TABLE>
+</DIV>
+
+</STRONG></A>
+   
+
+
+<HR NOSHADE SIZE="1">
+<P CLASS="BP">
+
+
+
+<!-- Start Footer -->
+
+</DIV>
+
+<DIV CLASS="OUTD">
+
+<HR>
+
+<TABLE CELLSPACING="0" CELLPADDING="0" WIDTH="100%">
+<TR>
+
+<TD VALIGN="BOTTOM" WIDTH="33%">
+
+<TABLE CELLSPACING="0" CELLPADDING="0">
+<TR>
+<TD ALIGN="CENTER"><A HREF="ch12_too.htm"><IMG SRC="../../dcommon/gifs/larrow.gif" ALT="" BORDER="0" HEIGHT="30" WIDTH="30"><BR><FONT SIZE="-2">Prev</FONT></A></TD>
+<TD ALIGN="CENTER"><A HREF="ch14_str.htm"><IMG SRC="../../dcommon/gifs/rarrow.gif" ALT="" BORDER="0" HEIGHT="30" WIDTH="30"><BR><FONT SIZE="-2">Next</FONT></A></TD>
+</TR>
+</TABLE>
+
+</TD>
+
+
+<TD ALIGN="CENTER" WIDTH="34%">
+<IMG SRC="../../dcommon/gifs/oracle.gif" ALT="Oracle" BORDER="0" HEIGHT="15" WIDTH="75"><BR>
+<FONT SIZE="-2">Copyright &copy; 1999 Oracle Corporation.</FONT>
+<BR>
+<FONT SIZE="-2">All Rights Reserved.</FONT>
+</TD>
+
+<TD VALIGN="BOTTOM" ALIGN="RIGHT" WIDTH="33%"> 
+
+<TABLE CELLSPACING="0" CELLPADDING="0">
+<TR>
+<TD ALIGN="CENTER" VALIGN="TOP" WIDTH="25%"><A HREF="../../products.htm"><IMG SRC="../../dcommon/gifs/prodicon.gif" ALT="" BORDER="0" HEIGHT="30" WIDTH="30"><BR>
+<FONT SIZE="-2">Library</FONT></A></TD>
+
+<TD ALIGN="CENTER" VALIGN="TOP" WIDTH="25%"><A HREF="../../server815.htm"><IMG SRC="../../dcommon/gifs/bookicon.gif" ALT="" BORDER="0" HEIGHT="30" WIDTH="30"><BR>
+<FONT SIZE=-2>Product</FONT></A></TD>
+
+<TD ALIGN="CENTER" VALIGN="TOP" WIDTH="25%"><A HREF="toc.htm"><IMG SRC="../../dcommon/gifs/conticon.gif" ALT="" BORDER="0" HEIGHT="30"
+WIDTH="30"><BR>
+<FONT SIZE="-2">Contents</FONT></A></TD>
+
+<TD ALIGN="CENTER" VALIGN="TOP" WIDTH="25%"><A HREF="index.htm"><IMG SRC="../../dcommon/gifs/indxicon.gif" ALT="" BORDER="0" HEIGHT="30"
+WIDTH="30"><BR>
+<FONT SIZE="-2">Index</FONT></A></TD>
+</TR>
+</TABLE>
+
+</TD>
+
+</TR>
+</TABLE>
+
+</DIV>
+</BODY>

@@ -1,0 +1,84 @@
+Solving Waits on “enq: TM – contention”
+ Jul 14, 2008  Dean in Oracle, Response Time Analysis  Tweet This  No Comments Recently, I was assisting one of our customers of Ignite for Oracle trying to diagnose sessions waiting on the “enq: TM – contention” event.  The blocked sessions were executing simple INSERT statements similar to:
+
+INSERT INTO supplier VALUES (:1, :2, :3);
+
+Waits on “enq: TM – contention” indicate there are unindexed foreign key constraints.  Reviewing the SUPPLIER table, we found a foreign key constraint referencing the PRODUCT table that did not have an associated index.  This was also confirmed by the Top Objects feature of Ignite for Oracle because all the time was associated with the PRODUCT table.  We added the index on the column referencing the PRODUCT table and the problem was solved.
+
+Cause
+After using Ignite for Oracle’s locking feature to find the blocking sessions, we found the real culprit.  Periodically, as the company reviewed its vendor list, they “cleaned up” the SUPPLIER table several times a week.  As a result, rows from the SUPPLIER table were deleted.  Those delete statements were then cascading to the PRODUCT table and taking out TM locks on it.
+
+Reproducing the Problem
+This problem has a simple fix, but I wanted to understand more about why this happens.  So I reproduced the issue to see what happens under the covers. I first created a subset of the tables from this customer and loaded them with sample data.
+
+CREATE TABLE supplier
+(     supplier_id     number(10)     not null,
+supplier_name     varchar2(50)     not null,
+contact_name     varchar2(50),
+CONSTRAINT supplier_pk PRIMARY KEY (supplier_id)
+);
+
+INSERT INTO supplier VALUES (1, ‘Supplier 1', ‘Contact 1');
+INSERT INTO supplier VALUES (2, ‘Supplier 2', ‘Contact 2');
+COMMIT;
+
+CREATE TABLE product
+(     product_id     number(10)     not null,
+product_name    varchar2(50)    not null,
+supplier_id     number(10)     not null,
+CONSTRAINT fk_supplier
+FOREIGN KEY (supplier_id)
+REFERENCES supplier(supplier_id)
+ON DELETE CASCADE
+);
+
+INSERT INTO product VALUES (1, ‘Product 1', 1);
+INSERT INTO product VALUES (2, ‘Product 2', 1);
+INSERT INTO product VALUES (3, ‘Product 3', 2);
+COMMIT;
+
+I then executed statements similar to what we found at this customer:
+
+User 1: DELETE supplier WHERE supplier_id = 1;
+User 2: DELETE supplier WHERE supplier_id = 2;
+User 3: INSERT INTO supplier VALUES (5, ‘Supplier 5', ‘Contact 5');
+
+Similar to the customer’s experience, User 1 and User 2 hung waiting on “enq: TM – contention”.  Reviewing information from V$SESSION I found the following:
+
+SELECT l.sid, s.blocking_session blocker, s.event, l.type, l.lmode, l.request, o.object_name, o.object_type
+FROM v$lock l, dba_objects o, v$session s
+WHERE UPPER(s.username) = UPPER(‘&User’)
+AND   l.id1        = o.object_id (+)
+AND   l.sid        = s.sid
+ORDER BY sid, type;
+
+SID BLOCK EVENT TYPE MODE REQ OBJECT OBJECT_TYPE 
+42  SQL*Net message from client TM 3 0 PRODUCT TABLE 
+42  SQL*Net message from client TM 3 0 SUPPLIER TABLE 
+42  SQL*Net message from client TX 6 0  TABLE 
+54 42 enq: TM – contention TM 3 0 SUPPLIER TABLE 
+54 42 enq: TM – contention TM 0 5 PRODUCT TABLE 
+83 54 enq: TM – contention TM 3 0 SUPPLIER TABLE 
+83 54 enq: TM – contention TM 0 2 PRODUCT TABLE 
+
+Following along with the solution we used for our customer, we added an index for the foreign key constraint on the SUPPLIER table back to the PRODUCT table:
+
+CREATE INDEX fk_supplier ON product (supplier_id);
+
+When we ran the test case again everything worked fine.  There were no exclusive locks acquired and hence no hanging.  Oracle takes out exclusive locks on the child table, the PRODUCT table in our example, when a foreign key constraint is not indexed.
+
+Query to Find Unindexed Foreign Key Constraints
+Now that we know unindexed foreign key constraints can cause severe problems, here is a script that I use to find them for a specific user (this can easily be tailored to search all schemas):
+
+SELECT * FROM (
+SELECT c.table_name, cc.column_name, cc.position column_position
+FROM   user_constraints c, user_cons_columns cc
+WHERE  c.constraint_name = cc.constraint_name
+AND    c.constraint_type = ‘R’
+MINUS
+SELECT i.table_name, ic.column_name, ic.column_position
+FROM   user_indexes i, user_ind_columns ic
+WHERE  i.index_name = ic.index_name
+)
+ORDER BY table_name, column_position;
+

@@ -1,0 +1,384 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!-- saved from url=(0036)http://www.dbacomp.com.br/blog/?p=39 -->
+<html xmlns="http://www.w3.org/1999/xhtml" dir="ltr" lang="pt-BR"><head profile="http://gmpg.org/xfn/11"><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+
+<title>Waiting for “read by other session”? (English) «  DBACOMP SOLUTIONS – Excelência em Banco de Dados</title>
+
+<link rel="stylesheet" href="./Waiting for “read by other session”_files/style.css" type="text/css" media="screen">
+<link rel="pingback" href="http://www.dbacomp.com.br/blog/xmlrpc.php">
+
+<style type="text/css" media="screen">
+
+	#page { background: url("http://www.dbacomp.com.br/blog/wp-content/themes/default/images/kubrickbgwide.jpg") repeat-y top; border: none; }
+
+</style>
+
+ 
+
+<link rel="alternate" type="application/rss+xml" title="Feed de DBACOMP SOLUTIONS - Excelência em Banco de Dados »" href="http://www.dbacomp.com.br/blog/?feed=rss2">
+<link rel="alternate" type="application/rss+xml" title="DBACOMP SOLUTIONS - Excelência em Banco de Dados »  Feed de comentários" href="http://www.dbacomp.com.br/blog/?feed=comments-rss2">
+<link rel="alternate" type="application/rss+xml" title="DBACOMP SOLUTIONS - Excelência em Banco de Dados » Waiting for “read by other session”? (English)  Feed de comentários" href="http://www.dbacomp.com.br/blog/?feed=rss2&p=39">
+<script type="text/javascript" src="./Waiting for “read by other session”_files/comment-reply.js"></script>
+<link rel="EditURI" type="application/rsd+xml" title="RSD" href="http://www.dbacomp.com.br/blog/xmlrpc.php?rsd">
+<link rel="wlwmanifest" type="application/wlwmanifest+xml" href="http://www.dbacomp.com.br/blog/wp-includes/wlwmanifest.xml"> 
+<link rel="index" title="DBACOMP SOLUTIONS – Excelência em Banco de Dados" href="http://www.dbacomp.com.br/blog">
+<link rel="start" title="Waiting for “PX Deq Credit: send blkd”? (English)" href="http://www.dbacomp.com.br/blog/?p=34">
+<link rel="prev" title="Waiting for “PX Deq Credit: send blkd”? (English)" href="http://www.dbacomp.com.br/blog/?p=34">
+<link rel="next" title="Troubleshooting Methodology – 1. Picking a Peak!" href="http://www.dbacomp.com.br/blog/?p=57">
+<meta name="generator" content="WordPress 3.1-alpha">
+<link rel="canonical" href="./Waiting for “read by other session”_files/Waiting for “read by other session”.html">
+</head>
+<body class="single single-post postid-39">
+<div id="page">
+
+
+<style type="text/css">
+
+	#div1 {background-color:#000; height:0px; position:relative; width:0px}
+
+	#div2 {position:absolute; left:5px; top: 104px; width: 1100px; height: 70px;}
+
+	#div3 {position:absolute; left:14px; top: 9px; width: 100px; height: 60px; }
+
+	#div4 {position:absolute; left:811px; top: 65px; width: 100px; height: 60px; }
+
+	#div5 {position:absolute; left:405px; top: 39px; width: 100px; height: 60px; }
+
+</style>
+
+
+<script type="text/javascript"> 
+
+$(document).ready(function(){
+
+ 
+
+	$(".btn-slide").click(function(){
+
+		$("#panel").slideToggle("slow");
+
+		$(this).toggleClass("active"); return false;
+
+	});
+
+	
+
+	 
+
+});
+
+</script> 
+
+
+<div id="header" role="banner">
+
+	<!-- The tab on top -->	
+
+	<div class="tab"> 
+
+		<ul class="login"> 
+
+			<!--Button For Login Panel--> 
+
+			<li id="toggle"> 
+
+				<a id="open" class="open" href="http://www.dbacomp.com.br/help_login.php">LogIn Helpdesk &nbsp;</a> 
+
+				<a id="close" style="display: none;" class="close" href="http://www.dbacomp.com.br/help_login.php">Fechar</a>			
+
+			</li> 
+
+		</ul> 
+
+        
+
+        
+
+	</div> 
+
+    <!-- close tab --> 
+
+
+		<div id="div1"> 
+
+
+
+			<div id="div2">
+
+
+
+
+        <!--Begin Navigation-->    
+
+        <ul id="navigation"> 
+
+  			<li><a href="http://www.dbacomp.com.br/empresa.php" id="home" title="home"><span>home</span></a></li> 
+
+			<li><a href="http://www.dbacomp.com.br/solucoes.php" id="services" title="solu��es"><span>our services</span></a></li> 
+
+			<li><a href="http://www.dbacomp.com.br/blog" id="blog" title="blog"><span>the bloggery</span></a></li> 
+
+  			<li><a href="http://www.dbacomp.com.br/parceiros.php" id="port" title="parceiros"><span>work portfolio</span></a></li> 
+
+  			<li><a href="http://www.dbacomp.com.br/contato.php" id="contact" title="contato"><span>contact us</span></a></li> 
+
+		</ul><!--Navigation close--> 
+
+
+			</div> 
+
+			<div id="div3">
+
+				<a href="http://www.dbacomp.com.br/"><img src="./Waiting for “read by other session”_files/logo.gif"></a>
+
+			</div>
+
+			<div id="div4">
+
+				<a href="http://www.dbacomp.com.br/easymon"><img src="./Waiting for “read by other session”_files/login_easymon.jpg" alt=""></a>
+
+			</div>
+
+
+			<div id="div5">
+
+				<img src="./Waiting for “read by other session”_files/exc.jpg">
+
+			</div>
+
+
+		</div>
+
+
+	<div id="headerimg">
+	
+	<a href="http://www.dbacomp.com.br/blog/"><img src="./Waiting for “read by other session”_files/logo.gif" width="0"></a>
+
+
+	</div>
+
+
+</div>
+
+
+	<div id="content" class="widecolumn" role="main">
+
+	
+		<div class="navigation">
+			<div class="alignleft">« <a href="http://www.dbacomp.com.br/blog/?p=34" rel="prev">Waiting for “PX Deq Credit: send blkd”? (English)</a></div>
+			<div class="alignright"><a href="http://www.dbacomp.com.br/blog/?p=57" rel="next">Troubleshooting Methodology – 1. Picking a Peak!</a> »</div>
+		</div>
+
+		<div class="post-39 post type-post hentry category-bandodedados" id="post-39">
+			<h2>Waiting for “read by other session”? (English)</h2>
+
+			<div class="entry">
+				<p>por <a title="Rafael Trevisan is online now" href="http://www.mandela.org/pt/members/rafael-trevisan/"><strong>Rafael Trevisan</strong></a></p>
+<p>Some days ago I sat down to chat with a friend while he analyzed the  problem of slowness in a batch process. The complaint came to him only  as: “The problem starts around 02:00 AM, then everything becomes very  slow”. Just when I arrived he had finished the plot the Wait Event Breakdown chart we can see below.</p>
+<p><span id="more-39"></span> <a id="attachment68" rel="Lightbox_0" href="http://www.mandela.org/attachments/vbcms-comments/68d1283981668-article-thanks-all-fish-readbyothersession-jpg"><img title="Wait Event Breakdown" src="./Waiting for “read by other session”_files/68d1283976278-article-thanks-all-fish-readbyothersession-jpg" border="0" alt="Wait Event Breakdown"></a><br>
+He had just put the mouse over the peak of the blue area and easily discover the reason for the slowness: <em>read by other session</em>, and with three clicks he got the SQL statement that was waiting for this wait event.</p>
+<p>The Oracle documentation says</p>
+<div>
+<div>
+<div>This event occurs when a session   requests a buffer that is  currently being read into the buffer cache  by  another session. Prior  to release 10.1, waits for this event were   grouped with   the other  reasons for waiting for buffers under the   ‘buffer busy wait’ event.</div>
+</div>
+</div>
+<p>That is, a new name for an old wait event, the famous <em>buffer busy wait</em>.<br>
+<a id="attachment69" rel="Lightbox_0" href="http://www.mandela.org/attachments/vbcms-comments/69d1283981691-article-thanks-all-fish-read_by_other_session-png"><img title="read by other session" src="./Waiting for “read by other session”_files/69d1283912352-article-thanks-all-fish-read_by_other_session-png" border="0" alt="read by other session"></a><br>
+When information is requested from the database, Oracle will first read the  data from disk into the database buffer cache. If two or more sessions  request the same information, the first session will read the data into  the buffer cache while other sessions wait. In previous versions, this  wait was classified under the <em>buffer busy waits</em> event. However, in  Oracle 10.1 and higher, this wait time is now broken out into the <em>read  by other session</em> wait event. The image on the right illustrates this scenario.</p>
+<p>Excessive waits for this event are  typically due to several processes  repeatedly reading the same blocks,  e.g. many sessions scanning the  same index or performing full table  scans on the same table. Tuning this issue is a matter of finding and  eliminating this contention.</p>
+<p>The class of block that the <em>read by other session</em> wait event is for and the segment that the buffer belongs to are  essential for diagnosing the problem. The table below shows the classes  of block read from the view <span style="font-family: Courier New;">v$waitstat</span>.</p>
+<div>
+<table width="500" align="center">
+<tbody>
+<tr valign="top">
+<td align="right">1</td>
+<td align="left">data block</td>
+<td align="right">7</td>
+<td>extent map</td>
+<td align="right">13</td>
+<td>file header block</td>
+</tr>
+<tr valign="top">
+<td align="right">2</td>
+<td align="left">sort block</td>
+<td align="right">8</td>
+<td>1st level bmb</td>
+<td align="right">14</td>
+<td>unused</td>
+</tr>
+<tr valign="top">
+<td align="right">3</td>
+<td align="left">save undo block</td>
+<td align="right">9</td>
+<td>2nd level bmb</td>
+<td align="right">15</td>
+<td>system undo header</td>
+</tr>
+<tr valign="top">
+<td align="right">4</td>
+<td align="left">segment header</td>
+<td align="right">10</td>
+<td>3rd level bmb</td>
+<td align="right">16</td>
+<td>system undo block</td>
+</tr>
+<tr valign="top">
+<td align="right">5</td>
+<td align="left">save undo header</td>
+<td align="right">11</td>
+<td>bitmap block</td>
+<td align="right">17</td>
+<td>undo header</td>
+</tr>
+<tr valign="top">
+<td align="right">6</td>
+<td align="left">free list</td>
+<td align="right">12</td>
+<td>bitmap index block</td>
+<td align="right">18</td>
+<td>undo block</td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>When a session is waiting on <em>read by other session</em>, an entry will be seen in the  v$session_wait system view giving more information on the blocks being   waited for:</p>
+<div>
+<div>Code:</div>
+<pre>SELECT p1 "file#", p2 "block#", p3 "class#"
+FROM v$session_wait
+WHERE event = 'read by other session';</pre>
+</div>
+<p>If information collected from the above query repeatedly shows  that the  same block (or range of blocks) is experiencing waits and the  class of the block is of type “data block” (which usually is), this indicates a  “hot” block or object.</p>
+<p>The following query will give the name and type of the object:</p>
+<div>
+<div>Code:</div>
+<pre>SELECT relative_fno, owner, segment_name, segment_type
+FROM dba_extents
+WHERE file_id = &amp;file
+AND &amp;block BETWEEN block_id AND block_id + blocks - 1</pre>
+</div>
+<p>The following hints may be useful for “data block” contention – these are things that MAY reduce this particular type of contention.</p>
+<p><strong>Tune inefficient queries</strong><br>
+Review the execution plan and make sure the plan chosen by Oracle is that read the fewest blocks possible. Optimize the SQL statement to reduce the number of physical and logical reads.</p>
+<p><strong>Redistribute data from the hot blocks</strong><br>
+Once identified the object with hot block, we can find the rows in the block, and try to redistribute them to other blocks.</p>
+<div>
+<div>Code:</div>
+<pre>SELECT data_object_id
+FROM dba_objects
+WHERE owner='&amp;owner' AND object_name='&amp;object';
+
+--rowid for the first row in the block
+SELECT dbms_rowid.rowid_create(1,&lt;data_object_id&gt;,&lt;relative_fno&gt;,&lt;block&gt;,0) start_rowid
+FROM dual;
+
+ --rowid for the 500th row in the block
+SELECT dbms_rowid.rowid_create(1,&lt;data_object_id&gt;,&lt;relative_fno&gt;,&lt;block&gt;,500) end_rowid
+FROM dual;  
+
+SELECT &lt;column_list&gt;
+FROM &lt;owner&gt;.&lt;segment_name&gt;
+WHERE rowid BETWEEN &lt;start_rowid&gt; AND &lt;end_rowid&gt;</pre>
+</div>
+<p><strong>Adjust <span style="font-family: Courier New;">PCTFREE </span>and <span style="font-family: Courier New;">PCTUSED</span></strong><br>
+Adjusting the <span style="font-family: Courier New;">PCTFREE </span>value downward for an object will reduce the  number of rows physically stored in a block. Adjusting the <span style="font-family: Courier New;">PCTUSED </span>value  for an object keeps that object from getting prematurely put back on  the freelist. Increase the number of <span style="font-family: Courier New;">FREELISTS </span>and <span style="font-family: Courier New;">FREELIST GROUPS</span>.  Depending on the type of contention, adjusting these values could help   distribute data among more blocks and reduce the hot block problem. Be   careful to optimize these parameters so blocks do move in and out of  the  freelist too frequently.</p>
+<p><strong>Reduce the Block Size</strong><br>
+This is very similar to adjusting the <span style="font-family: Courier New;">PCTFREE </span>and <span style="font-family: Courier New;">PCTUSED </span>parameters in that the goal is to reduce the amount of data stored within one block. In Oracle  9i and higher this can be achieved by storing the hot object in a  tablespace with a smaller block size. In databases prior to Oracle 9i the entire database must be rebuilt with a smaller block size.</p>
+<p><strong>Optimize indexes</strong><br>
+A low cardinality index has a relatively small number of unique values,  e.g. a column containing state data with only 50 values. Similar to  inefficient queries, the use of a low cardinality index could cause  excessive number of blocks to be read into the buffer cache and cause  premature aging out of “good” blocks.</p>
+<p><strong>Considerations</strong><br>
+Briefly, if the CLASS# is 1 (data block) and the SQL statement is a query, try:</p>
+<ul>
+<li>Reduce the level of concurrency or change the way the work is partitioned between the parallel threads.</li>
+<li>Optimize the SQL statement to reduce the number of physical and logical reads.</li>
+<li>Increase the number of FREELISTS and FREELIST GROUPS.</li>
+</ul>
+<p>However, if the CLASS# is 1 (data block) and the SQL statement is a DML, try:</p>
+<ul>
+<li>Reduce the level of concurrency or change the portioning method.</li>
+<li>Reduce the number of rows in the block.</li>
+<li>Rebuild the object in another tablespace with a smaller block size (Oracle9i Database and above).</li>
+</ul>
+<p><strong>Conclusion</strong><br>
+When a session waits on the <em>read by other session</em> event, it indicates a wait for another session to read the data from  disk into the Oracle buffer cache. If this happens too often the  performance of the query or the entire database can suffer. Typically  this is caused by contention for “hot” blocks or objects  so it is imperative to find out which data is being contended for. Once  that is known this article lists several alternative methods for  solving the issue.</p>
+<p>That’s it. I hope you enjoy and see you soon.</p>
+
+								
+				<p class="postmetadata alt">
+					<small>
+												Esse post foi publicado  de quarta-feira, 15 de setembro de 2010 às 17:34, e arquivado em <a href="http://www.dbacomp.com.br/blog/?cat=1" title="Ver todos os posts em Banco de Dados" rel="category">Banco de Dados</a>.						Você pode acompanhar os comentários desse post através do feed <a href="http://www.dbacomp.com.br/blog/?feed=rss2&p=39">RSS 2.0</a>. 
+
+													Você pode <a href="http://www.dbacomp.com.br/blog/?p=39#respond">comentar</a> ou mandar um <a href="http://www.dbacomp.com.br/blog/wp-trackback.php?p=39" rel="Trackback">trackback</a> do seu site pra cá.
+						
+					</small>
+				</p>
+
+			</div>
+		</div>
+
+	
+<!-- You can start editing here. -->
+
+
+			<!-- If comments are open, but there are no comments. -->
+
+	 
+
+
+<div id="respond">
+
+<h3>Deixe um comentário</h3>
+
+<div id="cancel-comment-reply"> 
+	<small><a rel="nofollow" id="cancel-comment-reply-link" href="http://www.dbacomp.com.br/blog/?p=39#respond" style="display:none;">Clique aqui para cancelar a resposta.</a></small>
+</div> 
+
+
+<form action="http://www.dbacomp.com.br/blog/wp-comments-post.php" method="post" id="commentform">
+
+
+<p><input type="text" name="author" id="author" value="" size="22" tabindex="1" aria-required="true">
+<label for="author"><small>Nome (obrigatório)</small></label></p>
+
+<p><input type="text" name="email" id="email" value="" size="22" tabindex="2" aria-required="true">
+<label for="email"><small>Email (não será publicado) (obrigatório)</small></label></p>
+
+<p><input type="text" name="url" id="url" value="" size="22" tabindex="3">
+<label for="url"><small>Site</small></label></p>
+
+
+<!--<p><small><strong>XHTML:</strong> Você pode usar estas tags: <code>&lt;a href=&quot;&quot; title=&quot;&quot;&gt; &lt;abbr title=&quot;&quot;&gt; &lt;acronym title=&quot;&quot;&gt; &lt;b&gt; &lt;blockquote cite=&quot;&quot;&gt; &lt;cite&gt; &lt;code&gt; &lt;del datetime=&quot;&quot;&gt; &lt;em&gt; &lt;i&gt; &lt;q cite=&quot;&quot;&gt; &lt;strike&gt; &lt;strong&gt; </code></small></p>-->
+
+<p><textarea name="comment" id="comment" cols="58" rows="10" tabindex="4"></textarea></p>
+
+<p><input name="submit" type="submit" id="submit" tabindex="5" value="Enviar Comentário">
+<input type="hidden" name="comment_post_ID" value="39" id="comment_post_ID">
+<input type="hidden" name="comment_parent" id="comment_parent" value="0">
+ 
+</p>
+
+</form>
+
+</div>
+
+
+	
+	</div>
+
+
+<hr>
+<div id="footer" role="contentinfo">
+<!-- If you'd like to support WordPress, having the "powered by" link somewhere on your blog is the best way; it's our only promotion or advertising. -->
+	<p>
+		DBACOMP SOLUTIONS - Excelência em Banco de Dados é orgulhosamente desenvolvido com <a href="http://wordpress.org/">WordPress</a>		<br><a href="http://www.dbacomp.com.br/blog/?feed=rss2">Posts (RSS)</a> e <a href="http://www.dbacomp.com.br/blog/?feed=comments-rss2">Comentários (RSS)</a>.		<!-- 18 solicitações. 0,113 segundos. -->
+	</p>
+</div>
+</div>
+
+<!-- Gorgeous design by Michael Heilemann - http://binarybonsai.com/kubrick/ -->
+
+		
+
+</body></html>

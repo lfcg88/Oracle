@@ -1,0 +1,63 @@
+  
+    
+Bookmark Fixed font  Go to End 
+
+Doc ID:  Note:68973.1 
+Subject:  RMAN - Legato Storage Manager Enabler and Authorization Codes 
+Type:  REFERENCE 
+Status:  PUBLISHED 
+ Content Type:  TEXT/PLAIN 
+Creation Date:  09-MAR-1999 
+Last Revision Date:  13-MAY-2002 
+ 
+
+Legato Storage Manager (LSM) Enabler and Authorization Codes
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+What is an LSM Enabler Code?
+
+  An LSM Enabler Code is a temporary code enabling Legato Networker evaluation.
+
+What is an LSM Authorization code?
+
+  An LSM Authorization Code is a permanent Enabler Code. It is installed over
+  the top of the base enabler code. 
+
+What is LSM installed with?
+
+  LSM is installed with the permanent authorization code (it never expires).
+
+How can I tell the Enabler Code that I have installed?
+
+  1. Use the nwadmin LSM GUI by pulling down the following menus:
+       Server->Registration
+
+  2. The displayed screen should show the following details:
+       Registration: Legato Storage Manager
+       Name: Legato Storage Manager
+       Enabler Code: fa577c-a16e3f-d26553
+       Host id: <some number>
+       Expiration date: Authorized - No expiration date
+
+When can these codes cause a problem?
+
+  They shouldn't! LSM, when installed from the Oracle distribution, should
+  come automatically configured with the correct Enabler Code and the nwadmin
+  GUI should show the information above.
+
+But what if they DO cause a problem?
+
+  It is possible that in certain circumstances (for example, after media loss 
+  and subsequent disaster recovery, or if you manually move your LSM 
+  installation) you may lose your permanent Enabler Code. In this case you may
+  see 'Legato Evaluation' (or something similar) in the Registration field. In
+  this case, perform the following steps to re-enter the permanent Enabler Code:
+
+  1. nwadmin->Server->Registration
+  2. Click 'create'
+  3. Enter the following in the Enabler code: field
+       fa577c-a16e3f-d26553
+  4. Click 'apply'
+  
+  The Legato Evaluation should now be replaced with the LSM registration.
+ 

@@ -1,0 +1,10 @@
+column segment_name format a35
+
+SELECT a.*,b.tablespace_name FROM 
+(	select owner ,segment_name ,count(*) "QuantExtent" ,sum(bytes)/1024 "TotalKb"
+	from dba_extents
+	where owner='ICDBOWN'
+	GROUP BY OWNER,SEGMENT_NAME ) a,
+      dba_segments b
+where a.owner=b.owner and a.segment_name=b.segment_name
+ORDER BY 3 DESC

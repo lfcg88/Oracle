@@ -1,0 +1,677 @@
+
+
+======================================
+primeiro
+======================================
+
+
+SQL> select owner,table_owner,table_name,index_name
+  2  from dba_indexes
+  3  where index_name like 'PK%' and UNIQUENESS = 'NONUNIQUE';
+
+OWNER                          TABLE_OWNER                    TABLE_NAME                     INDEX_NAME
+------------------------------ ------------------------------ ------------------------------ -------
+FCD                            FCD                            FCD                            PK_FCD
+
+
+PK_FCD não é unico 
+
+
+===================================
+primeiro
+====================================
+
+ EXPLAIN PLAN
+   SET statement_id = 'JM' FOR
+   DELETE FROM fcd.SERVICO_FCD 
+WHERE
+ NRO_FATURA = :b1
+
+
+
+
+Explained.
+
+ SELECT DECODE(id, 0,'', LPAD(' ',2*(level-1))||level||'.'||position)||' '
+           ||RTRIM(operation)||' '||RTRIM(options)||
+               DECODE(object_name,NULL,' ',' "'||RTRIM(object_name)||'" ')||
+           RTRIM(object_type)||' '||
+           DECODE(id,0,DECODE(position,NULL,NULL,'Cost = '||position))  query_plan
+      FROM plan_table
+      CONNECT BY PRIOR id = parent_id
+        AND statement_id = 'JM'
+      START WITH id = 0 
+       AND statement_id = 'JM';
+
+QUERY_PLAN
+----------------------------------------------------------------------------------------------------
+ DELETE STATEMENT   Cost = 15
+  2.1 DELETE  "SERVICO_FCD"
+    3.1 TABLE ACCESS FULL "SERVICO_FCD"
+
+3 rows selected.
+
+
+SQL> select count(*) from fcd.SERVICO_FCD;
+
+  COUNT(*)
+----------
+     14599
+
+
+
+Solução:
+
+SQL> create index fcd.idx_servico_fcd_01
+  2  on fcd.servico_fcd (nro_fatura)
+  3  tablespace fcd_index
+  4  storage
+  5  ( initial 50K
+  6    next 50K
+  7    pctincrease 0
+  8  )
+  9  /
+
+SQL> SELECT DECODE(id, 0,'', LPAD(' ',2*(level-1))||level||'.'||position)||' '
+  2             ||RTRIM(operation)||' '||RTRIM(options)||
+  3                 DECODE(object_name,NULL,' ',' "'||RTRIM(object_name)||'" ')||
+  4             RTRIM(object_type)||' '||
+  5             DECODE(id,0,DECODE(position,NULL,NULL,'Cost = '||position))  query_plan
+  6        FROM plan_table
+  7        CONNECT BY PRIOR id = parent_id
+  8          AND statement_id = 'JM'
+  9        START WITH id = 0 
+ 10         AND statement_id = 'JM';
+
+QUERY_PLAN
+--------------------------------------------------------------------------------------------------
+ DELETE STATEMENT   Cost = 1
+  2.1 DELETE  "SERVICO_FCD"
+    3.1 INDEX RANGE SCAN "IDX_SERVICO_FCD_01" NON-UNIQUE
+
+
+
+
+======================================
+segundo
+======================================
+
+
+
+
+
+
+delete from plan_table
+
+ EXPLAIN PLAN
+   SET statement_id = 'JM' FOR
+DELETE FROM fcd.HISTORICO_FCD 
+WHERE
+ NRO_FATURA = :b1
+
+
+SQL> SELECT DECODE(id, 0,'', LPAD(' ',2*(level-1))||level||'.'||position)||' '
+  2             ||RTRIM(operation)||' '||RTRIM(options)||
+  3                 DECODE(object_name,NULL,' ',' "'||RTRIM(object_name)||'" ')||
+  4             RTRIM(object_type)||' '||
+  5             DECODE(id,0,DECODE(position,NULL,NULL,'Cost = '||position))  query_plan
+  6        FROM plan_table
+  7        CONNECT BY PRIOR id = parent_id
+  8          AND statement_id = 'JM'
+  9        START WITH id = 0 
+ 10         AND statement_id = 'JM';
+
+QUERY_PLAN
+--------------------------------------------------------------------------------
+ DELETE STATEMENT   Cost = 1
+  2.1 DELETE  "HISTORICO_FCD"
+    3.1 TABLE ACCESS FULL "HISTORICO_FCD"
+
+
+
+
+SQL> select count(*) from fcd.HISTORICO_FCD;
+
+  COUNT(*)
+----------
+       504
+
+
+=========================
+terceiro
+=========================
+
+
+delete from plan_table
+
+ EXPLAIN PLAN
+   SET statement_id = 'JM' FOR
+UPDATE fcd.FCD SET TIPO_PRODUTO='SE' 
+WHERE
+ NRO_FATURA = :b1
+
+
+SQL>  EXPLAIN PLAN
+  2     SET statement_id = 'JM' FOR
+  3  UPDATE fcd.FCD SET TIPO_PRODUTO='SE' 
+  4  WHERE
+  5   NRO_FATURA = :b1;
+
+Explained.
+
+SQL> SELECT DECODE(id, 0,'', LPAD(' ',2*(level-1))||level||'.'||position)||' '
+  2             ||RTRIM(operation)||' '||RTRIM(options)||
+  3                 DECODE(object_name,NULL,' ',' "'||RTRIM(object_name)||'" ')||
+  4             RTRIM(object_type)||' '||
+  5             DECODE(id,0,DECODE(position,NULL,NULL,'Cost = '||position))  query_plan
+  6        FROM plan_table
+  7        CONNECT BY PRIOR id = parent_id
+  8          AND statement_id = 'JM'
+  9        START WITH id = 0 
+ 10         AND statement_id = 'JM';
+
+QUERY_PLAN
+--------------------------------------------------------------------------------
+ UPDATE STATEMENT   Cost = 2
+  2.1 UPDATE  "FCD"
+    3.1 INDEX RANGE SCAN "PK_FCD" NON-UNIQUE
+
+
+==========================================
+quarto
+==========================================
+
+
+delete from plan_table;
+
+EXPLAIN PLAN
+SET statement_id = 'JM' FOR
+UPDATE fcd.FCD SET TIPO_PRODUTO='SE' 
+WHERE
+ CONTA IN (SELECT CONTA   FROM fcd.CONTA_TIPO_PRODUTO  WHERE TIPO_PRODUTO = 'SE' );
+
+
+ SELECT DECODE(id, 0,'', LPAD(' ',2*(level-1))||level||'.'||position)||' '
+               ||RTRIM(operation)||' '||RTRIM(options)||
+                   DECODE(object_name,NULL,' ',' "'||RTRIM(object_name)||'" ')||
+               RTRIM(object_type)||' '||
+               DECODE(id,0,DECODE(position,NULL,NULL,'Cost = '||position))  query_plan
+         FROM plan_table
+          CONNECT BY PRIOR id = parent_id
+            AND statement_id = 'JM'
+        START WITH id = 0 
+        AND statement_id = 'JM';
+
+QUERY_PLAN
+--------------------------------------------------------------------------------
+ UPDATE STATEMENT   Cost = 59
+  2.1 UPDATE  "FCD"
+    3.1 HASH JOIN
+      4.1 VIEW  "VW_NSO_1"
+        5.1 SORT UNIQUE
+          6.1 INDEX FAST FULL SCAN "PK_CONTA_TIPO" UNIQUE
+      4.2 TABLE ACCESS FULL "FCD"
+
+
+
+ create index fcd.idx_FCD_01
+    on fcd.fcd (CONTA)
+    tablespace fcd_index
+    storage
+    ( initial 100K
+      next 100K
+      pctincrease 0
+    )
+    /
+
+
+QUERY_PLAN
+----------------------------------------------------------------------
+ UPDATE STATEMENT   Cost = 59
+  2.1 UPDATE  "FCD"
+    3.1 HASH JOIN
+      4.1 VIEW  "VW_NSO_1"
+        5.1 SORT UNIQUE
+          6.1 INDEX FAST FULL SCAN "PK_CONTA_TIPO" UNIQUE
+      4.2 TABLE ACCESS FULL "FCD"
+
+7 rows selected.
+
+( não funcionou )
+
+
+
+
+delete from plan_table;
+
+EXPLAIN PLAN
+SET statement_id = 'JM' FOR
+UPDATE /*+ rule */ fcd.FCD SET TIPO_PRODUTO='SE' 
+WHERE
+ CONTA IN (SELECT CONTA   FROM fcd.CONTA_TIPO_PRODUTO  WHERE TIPO_PRODUTO = 'SE' );
+
+
+=============================================
+
+===========================================
+
+
+SQL> select distinct owner,DEGREE
+  2  from dba_tables;
+
+OWNER                          DEGREE
+------------------------------ ----------
+ACESSO                                  1
+ADESAO                                  1
+APOIO                                   1
+AURORA$JIS$UTILITY$                     1
+BO                                      1
+BOETL                                   1
+CKMW                                    1
+CRM                                     1
+CRM                               DEFAULT
+CTXSYS                                  1
+EXTRANET                                1
+FATURAMENTO                             1
+FCD                                     1
+GSE                                     1
+MDSYS                                   1
+MIGRACAO                                1
+NAVITA                                  1
+OCASIONAL                               1
+OPS$ORACLE8                             1
+ORDSYS                                  1
+OSE$HTTP$ADMIN                          1
+OUTLN                                   1
+PERFSTAT                                1
+RAMOS                                   1
+SGE                                     1
+SGI                                     1
+SIC                                     1
+SISCOB                                  1
+SNG                                     1
+SYS                                     1
+SYSTEM                                  1
+USRTEMP                                 1
+VENDAS                                  1
+VOLTRAF                                 1
+WASADMIN                                1
+
+35 rows selected.
+
+SQL> select owner,table_name
+  2  from dba_tables
+  3  where degree='DEFAULT';
+
+no rows selected
+
+SQL> select owner,table_name
+  2  from dba_tables
+  3   where degree like '%DEFAULT%';
+
+OWNER                          TABLE_NAME
+------------------------------ ---------------------------
+CRM                            CAD_AVISO
+CRM                            CALL_TYPE
+CRM                            DEBUG
+CRM                            ESCALONAMENTO_GERADO
+
+
+===================================================
+
+
+=================================================
+
+
+
+==================
+Query modificada
+=================
+
+
+SELECT    v_tkt.codreclamacao,UPPER (v_tkt.descricaoocorrencia)|| ' '
+        || v_tkt.desc_tipo_evento,p.nome_cliente|| ' '|| p.endereco_inst_rua || ' '|| p.endereco_inst_bairro|| ' '
+         || p.endereco_inst_uf, TO_CHAR (v_tkt.dataatendimento, 'DD/MM/YYYY HH24:MI:SS'),
+         p.ident_vsat, 
+    crm.f_prod_proposta (p.id_proposta), 
+p.mod_plano_antena
+FROM crm.v_pontocliente p,crm. v_ticket_status v_tkt
+WHERE v_tkt.num_ponto = p.num_ponto(+)
+     AND v_tkt.statusocorrencia <> '3'
+     AND EXISTS ( SELECT 'a'
+                    FROM crm.v_acesso_usuario u
+                   WHERE user_id = 'alexbs'
+                     AND u.cod_destinatario = v_tkt.cod_destinatario)
+     AND EXISTS ( SELECT 'a'
+                    FROM crm.v_acesso_usuario u
+                   WHERE user_id = 'alexbs'
+                     AND (   u.desc_grupo_usuario = 'ACESSA TODOS OS PONTOS'
+                          OR u.num_cliente = v_tkt.num_cliente
+                          OR u.num_empresa = p.emp_instaladora
+                         ))
+     AND NVL (v_tkt.data_fup, SYSDATE) <= SYSDATE
+     and v_tkt.codocorrencia in (select t1.codocorrencia
+             from  crm.tabelaocorrencias t1
+             where upper(t1.descricaoocorrencia) like '%PROBLEMA TÉCNICO EASYBAND%'
+              )
+ORDER BY v_tkt.dataatendimento;
+
+
+
+Execution Plan                                                           
+----------------------------------------------------------               
+   0      SELECT STATEMENT Optimizer=CHOOSE (Cost=17094 Card=269229 Bytes=103922394)                                       1    0   SORT (ORDER BY) (Cost=17094 Card=269229 Bytes=103922394)     
+   2    1     FILTER                                                     
+   3    2       HASH JOIN (OUTER) (Cost=1630 Card=269229 Bytes=103922394)                                                  4    3         HASH JOIN (Cost=1017 Card=269229 Bytes=45768930)       
+   5    4           TABLE ACCESS (FULL) OF 'TABELAOCORRENCIAS' (Cost=1Card=9 Bytes=387)                                    6    4           VIEW OF 'V_TICKET_STATUS' (Cost=1006 Card=3081236  Bytes=391316972)                                    7    6             NESTED LOOPS (Cost=1006 Card=3081236 Bytes=323529780)                                                8    7               HASH JOIN (Cost=1006 Card=3081236 Bytes=314286072)                                                 9    8                 TABLE ACCESS (FULL) OF 'ENCAMINHAMENTO' (Cost=917 Card=9386 Bytes=103246)                       10    8                 HASH JOIN (Cost=85 Card=32828 Bytes=2987348)   
+  11   10                   TABLE ACCESS (FULL) OF 'TABELAOCORRENCIAS'(Cost=1 Card=176 Bytes=7568)                        12   10                   NESTED LOOPS (Cost=83 Card=32829 Bytes=1575792)                                               13   12                     TABLE ACCESS (FULL) OF 'MAX_ENCAMINHAMENTO' (Cost=1 Card=82 Bytes=2132)                     14   12                     TABLE ACCESS (BY INDEX ROWID) OF 'RECLAMACOES' (Cost=1 Card=40035 Bytes=880770)             15   14                       INDEX (UNIQUE SCAN) OF 'SYS_C005152' (UNIQUE)                                             16    7               INDEX (UNIQUE SCAN) OF 'SYS_C005230' (UNIQUE)    
+  17    3         VIEW OF 'V_PONTOCLIENTE' (Cost=91 Card=13156 Bytes=2841696)                                             18   17           NESTED LOOPS (Cost=91 Card=13156 Bytes=1552408)      
+  19   18             HASH JOIN (Cost=91 Card=13156 Bytes=1499784)       
+  20   19               TABLE ACCESS (FULL) OF 'CONTRATOS' (Cost=5 Card=322 Bytes=1932)                                   21   19               NESTED LOOPS (Cost=85 Card=13156 Bytes=1420848)                                                   22   21                 HASH JOIN (Cost=85 Card=13156 Bytes=1341912)   
+  23   22                   TABLE ACCESS (FULL) OF 'MODALIDADE_PLANO' (Cost=1 Card=32 Bytes=320)                          24   22                   HASH JOIN (Cost=83 Card=13156 Bytes=1210352)                                                  25   24                     TABLE ACCESS (FULL) OF 'TIPO_STATUS_PONTO' (Cost=1 Card=11 Bytes=22)                        26   24                     TABLE ACCESS (FULL) OF 'PONTOS' (Cost=81  Card=13156 Bytes=1184040)                         27   21                 INDEX (UNIQUE SCAN) OF 'UK_MODALIDADES' (UNIQUE)                                                28   18             INDEX (UNIQUE SCAN) OF 'SYS_C005022' (UNIQUE)      
+  29    2       NESTED LOOPS (Cost=3 Card=1 Bytes=25)                    
+  30   29         NESTED LOOPS (Cost=3 Card=3 Bytes=57)                  
+  31   30           TABLE ACCESS (BY INDEX ROWID) OF 'USUARIOS' (Cost= 2 Card=1 Bytes=14)                                 32   31             INDEX (UNIQUE SCAN) OF 'SYS_C005240' (UNIQUE) (Cost=1 Card=1)                                       33   30           TABLE ACCESS (BY INDEX ROWID) OF 'GRUPO_USUARIO' (Cost=1 Card=3 Bytes=15)                             34   33             INDEX (RANGE SCAN) OF 'IND_GRUPO_USUARIO_01' (NON-UNIQUE)                                           35   29         INDEX (UNIQUE SCAN) OF 'PK_USUARIO_GRUPO' (UNIQUE)     
+  36    2       NESTED LOOPS (Cost=3 Card=1 Bytes=47)                    
+  37   36         NESTED LOOPS (Cost=3 Card=7 Bytes=287)                 
+  38   37           TABLE ACCESS (BY INDEX ROWID) OF 'USUARIOS' (Cost=2 Card=1 Bytes=19)                                  39   38             INDEX (UNIQUE SCAN) OF 'SYS_C005240' (UNIQUE) (Cost=1 Card=1)                                       40   37           TABLE ACCESS (FULL) OF 'GRUPO_USUARIO' (Cost=1 Card=51 Bytes=1122)                                    41   36         INDEX (UNIQUE SCAN) OF 'PK_USUARIO_GRUPO' (UNIQUE)     
+                                                                         
+                                                                         
+Statistics                                                               
+----------------------------------------------------------               
+          0  recursive calls                                             
+          4  db block gets                                               
+          2  consistent gets                                             
+          0  physical reads                                              
+          0  redo size                                                   
+        667  bytes sent via SQL*Net to client                            
+        277  bytes received via SQL*Net from client                      
+          1  SQL*Net roundtrips to/from client                           
+          1  sorts (memory)                                              
+          0  sorts (disk)                                                
+          0  rows processed                      
+
+
+==================
+Query atual
+=================
+
+
+
+
+
+Execution Plan
+----------------------------------------------------------
+   0      SELECT STATEMENT Optimizer=CHOOSE (Cost=1021 Card=1 Bytes=343)
+   1    0   SORT (ORDER BY) (Cost=1021 Card=1 Bytes=343)
+   2    1     FILTER
+   3    2       HASH JOIN (OUTER) (Cost=1011 Card=1 Bytes=343)
+   4    3         VIEW OF 'V_TICKET_STATUS' (Cost=919 Card=1 Bytes=127)
+   5    4           FILTER
+   6    5             NESTED LOOPS (Cost=919 Card=1 Bytes=86)
+   7    6               NESTED LOOPS (Cost=918 Card=1 Bytes=43)
+   8    7                 NESTED LOOPS (Cost=917 Card=1 Bytes=21)
+   9    8                   TABLE ACCESS (FULL) OF 'ENCAMINHAMENTO' (Cost=917 Card=1 Bytes=18)
+  10    8                   INDEX (UNIQUE SCAN) OF 'SYS_C005230' (UNIQUE)
+  11    7                 TABLE ACCESS (BY INDEX ROWID) OF 'RECLAMACOES' (Cost=1 Card=40035 Bytes=880770)
+  12   11                   INDEX (UNIQUE SCAN) OF 'SYS_C005152' (UNIQUE)
+  13    6               TABLE ACCESS (BY INDEX ROWID) OF 'TABELAOCORRENCIAS' (Cost=1 Card=176 Bytes=7568)
+  14   13                 INDEX (UNIQUE SCAN) OF 'SYS_C005207' (UNIQUE)
+  15    5             SORT (AGGREGATE)
+  16   15               FIRST ROW (Cost=3 Card=4 Bytes=44)
+  17   16                 INDEX (RANGE SCAN (MIN/MAX)) OF 'IND_ENCAMINHAMENTO_CODRECDATA' (NON-UNIQUE) (Cost=3 Card=4)
+  18    3         VIEW OF 'V_PONTOCLIENTE' (Cost=91 Card=13156 Bytes=2841696)
+  19   18           NESTED LOOPS (Cost=91 Card=13156 Bytes=1552408)
+  20   19             HASH JOIN (Cost=91 Card=13156 Bytes=1499784)
+  21   20               TABLE ACCESS (FULL) OF 'CONTRATOS' (Cost=5 Card=322 Bytes=1932)
+  22   20               NESTED LOOPS (Cost=85 Card=13156 Bytes=1420848)
+  23   22                 HASH JOIN (Cost=85 Card=13156 Bytes=1341912)
+  24   23                   TABLE ACCESS (FULL) OF 'MODALIDADE_PLANO'(Cost=1 Card=32 Bytes=320)
+  25   23                   HASH JOIN (Cost=83 Card=13156 Bytes=1210352)
+  26   25                     TABLE ACCESS (FULL) OF 'TIPO_STATUS_PONTO' (Cost=1 Card=11 Bytes=22)
+  27   25                     TABLE ACCESS (FULL) OF 'PONTOS' (Cost=81 Card=13156 Bytes=1184040)
+  28   22                 INDEX (UNIQUE SCAN) OF 'UK_MODALIDADES' (UNIQUE)
+  29   19             INDEX (UNIQUE SCAN) OF 'SYS_C005022' (UNIQUE)
+  30    2       NESTED LOOPS (Cost=3 Card=1 Bytes=25)
+  31   30         NESTED LOOPS (Cost=3 Card=3 Bytes=57)
+  32   31           TABLE ACCESS (BY INDEX ROWID) OF 'USUARIOS' (Cost=2 Card=1 Bytes=14)
+  33   32             INDEX (UNIQUE SCAN) OF 'SYS_C005240' (UNIQUE) (Cost=1 Card=1)
+  34   31           TABLE ACCESS (BY INDEX ROWID) OF 'GRUPO_USUARIO' (Cost=1 Card=3 Bytes=15)
+  35   34             INDEX (RANGE SCAN) OF 'IND_GRUPO_USUARIO_01' (NON-UNIQUE)
+  36   30         INDEX (UNIQUE SCAN) OF 'PK_USUARIO_GRUPO' (UNIQUE)
+  37    2       NESTED LOOPS (Cost=3 Card=1 Bytes=47)
+  38   37         NESTED LOOPS (Cost=3 Card=7 Bytes=287)
+  39   38           TABLE ACCESS (BY INDEX ROWID) OF 'USUARIOS' (Cost=2 Card=1 Bytes=19)
+  40   39             INDEX (UNIQUE SCAN) OF 'SYS_C005240' (UNIQUE) (Cost=1 Card=1)
+  41   38           TABLE ACCESS (FULL) OF 'GRUPO_USUARIO' (Cost=1 Card=51 Bytes=1122)
+  42   37         INDEX (UNIQUE SCAN) OF 'PK_USUARIO_GRUPO' (UNIQUE)
+  43    2       TABLE ACCESS (BY INDEX ROWID) OF 'TABELAOCORRENCIAS' ( Cost=1 Card=1 Bytes=43)
+  44   43         INDEX (UNIQUE SCAN) OF 'SYS_C005207' (UNIQUE)
+
+
+
+
+Statistics
+----------------------------------------------------------
+          0  recursive calls
+        883  db block gets
+     422859  consistent gets
+        456  physical reads
+          0  redo size
+        667  bytes sent via SQL*Net to client
+        278  bytes received via SQL*Net from client
+          1  SQL*Net roundtrips to/from client
+          1  sorts (memory)
+          0  sorts (disk)
+          0  rows processed
+
+======================== V_TICKET_STATUS ================================
+
+
+(CODRECLAMACAO
+NUM_CLIENTE
+NOMEATENDENTE
+CODOCORRENCIA
+DESCRICAOOCORRENCIA
+DATAATENDIMENTO
+PESSOACONTATO
+EMAIL
+TELEFONECONTATO
+RECLAMACAO
+DATAASSUNCAO
+ATUALRESPONSAVEL
+STATUSOCORRENCIA
+TEMPORESOLUCAO
+METAATENDIMENTO
+NUM_PONTO
+DATA_ESCALONAMENTO
+CODENCAMINHAMENTO
+DATAENCAMINHAMENTO
+COD_TIPO_EVENTO
+DESC_TIPO_EVENTO
+REMETENTE
+EMAILDESTINATARIO
+TEXTO
+COD_DESTINATARIO
+ID_CALL_TYPE
+DATA_FUP)
+as
+select r.codreclamacao,
+       r.num_cliente,
+       r.nomeatendente,
+       r.codocorrencia,
+       t.descricaoocorrencia,
+       r.dataatendimento,
+       r.pessoacontato,
+       r.email,
+       r.telefonecontato,
+       r.reclamacao,
+       r.dataassuncao,
+       r.atualresponsavel,
+       r.statusocorrencia,
+       r.temporesolucao,
+       r.metaatendimento,
+       r.num_ponto,
+       r.data_escalonamento,
+       e.codencaminhamento,
+       e.dataencaminhamento,
+       e.cod_tipo_evento,
+       te.desc_tipo_evento,
+       e.remetente,
+       e.emaildestinatario,
+       e.texto,
+       e.cod_destinatario,
+       r.id_call_type,
+       e.data_fup
+from reclamacoes r,
+     encaminhamento e,
+     tabelaocorrencias t,
+     tipo_evento te,
+     max_encaminhamento me
+where r.codreclamacao      = me.cod_reclamacao
+ and me.cod_encaminhamento = e.codencaminhamento
+ and  r.codocorrencia      = t.codocorrencia
+ and  e.cod_tipo_evento    = te.cod_tipo_evento
+
+
+
+
+======================== V_PONTOCLIENTE ================================
+
+
+
+NUM_PONTO
+COD_MOD_PLANO
+COD_TIPO_SLA
+EMP_INSTALADORA
+NUM_LOCALFATURA
+NUM_CONTRATO
+DATA_INSTALACAO
+DATA_LIGACAO
+DATA_ENCERRAMENTO
+DATA_DESATIVACAO
+PLATAFORMA
+IDENT_VSAT
+TAMANHO_VSAT
+VELOCIDADE
+CONTATO_INST_NOME
+CONTATO_INST_TEL
+CONTATO_INST_EMAIL
+ENDERECO_INST_RUA
+ENDERECO_INST_BAIRRO
+ENDERECO_INST_UF
+ENDERECO_INST_CIDADE
+ENDERECO_INST_CEP
+COD_RAZAO_DESLIGAMENTO
+CODIGO_ATIVACAO
+LATITUDE
+LONGITUDE
+NOME_CLIENTE
+CNPJ_CPF
+INSC_ESTADUAL
+DATA_AGENDAMENTO
+COD_TIPO_CLIENTE
+CONTRATO_RECEBIDO_S_N
+OBSERVACAO_CONTRATO
+NUM_CLIENTE
+ID_PROPOSTA
+STATUS_PONTO
+DATA_STATUS
+DESC_STATUS
+NOME_ISP
+MOD_PLANO_ANTENA
+IP
+NUM_CLUSTER
+HPP
+INTERFACE
+CADEIA
+AGREGADOR
+SENHA_USUARIO
+FLAG_PERMISSAO
+LOGIN_USUARIO
+FRANQUIA_UPLOAD
+FRANQUIA_DOWNLOAD
+CONTATO_NOME
+CONTATO_TEL
+NUM_PONTO_ANTIGO
+NUM_REDE_VPN
+NUM_PONTO_EASYBAND
+SERVICO_ADICIONAL
+
+
+SELECT
+p.num_ponto,
+p.cod_mod_plano,
+p.cod_tipo_sla,
+p.emp_instaladora,
+p.num_localfatura,
+p.num_contrato,
+p.data_instalacao,
+p.data_ligacao,
+p.data_encerramento,
+p.data_desativacao,
+p.plataforma,
+p.ident_vsat,
+p.tamanho_vsat,
+p.velocidade,
+p.contato_inst_nome,
+p.contato_inst_tel,
+p.contato_inst_email,
+p.endereco_inst_rua,
+p.endereco_inst_bairro,
+p.endereco_inst_uf,
+p.endereco_inst_cidade,
+p.endereco_inst_cep,
+p.cod_razao_desligamento,
+p.codigo_ativacao,
+p.latitude,
+p.longitude,
+p.nome_cliente,
+p.cnpj_cpf,
+p.insc_estadual,
+p.data_agendamento,
+p.cod_tipo_cliente,
+p.contrato_recebido_s_n,
+p.observacao_contrato,
+c.num_cliente,
+p.id_proposta,
+P.status,
+p.data_status,
+t.descricao,
+c.nome_cliente,
+mp.desc_mod_plano || ' - ' || p.tamanho_vsat,
+p.ip,
+p.num_cluster,
+p.hpp,
+p.interface,
+p.cadeia,
+c.razao_social Agregador,
+p.senha_usuario,
+p.flag_permissao,
+p.login_usuario,
+m.FRANQUIA_UPLOAD,
+m.FRANQUIA_DOWNLOAD,
+c.contato_nome,
+c.contato_tel,
+p.num_ponto_antigo,
+p.num_rede_vpn,
+p.num_ponto_easyband,
+p.servico_adicional
+FROM
+CLIENTES c,
+CONTRATOS o,
+PONTOS p,
+TIPO_STATUS_PONTO t,
+MODALIDADE_PLANO mp,
+vendas.Modalidades m
+WHERE
+c.num_cliente = o.num_cliente AND
+mp.cod_mod_plano = p.cod_mod_plano AND
+o.num_contrato = p.num_contrato AND
+t.status = p.status AND
+p.tamanho_vsat = m.antena and
+p.cod_mod_plano = m.id_tipos_modalidade
+
+
+
+

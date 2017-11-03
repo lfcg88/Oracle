@@ -1,0 +1,84 @@
+REM
+REM DBAToolZ NOTE:
+REM	This script was obtained from DBAToolZ.com
+REM	It's configured to work with SQL Directory (SQLDIR).
+REM	SQLDIR is a utility that allows easy organization and
+REM	execution of SQL*Plus scripts using user-friendly menu.
+REM	Visit DBAToolZ.com for more details and free SQL scripts.
+REM
+REM
+REM File:
+REM 	c_proc_extract.sql
+REM
+REM <SQLDIR_GRP>REVERSE</SQLDIR_GRP>
+REM
+REM Author:
+REM 	Vitaliy Mogilevskiy
+REM	VMOGILEV
+REM	(vit100gain@earthlink.net)
+REM
+REM Purpose:
+REM	<SQLDIR_TXT>
+REM	This script will extract source code for the following source types:
+REM	1. PACKAGE
+REM	2. PACKAGE BODY
+REM	3. FUNCTION
+REM	4. PROCEDURE
+REM	The source code will be spooled into a file named after the source name
+REM	</SQLDIR_TXT>
+REM
+REM Usage:
+REM	c_proc_extract.sql
+REM
+REM Example:
+REM	c_proc_extract.sql
+REM
+REM
+REM History:
+REM	08-01-1998	VMOGILEV	Created
+REM
+REM
+
+set scan on
+set pages 0
+set feedback off
+set heading off
+set verify off
+set lines 300
+set trims on
+
+set term on
+prompt +----------------------------------------------------------------------+
+prompt DESCRIPTION:
+prompt ============
+prompt This script will extract source code for the following source types:
+prompt 1. PACKAGE
+prompt 2. PACKAGE BODY
+prompt 3. FUNCTION
+prompt 4. PROCEDURE
+prompt The source code will be spooled into a file named after the source name
+prompt USAGE:
+prompt =====
+prompt follow the prompts ...
+prompt +----------------------------------------------------------------------+
+accept proc_name  prompt "Enter Procedure Or Package Name: "
+accept proc_owner prompt "Enter The Owner Name: "
+accept type       prompt "Enter type Of the source [PACKAGE, PACKAGE BODY, PROCEDURE, FUNCTION]: "
+set term off
+
+SELECT DECODE(ROWNUM,1,'CREATE OR REPLACE '||text,text)
+FROM   dba_source
+WHERE  name  = UPPER('&&proc_name')
+AND    owner = UPPER('&proc_owner')
+AND    type  = UPPER('&type')
+ORDER BY line
+
+spool &&proc_name..sql
+/
+prompt /
+spool off
+
+ed &&proc_name
+
+undefine proc_name
+

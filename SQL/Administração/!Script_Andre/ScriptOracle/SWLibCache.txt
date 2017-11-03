@@ -1,0 +1,136 @@
+-- pre_requisitos
+--  como usuarios sys execute:
+--                   create  view X_$KGLPN as select * from X$KGLPN;
+--                   grant select on X_$KGLPN to agent;
+--                   create  view X_$KGLLK as select * from X$KGLLK;
+--                   grant select on X_$KGLLK to agent
+--			create or replace view X_$KGLOB as select * from X$KGLOB;
+--                   grant select on X_$KGLOB to agent;
+--------------------------------------------------------------------------
+
+col event    format a40       heading "Session Wait Event" trunc
+col cnt      format 9999      heading "Ocurrs"
+col sec      format 999,999,990      heading "Secs In|Wait (sec)"
+col dte      format a8          heading "Date"
+col key      format 9999         heading "OSM|Key"
+
+
+select event,
+       -- a.key key,
+       -- to_char(a.the_date,'DD HH24:MI') dte,
+       sum(seconds_in_wait) sec,
+       count(sid) cnt
+from   v$session_wait  a
+where  
+    STATE = 'WAITING'  ---- este estado indica que a sessão esta em wait no momento
+  and event like '%library%'
+group by  event
+/
+
+
+col sid format 9999
+col event    format a20       heading " Event" trunc
+
+select sid,seq#,event,p1,p1raw,p2,p2raw,p3,p3raw
+from v$session_wait
+where event like '%library%'
+and STATE = 'WAITING'  ---- este estado indica que a sessão esta em wait no momento
+/
+
+
+select p1raw,count(*)
+from v$session_wait
+where event like '%library%'
+and STATE = 'WAITING'  ---- este estado indica que a sessão esta em wait no momento
+group by p1raw
+/
+
+
+
+------------------------------------------------------------------
+-- para executar os dois comandos abaixo é necessario:
+--  1) executar os pre-requisitos 
+-- caso estes comandos funcionen não existe a necessidae de executar os demais comandos
+-- que vem a seguir
+------------------------------------------------------------------
+
+--Finding Blockers: 
+
+SELECT kglnaown "Owner", kglnaobj "Object"
+    FROM sys.x_$kglob
+   WHERE kglhdadr in ( select P1RAW from v$session_wait where event like '%library%' )
+  ;
+
+--The following SQL can be used to show the sessions which are 
+--holding and/or requesting pins on the object that given in P1 in the wait: 
+
+  SELECT s.sid, kglpnmod "Mode", kglpnreq "Req"
+    FROM x_$kglpn p, v$session s
+   WHERE p.kglpnuse=s.saddr
+     AND kglpnhdl in ( select P1RAW from v$session_wait where event like '%library%' )
+  ;
+
+
+
+---------------------------------------------------------------
+-- executar com internal - documentacao LIBRARY_CACHE_LOCK.htm
+--------------------------------------------------------------
+
+--You will see that at least one lock for the session has KGLLKREQ > 0   
+--which means this is a REQUEST for a lock (thus, the session is waiting).   
+
+--If we now match the KGLLKHDL with the handles of other sessions in   
+--X$KGLLK that should give us the address of the blocking session since  
+--KGLLKREQ=0 for this session, meaning it HAS the lock.    S
+
+SELECT * FROM X$KGLLK LOCK_A   WHERE KGLLKREQ = 0    
+AND EXISTS (SELECT LOCK_B.KGLLKHDL FROM X$KGLLK LOCK_B                
+WHERE KGLLKSES = 'saddr_from_v$session' /* BLOCKED SESSION */                
+AND LOCK_A.KGLLKHDL = LOCK_B.KGLLKHDL                AND KGLLKREQ > 0);   
+
+--If we look a bit further we can then again match KGLLKSES with SADDR   
+--in v$session to find further information on the blocking session:   
+
+SELECT SID,USERNAME,TERMINAL,PROGRAM FROM V$SESSION  
+WHERE SADDR in    (SELECT KGLLKSES FROM X$KGLLK LOCK_A     WHERE KGLLKREQ = 0      
+AND EXISTS (SELECT LOCK_B.KGLLKHDL FROM X$KGLLK LOCK_B                  
+WHERE KGLLKSES = 'saddr_from_v$session' /* BLOCKED SESSION */                  
+AND LOCK_A.KGLLKHDL = LOCK_B.KGLLKHDL                  
+AND KGLLKREQ > 0)   ); 
+
+
+--In the same way we can also find all the blocked sessions:   
+
+SELECT SID,USERNAME,TERMINAL,PROGRAM FROM V$SESSION  WHERE SADDR in    
+(SELECT KGLLKSES FROM X$KGLLK LOCK_A     WHERE KGLLKREQ > 0      
+AND EXISTS (SELECT LOCK_B.KGLLKHDL FROM X$KGLLK LOCK_B                  
+WHERE KGLLKSES = 'saddr_from_v$session' /* BLOCKING SESSION */                  
+AND LOCK_A.KGLLKHDL = LOCK_B.KGLLKHDL                  
+AND KGLLKREQ = 0)   ); 
+
+---------------------------------------------------------------
+-- executar com internal - documentacao library_cache_pin_wait.htm
+--------------------------------------------------------------
+
+--Finding Blockers: 
+
+--Use P1RAW rather than P1
+--This is the handle of the library cache object which the waiting session wants to acquire a pin on. 
+--The actual object being waited on can be found using 
+
+SELECT kglnaown "Owner", kglnaobj "Object"
+    FROM x$kglob
+   WHERE kglhdadr='&P1RAW'
+  ;
+
+The following SQL can be used to show the sessions which are 
+holding and/or requesting pins on the object that given in P1 in the wait: 
+
+  SELECT s.sid, kglpnmod "Mode", kglpnreq "Req"
+    FROM x$kglpn p, v$session s
+   WHERE p.kglpnuse=s.saddr
+     AND kglpnhdl='&P1RAW'
+  ;
+
+
+

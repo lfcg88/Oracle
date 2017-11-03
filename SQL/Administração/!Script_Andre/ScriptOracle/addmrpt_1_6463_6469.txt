@@ -1,0 +1,515 @@
+          Relatório ADDM da Tarefa 'TAREFA_21372'
+          ---------------------------------------
+
+Período da Análise
+------------------
+Faixa de snapshot de AWR de 6463 para 6469.
+O período é iniciado em 29/03/11 11:00:32
+O período termina em 29/03/11 12:30:52
+
+Alvo da Análise
+---------------
+Banco de dados 'PCORP2' com ID de BD 4057681452.
+Versão do banco de dados 11.2.0.2.0.
+O ADDM executou uma análise da instância PCORP2, numerada como 1 e armazenada
+em host em dc8003.fgv.br.
+
+Atividade Durante o Período de Análise
+--------------------------------------
+O tempo total do banco de dados foi 219060 segundos.
+O número médio de sessões ativas foi 40,42.
+
+Resumo das Descobertas:
+-----------------------
+    Descrição                                             Sessões Ativas
+   Recomendações
+                                                          Percentual de Atividad
+e
+    ----------------------------------------------------  ----------------------
+-  -------------
+1   Paginação de Memória Virtual                          40,42 | 100
+   2
+2   Evento de Espera Incomum "Rede"                       7,56 | 18,71
+   2
+3   Latches do Shared Pool                                6,03 | 14,93
+   0
+4   Classe de Espera "Usuário de E/S"                     4,95 | 12,24
+   0
+5   Uso da CPU                                            4,38 | 10,83
+   2
+6   Instruções Top-SQL                                    4,24 | 10,49
+   2
+7   Esperas por Bloqueio de Linha                         3,56 | 8,82
+   5
+8   Principais Segmento por "E/S do Usuário" e "Cluster"  3,03 | 7,5
+   2
+9   Soft Parse                                            1,88 | 4,66
+   2
+10  Hard Parse Devido ao Uso Literal                      1,42 | 3,5
+   1
+
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+          Descobertas e Recomendações
+          ---------------------------
+
+Descoberta 1: Paginação de Memória Virtual
+O impacto é 40,42 sessões ativas, 100\% da atividade total.
+-----------------------------------------------------------
+Foi detectada paginação de memória virtual significativa no sistema
+operacional do host.
+
+   Recomendação 1: Configuração do Host
+   O benefício estimado é 40,42 sessões ativas, 100\% da atividade total.
+   ----------------------------------------------------------------------
+   Ação
+      O sistema operacional de host estava enfrentando paginação
+      significativa, mas nenhuma causa raiz específica foi detectada.
+      Investigue processos que não pertencem a esta instância em execução no
+      host que estejam consumindo uma quantidade significativa de memória
+      virtual. Procure também adicionar mais memória física ao host.
+
+   Recomendação 2: Configuração do Banco de Dados
+   O benefício estimado é 40,42 sessões ativas, 100\% da atividade total.
+   ----------------------------------------------------------------------
+   Ação
+      Considere a avaliação do Gerenciamento Automático de Memória
+      Compartilhada, definindo o parâmetro "sga_target" para controlar a
+      quantidade de SGA consumida por esta instância.
+
+
+Descoberta 2: Evento de Espera Incomum "Rede"
+O impacto é 7,56 sessões ativas, 18,71\% da atividade total.
+------------------------------------------------------------
+O evento de espera "virtual circuit wait" na classe de espera "Network" estava
+consumindo um tempo de banco de dados significativo.
+
+   Recomendação 1: Análise da Aplicação
+   O benefício estimado é 7,56 sessões ativas, 18,71\% da atividade total.
+   -----------------------------------------------------------------------
+   Ação
+      Investigue a causa de altas esperas de "virtual circuit wait". Consulte
+      a "Referência de Banco de Dados" da Oracle para ver a descrição desse
+      evento de espera.
+
+   Recomendação 2: Análise da Aplicação
+   O benefício estimado é 6,56 sessões ativas, 16,22\% da atividade total.
+   -----------------------------------------------------------------------
+   Ação
+      Investigue a causa de altas esperas de "virtual circuit wait" no Serviço
+      "PCORP2".
+
+   Sintomas que Levaram à Descoberta:
+   ----------------------------------
+      A classe de espera "Rede" estava consumindo um tempo de banco de dados
+      significativo.
+      O impacto é 7,57 sessões ativas, 18,74\% da atividade total.
+
+
+Descoberta 3: Latches do Shared Pool
+O impacto é 6,03 sessões ativas, 14,93\% da atividade total.
+------------------------------------------------------------
+A disputa por latches relacionados ao shared pool estava consumindo um tempo
+de banco de dados significativo.
+Esperas por "library cache: mutex X" chegaram a  1\%  de tempo de banco de
+dados.
+Esperas por "library cache lock" chegaram a  10\%  de tempo de banco de dados.
+Esperas por "cursor: pin S wait on X" chegaram a  2\%  de tempo de banco de
+dados.
+
+   Nenhuma recomendação está disponível.
+
+   Sintomas que Levaram à Descoberta:
+   ----------------------------------
+      A classe de espera "Concorrência" estava consumindo um tempo de banco de
+      dados significativo.
+      O impacto é 7,05 sessões ativas, 17,43\% da atividade total.
+
+
+Descoberta 4: Classe de Espera "Usuário de E/S"
+O impacto é 4,95 sessões ativas, 12,24\% da atividade total.
+------------------------------------------------------------
+A classe de espera "Entrada/Saída do Usuário" estava consumindo um tempo de
+banco de dados significativo.
+O pool de fluxos foi dimensionado de forma adequada.
+Esperas por entrada/saída em tablespaces temporários não estavam consumindo um
+tempo de banco de dados significativo.
+O throughput do subsistema de entrada/saída não foi significativamente mais
+baixo do que o esperado.
+
+   Nenhuma recomendação está disponível.
+
+
+Descoberta 5: Uso da CPU
+O impacto é 4,38 sessões ativas, 10,83\% da atividade total.
+------------------------------------------------------------
+A CPU do host era um gargalo e a instância estava consumindo 96\% da CPU do
+host. Todos os tempos de espera serão aumentados pela espera da CPU.
+O consumo de CPU do host foi 96\%.
+
+   Recomendação 1: Análise da Aplicação
+   O benefício estimado é 19,46 sessões ativas, 48,14\% da atividade total.
+   ------------------------------------------------------------------------
+   Ação
+      Verifique a descoberta "Instruções Top SQL" das instruções SQL que
+      consomem tempo significante da CPU. Por exemplo, a instrução SELECT com
+      SQL_ID "fuzq1armxxcy0" é responsável por 2% de uso da CPU durante o
+      período de análise.
+
+   Recomendação 2: Configuração do Host
+   O benefício estimado é 4,38 sessões ativas, 10,83\% da atividade total.
+   -----------------------------------------------------------------------
+   Ação
+      Considere a adição de mais CPUs ao host ou a adição de instâncias que
+      servem ao banco de dados em outros hosts.
+   Ação
+      Considere também a utilização do Oracle Database Resource Manager para
+      priorizar a carga de trabalho de vários grupos de consumidores.
+
+
+Descoberta 6: Instruções Top-SQL
+O impacto é 4,24 sessões ativas, 10,49\% da atividade total.
+------------------------------------------------------------
+Foram encontradas instruções SQL consumindo um tempo de banco de dados
+significativo. Estas instruções oferecem uma boa oportunidade para melhoria de
+desempenho.
+
+   Recomendação 1: Ajuste de SQL
+   O benefício estimado é 3,04 sessões ativas, 7,52\% da atividade total.
+   ----------------------------------------------------------------------
+   Ação
+      Investigue a instrução SELECT com o SQL_ID "fuzq1armxxcy0" para obter
+      possíveis melhorias de desempenho. Você pode complementar as informações
+      fornecidas aqui com um relatório ASH para este SQL_ID.
+      Objeto Relacionado
+         Instrução SQL com SQL_ID fuzq1armxxcy0.
+         SELECT NVL(SUM(CR),0)/DECODE(COUNT(*),0,1,COUNT(*)) FROM (SELECT
+         H.DISC_CD,NVL(H.CR_ALUNO_VL,0) CR FROM HISTACAD H, ALUNDISCENC_V AD_V
+         WHERE H.TURMA_CD = AD_V.TURMA_CD AND H.Q_SINOTICO_CD =
+         AD_V.Q_SINOTICO_CD AND H.DISC_CD = AD_V.DISC_CD AND H.MATR_CD =
+         AD_V.MATR_CD AND H.ANO_NR = AD_V.ANO_NR AND ( (AD_V.TIPO IN
+         ('NORM','CUMPR')) OR (AD_V.TIPO IN ('OUTRA') AND (H.TURMA_CD,
+         H.DISC_CD) IN ( SELECT TURMA_ANT_CD, DISC_ANT_CD FROM ALUNOREQ_AUX
+         WHERE MATR_CD = :B2 AND ANO_NR = :B1 AND REQUER_SQ > 0 AND REQUER_CD
+         = 'REAB' AND REQUER_STATUS_CD IN ('ATEND','ECQ','EA')))) AND
+         H.MATR_CD= :B2 AND H.ANO_NR= :B1 AND AD_V.MATR_CD= :B2 AND
+         AD_V.ANO_NR= :B1 AND H.DISC_CD <> '0' AND H.DISC_CD NOT IN (SELECT
+         D.DISC_CD FROM DISCIPLINA D WHERE D.DISC_NOTA_FLG_CD = 'N') AND
+         H.SIT_ACAD_CD IN ('APROV') UNION ALL SELECT
+         H.DISC_CD,NVL(H.CR_ALUNO_VL,0) CR FROM HISTACAD H WHERE H.DISC_CD =
+         'TRCONCLCURSO' AND H.MATR_CD=:B2 AND H.ANO_NR= :B1 UNION SELECT
+         H.DISC_CD,NVL(H.CR_ALUNO_VL,0) CR FROM HISTACAD H, HISTMATEAD HM
+         WHERE H.MATR_CD=HM.MATR_CD AND H.ANO_NR=HM.ANO_NR AND
+         H.DISC_CD=HM.DISC_CD AND H.TURMA_CD=HM.TURMA_DISC_CD AND HM.PROD_CD
+         NOT IN ('EADDOC','EAD72DOC','EAD60DOC') AND H.MATR_CD=:B2 AND
+         H.ANO_NR= :B1 )
+   Motivo
+      O SQL gastou somente 1% de seu tempo de banco de dados nas esperas da
+      CPU, E/S e do Cluster. No entanto, o Supervisor de Ajuste SQL não é
+      aplicável neste caso. Verifique os dados de desempenho do SQL e localize
+      as melhorias potenciais.
+   Motivo
+      O tempo do banco de dados deste SQL foi dividido como segue:  85% para
+      execução SQL, 15% para parse, 0% para execução de PL/SQL e para execução
+      de 0% Java.
+   Motivo
+      A instrução SQL com SQL_ID "fuzq1armxxcy0" foi executada 13 vezes e
+      apresentava um tempo médio decorrido de 86 segundos.
+   Motivo
+      Pelo menos 3 dos planos de execução distintos foram utilizados para esta
+      instrução SQL durante o período de análise.
+   Motivo
+      Aguardando evento "library cache lock" na classe de espera "Concurrency"
+      considerado para 56% do tempo de banco de dados usado para processar a
+      instrução SQL com SQL_ID "fuzq1armxxcy0".
+   Motivo
+      Aguardando evento "cursor: pin S wait on X" na classe de espera
+      "Concurrency" considerado para 26% do tempo de banco de dados usado para
+      processar a instrução SQL com SQL_ID "fuzq1armxxcy0".
+
+   Recomendação 2: Ajuste de SQL
+   O benefício estimado é 1,2 sessões ativas, 2,97\% da atividade total.
+   ---------------------------------------------------------------------
+   Ação
+      Investigue a instrução SELECT com o SQL_ID "599kk70c4bmmk" para obter
+      possíveis melhorias de desempenho. Você pode complementar as informações
+      fornecidas aqui com um relatório ASH para este SQL_ID.
+      Objeto Relacionado
+         Instrução SQL com SQL_ID 599kk70c4bmmk.
+         select option#,NVL(success,0),NVL(failure,0) from audit$ where
+         user#=:client and proxy# is null
+   Ação
+      Use arrays de extração maiores ao extrair resultados da instrução SELECT
+      com o SQL_ID "599kk70c4bmmk".
+      Objeto Relacionado
+         Instrução SQL com SQL_ID 599kk70c4bmmk.
+         select option#,NVL(success,0),NVL(failure,0) from audit$ where
+         user#=:client and proxy# is null
+   Motivo
+      O SQL gastou somente 0% de seu tempo de banco de dados nas esperas da
+      CPU, E/S e do Cluster. No entanto, o Supervisor de Ajuste SQL não é
+      aplicável neste caso. Verifique os dados de desempenho do SQL e localize
+      as melhorias potenciais.
+   Motivo
+      O tempo do banco de dados deste SQL foi dividido como segue:  0% para
+      execução SQL, 100% para parse, 0% para execução de PL/SQL e para
+      execução de 0% Java.
+   Motivo
+      A instrução SQL com SQL_ID "599kk70c4bmmk" foi executada 103 vezes e
+      apresentava um tempo médio decorrido de 13 segundos.
+   Motivo
+      Aguardando evento "library cache lock" na classe de espera "Concurrency"
+      considerado para 81% do tempo de banco de dados usado para processar a
+      instrução SQL com SQL_ID "599kk70c4bmmk".
+
+
+Descoberta 7: Esperas por Bloqueio de Linha
+O impacto é 3,56 sessões ativas, 8,82\% da atividade total.
+-----------------------------------------------------------
+Foram encontradas instruções SQL aguardando bloqueios de linha.
+
+   Recomendação 1: Análise da Aplicação
+   O benefício estimado é 1,18 sessões ativas, 2,93\% da atividade total.
+   ----------------------------------------------------------------------
+   Ação
+      Uma disputa por linha significativa foi detectada em TABLE
+      "BASE_SIGA.PRODUTO_EAD_PROSPECT_SIGA" com o ID de objeto 213997.
+      Rastreie a causa da disputa por linha na lógica da aplicação usando a
+      instrução SQL bloqueada fornecida.
+      Objeto Relacionado
+         Objeto do banco de dados com ID 213997.
+   Motivo
+      A sessão com ID 811 e número de série 61 no número de instância 1 foi a
+      sessão de bloqueio responsável por 100% dos benefícios desta
+      recomendação.
+
+   Recomendação 2: Análise da Aplicação
+   O benefício estimado é ,05 sessões ativas, ,13\% da atividade total.
+   --------------------------------------------------------------------
+   Ação
+      Uma disputa por linha significativa foi detectada em INDEX
+      "BASE_SIGA.IX2_PRODUTO_EAD_PROSPECT_SIGA" com o ID de objeto 238448.
+      Rastreie a causa da disputa por linha na lógica da aplicação usando a
+      instrução SQL bloqueada fornecida.
+      Objeto Relacionado
+         Objeto do banco de dados com ID 238448.
+
+   Recomendação 3: Análise da Aplicação
+   O benefício estimado é ,05 sessões ativas, ,12\% da atividade total.
+   --------------------------------------------------------------------
+   Ação
+      Uma disputa por linha significativa foi detectada em TABLE
+      "BASE_SIGA.RESULTADO_AVALIACAO_SIGA" com o ID de objeto 214051. Rastreie
+      a causa da disputa por linha na lógica da aplicação usando a instrução
+      SQL bloqueada fornecida.
+      Objeto Relacionado
+         Objeto do banco de dados com ID 214051.
+
+   Recomendação 4: Análise da Aplicação
+   O benefício estimado é ,03 sessões ativas, ,07\% da atividade total.
+   --------------------------------------------------------------------
+   Ação
+      Uma disputa por linha significativa foi detectada em TABLE
+      "BASE_CLIENTE.CONTROLE_GERACAO_COBRANCA" com o ID de objeto 211700.
+      Rastreie a causa da disputa por linha na lógica da aplicação usando a
+      instrução SQL bloqueada fornecida.
+      Objeto Relacionado
+         Objeto do banco de dados com ID 211700.
+
+   Recomendação 5: Análise da Aplicação
+   O benefício estimado é ,02 sessões ativas, ,06\% da atividade total.
+   --------------------------------------------------------------------
+   Ação
+      Uma disputa por linha significativa foi detectada em TABLE
+      "BASE_SIGA.MATRICULA_CURSO_EAD_SIGA" com o ID de objeto 213845. Rastreie
+      a causa da disputa por linha na lógica da aplicação usando a instrução
+      SQL bloqueada fornecida.
+      Objeto Relacionado
+         Objeto do banco de dados com ID 213845.
+
+   Sintomas que Levaram à Descoberta:
+   ----------------------------------
+      A classe de espera "Aplicação" estava consumindo um tempo de banco de
+      dados significativo.
+      O impacto é 3,65 sessões ativas, 9,03\% da atividade total.
+
+
+Descoberta 8: Principais Segmento por "E/S do Usuário" e "Cluster"
+O impacto é 3,03 sessões ativas, 7,5\% da atividade total.
+------------------------------------------------------------------
+Foram encontrados segmentos de banco de dados individuais responsáveis por
+esperas significativas de "E/S do Usuário" e "Cluster".
+
+   Recomendação 1: Ajuste do Segmento
+   O benefício estimado é 2,01 sessões ativas, 4,98\% da atividade total.
+   ----------------------------------------------------------------------
+   Ação
+      Execute o "Supervisor de Segmento" em TABLE "SYS.SQLOBJ$AUXDATA" com o
+      ID de objeto 213.
+      Objeto Relacionado
+         Objeto do banco de dados com ID 213.
+   Ação
+      Investigue a lógica da aplicação envolvendo entrada/saída em TABLE
+      "SYS.SQLOBJ$AUXDATA" com o ID de objeto 213.
+      Objeto Relacionado
+         Objeto do banco de dados com ID 213.
+   Motivo
+      As estatísticas de uso de E/S para o objeto são: 7652 varreduras
+      completas de objetos, 156268008 leituras físicas, 4336 gravações físicas
+      e 0 leituras diretas.
+
+   Recomendação 2: Ajuste do Segmento
+   O benefício estimado é 1,02 sessões ativas, 2,51\% da atividade total.
+   ----------------------------------------------------------------------
+   Ação
+      Investigue a lógica da aplicação envolvendo entrada/saída em TABLE
+      "BASE_CLIENTE.FATURA" com o ID de objeto 211732.
+      Objeto Relacionado
+         Objeto do banco de dados com ID 211732.
+   Motivo
+      As estatísticas de uso de E/S para o objeto são: 0 varreduras completas
+      de objetos, 2953130 leituras físicas, 957 gravações físicas e 0 leituras
+      diretas.
+
+   Sintomas que Levaram à Descoberta:
+   ----------------------------------
+      A classe de espera "Entrada/Saída do Usuário" estava consumindo um tempo
+      de banco de dados significativo.
+      O impacto é 4,95 sessões ativas, 12,24\% da atividade total.
+
+
+Descoberta 9: Soft Parse
+O impacto é 1,88 sessões ativas, 4,66\% da atividade total.
+-----------------------------------------------------------
+Soft parses das instruções SQL estavam consumindo um tempo de banco de dados
+significativo.
+
+   Recomendação 1: Análise da Aplicação
+   O benefício estimado é 1,88 sessões ativas, 4,66\% da atividade total.
+   ----------------------------------------------------------------------
+   Ação
+      Investigue a lógica da aplicação para manter os cursos utilizados com
+      frequência abertos. Observe que os cursos são fechados por chamadas de
+      fechamento de cursor e desconexões de sessão.
+
+   Recomendação 2: Configuração do Banco de Dados
+   O benefício estimado é 1,88 sessões ativas, 4,66\% da atividade total.
+   ----------------------------------------------------------------------
+   Ação
+      Considere o aumento do cache de cursor da sessão aumentando o valor do
+      parâmetro "session_cached_cursors".
+   Motivo
+      O valor do parâmetro "session_cached_cursors" era "150" durante o
+      período de análise.
+
+
+Descoberta 10: Hard Parse Devido ao Uso Literal
+O impacto é 1,42 sessões ativas, 3,5\% da atividade total.
+----------------------------------------------------------
+Instruções SQL não foram compartilhadas em decorrência do uso de literais.
+Isso resultou em parses adicionais que estavam consumindo um tempo de banco de
+dados significativo.
+
+   Recomendação 1: Análise da Aplicação
+   O benefício estimado é 1,42 sessões ativas, 3,5\% da atividade total.
+   ---------------------------------------------------------------------
+   Ação
+      Investigue a lógica da aplicação para o possível uso de variáveis de
+      bind em vez de literais.
+   Ação
+      Como alternativa, você pode definir o parâmetro  "cursor_sharing" como
+      "force".
+   Motivo
+      Descobriu-se que pelo menos 64 instruções SQL com
+      FORCE_MATCHING_SIGNATURE 8770002383321390803 e PLAN_HASH_VALUE
+      1676892053 estavam usando literais. Consulte V$SQL para ver exemplos de
+      tais instruções SQL.
+   Motivo
+      Descobriu-se que pelo menos 57 instruções SQL com
+      FORCE_MATCHING_SIGNATURE 16761534717941856474 e PLAN_HASH_VALUE
+      1390340654 estavam usando literais. Consulte V$SQL para ver exemplos de
+      tais instruções SQL.
+   Motivo
+      Descobriu-se que pelo menos 49 instruções SQL com
+      FORCE_MATCHING_SIGNATURE 13279932780644973333 e PLAN_HASH_VALUE
+      934345292 estavam usando literais. Um exemplo é a instrução SQL com o
+      SQL_ID "dpm16dhft18v5".
+      Objeto Relacionado
+         Instrução SQL com SQL_ID dpm16dhft18v5.
+         SELECT EO.PROD_CD, EO.SUB_PROD_CD,
+         EO.CURSO_PROD_EAD_CD,EO.CURSO_PROD_EAD_DATA_SQ,
+         TO_CHAR(EV.DATA_INIC,'DD/MM/YYYY')
+         DATA_OCORR,PC.PROD_CARGA_HORARIA_NR FROM EADOCORR EO,EADCURSO EC,
+         PRODCARAC PC, (SELECT EO1.PROD_CD, EO1.SUB_PROD_CD,
+         EO1.CURSO_PROD_EAD_CD,         MIN(EO1.PROD_EAD_INIC_OCORR_DT)
+         DATA_INIC  FROM EADOCORR EO1, EADPLANCURSO EP1  WHERE
+         EO1.PROD_CD=EP1.PROD_CD     AND EO1.SUB_PROD_CD=EP1.SUB_PROD_CD
+         AND EO1.CURSO_PROD_EAD_CD=EP1.CURSO_PROD_EAD_CD    AND
+         EO1.CURSO_PROD_EAD_DATA_SQ=EP1.CURSO_PROD_EAD_DATA_SQ    AND
+         EO1.SIT_PROD_CURSO_OCORR_CD='EOLIB'    AND
+         EO1.CURSO_OCORR_EAD_TIPO_CD='LIVRE'    AND
+         (EO1.PROD_CD,EO1.SUB_PROD_CD,EO1.CURSO_PROD_EAD_CD,EP1.PLANO_EAD_CD)
+         NOT IN (SELECT PROD_CD,SUB_PROD_CD,CURSO_PROD_EAD_CD,PLANO_EAD_CD
+         FROM EMPLANCURSO PC     WHERE PC.PROD_CD = 'EAD60DOC' AND
+         PC.SUB_PROD_CD = '00' AND PC.CURSO_PROD_EAD_CD =
+         EO1.CURSO_PROD_EAD_CD  AND PC.CURSO_PROD_EAD_DATA_SQ =
+         EO1.CURSO_PROD_EAD_DATA_SQ)  GROUP BY
+         EO1.PROD_CD,EO1.SUB_PROD_CD,EO1.CURSO_PROD_EAD_CD) EV WHERE
+         EV.PROD_CD=EO.PROD_CD AND PC.PROD_CD=EO.PROD_CD AND
+         PC.SUB_PROD_CD=EO.SUB_PROD_CD AND EV.SUB_PROD_CD=EO.SUB_PROD_CD AND
+         EV.CURSO_PROD_EAD_CD=EO.CURSO_PROD_EAD_CD AND
+         TRUNC(EV.DATA_INIC)=TRUNC(EO.PROD_EAD_INIC_OCORR_DT) AND
+         EO.PROD_CD=EC.PROD_CD AND EO.SUB_PROD_CD=EC.SUB_PROD_CD AND
+         EO.CURSO_PROD_EAD_CD=EC.CURSO_PROD_EAD_CD AND
+         EO.CURSO_OCORR_EAD_TIPO_CD='LIVRE' AND
+         TRUNC(CARACT_CURSO_EAD_DT)=(SELECT TRUNC(MAX(CARACT_CURSO_EAD_DT))
+         FROM EADCURSO            WHERE PROD_CD=EO.PROD_CD AND
+         SUB_PROD_CD=EO.SUB_PROD_CD AND
+         SIT_PROD_CURSO_CD='ECLIB' AND
+         (PROD_CD,SUB_PROD_CD,CURSO_PROD_EAD_CD,CURSO_PROD_EAD_DATA_SQ) IN
+         (SELECT PROD_CD,SUB_PROD_CD,CURSO_PROD_EAD_CD,CURSO_PROD_EAD_DATA_SQ
+         FROM EADOCORR
+         WHERE CURSO_OCORR_EAD_TIPO_CD='LIVRE' )  ) AND EO.PROD_CD =
+         'EAD60DOC'AND EO.SUB_PROD_CD = '00'
+   Motivo
+      Descobriu-se que pelo menos 36 instruções SQL com
+      FORCE_MATCHING_SIGNATURE 11722779907735591608 e PLAN_HASH_VALUE
+      2138733819 estavam usando literais. Consulte V$SQL para ver exemplos de
+      tais instruções SQL.
+   Motivo
+      Descobriu-se que pelo menos 31 instruções SQL com
+      FORCE_MATCHING_SIGNATURE 8770002383321390803 e PLAN_HASH_VALUE
+      3553184436 estavam usando literais. Consulte V$SQL para ver exemplos de
+      tais instruções SQL.
+
+   Sintomas que Levaram à Descoberta:
+   ----------------------------------
+      Hard parses de instruções SQL estavam consumindo um tempo de banco de
+      dados significativo.
+      O impacto é 3,43 sessões ativas, 8,49\% da atividade total.
+
+
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+          Informações Adicionais
+          ----------------------
+
+Advertências
+------------
+Não é possível determinar ADDM quando o buffer cache é subdimensionado devido
+a alterações no tamanho do buffer cache.
+Não é possível determinar o impacto de cursores eliminados do shared pool
+devido às alterações no tamanho do shared pool.
+
+Informações Diversas
+--------------------
+A classe de espera "Commit" não estava consumindo um tempo de banco de dados
+significativo.
+A classe de espera "Configuração" não estava consumindo um tempo de banco de
+dados significativo.
+

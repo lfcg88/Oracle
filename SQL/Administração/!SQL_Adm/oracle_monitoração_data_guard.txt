@@ -1,0 +1,12 @@
+- logs do alert (primario e secundario)
+- logs  dataguard (primario e secundario)
+- output do "show configuration", "show database verbose seaprod", "show database verbose seacont" 
+- resultado dos seguintes select's que foram executados nos dois ambientes:
+
+SELECT SEQUENCE#,APPLIED FROM V$ARCHIVED_LOG ORDER BY SEQUENCE#;
+
+SELECT SEQUENCE#,FIRST_TIME,NEXT_TIME FROM V$ARCHIVED_LOG ORDER BY SEQUENCE#;
+
+SELECT SEQUENCE#,FIRST_TIME,NEXT_TIME,APPLIED FROM DBA_LOGSTDBY_LOG ORDER BY 1; 
+
+SELECT PROCESS,STATUS FROM V$MANAGED_STANDBY    

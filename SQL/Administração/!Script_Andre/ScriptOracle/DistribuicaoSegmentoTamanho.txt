@@ -1,0 +1,51 @@
+
+
+
+When you create a new segment, you need to have a very rough estimate of the 
+ultimate size of the segment in order to
+assign it to a tablespace with the appropriate extent size. Follow these three
+ simple rules when assigning a segment to a
+tablespace.
+
+1) Segments smaller than 160M should be placed in 160K extent tablespaces.
+2) Segments between 160M and 5120M should be placed in 5120K extent tablespaces.
+3) Segments larger than 5120M should be placed in 160M extent tablespaces.
+
+
+These extent sizes are chosen to be a multiple of five blocks since Oracle7 will 
+round all extent sizes to a multiple of five
+blocks. In Oracle8 extents won’t be rounded to a multiple of five blocks if they 
+are a multiple of the minimum extent size
+for the tablespace. For Oracle8 databases, choosing the following extent sizes is a little simpler.
+
+
+1) Segments smaller than 128M should be placed in 128K extent tablespaces.
+2) Segments between 128M and 4G should be placed in 4M extent tablespaces.
+3) Segments larger than 4G should be placed in 128M extent tablespaces
+
+
+
+----------------- distribuicao de embratel -------------------
+
+
+select 'alter table '||owner||'.'||segment_name||' move tablespace mba_sma_rms_dat;'
+from dba_segments
+where tablespace_name = 'MBA_RMS_DAT' and ( (bytes/1024)/1024 ) < 32 and segment_type = 'TABLE'
+union all
+select 'alter table '||owner||'.'||segment_name||' move tablespace mba_med_rms_dat;'
+from dba_segments
+where tablespace_name = 'MBA_RMS_DAT' and ( (bytes/1024)/1024 ) >= 32 and segment_type = 'TABLE'
+
+
+
+
+select 'alter index  '||owner||'.'||segment_name||' rebuild   tablespace mba_sma_rms_idx;'
+from dba_segments
+where tablespace_name = 'MBA_RMS_IDX' and ( (bytes/1024)/1024 ) < 32 and segment_type = 'INDEX'
+union all
+select 'alter index '||owner||'.'||segment_name||' rebuild  tablespace mba_med_rms_idx;'
+from dba_segments
+where tablespace_name = 'MBA_RMS_IDX' and ( (bytes/1024)/1024 ) >= 32 and segment_type = 'INDEX'
+
+
+

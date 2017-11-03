@@ -1,0 +1,132 @@
+/* Execution Environment:
+     <SQL, SQL*Plus, iSQL*Plus>
+
+Access Privileges:
+     Requires DBA privileges in order to be executed.
+
+Usage:
+     sqlplus <user>/<pw> @ind_an 
+
+Instructions:
+     Copy the script into the file ind_an.sql. Execute the script from SQL*Plus connected
+     with a user with DBA privileges.  The script requires to parameters:
+
+     1. Name of the output file where the report while be generated
+     2. Name of the SCHEMA to be analyzed.
+
+PROOFREAD THIS SCRIPT BEFORE USING IT! Due to differences in the way text 
+editors, e-mail packages, and operating systems handle text formatting (spaces, 
+tabs, and carriage returns), this script may not be in an executable state
+when you first receive it. Check over the script to ensure that errors of
+this type are corrected.
+
+ 
+   
+Description  
+This script determines whether an index is a good candidate for a rebuild or for
+a bitmap index.  All indexes for a given schema or for a subset of schema's are
+analyzed (except indexes under SYS and SYSTEM).
+
+Sample Output
+-------------
+
+Owner           Index Name                % Deleted Entries Blevel Distinctivenes
+--------------- ------------------------- ----------------- ------ -------------
+SMS             PLATMAP_I1                           31.504      1        32.927
+SMS             PLATMAP_I2                           27.682      1        29.399
+SMS             PLATMAP_I3                           31.237      1        31.237
+SMS             PRODMAP_I4                            8.765      5          99.9
+SMS             SB_CR_BOM_ITEMS_I1                   34.496      2        97.356
+SMS             SB_CR_OS_VERSIONS_I1                 51.942      1        68.063
+SMS             SB_CR_RELEASES_I1                    34.584      1        18.426
+SMS             TAR_HEAD_I2                          21.728      5        22.344
+
+Rebuild the index when:
+
+- deleted entries represent 20% or more of the current entries.
+- the index depth is more then 4 levels.
+
+Possible candidate for bitmap index:
+
+- when distinctiveness is more than 99%
+
+
+ 
+   
+References  
+-- Note:77574.1  Guidelines on when to rebuild an index
+*/
+--   
+--Script  
+REM =============================================================
+REM
+REM                         rebuild_indx.sql
+REM
+REM  Copyright (c) Oracle Software, 1998 - 2000
+REM 
+REM  Author  : Jurgen Schelfhout
+REM
+REM  The sample program in this article is provided for educational
+REM  purposes only and is NOT supported by Oracle Support Services.
+REM  It has been tested internally, however, and works as documented.
+REM  We do not guarantee that it will work for you, so be sure to test
+REM  it in your environment before relying on it.
+REM
+REM  This script will analyze all the indexes for a given schema
+REM  or for a subset of schema's. After this the dynamic view
+REM  index_stats is consulted to see if an index is a good
+REM  candidate for a rebuild or for a bitmap index.
+REM
+REM  Database Version : 7.3.X and above.
+REM
+REM =============================================================
+REM HEIGHT         -  Height of the B-Tree 
+REM LF_ROWS        -  Number of leaf rows 
+REM DEL_LF_ROWS    -  Number of deleted leaf rows in the index 
+REM DISTINCT_KEYS  -  Number of distinct keys in the index (may include rows that have been deleted) 
+REM =============================================================
+prompt
+ACCEPT spoolfile CHAR prompt 'Output-file : ';
+ACCEPT schema CHAR prompt 'Schema name (% allowed) : '; 
+prompt
+prompt
+prompt Rebuild the index when :
+prompt   - deleted entries represent 20% or more of the current entries
+prompt   - the index depth is more then 4 levels.
+prompt Possible candidate for bitmap index :
+prompt   - when distinctiveness is more than 99%
+prompt
+spool &spoolfile
+
+set serveroutput on size 2000
+set verify off
+set linesize 100
+
+declare
+ c_name        INTEGER;
+ ignore        INTEGER;
+ height        index_stats.height%TYPE := 0;
+ lf_rows       index_stats.lf_rows%TYPE := 0;
+ del_lf_rows   index_stats.del_lf_rows%TYPE := 0;
+ distinct_keys index_stats.distinct_keys%TYPE := 0;
+ cursor c_indx is
+  select owner, table_name, index_name
+  from dba_indexes
+  where owner like upper('&schema') 
+    and table_name <> 'ATTRIBUTES' and index_name <> 'TASKS_POOL_INDEX'
+    and owner not in ('SYS','SYSTEM');
+begin
+ dbms_output.enable (1000000);
+ --dbms_output.put_line('passo1');
+ c_name := DBMS_SQL.OPEN_CURSOR;
+ for r_indx in c_indx loop
+  dbms_output.put_line('analyze index ' || r_indx.owner || '.' ||r_indx.index_name || ' validate structure;');
+  dbms_output.put_line('select name,HEIGHT, decode (LF_ROWS,0,1,LF_ROWS) "LF_ROWS", DEL_LF_ROWS,decode (DISTINCT_KEYS,0,1,DISTINCT_KEYS) "DISTINCT",(DEL_LF_ROWS/decode (LF_ROWS,0,1,LF_ROWS))*100 "%" from index_stats;');
+ end loop;
+end;
+/
+
+spool off
+set verify on
+
+ 

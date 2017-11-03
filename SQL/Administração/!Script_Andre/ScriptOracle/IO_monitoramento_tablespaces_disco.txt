@@ -1,0 +1,183 @@
+/usr/accts/oracle >cat rwtick
+#!/bin/ksh
+svrmgrl command=@rwtt
+cp rwtt.log rwtt.tick
+
+/usr/accts/oracle >cat rwtt.sql
+connect internal
+spool rwtt
+select to_char(sysdate,'YYYY/MM/DD HH24:MI:SS') from dual;
+select substr(file_name,1,40), phyrds, phywrts, phyblkrd, phyblkwrt
+ from dba_data_files d, v$filestat v
+  where file_id=file#
+   order by 1;
+select substr(file_name,1,5), sum(phyrds), sum(phywrts), sum(phyblkrd), sum(phyblkwrt)
+ from dba_data_files, v$filestat
+  where file_id=file#
+   group by substr(file_name,1,5)
+    order by 1;
+select substr(file_name,1,1), sum(phyrds), sum(phywrts), sum(phyblkrd), sum(phyblkwrt)
+ from dba_data_files, v$filestat
+  where file_id=file#
+   group by substr(file_name,1,1)
+    order by 1;
+select '/'||substr(file_name,20,3), sum(phyrds), sum(phywrts), sum(phyblkrd), sum(phyblkwrt)
+ from dba_data_files d, v$filestat v
+  where file_id=file#
+   group by('/'||substr(file_name,20,3));
+spool off
+exit
+
+/usr/accts/oracle >cat rwtock
+svrmgrl command=@rwtt
+cp rwtt.log rwtt.tock
+./rwtt.pl > rwtt.ticktock
+awk '
+{
+ if (substr($0,1,1)=="/")
+  {
+   if (NR % 2==1) {o2=$2; o3=$3; o4=$4; o5=$5}
+   if (NR % 2==0) printf("%-40s %8d %8d %8d %8d\n",$1,$2-o2,$3-o3,$4-o4,$5-o5)
+  }
+ else
+ if (index($0,"/")>0) print $0
+}' rwtt.ticktock > rwtt.delta
+awk '
+{
+ if (NR==5) {printf("%s ",substr($0,1,19))}
+ if (NR==5) {n1=substr($0,9,2)*86400+substr($0,12,2)*3600+substr($0,15,2)*60+substr($0,18,2)}
+ if (NR==6) {n2=substr($0,9,2)*86400+substr($0,12,2)*3600+substr($0,15,2)*60+substr($0,18,2)}
+ if (NR==6) {printf("- %s = ",substr($0,12,8))}
+ if (NR==6) {printf("%16d-secs\n",n2-n1)}
+}' rwtt.ticktock > rwtt.out
+print "                                             READ ___WRITE _BLKREAD BLKWRITE" >> rwtt.out
+grep '/ ' rwtt.delta >> rwtt.out
+sort rwtt.delta -rn +1 | grep oracle | head -14 >> rwtt.out
+print >> rwtt.out
+sort rwtt.delta -rn +2 | grep oracle | head  -5 >> rwtt.out
+print
+grep '^/' rwtt.delta
+print
+cat rwtt.out
+
+/usr/accts/oracle >cat rwtt.pl
+#!/usr/local/bin/perl -w
+#
+open (OLD,'rwtt.tick');
+open (TRN,'rwtt.tock');
+$x=(<OLD>);
+while (<TRN>) {
+   print "$x";
+   print ;
+   $x=(<OLD>);
+}
+close(OLD);
+close(TRN);
+--------------------------------------------------------------------------------
+Running:
+/usr/accts/oracle >rwtick
+...
+/usr/accts/oracle >rwtock
+Yields:
+
+/v001a/oracle/dojv/rbs_01.dbf                   0        0        0        0
+/v001a/oracle/dojv/rbs_011.dbf                  0        0        0        0
+/v001a/oracle/dojv/sys_01.dbf                 101       28      239       28
+/v001a/oracle/dojv/vcin_s02i_0.dbf              2        0        2        0
+/v001a/oracle/dojv/vcin_s04d_0.dbf              0        0        0        0
+/v001a/oracle/dojv/vcin_vadh_0.dbf              5       11        5       11
+/v001a/oracle/dojv/vcin_vcmd_0.dbf           1026      250     9617      250
+/v001a/oracle/dojv/vcin_vimd_0.dbf            133        0     2082        0
+/v001a/oracle/dojv/vcin_vlkd_0.dbf             20        0       23        0
+/v001a/oracle/dojv/vcin_vmoh_0.dbf              7        1       46        1
+/v001a/oracle/dojv/vcin_vvhh_0.dbf              8        6        8        6
+/v002a/oracle/dojv/rbs_02.dbf                   0       19        0       19
+/v002a/oracle/dojv/rbs_021.dbf                  0       36        0       36
+/v002a/oracle/dojv/tmp_01.dbf                   0       82        0      642
+/v002a/oracle/dojv/tmp_02.dbf                   0       17        0      136
+/v002a/oracle/dojv/vcin_s03i_0.dbf              0        1        0        1
+/v002a/oracle/dojv/vcin_vcmi_0.dbf            254      107      254      107
+/v002a/oracle/dojv/vcin_vimi_0.dbf             33        0       33        0
+/v002a/oracle/dojv/vcin_vjrd_0.dbf             12       27       12       27
+/v002a/oracle/dojv/vcin_vlki_0.dbf             23        0       23        0
+/v002a/oracle/dojv/vcin_vmoi_0.dbf              0        1        0        1
+/v002a/oracle/dojv/vcin_vspd_0.dbf             22        0       22        0
+/v003a/oracle/dojv/rbs_03.dbf                   0       22        0       22
+/v003a/oracle/dojv/rbs_031.dbf                  0       45        0       45
+/v003a/oracle/dojv/usr_01.dbf                  66      260      829      260
+/v003a/oracle/dojv/vcin_s01i_0.dbf              3        0        3        0
+/v003a/oracle/dojv/vcin_s01i_1.dbf              0        0        0        0
+/v003a/oracle/dojv/vcin_s04i_0.dbf              4        0        4        0
+/v003a/oracle/dojv/vcin_s05i_0.dbf              0        0        0        0
+/v003a/oracle/dojv/vcin_vjri_0.dbf             40       96       40       96
+/v003a/oracle/dojv/vcin_vmod_0.dbf              4        1        4        1
+/v003a/oracle/dojv/vcin_vspi_0.dbf             36        0       36        0
+/v003a/oracle/dojv/vcin_vvhi_0.dbf            125       29      125       29
+/v003a/oracle/dojv/vcin_vvsd_0.dbf              0        0        0        0
+/v003a/oracle/dojv/vcin_vvsd_1.dbf              0        0        0        0
+/v004a/oracle/dojv/rbs_04.dbf                   0       54        0       54
+/v004a/oracle/dojv/rbs_041.dbf                  0        0        0        0
+/v004a/oracle/dojv/vcin_vadd_0.dbf            229       11      229       11
+/v004a/oracle/dojv/vcin_vcmh_0.dbf           2415       27    33664       27
+/v004a/oracle/dojv/vcin_vcod_0.dbf              0        0        0        0
+/v004a/oracle/dojv/vcin_vcoi_0.dbf             54        0       54        0
+/v004a/oracle/dojv/vcin_vnmd_0.dbf           1495        0     1495        0
+/v004a/oracle/dojv/vcin_vnmh_0.dbf              1        0        1        0
+/v004a/oracle/dojv/vcin_vnmi_0.dbf            151        2      151        2
+/v004a/oracle/dojv/vcin_vodi_0.dbf              1        1        1        1
+/v004a/oracle/dojv/vcin_vsri_0.dbf              0        0        0        0
+/v005a/oracle/dojv/rbs_05.dbf                   0       61        0       61
+/v005a/oracle/dojv/rbs_051.dbf                  0        0        0        0
+/v005a/oracle/dojv/vcin_s01d_0.dbf              3        1        3        1
+/v005a/oracle/dojv/vcin_s05d_0.dbf              0        0        0        0
+/v005a/oracle/dojv/vcin_vadi_0.dbf            118       69      118       69
+/v005a/oracle/dojv/vcin_vodd_0.dbf              0        0        0        0
+/v005a/oracle/dojv/vcin_vpsd_0.dbf            113       43      116       43
+/v005a/oracle/dojv/vcin_vpsh_0.dbf            132       12      136       12
+/v005a/oracle/dojv/vcin_vsrd_0.dbf              1       44        1       44
+/v005a/oracle/dojv/vcin_vstd_0.dbf              0        0        0        0
+/v005a/oracle/dojv/vcin_vvhd_0.dbf            126        9      126        9
+/v006a/oracle/dojv/rbs_06.dbf                   0       22        0       22
+/v006a/oracle/dojv/rbs_061.dbf                  0       33        0       33
+/v006a/oracle/dojv/vcin_s02d_0.dbf              0        0        0        0
+/v006a/oracle/dojv/vcin_s03d_0.dbf              0        1        0        1
+/v006a/oracle/dojv/vcin_vodh_0.dbf             34        0      155        0
+/v006a/oracle/dojv/vcin_vpsi_0.dbf            336       94      336       94
+/v006a/oracle/dojv/vcin_vsph_0.dbf              0        0        0        0
+/v001                                        1302      296    12022      296
+/v002                                         344      290      344      969
+/v003                                         278      453     1041      453
+/v004                                        4346       95    35595       95
+/v005                                         493      239      500      239
+/v006                                         370      150      491      150
+/                                            7133     1523    49993     2202
+/rbs                                            0      292        0      292
+/sys                                          101       28      239       28
+/tmp                                            0       99        0      778
+/usr                                           66      260      829      260
+/vci                                         6966      844    48925      844
+
+1999/04/19 15:35:27 - 15:50:46 =              919-secs
+                                             READ ___WRITE _BLKREAD BLKWRITE
+/                                            7133     1523    49993     2202
+/v004a/oracle/dojv/vcin_vcmh_0.dbf           2415       27    33664       27
+/v004a/oracle/dojv/vcin_vnmd_0.dbf           1495        0     1495        0
+/v001a/oracle/dojv/vcin_vcmd_0.dbf           1026      250     9617      250
+/v006a/oracle/dojv/vcin_vpsi_0.dbf            336       94      336       94
+/v002a/oracle/dojv/vcin_vcmi_0.dbf            254      107      254      107
+/v004a/oracle/dojv/vcin_vadd_0.dbf            229       11      229       11
+/v004a/oracle/dojv/vcin_vnmi_0.dbf            151        2      151        2
+/v001a/oracle/dojv/vcin_vimd_0.dbf            133        0     2082        0
+/v005a/oracle/dojv/vcin_vpsh_0.dbf            132       12      136       12
+/v005a/oracle/dojv/vcin_vvhd_0.dbf            126        9      126        9
+/v003a/oracle/dojv/vcin_vvhi_0.dbf            125       29      125       29
+/v005a/oracle/dojv/vcin_vadi_0.dbf            118       69      118       69
+/v005a/oracle/dojv/vcin_vpsd_0.dbf            113       43      116       43
+/v001a/oracle/dojv/sys_01.dbf                 101       28      239       28
+
+/v003a/oracle/dojv/usr_01.dbf                  66      260      829      260
+/v001a/oracle/dojv/vcin_vcmd_0.dbf           1026      250     9617      250
+/v002a/oracle/dojv/vcin_vcmi_0.dbf            254      107      254      107
+/v003a/oracle/dojv/vcin_vjri_0.dbf             40       96       40       96
+/v006a/oracle/dojv/vcin_vpsi_0.dbf            336       94      336       94
+

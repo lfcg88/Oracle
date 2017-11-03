@@ -1,0 +1,247 @@
+
+Junho 11, 2010                                                                             Database IO Report                                                                                           
+                                                                                         =======================                                                                                        
+                                                                                                                                                                                                        
+Tablespace Data-File                      Physical  Physical Physical   Physical                                                                                                                        
+Name       Name                              Reads Blk-Reads   Writes Blk-Writes                                                                                                                        
+---------- ------------------------------ -------- --------- -------- ----------                                                                                                                        
+SYSTEM     /u2/oradata/sysspd1.dbf         #######   #######   10,728     10,728                                                                                                                        
+           /u6/oradata/spd1/sysspd2.dbf         35        77       20         20                                                                                                                        
+ROLLBACK   /u2/oradata/spd1_rbsd01.dbf     #######   #######  #######    #######                                                                                                                        
+           /u07/oradata/spd1_rbsd02.dbf     96,362    96,362  #######    #######                                                                                                                        
+           /u6/oradata/spd1/spd1_rbsd04.d  #######   #######  #######    #######                                                                                                                        
+           bf                                                                                                                                                                                           
+                                                                                                                                                                                                        
+           /u07/oradata/spd1/spd1_rbsd06.    6,913     6,913   38,375     38,375                                                                                                                        
+           dbf                                                                                                                                                                                          
+                                                                                                                                                                                                        
+           /u3/oradata/spd1/spd1_rbsd05.d   55,928    55,928  #######    #######                                                                                                                        
+           bf                                                                                                                                                                                           
+                                                                                                                                                                                                        
+           /u07/oradata/spd1_rbsd03.dbf    #######   #######  #######    #######                                                                                                                        
+TEMP       /u2/oradata/spd1_temp01.dbf     #######   #######   72,681    #######                                                                                                                        
+           /u6/oradata/spd1/spd1_temp02.d  #######   #######   39,236    #######                                                                                                                        
+           bf                                                                                                                                                                                           
+                                                                                                                                                                                                        
+TOOLDAT    /u2/oradata/spd1_tooldat01.dbf   20,237    27,216    1,727      1,727                                                                                                                        
+TOOLIND    /u3/oradata/spd1_toolind01.dbf      655       655        0          0                                                                                                                        
+WORK_DAT   /u2/oradata/spd1_work_dat01.db      627     4,453    9,753      9,753                                                                                                                        
+           f                                                                                                                                                                                            
+                                                                                                                                                                                                        
+WORK_IND   /u3/oradata/spd1_work_ind01.db        0         0        0          0                                                                                                                        
+           f                                                                                                                                                                                            
+                                                                                                                                                                                                        
+USERS      /u2/oradata/spd1_users01.dbf          0         0        0          0                                                                                                                        
+SIA_DAT    /u2/oradata/spd1_sia_dat01.dbf  #######   #######  #######    #######                                                                                                                        
+           /u3/oradata/spd1/spd1_sia_dat1  #######   #######   37,671     37,677                                                                                                                        
+           5.dbf                                                                                                                                                                                        
+                                                                                                                                                                                                        
+           /u6/oradata/spd1/spd1_sia_dat1  #######   #######   52,446     52,453                                                                                                                        
+           4.dbf                                                                                                                                                                                        
+                                                                                                                                                                                                        
+           /u6/oradata/spd1/spd1_sia_dat1  #######   #######   42,939     42,947                                                                                                                        
+           3.dbf                                                                                                                                                                                        
+                                                                                                                                                                                                        
+           /u6/oradata/spd1/spd1_sia_dat1  #######   #######   38,076     38,084                                                                                                                        
+           2.dbf                                                                                                                                                                                        
+                                                                                                                                                                                                        
+           /u5/oradata/spd1/spd1_sia_dat1  #######   #######   43,501     43,509                                                                                                                        
+           0.dbf                                                                                                                                                                                        
+                                                                                                                                                                                                        
+           /u4/oradata/spd1/spd1_sia_dat1  #######   #######   82,039     82,047                                                                                                                        
+           0.dbf                                                                                                                                                                                        
+                                                                                                                                                                                                        
+           /u4/oradata/spd1/spd1_sia_dat0  #######   #######   77,734     77,742                                                                                                                        
+           9.dbf                                                                                                                                                                                        
+                                                                                                                                                                                                        
+           /u4/oradata/spd1/spd1_sia_dat0  #######   #######   71,054     71,071                                                                                                                        
+           8.dbf                                                                                                                                                                                        
+                                                                                                                                                                                                        
+           /u4/oradata/spd1/spd1_sia_dat0  #######   #######  #######    #######                                                                                                                        
+           7.dbf                                                                                                                                                                                        
+                                                                                                                                                                                                        
+           /u6/oradata/spd1/spd1_sia_dat1  #######   #######   41,400     41,406                                                                                                                        
+           6.dbf                                                                                                                                                                                        
+                                                                                                                                                                                                        
+           /u01/oradata/spd1_sia_dat06.db  #######   #######   64,564     64,572                                                                                                                        
+           f                                                                                                                                                                                            
+                                                                                                                                                                                                        
+           /u07/oradata/spd1/spd1_sia_dat  #######   #######  #######    #######                                                                                                                        
+           05.dbf                                                                                                                                                                                       
+                                                                                                                                                                                                        
+           /u3/oradata/spd1_sia_dat04.dbf  #######   #######   67,387     67,400                                                                                                                        
+           /u2/oradata/spd1_sia_dat02.dbf  #######   #######  #######    #######                                                                                                                        
+           /u2/oradata/spd1_sia_dat03      #######   #######  #######    #######                                                                                                                        
+SIA_IND    /u3/oradata/spd1_sia_ind01.dbf  #######   #######  #######    #######                                                                                                                        
+           /u3/oradata/spd1_sia_ind03.dbf  #######   #######   56,894     56,894                                                                                                                        
+           /u3/oradata/spd1/spd1_sia_ind_  #######   #######   37,945     37,945                                                                                                                        
+           10m03.dbf                                                                                                                                                                                    
+                                                                                                                                                                                                        
+           /u6/oradata/spd1/spd1_sia_ind2  #######   #######    9,189      9,189                                                                                                                        
+           4.dbf                                                                                                                                                                                        
+                                                                                                                                                                                                        
+           /u6/oradata/spd1/spd1_sia_ind2  #######   #######   18,965     18,965                                                                                                                        
+           3.dbf                                                                                                                                                                                        
+                                                                                                                                                                                                        
+           /u2/oradata/spd1_sia_ind22.dbf   22,037    22,190      934        934                                                                                                                        
+           /u01/oradata/spd1_sia_ind21.db  #######   #######   25,959     25,959                                                                                                                        
+           f                                                                                                                                                                                            
+                                                                                                                                                                                                        
+           /u6/oradata/spd1/spd1_sia_ind1  #######   #######   28,008     28,008                                                                                                                        
+           3.dbf                                                                                                                                                                                        
+                                                                                                                                                                                                        
+           /u6/oradata/spd1/spd1_sia_ind1  #######   #######    5,150      5,150                                                                                                                        
+           2.dbf                                                                                                                                                                                        
+                                                                                                                                                                                                        
+           /u5/oradata/spd1/spd1_sia_ind1  #######   #######   11,423     11,423                                                                                                                        
+           1.dbf                                                                                                                                                                                        
+                                                                                                                                                                                                        
+           /u5/oradata/spd1/spd1_sia_ind1  #######   #######   11,268     11,268                                                                                                                        
+           0.dbf                                                                                                                                                                                        
+
+Junho 11, 2010                                                                             Database IO Report                                                                                           
+                                                                                         =======================                                                                                        
+                                                                                                                                                                                                        
+Tablespace Data-File                      Physical  Physical Physical   Physical                                                                                                                        
+Name       Name                              Reads Blk-Reads   Writes Blk-Writes                                                                                                                        
+---------- ------------------------------ -------- --------- -------- ----------                                                                                                                        
+                                                                                                                                                                                                        
+SIA_IND    /u5/oradata/spd1/spd1_sia_ind0  #######   #######   13,048     13,048                                                                                                                        
+           9.dbf                                                                                                                                                                                        
+                                                                                                                                                                                                        
+           /u5/oradata/spd1/spd1_sia_ind0  #######   #######   19,008     19,008                                                                                                                        
+           8.dbf                                                                                                                                                                                        
+                                                                                                                                                                                                        
+           /u4/oradata/spd1/spd1_sia_ind0  #######   #######   37,729     37,729                                                                                                                        
+           5.dbf                                                                                                                                                                                        
+                                                                                                                                                                                                        
+           /u5/oradata/spd1/ind01          #######   #######   54,349     54,349                                                                                                                        
+           /u5/oradata/spd1/spd1_sia_ind0  #######   #######   39,181     39,181                                                                                                                        
+           4.dbf                                                                                                                                                                                        
+                                                                                                                                                                                                        
+           /u6/oradata/spd1/spd1_sia_ind2  #######   #######    5,095      5,095                                                                                                                        
+           0.dbf                                                                                                                                                                                        
+                                                                                                                                                                                                        
+           /u6/oradata/spd1/spd1_sia_ind1  #######   #######   13,755     13,755                                                                                                                        
+           9.dbf                                                                                                                                                                                        
+                                                                                                                                                                                                        
+           /u6/oradata/spd1/spd1_sia_ind1  #######   #######   28,215     28,215                                                                                                                        
+           8.dbf                                                                                                                                                                                        
+                                                                                                                                                                                                        
+           /u6/oradata/spd1/spd1_sia_ind1  #######   #######   13,092     13,092                                                                                                                        
+           5.dbf                                                                                                                                                                                        
+                                                                                                                                                                                                        
+           /u6/oradata/spd1/spd1_sia_ind1  #######   #######    8,524      8,524                                                                                                                        
+           4.dbf                                                                                                                                                                                        
+                                                                                                                                                                                                        
+           /u4/oradata/spd1_sia_ind07.dbf  #######   #######    6,126      6,126                                                                                                                        
+           /u1/oradata/spd1_sia_ind06.dbf    7,843     7,843      449        449                                                                                                                        
+           /u3/oradata/spd1_sia_ind02.dbf  #######   #######  #######    #######                                                                                                                        
+SIA_IND_1M /u3/oradata/spd1/spd1_sia_ind_  #######   #######  #######    #######                                                                                                                        
+           1m01.dbf                                                                                                                                                                                     
+                                                                                                                                                                                                        
+           /u5/oradata/spd1/spd1_sia_ind_  #######   #######  #######    #######                                                                                                                        
+           1m02.dbf                                                                                                                                                                                     
+                                                                                                                                                                                                        
+SIA_IND_10 /u3/oradata/spd1/spd1_sia_ind_  #######   #######  #######    #######                                                                                                                        
+M          10m01.dbf                                                                                                                                                                                    
+                                                                                                                                                                                                        
+           /u3/oradata/spd1/spd1_sia_ind_  #######   #######  #######    #######                                                                                                                        
+           10m02.dbf                                                                                                                                                                                    
+                                                                                                                                                                                                        
+           /u5/oradata/spd1/spd1_sia_ind_  #######   #######  #######    #######                                                                                                                        
+           10m03.dbf                                                                                                                                                                                    
+                                                                                                                                                                                                        
+SIA_IND_50 /u3/oradata/spd1/spd1_sia_ind_  #######   #######   43,748     43,748                                                                                                                        
+M          50m01.dbf                                                                                                                                                                                    
+                                                                                                                                                                                                        
+           /u3/oradata/spd1/spd1_sia_ind_  #######   #######    6,635      6,635                                                                                                                        
+           50m02.dbf                                                                                                                                                                                    
+                                                                                                                                                                                                        
+           /u08/oradata/spd1/spd1_sia_ind    5,371     5,371   17,201     17,201                                                                                                                        
+           _50m09.dbf                                                                                                                                                                                   
+                                                                                                                                                                                                        
+           /u07/oradata/spd1/spd1_sia_ind   29,558    29,558   23,402     23,402                                                                                                                        
+           _50m08.dbf                                                                                                                                                                                   
+                                                                                                                                                                                                        
+           /u5/oradata/spd1/spd1_sia_ind_  #######   #######   90,480     90,480                                                                                                                        
+           50m06.dbf                                                                                                                                                                                    
+                                                                                                                                                                                                        
+           /u5/oradata/spd1/spd1_sia_ind_  #######   #######   17,970     17,970                                                                                                                        
+           50m05.dbf                                                                                                                                                                                    
+                                                                                                                                                                                                        
+           /u4/oradata/spd1/spd1_sia_ind_  #######   #######    9,243      9,243                                                                                                                        
+           50m05.dbf                                                                                                                                                                                    
+                                                                                                                                                                                                        
+           /u3/oradata/spd1/spd1_sia_ind_  #######   #######  #######    #######                                                                                                                        
+           50m04.dbf                                                                                                                                                                                    
+                                                                                                                                                                                                        
+           /u3/oradata/spd1/spd1_sia_ind_  #######   #######    9,031      9,031                                                                                                                        
+           50m03.dbf                                                                                                                                                                                    
+                                                                                                                                                                                                        
+SIA_DAT_10 /u2/oradata/spd1/spd1_sia_dat_       24        24        0          0                                                                                                                        
+0M         100m01.dbf                                                                                                                                                                                   
+                                                                                                                                                                                                        
+           /u2/oradata/spd1/spd1_sia_dat_       67        67        0          0                                                                                                                        
+           100m02.dbf                                                                                                                                                                                   
+                                                                                                                                                                                                        
+SIA_DAT_1M /u2/oradata/spd1_sia_dat_1m01.      273     3,269      125        125                                                                                                                        
+           dbf                                                                                                                                                                                          
+                                                                                                                                                                                                        
+           /u6/oradata/spd1/spd1_sia_dat_      110       546       60         60                                                                                                                        
+           1m02.dbf                                                                                                                                                                                     
+                                                                                                                                                                                                        
+DCIS_RESER /u3/oradata/spd1/spd1_dcis_res        2         2        0          0                                                                                                                        
+VA_KEYWORD erva_keyword01.dbf                                                                                                                                                                           
+                                                                                                                                                                                                        
+SIA_DAT_GD /u07/oradata/spd1/spd1_sia_dat  #######   #######        0          0                                                                                                                        
+E          _gde_01.dbf                                                                                                                                                                                  
+                                                                                                                                                                                                        
+           /u07/oradata/spd1/spd1_sia_dat  #######   #######        0          0                                                                                                                        
+
+Junho 11, 2010                                                                             Database IO Report                                                                                           
+                                                                                         =======================                                                                                        
+                                                                                                                                                                                                        
+Tablespace Data-File                      Physical  Physical Physical   Physical                                                                                                                        
+Name       Name                              Reads Blk-Reads   Writes Blk-Writes                                                                                                                        
+---------- ------------------------------ -------- --------- -------- ----------                                                                                                                        
+           _gde_02.dbf                                                                                                                                                                                  
+                                                                                                                                                                                                        
+SIA_DAT_GD /u07/oradata/spd1/spd1_sia_dat  #######   #######    1,617      1,617                                                                                                                        
+E          _gde_03.dbf                                                                                                                                                                                  
+                                                                                                                                                                                                        
+           /u07/oradata/spd1/spd1_sia_dat  #######   #######        0          0                                                                                                                        
+           _gde_04.dbf                                                                                                                                                                                  
+                                                                                                                                                                                                        
+           /u07/oradata/spd1/spd1_sia_dat  #######   #######        0          0                                                                                                                        
+           _gde_05.dbf                                                                                                                                                                                  
+                                                                                                                                                                                                        
+           /u07/oradata/spd1/spd1_sia_dat  #######   #######        0          0                                                                                                                        
+           _gde_06.dbf                                                                                                                                                                                  
+                                                                                                                                                                                                        
+           /u08/oradata/spd1/spd1_sia_dat   77,302    77,302   16,355     16,355                                                                                                                        
+           _gde_13.dbf                                                                                                                                                                                  
+                                                                                                                                                                                                        
+           /u08/oradata/spd1/spd1_sia_dat  #######   #######        0          0                                                                                                                        
+           _gde_12.dbf                                                                                                                                                                                  
+                                                                                                                                                                                                        
+           /u08/oradata/spd1/spd1_sia_dat  #######   #######        0          0                                                                                                                        
+           _gde_11.dbf                                                                                                                                                                                  
+                                                                                                                                                                                                        
+           /u07/oradata/spd1/spd1_sia_dat  #######   #######        0          0                                                                                                                        
+           _gde_10.dbf                                                                                                                                                                                  
+                                                                                                                                                                                                        
+           /u07/oradata/spd1/spd1_sia_dat  #######   #######        0          0                                                                                                                        
+           _gde_07.dbf                                                                                                                                                                                  
+                                                                                                                                                                                                        
+           /u07/oradata/spd1/spd1_sia_dat  #######   #######        0          0                                                                                                                        
+           _gde_08.dbf                                                                                                                                                                                  
+                                                                                                                                                                                                        
+           /u07/oradata/spd1/spd1_sia_dat  #######   #######        0          0                                                                                                                        
+           _gde_09.dbf                                                                                                                                                                                  
+                                                                                                                                                                                                        
+SYS_AUDIT_ /u08/oradata/spd1/spd1_sys_aud   16,801   #######    5,518      5,518                                                                                                                        
+MED        it_med_01.dbf                                                                                                                                                                                
+                                                                                                                                                                                                        
+
+***** END OF REPORT ****

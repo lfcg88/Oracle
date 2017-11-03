@@ -1,0 +1,10 @@
+set linesize 150
+set pagesize 150
+column tablespace_name format a12
+column FILE_NAME format a50
+column MAXBYTES format 99999999999999
+
+select file_name, tablespace_name, (bytes/1024/1024) Mbytes,
+       autoextensible, maxbytes, increment_by
+from dba_data_files
+  where tablespace_name like upper('%&TBS%');

@@ -1,0 +1,2025 @@
+<i>ver: 8.2</i>
+<hr>
+
+
+<html>
+<a name=top></a>
+
+<b> HOST: adclodb04 </b>
+<hr>
+<b> INSTANCE: rjd5 </b>
+<hr>
+<b> VERSION: 9.2.0.8.0 </b>
+<hr>
+<b> DATE: 10-DEZ-2010 </b>
+<hr>
+<pre>
+
+
+BANNER                                                                          
+----------------------------------------------------------------                
+Oracle9i Enterprise Edition Release 9.2.0.8.0 - 64bit Production                
+PL/SQL Release 9.2.0.8.0 - Production                                           
+CORE	9.2.0.8.0	Production                                                       
+TNS for Linux: Version 9.2.0.8.0 - Production                                   
+NLSRTL Version 9.2.0.8.0 - Production                                           
+
+
+.CLIENT_CONFIGURATION.                                                          
+----------------------                                                          
+CURRENT_USER                  HOST                                              
+----------------------------- ---------------------------                       
+SYSTEM                        DUFRY\INV01235
+
+
+</pre>
+<hr>
+<hr>
+
+[adclodb04 / rjd5] Collecting default passwords...
+
+
+<br>
+
+<b>.DEFAULT PASSWORDS.</b>
+
+<pre>
+		 from	dba_users, user$, v$instance
+		     	           *
+ERRO na linha 20:
+ORA-06550: line 20, column 20: 
+PL/SQL: ORA-00942: table or view does not exist 
+ORA-06550: line 16, column 3: 
+PL/SQL: SQL Statement ignored 
+ORA-06550: line 3222, column 7: 
+PLS-00364: loop index variable 'LV_USER' use is invalid 
+ORA-06550: line 3222, column 4: 
+PL/SQL: Statement ignored 
+
+
+
+</pre>
+<a HREF=#top><h6>Top</h6></a>
+<hr>
+
+[adclodb04 / rjd5] Collecting DBlinks...
+
+
+<br>
+
+<b>.DBLINKS.</b>
+
+<pre>
+	select name, userid, password, host from sys.link$
+	                                             *
+ERRO na linha 1:
+ORA-01031: insufficient privileges 
+
+
+
+</pre>
+<a HREF=#top><h6>Top</h6></a>
+<hr>
+
+[adclodb04 / rjd5] Collecting RESTRICTED OBJECTS ACCCESS...
+
+
+<br>
+
+<b>.RESTRICTED OBJECTS ACCESS.</b>
+
+'ALL_USERS','AUD$','LINK$','ALL_DB_LINKS', 'DBMS_SYSTEM'
+
+<pre>
+
+PRIVILEGE            GRANTEE                   TABLE_NAME                                 
+-------------------- ------------------------- ----------------------------------------   
+EXECUTE              SYSTEM                    DBMS_SYSTEM                                
+EXECUTE              OEM_MONITOR               DBMS_SYSTEM                                
+
+</pre>
+<a HREF=#top><h6>Top</h6></a>
+<hr>
+
+[adclodb04 / rjd5] Collecting Account/Passwords Policy ...
+
+
+<br>
+
+<b>.USER PROFILES.</b>
+
+<pre>
+
+PROFILE                        RESOURCE_NAME                  LIMIT               
+------------------------------ ------------------------------ --------------------
+DEFAULT                        FAILED_LOGIN_ATTEMPTS          UNLIMITED           
+DEFAULT                        PASSWORD_LIFE_TIME             UNLIMITED           
+DEFAULT                        PASSWORD_REUSE_MAX             UNLIMITED           
+DEFAULT                        PASSWORD_LOCK_TIME             UNLIMITED           
+DEFAULT                        PASSWORD_GRACE_TIME            UNLIMITED           
+DEFAULT                        PASSWORD_VERIFY_FUNCTION       NULL                
+DEFAULT                        PASSWORD_REUSE_TIME            UNLIMITED           
+PF_USER_GERAL                  FAILED_LOGIN_ATTEMPTS          4                   
+PF_USER_GERAL                  PASSWORD_GRACE_TIME            10                  
+PF_USER_GERAL                  PASSWORD_LOCK_TIME             1                   
+PF_USER_GERAL                  PASSWORD_VERIFY_FUNCTION       VERIFY_FUNCTION     
+PF_USER_GERAL                  PASSWORD_REUSE_MAX             3                   
+PF_USER_GERAL                  PASSWORD_REUSE_TIME            1                   
+PF_USER_GERAL                  PASSWORD_LIFE_TIME             11                  
+PINTQ                          FAILED_LOGIN_ATTEMPTS          DEFAULT             
+PINTQ                          PASSWORD_GRACE_TIME            DEFAULT             
+PINTQ                          PASSWORD_LOCK_TIME             DEFAULT             
+PINTQ                          PASSWORD_VERIFY_FUNCTION       DEFAULT             
+PINTQ                          PASSWORD_REUSE_MAX             DEFAULT             
+PINTQ                          PASSWORD_REUSE_TIME            DEFAULT             
+PINTQ                          PASSWORD_LIFE_TIME             DEFAULT             
+P2_INTQ                        FAILED_LOGIN_ATTEMPTS          DEFAULT             
+P2_INTQ                        PASSWORD_GRACE_TIME            DEFAULT             
+P2_INTQ                        PASSWORD_LOCK_TIME             DEFAULT             
+P2_INTQ                        PASSWORD_VERIFY_FUNCTION       DEFAULT             
+P2_INTQ                        PASSWORD_REUSE_MAX             DEFAULT             
+P2_INTQ                        PASSWORD_REUSE_TIME            DEFAULT             
+P2_INTQ                        PASSWORD_LIFE_TIME             DEFAULT             
+P3_INTQ                        FAILED_LOGIN_ATTEMPTS          DEFAULT             
+P3_INTQ                        PASSWORD_GRACE_TIME            DEFAULT             
+P3_INTQ                        PASSWORD_LOCK_TIME             DEFAULT             
+P3_INTQ                        PASSWORD_VERIFY_FUNCTION       DEFAULT             
+P3_INTQ                        PASSWORD_REUSE_MAX             DEFAULT             
+P3_INTQ                        PASSWORD_REUSE_TIME            DEFAULT             
+P3_INTQ                        PASSWORD_LIFE_TIME             DEFAULT             
+TEMP_PROF                      FAILED_LOGIN_ATTEMPTS          DEFAULT             
+TEMP_PROF                      PASSWORD_GRACE_TIME            DEFAULT             
+TEMP_PROF                      PASSWORD_LOCK_TIME             DEFAULT             
+TEMP_PROF                      PASSWORD_VERIFY_FUNCTION       DEFAULT             
+TEMP_PROF                      PASSWORD_REUSE_MAX             DEFAULT             
+TEMP_PROF                      PASSWORD_REUSE_TIME            DEFAULT             
+TEMP_PROF                      PASSWORD_LIFE_TIME             30                  
+USER_MANUTENCAO                FAILED_LOGIN_ATTEMPTS          DEFAULT             
+USER_MANUTENCAO                PASSWORD_GRACE_TIME            DEFAULT             
+USER_MANUTENCAO                PASSWORD_LOCK_TIME             DEFAULT             
+USER_MANUTENCAO                PASSWORD_VERIFY_FUNCTION       DEFAULT             
+USER_MANUTENCAO                PASSWORD_REUSE_MAX             DEFAULT             
+USER_MANUTENCAO                PASSWORD_REUSE_TIME            DEFAULT             
+USER_MANUTENCAO                PASSWORD_LIFE_TIME             DEFAULT             
+USUARIO                        FAILED_LOGIN_ATTEMPTS          DEFAULT             
+USUARIO                        PASSWORD_REUSE_MAX             DEFAULT             
+USUARIO                        PASSWORD_REUSE_TIME            DEFAULT             
+USUARIO                        PASSWORD_LOCK_TIME             DEFAULT             
+USUARIO                        PASSWORD_GRACE_TIME            DEFAULT             
+USUARIO                        PASSWORD_VERIFY_FUNCTION       DEFAULT             
+USUARIO                        PASSWORD_LIFE_TIME             DEFAULT             
+
+</pre>
+<a HREF=#top><h6>Top</h6></a>
+<hr>
+
+[adclodb04 / rjd5] Collecting users in profiles ...
+
+
+<br>
+
+<b>.TOTAL USERS IN PROFILES.</b>
+
+<pre>
+
+ TOT_USERS PROFILE                                                                
+---------- ------------------------------                                         
+       232 DEFAULT                                                                
+         1 TEMP_PROF                                                              
+         1 USER_MANUTENCAO                                                        
+       156 USUARIO                                                                
+
+</pre>
+<a HREF=#top><h6>Top</h6></a>
+<hr>
+
+[adclodb04 / rjd5] Collecting OS Authentications Prefix...
+
+
+<br>
+
+<b>.AUTHENT PREFIX.</b>
+
+<pre>
+
+NAME                         VALUE                                    
+---------------------------- ---------------                          
+remote_os_authent            TRUE                                     
+
+</pre>
+<a HREF=#top><h6>Top</h6></a>
+<hr>
+
+[adclodb04 / rjd5] Collecting parameter dblink_encrypt...
+
+
+<br>
+
+<b>.DBLink_encrypt.</b>
+
+<pre>
+
+NAME                         VALUE                                    
+---------------------------- ---------------                          
+dblink_encrypt_login         FALSE                                    
+
+</pre>
+<a HREF=#top><h6>Top</h6></a>
+<hr>
+
+[adclodb04 / rjd5] Collecting Parameter O7_DICTIONARY...
+
+
+<br>
+
+<b>.O7_DICTIONARY.</b>
+
+<pre>
+
+</pre>
+<a HREF=#top><h6>Top</h6></a>
+<hr>
+
+[adclodb04 / rjd5] Collecting Remote Logins...
+
+
+<br>
+
+<b>.REMOTE LOGINS.</b>
+
+<pre>
+
+NAME                         VALUE                     
+---------------------------- --------------------------
+remote_login_passwordfile    EXCLUSIVE                 
+
+</pre>
+<a HREF=#top><h6>Top</h6></a>
+<hr>
+
+[adclodb04 / rjd5] Collecting privileges "ADMIN OPTION"...
+
+
+<br>
+
+<b>.ADMIN OPTION.</b>
+
+<pre>
+
+GRANTEE                        PRIVILEGE                                ADM                                    
+------------------------------ ---------------------------------------- ---                                    
+HELPDESK                       CREATE SESSION                           YES                                    
+
+</pre>
+<a HREF=#top><h6>Top</h6></a>
+<hr>
+
+[adclodb04 / rjd5] Collecting users with "OLAP_DBA"...
+
+
+<br>
+
+<b>.OLAP_ADMIN.</b>
+
+<pre>
+
+</pre>
+<a HREF=#top><h6>Top</h6></a>
+<hr>
+
+[adclodb04 / rjd5] Collecting "SPECIAL PRIVS"...
+
+
+<br>
+
+<b>.SPECIAL PRIVS.</b>
+
+<pre>
+
+GRANTEE                   PRIVILEGE                                             
+------------------------- --------------------------------------------------    
+AXB                       CREATE PUBLIC SYNONYM                                 
+COMERCIAL                 CREATE PUBLIC SYNONYM                                 
+CSEG                      CREATE PUBLIC SYNONYM                                 
+HELPDESK                  ALTER USER                                            
+INTQ                      CREATE PUBLIC SYNONYM                                 
+INTQ                      DROP PUBLIC SYNONYM                                   
+PAINEL                    CREATE PUBLIC SYNONYM                                 
+SCM                       CREATE PUBLIC SYNONYM                                 
+XDB                       ADMINISTER DATABASE TRIGGER                           
+XDB                       CREATE PUBLIC SYNONYM                                 
+XDB                       DROP PUBLIC SYNONYM                                   
+
+</pre>
+<a HREF=#top><h6>Top</h6></a>
+<hr>
+
+[adclodb04 / rjd5] Collecting "RISK PACKAGES"...
+
+
+<br>
+
+<b>.RISK_PACKAGES.</b>
+
+<pre>
+
+PRIVILEGE  OWNER           TABLE_NAME                GRANTEE                    
+---------- --------------- ------------------------- -------------------------  
+EXECUTE    SYS             DBMS_LOB                  PUBLIC                     
+EXECUTE    SYS             DBMS_DDL                  PUBLIC                     
+EXECUTE    SYS             DBMS_EXPORT_EXTENSION     PUBLIC                     
+EXECUTE    SYS             DBMS_STATS                PUBLIC                     
+EXECUTE    SYS             DBMS_SYSTEM               SYSTEM                     
+EXECUTE    SYS             DBMS_XRWMV                PUBLIC                     
+EXECUTE    SYS             DBMS_RANDOM               PUBLIC                     
+EXECUTE    SYS             DBMS_METADATA             PUBLIC                     
+EXECUTE    SYS             DBMS_CDC_SUBSCRIBE        PUBLIC                     
+DEBUG      SYS             OWA_OPT_LOCK              PUBLIC                     
+EXECUTE    SYS             OWA_OPT_LOCK              PUBLIC                     
+EXECUTE    SYS             DBMS_REPUTIL              PUBLIC                     
+EXECUTE    SYS             DBMS_REPCAT_RGT_EXP       PUBLIC                     
+EXECUTE    SYS             DBMS_REPCAT_INSTANTIATE   PUBLIC                     
+EXECUTE    ORDSYS          ORDIMGIDXMETHODS          PUBLIC                     
+EXECUTE    MDSYS           PRVT_IDX                  PUBLIC                     
+EXECUTE    MDSYS           MD2                       PUBLIC                     
+EXECUTE    MDSYS           SDO_TUNE                  PUBLIC                     
+EXECUTE    MDSYS           SDO_UTIL                  PUBLIC                     
+EXECUTE    MDSYS           SDO_CATALOG               PUBLIC                     
+EXECUTE    MDSYS           RTREE_IDX                 PUBLIC                     
+EXECUTE    MDSYS           SDO_RTREE_ADMIN           PUBLIC                     
+EXECUTE    CTXSYS          CATSEARCH                 PUBLIC                     
+EXECUTE    CTXSYS          DRILOAD                   PUBLIC                     
+EXECUTE    CTXSYS          CTX_DOC                   PUBLIC                     
+EXECUTE    CTXSYS          CTX_QUERY                 PUBLIC                     
+EXECUTE    XDB             DBMS_XMLSCHEMA            PUBLIC                     
+EXECUTE    XDB             DBMS_XMLSCHEMA_INT        PUBLIC                     
+EXECUTE    XDB             DBMS_XDBZ0                PUBLIC                     
+
+</pre>
+<a HREF=#top><h6>Top</h6></a>
+<hr>
+
+[adclodb04 / rjd5] Collecting privileges "ANY"...
+
+
+<br>
+
+<b>.PRIVILEGE_ANY.</b>
+
+<pre>
+
+GRANTEE                                            PRIVILEGE                     
+-------------------------------------------------- ------------------------------
+AXB                                                SELECT ANY TABLE              
+AXB                                                DROP ANY SNAPSHOT             
+AXB                                                CREATE ANY SYNONYM            
+AXB                                                CREATE ANY PROCEDURE          
+AXB                                                EXECUTE ANY PROCEDURE         
+INTQ                                               DROP ANY VIEW                 
+INTQ                                               DROP ANY INDEX                
+INTQ                                               DROP ANY TABLE                
+INTQ                                               ALTER ANY INDEX               
+INTQ                                               ALTER ANY TABLE               
+INTQ                                               CREATE ANY VIEW               
+INTQ                                               CREATE ANY INDEX              
+INTQ                                               CREATE ANY TABLE              
+INTQ                                               DELETE ANY TABLE              
+INTQ                                               DROP ANY CLUSTER              
+INTQ                                               DROP ANY SYNONYM              
+INTQ                                               DROP ANY TRIGGER              
+INTQ                                               INSERT ANY TABLE              
+INTQ                                               SELECT ANY TABLE              
+INTQ                                               ALTER ANY CLUSTER             
+INTQ                                               ALTER ANY TRIGGER             
+INTQ                                               DROP ANY SEQUENCE             
+INTQ                                               DROP ANY SNAPSHOT             
+INTQ                                               ALTER ANY SEQUENCE            
+INTQ                                               ALTER ANY SNAPSHOT            
+INTQ                                               CREATE ANY CLUSTER            
+INTQ                                               CREATE ANY SYNONYM            
+INTQ                                               CREATE ANY TRIGGER            
+INTQ                                               DROP ANY PROCEDURE            
+INTQ                                               ALTER ANY PROCEDURE           
+INTQ                                               CREATE ANY SEQUENCE           
+INTQ                                               CREATE ANY SNAPSHOT           
+INTQ                                               CREATE ANY PROCEDURE          
+INTQ                                               EXECUTE ANY PROCEDURE         
+PROC                                               CREATE ANY PROCEDURE          
+PAINEL                                             ALTER ANY TABLE               
+PAINEL                                             ALTER ANY SEQUENCE            
+SCM_ADM                                            SELECT ANY TABLE              
+SCM_DES                                            ALTER ANY TABLE               
+SCM_DES                                            ALTER ANY PROCEDURE           
+SCM_DES                                            EXECUTE ANY PROCEDURE         
+HELPDESK                                           GRANT ANY ROLE                
+REPADMIN                                           DROP ANY VIEW                 
+REPADMIN                                           DROP ANY INDEX                
+REPADMIN                                           DROP ANY TABLE                
+REPADMIN                                           ALTER ANY INDEX               
+REPADMIN                                           ALTER ANY TABLE               
+REPADMIN                                           CREATE ANY VIEW               
+REPADMIN                                           CREATE ANY INDEX              
+REPADMIN                                           CREATE ANY TABLE              
+REPADMIN                                           DELETE ANY TABLE              
+REPADMIN                                           DROP ANY CLUSTER              
+REPADMIN                                           DROP ANY SYNONYM              
+REPADMIN                                           DROP ANY TRIGGER              
+REPADMIN                                           INSERT ANY TABLE              
+REPADMIN                                           SELECT ANY TABLE              
+REPADMIN                                           ALTER ANY CLUSTER             
+REPADMIN                                           ALTER ANY TRIGGER             
+REPADMIN                                           DROP ANY SEQUENCE             
+REPADMIN                                           DROP ANY SNAPSHOT             
+REPADMIN                                           ALTER ANY SEQUENCE            
+REPADMIN                                           ALTER ANY SNAPSHOT            
+REPADMIN                                           CREATE ANY CLUSTER            
+REPADMIN                                           CREATE ANY SYNONYM            
+REPADMIN                                           CREATE ANY TRIGGER            
+REPADMIN                                           DROP ANY PROCEDURE            
+REPADMIN                                           ALTER ANY PROCEDURE           
+REPADMIN                                           CREATE ANY SEQUENCE           
+REPADMIN                                           CREATE ANY SNAPSHOT           
+REPADMIN                                           CREATE ANY PROCEDURE          
+REPADMIN                                           EXECUTE ANY PROCEDURE         
+COMERCIAL                                          CREATE ANY VIEW               
+COMERCIAL                                          CREATE ANY INDEX              
+COMERCIAL                                          CREATE ANY TABLE              
+COMERCIAL                                          CREATE ANY SYNONYM            
+COMERCIAL                                          CREATE ANY SNAPSHOT           
+MANUTENCAO                                         EXECUTE ANY PROCEDURE         
+OPS$AXBGRL                                         SELECT ANY TABLE              
+OPS$AXBGRL                                         CREATE ANY SYNONYM            
+OPS$AXBGRL                                         CREATE ANY PROCEDURE          
+OPS$AXBGRL                                         EXECUTE ANY PROCEDURE         
+ROLE_PRICE                                         SELECT ANY TABLE              
+ROLE_PRICE                                         EXECUTE ANY PROCEDURE         
+OPS$AXBPROD                                        DROP ANY TABLE                
+OPS$AXBPROD                                        ALTER ANY TABLE               
+OPS$AXBPROD                                        CREATE ANY TABLE              
+OPS$AXBPROD                                        DELETE ANY TABLE              
+OPS$AXBPROD                                        INSERT ANY TABLE              
+OPS$AXBPROD                                        SELECT ANY TABLE              
+OPS$AXBPROD                                        UPDATE ANY TABLE              
+OPS$AXBPROD                                        CREATE ANY SYNONYM            
+OPS$AXBPROD                                        CREATE ANY PROCEDURE          
+OPS$AXBPROD                                        EXECUTE ANY PROCEDURE         
+OPS$ORACLE8                                        SELECT ANY TABLE              
+SERGIODBAMJV                                       SELECT ANY TABLE              
+JAVADEBUGPRIV                                      DEBUG ANY PROCEDURE           
+
+</pre>
+<a HREF=#top><h6>Top</h6></a>
+<hr>
+
+[adclodb04 / rjd5] Collecting Default TableSpaces...
+
+
+<br>
+
+<b>.DEFAULT TABLESPACES.</b>
+
+<pre>
+
+</pre>
+<a HREF=#top><h6>Top</h6></a>
+<hr>
+
+[adclodb04 / rjd5] Collecting PUBLIC permission on system privileges...
+
+
+<br>
+
+<b>.PUBLIC SYS.</b>
+
+<pre>
+
+</pre>
+<a HREF=#top><h6>Top</h6></a>
+<hr>
+
+[adclodb04 / rjd5] Collecting AUDIT value...
+
+
+<br>
+
+<b>.AUDITING CONFIGURATION OPTIONS.</b>
+
+<pre>
+
+</pre>
+<a HREF=#top><h6>Top</h6></a>
+<hr>
+
+[adclodb04 / rjd5] Collecting Auditing Configutation...
+
+
+<br>
+
+<b>.AUDITING COMMANDS.</b>
+
+<pre>
+
+USER_NAME                      AUDIT_OPTION                        SUCCESS    FAILURE     
+------------------------------ ----------------------------------- ---------- ----------  
+                               CREATE SESSION                      BY ACCESS  BY ACCESS   
+
+</pre>
+<a HREF=#top><h6>Top</h6></a>
+<hr>
+
+[adclodb04 / rjd5] Collecting TABLESPACE_AUD$...
+
+
+<br>
+
+<b>.TABLESPACE_AUD$.</b>
+
+<pre>
+
+</pre>
+<a HREF=#top><h6>Top</h6></a>
+<hr>
+
+[adclodb04 / rjd5] Collecting public privileges on UTL_packages ...
+
+
+<br>
+
+<b>.UTL_packages.</b>
+
+<pre>
+
+PRIVILEGE            GRANTEE                   TABLE_NAME                                 
+-------------------- ------------------------- ----------------------------------------   
+EXECUTE              PUBLIC                    UTL_FILE                                   
+EXECUTE              PUBLIC                    UTL_TCP                                    
+EXECUTE              PUBLIC                    UTL_SMTP                                   
+EXECUTE              PUBLIC                    UTL_HTTP                                   
+
+</pre>
+<a HREF=#top><h6>Top</h6></a>
+<hr>
+
+[adclodb04 / rjd5] Collecting users with DBA role...
+
+
+<br>
+
+<b>.USERS_DBA_ROLE.</b>
+
+<pre>
+
+GRANTEE                   DEFA ADMI                                                                 
+------------------------- ---- ----                                                                 
+CTXSYS                    YES  NO                                                                   
+OPS$ORACLE                YES  NO                                                                   
+
+</pre>
+<a HREF=#top><h6>Top</h6></a>
+<hr>
+<br>
+
+<b>.SYSDBA AND SYSOPER USERS.</b>
+
+<pre>
+
+</pre>
+<a HREF=#top><h6>Top</h6></a>
+<hr>
+
+[adclodb04 / rjd5] Collecting privileges "CATALOG_ROLE"...
+
+
+<br>
+
+<b>.CATALOG_ROLES.</b>
+
+<pre>
+
+GRANTEE                        GRANTED_ROLE                  
+------------------------------ ------------------------------
+PERFSTAT                       SELECT_CATALOG_ROLE           
+
+</pre>
+<a HREF=#top><h6>Top</h6></a>
+<hr>
+
+[adclodb04 / rjd5] Collecting DBA Users...
+
+
+<br>
+
+<b>.DBA_USERS.</b>
+
+<pre>
+
+USERNAME                            PROFILE           PASSWORD           ACCOUNT_STATUS                                 
+----------------------------------- ----------------- ------------------ ------------------                             
+SYS                                 USUARIO           *****************  OPEN                                           
+SYSTEM                              USUARIO           *****************  OPEN                                           
+OUTLN                               DEFAULT           *****************  OPEN                                           
+DBSNMP                              DEFAULT           *****************  LOCKED                                         
+DART                                USUARIO           *****************  LOCKED                                         
+WMSYS                               DEFAULT           *****************  LOCKED                                         
+ORDSYS                              DEFAULT           *****************  LOCKED                                         
+ORDPLUGINS                          DEFAULT           *****************  LOCKED                                         
+MDSYS                               DEFAULT           *****************  LOCKED                                         
+CTXSYS                              DEFAULT           *****************  LOCKED                                         
+XDB                                 DEFAULT           *****************  OPEN                                           
+ANONYMOUS                           DEFAULT           *****************  LOCKED                                         
+SALVIO                              USUARIO           *****************  OPEN                                           
+LUCIANAM                            USUARIO           *****************  LOCKED                                         
+REPADMIN                            USUARIO           *****************  OPEN                                           
+SAFSUP                              USUARIO           *****************  LOCKED                                         
+LAUGUSTO                            USUARIO           *****************  OPEN                                           
+OPS$INTQ                            USUARIO           *****************  OPEN                                           
+RCASIA                              USUARIO           *****************  LOCKED                                         
+RICARDO                             USUARIO           *****************  LOCKED                                         
+BALOGH                              USUARIO           *****************  OPEN                                           
+ABEL                                USUARIO           *****************  LOCKED                                         
+RECURSOS_RJADUX01                   USUARIO           *****************  LOCKED                                         
+HRIBEIRO                            USUARIO           *****************  OPEN                                           
+SAL_DESENV                          USUARIO           *****************  LOCKED                                         
+ESMANHO                             USUARIO           *****************  OPEN                                           
+LEITUGA                             USUARIO           *****************  LOCKED                                         
+RPEREIRA                            USUARIO           *****************  OPEN                                           
+LANG                                USUARIO           *****************  LOCKED                                         
+LIXO                                USUARIO           *****************  LOCKED                                         
+FERNANDO                            USUARIO           *****************  LOCKED                                         
+SACM_RJD10                          USUARIO           *****************  OPEN                                           
+WSANTOS                             USUARIO           *****************  LOCKED                                         
+ADP_INI                             USUARIO           *****************  LOCKED                                         
+JPAULO                              USUARIO           *****************  LOCKED                                         
+APPL_APPL                           USUARIO           *****************  LOCKED                                         
+COMERCIAL_RJD6                      USUARIO           *****************  OPEN                                           
+SCM                                 USUARIO           *****************  OPEN                                           
+CAROLINA                            USUARIO           *****************  OPEN                                           
+VAYSSIER                            USUARIO           *****************  LOCKED                                         
+RENTAL                              USUARIO           *****************  LOCKED                                         
+MICHELLE                            USUARIO           *****************  OPEN                                           
+BRASIFMAQ                           USUARIO           *****************  LOCKED                                         
+TANIA                               USUARIO           *****************  LOCKED                                         
+CAETANO                             USUARIO           *****************  OPEN                                           
+APPL_R113                           USUARIO           *****************  LOCKED                                         
+INTQBRASIFMAQ                       USUARIO           *****************  OPEN                                           
+PUBLI_CAD0                          USUARIO           *****************  LOCKED                                         
+SYLVIA                              USUARIO           *****************  OPEN                                           
+PROC                                USUARIO           *****************  OPEN                                           
+SCM_DP                              USUARIO           *****************  LOCKED                                         
+VALERIA                             USUARIO           *****************  LOCKED                                         
+BEZERRA                             USUARIO           *****************  LOCKED                                         
+NICOLINI                            USUARIO           *****************  LOCKED                                         
+LHENRIQUE                           USUARIO           *****************  OPEN                                           
+PUBLI_RJD6                          USUARIO           *****************  LOCKED                                         
+CONSULTORIQ                         USUARIO           *****************  OPEN                                           
+WAGNER                              USUARIO           *****************  LOCKED                                         
+EXPADM                              USUARIO           *****************  LOCKED                                         
+KALENCAR                            USUARIO           *****************  OPEN                                           
+PUPPIN                              USUARIO           *****************  LOCKED                                         
+IN68_USU                            USUARIO           *****************  OPEN                                           
+LOGISTICO                           USUARIO           *****************  OPEN                                           
+LINS                                USUARIO           *****************  LOCKED                                         
+KARLA                               USUARIO           *****************  OPEN                                           
+IVANILDA                            USUARIO           *****************  OPEN                                           
+SINVAL                              USUARIO           *****************  OPEN                                           
+COMERCIAL_RJADUX05                  USUARIO           *****************  LOCKED                                         
+SACM_RJADUX05                       USUARIO           *****************  OPEN                                           
+WALTER                              USUARIO           *****************  LOCKED                                         
+MLSOARES                            USUARIO           *****************  LOCKED                                         
+GRANTEE                             USUARIO           *****************  LOCKED                                         
+COMERCIAL                           USUARIO           *****************  OPEN                                           
+ORADBA                              USUARIO           *****************  LOCKED                                         
+BKP                                 USUARIO           *****************  LOCKED                                         
+FKOCHPWC                            USUARIO           *****************  LOCKED                                         
+INTERFACE                           USUARIO           *****************  OPEN                                           
+VLUCIA                              USUARIO           *****************  OPEN                                           
+SISPRO_TEMP                         USUARIO           *****************  LOCKED                                         
+APPS                                USUARIO           *****************  LOCKED                                         
+FORMS50                             USUARIO           *****************  LOCKED                                         
+BLACERDA                            USUARIO           *****************  LOCKED                                         
+FS93                                USUARIO           *****************  OPEN                                           
+ANDRE_RSD0                          USUARIO           *****************  LOCKED                                         
+OPER                                USUARIO           *****************  OPEN                                           
+FKOCHPWL                            USUARIO           *****************  LOCKED                                         
+CALL                                USUARIO           *****************  OPEN                                           
+OPS$ORACLE8                         USUARIO           *****************  LOCKED                                         
+BAENCE                              USUARIO           *****************  OPEN                                           
+OPS$OPER                            USUARIO           *****************  OPEN                                           
+BKPGER                              USUARIO           *****************  LOCKED                                         
+PUBLI                               USUARIO           *****************  LOCKED                                         
+CLAUDIOA                            USUARIO           *****************  OPEN                                           
+LEILAGS                             USUARIO           *****************  LOCKED                                         
+CENTROS                             USUARIO           *****************  LOCKED                                         
+ARSOUZA                             USUARIO           *****************  LOCKED                                         
+LCARLOS                             USUARIO           *****************  OPEN                                           
+ITFBSA                              USUARIO           *****************  LOCKED                                         
+SISPRO_PAT                          USUARIO           *****************  OPEN                                           
+DLIMA                               USUARIO           *****************  LOCKED                                         
+DBARBOSA                            USUARIO           *****************  OPEN                                           
+SISPRO_MIAMI                        USUARIO           *****************  OPEN                                           
+SISPRO_MIA                          USUARIO           *****************  OPEN                                           
+FNUNES                              USUARIO           *****************  OPEN                                           
+RVELOZO                             USUARIO           *****************  LOCKED                                         
+ERICA                               USUARIO           *****************  LOCKED                                         
+FELIPER                             USUARIO           *****************  LOCKED                                         
+BRSGPC                              USUARIO           *****************  OPEN                                           
+RDEGLI                              USUARIO           *****************  LOCKED                                         
+JROCHA                              USUARIO           *****************  LOCKED                                         
+REPORTIQ                            USUARIO           *****************  LOCKED                                         
+CLAUDIOL                            USUARIO           *****************  LOCKED                                         
+PCOELHO                             USUARIO           *****************  LOCKED                                         
+LIBCAP1                             USUARIO           *****************  LOCKED                                         
+LIBCAP2                             USUARIO           *****************  LOCKED                                         
+LIBCAR1                             USUARIO           *****************  LOCKED                                         
+LIBCAR2                             USUARIO           *****************  LOCKED                                         
+ITFBDF                              USUARIO           *****************  LOCKED                                         
+RWAILANP                            USUARIO           *****************  OPEN                                           
+ITFBAP                              USUARIO           *****************  LOCKED                                         
+CALVINHO                            USUARIO           *****************  LOCKED                                         
+PROPHIX                             USUARIO           *****************  OPEN                                           
+TODTMANN                            USUARIO           *****************  LOCKED                                         
+SUPORTE                             USUARIO           *****************  OPEN                                           
+RIGTHWAY                            USUARIO           *****************  LOCKED                                         
+COMERCIAL_LINK                      USUARIO           *****************  OPEN                                           
+HSILVA                              USUARIO           *****************  OPEN                                           
+EXCEL                               USUARIO           *****************  LOCKED                                         
+MANDRADE                            USUARIO           *****************  LOCKED                                         
+VIVIANNE                            USUARIO           *****************  OPEN                                           
+PAINEL                              USUARIO           *****************  OPEN                                           
+BMACEDO                             USUARIO           *****************  LOCKED                                         
+TSTALKER                            USUARIO           *****************  LOCKED                                         
+PACKNESS                            USUARIO           *****************  OPEN                                           
+JJUNIOR                             USUARIO           *****************  LOCKED                                         
+MAMPARO                             USUARIO           *****************  OPEN                                           
+VILCEUE                             USUARIO           *****************  LOCKED                                         
+MGODOY                              USUARIO           *****************  LOCKED                                         
+DFKALFD                             DEFAULT           *****************  LOCKED                                         
+AMOURA                              USUARIO           *****************  LOCKED                                         
+CINTIAS                             USUARIO           *****************  LOCKED                                         
+NLIBERAL                            USUARIO           *****************  OPEN                                           
+ATEND01                             USUARIO           *****************  LOCKED                                         
+MMOURA                              USUARIO           *****************  LOCKED                                         
+RIGHTWAY                            USUARIO           *****************  LOCKED                                         
+GSANTOS                             USUARIO           *****************  LOCKED                                         
+ALUCENA                             USUARIO           *****************  LOCKED                                         
+PAULOH                              USUARIO           *****************  OPEN                                           
+RAQUINO                             USUARIO           *****************  LOCKED                                         
+KELLYO                              USUARIO           *****************  LOCKED                                         
+ATEND09                             USUARIO           *****************  LOCKED                                         
+JCASTRO                             USUARIO           *****************  OPEN                                           
+MAREAL                              USUARIO           *****************  LOCKED                                         
+EMELLO                              USUARIO           *****************  LOCKED                                         
+FRANKLIN                            USUARIO           *****************  OPEN                                           
+AGUSTAVO                            USUARIO           *****************  LOCKED                                         
+ALVARON                             USUARIO           *****************  LOCKED                                         
+ACONCEIC                            USUARIO           *****************  OPEN                                           
+MVMOURA                             USUARIO           *****************  LOCKED                                         
+CHRSILVA                            DEFAULT           *****************  LOCKED                                         
+ANNAREIS                            DEFAULT           *****************  LOCKED                                         
+RMARQUES                            DEFAULT           *****************  LOCKED                                         
+OPERACAO                            DEFAULT           *****************  OPEN                                           
+RODRIGUE                            DEFAULT           *****************  LOCKED                                         
+LUSANTOS                            DEFAULT           *****************  LOCKED                                         
+GALBERTO                            DEFAULT           *****************  LOCKED                                         
+MKAYAT                              DEFAULT           *****************  OPEN                                           
+ROBERTAC                            DEFAULT           *****************  LOCKED                                         
+LCORREA                             DEFAULT           *****************  LOCKED                                         
+LTEIXEIR                            DEFAULT           *****************  LOCKED                                         
+WZANARDO                            DEFAULT           *****************  OPEN                                           
+GLOPES                              DEFAULT           *****************  LOCKED                                         
+MRPEREIR                            DEFAULT           *****************  OPEN                                           
+FLGOMES                             DEFAULT           *****************  LOCKED                                         
+HDESK                               DEFAULT           *****************  OPEN                                           
+CRDIAS                              DEFAULT           *****************  OPEN                                           
+VCOSTA                              DEFAULT           *****************  LOCKED                                         
+DSV_COMERCIAL                       DEFAULT           *****************  LOCKED                                         
+DTEIXEI                             DEFAULT           *****************  LOCKED                                         
+VERONICA                            DEFAULT           *****************  LOCKED                                         
+ANDREACA                            DEFAULT           *****************  LOCKED                                         
+MARCIOQ                             DEFAULT           *****************  LOCKED                                         
+VCOMER                              DEFAULT           *****************  LOCKED                                         
+MBARCELL                            DEFAULT           *****************  LOCKED                                         
+HELPDESK                            DEFAULT           *****************  OPEN                                           
+EXIT                                DEFAULT           *****************  LOCKED                                         
+LIBCAP3                             DEFAULT           *****************  LOCKED                                         
+CFREITAS                            DEFAULT           *****************  LOCKED                                         
+OPS$JASILVA                         DEFAULT           *****************  LOCKED                                         
+MJORDAO                             DEFAULT           *****************  LOCKED                                         
+JDUARTE                             DEFAULT           *****************  LOCKED                                         
+RCARVALH                            DEFAULT           *****************  LOCKED                                         
+SCONDE                              DEFAULT           *****************  OPEN                                           
+BCAMPOS                             DEFAULT           *****************  LOCKED                                         
+MAFRANCA                            DEFAULT           *****************  LOCKED                                         
+FFARELI                             DEFAULT           *****************  LOCKED                                         
+ATEND11                             DEFAULT           *****************  LOCKED                                         
+RBULLARA                            DEFAULT           *****************  LOCKED                                         
+OPS$HELPDESK                        DEFAULT           *****************  OPEN                                           
+MDESCHAM                            DEFAULT           *****************  OPEN                                           
+VENET                               DEFAULT           *****************  LOCKED                                         
+CARDOSO                             DEFAULT           *****************  LOCKED                                         
+JARBAS                              DEFAULT           *****************  LOCKED                                         
+OPS$BOLAVO                          DEFAULT           *****************  LOCKED                                         
+CBAETA                              DEFAULT           *****************  LOCKED                                         
+LFOLIV                              DEFAULT           *****************  OPEN                                           
+TARCISIO                            DEFAULT           *****************  LOCKED                                         
+CKHADER                             DEFAULT           *****************  LOCKED                                         
+TAMIAZZO                            USUARIO           *****************  LOCKED                                         
+ESMANHOT                            USUARIO           *****************  LOCKED                                         
+PMATULO                             DEFAULT           *****************  OPEN                                           
+OPS$FNEVES                          DEFAULT           *****************  LOCKED                                         
+ASTAVALE                            DEFAULT           *****************  LOCKED                                         
+DSOUTO                              DEFAULT           *****************  LOCKED                                         
+SCM_BR0629232                       TEMP_PROF         *****************  EXPIRED                                        
+ACR                                 DEFAULT           *****************  OPEN                                           
+WREZENDE                            DEFAULT           *****************  LOCKED                                         
+CAALMEID                            DEFAULT           *****************  LOCKED                                         
+ITTEMP                              DEFAULT           *****************  LOCKED                                         
+ITTEMP1                             DEFAULT           *****************  LOCKED                                         
+ITTEMP2                             DEFAULT           *****************  LOCKED                                         
+GSROCHA                             DEFAULT           *****************  LOCKED                                         
+RECADUSU                            DEFAULT           *****************  LOCKED                                         
+MFELIPE                             DEFAULT           *****************  OPEN                                           
+INTQ                                USUARIO           *****************  OPEN                                           
+TLGURGEL                            DEFAULT           *****************  LOCKED                                         
+SAVANAC                             DEFAULT           *****************  OPEN                                           
+TALENCAR                            DEFAULT           *****************  LOCKED                                         
+FBARROSO                            DEFAULT           *****************  LOCKED                                         
+MROCHA                              DEFAULT           *****************  LOCKED                                         
+BMARCONE                            DEFAULT           *****************  LOCKED                                         
+IBIDES                              DEFAULT           *****************  OPEN                                           
+WQUEIROZ                            DEFAULT           *****************  LOCKED                                         
+APRAFAEL                            DEFAULT           *****************  LOCKED                                         
+TMARIA                              DEFAULT           *****************  OPEN                                           
+BOLAVO                              DEFAULT           *****************  LOCKED                                         
+MPEREIRA                            DEFAULT           *****************  OPEN                                           
+FVIEGAS                             DEFAULT           *****************  LOCKED                                         
+VGEOVAN                             DEFAULT           *****************  LOCKED                                         
+MARCELOP                            DEFAULT           *****************  LOCKED                                         
+EPINHO                              DEFAULT           *****************  LOCKED                                         
+HFBSILVA                            DEFAULT           *****************  LOCKED                                         
+ROLIVEIR                            DEFAULT           *****************  LOCKED                                         
+ROZANA                              DEFAULT           *****************  OPEN                                           
+LHENRIQU                            DEFAULT           *****************  OPEN                                           
+JCASTRO1                            DEFAULT           *****************  LOCKED                                         
+JCASTRO2                            DEFAULT           *****************  LOCKED                                         
+JCASTRO3                            DEFAULT           *****************  LOCKED                                         
+VERONICA1                           DEFAULT           *****************  LOCKED                                         
+VERONICA2                           DEFAULT           *****************  LOCKED                                         
+VERONICA3                           DEFAULT           *****************  LOCKED                                         
+WQUEIROZ1                           DEFAULT           *****************  LOCKED                                         
+WQUEIROZ2                           DEFAULT           *****************  LOCKED                                         
+WQUEIROZ3                           DEFAULT           *****************  LOCKED                                         
+LPAULINO                            DEFAULT           *****************  OPEN                                           
+EDSONA                              DEFAULT           *****************  LOCKED                                         
+INTQLNK                             DEFAULT           *****************  OPEN                                           
+VATHAYDE                            DEFAULT           *****************  LOCKED                                         
+DBENDITO                            DEFAULT           *****************  LOCKED                                         
+LVENANCI                            DEFAULT           *****************  LOCKED                                         
+ESILVA                              DEFAULT           *****************  LOCKED                                         
+GCALAES                             DEFAULT           *****************  LOCKED                                         
+ROSANAC                             DEFAULT           *****************  LOCKED                                         
+VERAT                               DEFAULT           *****************  LOCKED                                         
+GILBERTO                            DEFAULT           *****************  LOCKED                                         
+OPS$GILBERTO                        DEFAULT           *****************  OPEN                                           
+TESTEPAN                            DEFAULT           *****************  LOCKED                                         
+OLIVEIRA                            DEFAULT           *****************  OPEN                                           
+RDUARTE                             DEFAULT           *****************  LOCKED                                         
+LMIRANDA                            DEFAULT           *****************  OPEN                                           
+JREIS                               DEFAULT           *****************  LOCKED                                         
+TALVES                              DEFAULT           *****************  LOCKED                                         
+EPEREIRA                            DEFAULT           *****************  LOCKED                                         
+IQCONECTA                           DEFAULT           *****************  OPEN                                           
+JLEONEZ                             DEFAULT           *****************  LOCKED                                         
+LXIMENES                            DEFAULT           *****************  LOCKED                                         
+ANDREAS                             DEFAULT           *****************  LOCKED                                         
+AGUEDES                             DEFAULT           *****************  LOCKED                                         
+DMELLO                              DEFAULT           *****************  LOCKED                                         
+RFRESSAT                            DEFAULT           *****************  LOCKED                                         
+GFEVEREI                            DEFAULT           *****************  LOCKED                                         
+RVARELA                             DEFAULT           *****************  LOCKED                                         
+SDIAS                               DEFAULT           *****************  LOCKED                                         
+AXB_GERAL                           DEFAULT           *****************  OPEN                                           
+FELIPERO                            DEFAULT           *****************  LOCKED                                         
+DFANTATO                            DEFAULT           *****************  LOCKED                                         
+HARAKI                              DEFAULT           *****************  OPEN                                           
+LOTA                                DEFAULT           *****************  OPEN                                           
+JFERRAZ                             DEFAULT           *****************  LOCKED                                         
+APRADO                              DEFAULT           *****************  LOCKED                                         
+RMARTINS                            DEFAULT           *****************  LOCKED                                         
+MLADEIRA                            DEFAULT           *****************  LOCKED                                         
+CBESSA                              DEFAULT           *****************  OPEN                                           
+ENASCIMENTO                         DEFAULT           *****************  LOCKED                                         
+MOEDAS                              DEFAULT           *****************  LOCKED                                         
+SERGIODBAMJV                        DEFAULT           *****************  OPEN                                           
+OPS$PAINEL                          USUARIO           *****************  LOCKED                                         
+OPS$AXBGRL                          USUARIO           *****************  OPEN                                           
+OPS$AXBPROD                         USUARIO           *****************  OPEN                                           
+MBARBOSA                            DEFAULT           *****************  LOCKED                                         
+OPS$                                DEFAULT           *****************  OPEN                                           
+TPIRES                              DEFAULT           *****************  LOCKED                                         
+WRESENDE                            DEFAULT           *****************  LOCKED                                         
+ESIQUEIRA                           DEFAULT           *****************  LOCKED                                         
+MCARVALHO                           DEFAULT           *****************  LOCKED                                         
+NELSONP                             DEFAULT           *****************  LOCKED                                         
+BETO                                DEFAULT           *****************  LOCKED                                         
+USR_DBA                             DEFAULT           *****************  LOCKED                                         
+GKALFAS                             DEFAULT           *****************  LOCKED                                         
+ASANTOS                             DEFAULT           *****************  LOCKED                                         
+ALEXANDRE.SANTOS                    DEFAULT           *****************  LOCKED                                         
+TFORTES                             DEFAULT           *****************  LOCKED                                         
+THAISD                              DEFAULT           *****************  LOCKED                                         
+AJBUGVISA                           DEFAULT           *****************  LOCKED                                         
+MSOUZA                              DEFAULT           *****************  LOCKED                                         
+ANTONIOV                            DEFAULT           *****************  LOCKED                                         
+RMORAES                             DEFAULT           *****************  LOCKED                                         
+NDIAS                               DEFAULT           *****************  LOCKED                                         
+NATHALIA.DIAS                       DEFAULT           *****************  LOCKED                                         
+OPS$NDIAS                           DEFAULT           *****************  LOCKED                                         
+HSALES                              DEFAULT           *****************  OPEN                                           
+AVIEIRA                             DEFAULT           *****************  OPEN                                           
+GMAIA                               DEFAULT           *****************  LOCKED                                         
+DEBORAS                             DEFAULT           *****************  LOCKED                                         
+FRED                                DEFAULT           *****************  LOCKED                                         
+ELIASIL                             DEFAULT           *****************  LOCKED                                         
+RTEXEIRA                            DEFAULT           *****************  LOCKED                                         
+ENVES                               DEFAULT           *****************  LOCKED                                         
+ENEVES                              DEFAULT           *****************  LOCKED                                         
+JEA                                 DEFAULT           *****************  LOCKED                                         
+TAINAH                              DEFAULT           *****************  LOCKED                                         
+NATASHAS                            DEFAULT           *****************  LOCKED                                         
+RTEIXEIR                            DEFAULT           *****************  OPEN                                           
+MONICAV                             DEFAULT           *****************  LOCKED                                         
+MARCELOB                            DEFAULT           *****************  LOCKED                                         
+GMENEZ                              DEFAULT           *****************  LOCKED                                         
+SISPRO_DD                           USUARIO           *****************  OPEN                                           
+KELLEN                              DEFAULT           *****************  LOCKED                                         
+AXB                                 DEFAULT           *****************  OPEN                                           
+THVIEIRA                            DEFAULT           *****************  LOCKED                                         
+BIANCAB                             DEFAULT           *****************  LOCKED                                         
+BIANCA                              DEFAULT           *****************  LOCKED                                         
+FABIOAL                             DEFAULT           *****************  LOCKED                                         
+MARCOSR                             DEFAULT           *****************  LOCKED                                         
+CSEG                                DEFAULT           *****************  OPEN                                           
+PERFSTAT                            DEFAULT           *****************  OPEN                                           
+CINTIA                              DEFAULT           *****************  LOCKED                                         
+CAROLC                              DEFAULT           *****************  LOCKED                                         
+LEANDROR                            DEFAULT           *****************  LOCKED                                         
+ACELIAS                             DEFAULT           *****************  OPEN                                           
+DCELILE                             DEFAULT           *****************  LOCKED                                         
+DCALILE                             DEFAULT           *****************  LOCKED                                         
+APPMAN                              DEFAULT           *****************  LOCKED                                         
+ISMAELF                             DEFAULT           *****************  LOCKED                                         
+DMARTINS                            DEFAULT           *****************  LOCKED                                         
+VICTORS                             DEFAULT           *****************  LOCKED                                         
+VANESSAF                            DEFAULT           *****************  LOCKED                                         
+KATIAF                              DEFAULT           *****************  OPEN                                           
+MALIMA                              DEFAULT           *****************  LOCKED                                         
+RODRIGOA                            DEFAULT           *****************  LOCKED                                         
+FILIPEF                             DEFAULT           *****************  LOCKED                                         
+LBRITO                              DEFAULT           *****************  LOCKED                                         
+JFECHER                             DEFAULT           *****************  LOCKED                                         
+ALTAIRC                             DEFAULT           *****************  LOCKED                                         
+ANDREA                              DEFAULT           *****************  LOCKED                                         
+ANIZIO                              DEFAULT           *****************  LOCKED                                         
+ARAMOS                              DEFAULT           *****************  LOCKED                                         
+EBATISTA                            DEFAULT           *****************  LOCKED                                         
+AURORA$JIS$UTILITY$                 DEFAULT           *****************  LOCKED                                         
+OSE$HTTP$ADMIN                      DEFAULT           *****************  LOCKED                                         
+AURORA$ORB$UNAUTHENTICATED          DEFAULT           *****************  OPEN                                           
+RLEAL                               DEFAULT           *****************  LOCKED                                         
+LUISF                               DEFAULT           *****************  LOCKED                                         
+LVIANNA                             DEFAULT           *****************  LOCKED                                         
+ELIZAL                              DEFAULT           *****************  LOCKED                                         
+ADMILTON                            DEFAULT           *****************  LOCKED                                         
+VLTAVARES                           DEFAULT           *****************  LOCKED                                         
+JCFERRAZ                            DEFAULT           *****************  LOCKED                                         
+JTJUNIOR                            DEFAULT           *****************  EXPIRED & LOCKED                               
+VSASAKI                             DEFAULT           *****************  EXPIRED & LOCKED                               
+MANUTENCAO                          USER_MANUTENCAO   *****************  OPEN                                           
+LFBARRETO                           DEFAULT           *****************  EXPIRED                                        
+PROTEUS                             DEFAULT           *****************  OPEN                                           
+OPS$MOEDAS                          DEFAULT           *****************  OPEN                                           
+OPS$ORACLE                          DEFAULT           *****************  OPEN                                           
+JMSANTOS                            DEFAULT           *****************  LOCKED                                         
+DELMY                               DEFAULT           *****************  LOCKED                                         
+JLIMA                               DEFAULT           *****************  LOCKED                                         
+LSIMOES                             DEFAULT           *****************  LOCKED                                         
+EASY_LNK                            DEFAULT           *****************  OPEN                                           
+
+</pre>
+<a HREF=#top><h6>Top</h6></a>
+<hr>
+
+[adclodb04 / rjd5] Collecting externally users...
+
+
+<br>
+
+<b>.Externally Users.</b>
+
+<pre>
+
+USERNAME                            PROFILE           PASSWORD         ACCOUNT_STATUS                                   
+----------------------------------- ----------------- ---------------- ------------------                               
+OPS$                                DEFAULT           *************    OPEN                                             
+OPS$AXBGRL                          USUARIO           *************    OPEN                                             
+OPS$AXBPROD                         USUARIO           *************    OPEN                                             
+OPS$AXBPROD                         USUARIO           EXTERNAL         OPEN                                             
+OPS$BOLAVO                          DEFAULT           *************    LOCKED                                           
+OPS$FNEVES                          DEFAULT           *************    LOCKED                                           
+OPS$GILBERTO                        DEFAULT           *************    OPEN                                             
+OPS$HELPDESK                        DEFAULT           *************    OPEN                                             
+OPS$INTQ                            USUARIO           *************    OPEN                                             
+OPS$INTQ                            USUARIO           EXTERNAL         OPEN                                             
+OPS$JASILVA                         DEFAULT           *************    LOCKED                                           
+OPS$MOEDAS                          DEFAULT           *************    OPEN                                             
+OPS$NDIAS                           DEFAULT           *************    LOCKED                                           
+OPS$OPER                            USUARIO           *************    OPEN                                             
+OPS$OPER                            USUARIO           EXTERNAL         OPEN                                             
+OPS$ORACLE                          DEFAULT           *************    OPEN                                             
+OPS$ORACLE                          DEFAULT           EXTERNAL         OPEN                                             
+OPS$ORACLE8                         USUARIO           *************    LOCKED                                           
+OPS$ORACLE8                         USUARIO           EXTERNAL         LOCKED                                           
+OPS$PAINEL                          USUARIO           *************    LOCKED                                           
+
+</pre>
+<a HREF=#top><h6>Top</h6></a>
+<hr>
+
+[adclodb04 / rjd5] Collecting Roles...
+
+
+<br>
+
+<b>.ROLES.</b>
+
+<pre>
+
+GRANTEE                   GRANTED_ROLE                   ADMIN_ DEFAULT 
+------------------------- ------------------------------ ------ ------- 
+ACR                       SCM_USU                        NO     YES     
+AXB                       FORMS5                         NO     YES     
+AXB                       CONNECT                        NO     YES     
+AXB                       SEL_DIC                        NO     YES     
+AXB                       RESOURCE                       NO     YES     
+BKP                       EXP_FULL_DATABASE              NO     YES     
+JEA                       ROIQUSUIQ                      NO     YES     
+SCM                       CONNECT                        NO     YES     
+SCM                       SCM_ADM                        NO     YES     
+SCM                       SCM_USU                        NO     YES     
+SCM                       RESOURCE                       NO     YES     
+XDB                       RESOURCE                       NO     YES     
+XDB                       JAVAUSERPRIV                   NO     YES     
+ABEL                      ROIQUSUIQ                      NO     YES     
+APPS                      ROIQUSUIQ                      NO     YES     
+CALL                      CALL_USU                       NO     YES     
+CSEG                      CONNECT                        NO     YES     
+CSEG                      RESOURCE                       NO     YES     
+CSEG                      CAD_DECRIPT                    NO     YES     
+CSEG                      DECRIPT_KEY                    NO     YES     
+CSEG                      ENCRIPT_KEY                    NO     YES     
+DART                      ROIQUSUIQ                      NO     YES     
+FRED                      R_SCM_S                        NO     YES     
+FRED                      R_MOEDAS_S                     NO     YES     
+FS93                      INTQFS93                       NO     YES     
+INTQ                      CONNECT                        NO     YES     
+INTQ                      ROIQADM                        NO     YES     
+INTQ                      SAL_ADM                        NO     YES     
+INTQ                      SAL_USR                        NO     YES     
+INTQ                      SEL_DIC                        NO     YES     
+INTQ                      ANALISTA                       NO     YES     
+INTQ                      RESOURCE                       NO     YES     
+INTQ                      SRI_ROLE                       NO     YES     
+INTQ                      ROIQADMIQ                      NO     YES     
+INTQ                      ROIQUSUIQ                      NO     YES     
+INTQ                      ROLE_SISPRO_PAT_USU            NO     YES     
+LANG                      ROIQUSUIQ                      NO     YES     
+LINS                      ROIQUSUIQ                      NO     YES     
+LIXO                      ROIQUSUIQ                      NO     YES     
+LOTA                      R_AXB_S                        NO     YES     
+LOTA                      R_INTQ_S                       NO     YES     
+LOTA                      R_COMERCIAL_S                  NO     YES     
+OPER                      CONNECT                        NO     YES     
+OPER                      ROIQUSUIQ                      NO     YES     
+PROC                      CONNECT                        NO     YES     
+DLIMA                     ROIQUSUIQ                      NO     YES     
+ERICA                     ROIQUSUIQ                      NO     YES     
+EXCEL                     ROIQUSUIQ                      NO     YES     
+GMAIA                     ROIQUSUIQ                      NO     YES     
+HDESK                     ROIQUSUIQ                      NO     YES     
+JLIMA                     ROIQUSUIQ                      NO     YES     
+JREIS                     RL_AMEX                        NO     YES     
+JREIS                     ROIQUSUIQ                      NO     YES     
+JREIS                     ROLE_SISPRO_PAT_USU            NO     YES     
+KARLA                     CALL_USU                       NO     YES     
+KARLA                     ROIQUSUIQ                      NO     YES     
+LUISF                     ROIQUSUIQ                      NO     YES     
+PUBLI                     ROIQUSUIQ                      NO     YES     
+PUBLI                     ROLE_PUBLI                     NO     YES     
+RLEAL                     ROIQUSUIQ                      NO     YES     
+SDIAS                     R_COMERCIAL_FINANC             NO     YES     
+TANIA                     ROIQUSUIQ                      NO     YES     
+VENET                     ROIQUSUIQ                      NO     YES     
+WMSYS                     CONNECT                        NO     YES     
+WMSYS                     RESOURCE                       NO     YES     
+WMSYS                     WM_ADMIN_ROLE                  YES    YES     
+AMOURA                    ROIQUSUIQ                      NO     YES     
+ANDREA                    ROIQUSUIQ                      NO     YES     
+ANIZIO                    ROIQUSUIQ                      NO     YES     
+APRADO                    ROIQUSUIQ                      NO     YES     
+ARAMOS                    CALL_USU                       NO     YES     
+ARAMOS                    ROIQUSUIQ                      NO     YES     
+BAENCE                    ROIQUSUIQ                      NO     YES     
+BALOGH                    R_SCM_S                        NO     YES     
+BALOGH                    R_INTQ_S                       NO     YES     
+BALOGH                    R_MOEDAS_S                     NO     YES     
+BALOGH                    R_PROPHIX_S                    NO     YES     
+BKPGER                    ROIQUSUIQ                      NO     YES     
+BRSGPC                    CONNECT                        NO     YES     
+BRSGPC                    RESOURCE                       NO     YES     
+CAROLC                    ROIQUSUIQ                      NO     YES     
+CBAETA                    ROIQUSUIQ                      NO     YES     
+CBESSA                    R_SCM_S                        NO     YES     
+CBESSA                    R_INTQ_S                       NO     YES     
+CBESSA                    R_MOEDAS_S                     NO     YES     
+CINTIA                    ROIQUSUIQ                      NO     YES     
+CRDIAS                    R_AXB_A                        NO     YES     
+CRDIAS                    SCM_USU                        NO     YES     
+CRDIAS                    ROIQUSUIQ                      NO     YES     
+DMELLO                    ROIQUSUIQ                      NO     YES     
+DSOUTO                    ROIQUSUIQ                      NO     YES     
+EDSONA                    ROIQUSUIQ                      NO     YES     
+EMELLO                    ROIQUSUIQ                      NO     YES     
+EMELLO                    ROLE_SISPRO_PAT_USU            NO     YES     
+ENEVES                    ROIQUSUIQ                      NO     YES     
+EPINHO                    ROIQUSUIQ                      NO     YES     
+ESILVA                    ROIQUSUIQ                      NO     YES     
+EXPADM                    EXP_FULL_DATABASE              NO     YES     
+FNUNES                    ROIQUSUIQ                      NO     YES     
+GLOPES                    RL_AMEX                        NO     YES     
+GLOPES                    SCM_DES                        NO     YES     
+GLOPES                    SCM_USU                        NO     YES     
+GLOPES                    ROIQUSUIQ                      NO     YES     
+HSALES                    ROIQUSUIQ                      NO     YES     
+HSALES                    ROLE_SISPRO_PAT_USU            NO     YES     
+HSILVA                    RL_AMEX                        NO     YES     
+HSILVA                    SCM_USU                        NO     YES     
+HSILVA                    ROIQUSUIQ                      NO     YES     
+HSILVA                    CAD_DECRIPT                    NO     YES     
+HSILVA                    CAD_INVERSAO                   NO     YES     
+IBIDES                    ROIQUSUIQ                      NO     YES     
+ITFBAP                    ROIQUSUIQ                      NO     YES     
+ITFBDF                    ROIQUSUIQ                      NO     YES     
+ITFBSA                    ROIQUSUIQ                      NO     YES     
+JARBAS                    SRI_ROLE                       NO     YES     
+JARBAS                    ROIQUSUIQ                      NO     YES     
+JPAULO                    ROIQUSUIQ                      NO     YES     
+JROCHA                    SCM_USU                        NO     YES     
+JROCHA                    ROIQUSUIQ                      NO     YES     
+KATIAF                    R_SCM_S                        NO     YES     
+KATIAF                    R_INTQ_S                       NO     YES     
+KATIAF                    R_MOEDAS_S                     NO     YES     
+KATIAF                    R_PROPHIX_S                    NO     YES     
+KATIAF                    R_COMERCIAL_S                  NO     YES     
+KELLEN                    ROIQUSUIQ                      NO     YES     
+KELLYO                    ROIQUSUIQ                      NO     YES     
+LFOLIV                    ROIQUSUIQ                      NO     YES     
+MALIMA                    SCM_USU                        NO     YES     
+MALIMA                    ROIQUSUIQ                      NO     YES     
+MAREAL                    ROIQUSUIQ                      NO     YES     
+MGODOY                    ROIQUSUIQ                      NO     YES     
+MKAYAT                    ROIQUSUIQ                      NO     YES     
+MMOURA                    ROIQUSUIQ                      NO     YES     
+MOEDAS                    SCM_DES                        NO     YES     
+MOEDAS                    SCM_USU                        NO     YES     
+MOEDAS                    RESOURCE                       NO     YES     
+MOEDAS                    ROIQUSUIQ                      NO     YES     
+MROCHA                    SAL_USR                        NO     YES     
+MROCHA                    ROIQUSUIQ                      NO     YES     
+MROCHA                    ROLE_SAL_USU                   NO     YES     
+MSOUZA                    CALL_USU                       NO     YES     
+MSOUZA                    ROIQUSUIQ                      NO     YES     
+ORDSYS                    RESOURCE                       NO     YES     
+ORDSYS                    JAVAUSERPRIV                   NO     YES     
+PAINEL                    R_AXB_S                        NO     YES     
+PAINEL                    RESOURCE                       NO     YES     
+PAINEL                    R_INTQ_S                       NO     YES     
+PAINEL                    ROIQUSUIQ                      NO     YES     
+PAULOH                    SCM_DES                        NO     YES     
+PAULOH                    SCM_USU                        NO     YES     
+PAULOH                    ROIQUSUIQ                      NO     YES     
+PUBLIC                    DECRIPT_KEY                    NO     YES     
+PUBLIC                    ENCRIPT_KEY                    NO     YES     
+PUPPIN                    ROIQUSUIQ                      NO     YES     
+RCASIA                    ROIQUSUIQ                      NO     YES     
+RDEGLI                    RL_AMEX                        NO     YES     
+RDEGLI                    SCM_USU                        NO     YES     
+RDEGLI                    ROIQUSUIQ                      NO     YES     
+RENTAL                    ROLE_SISPRO_PAT_USU            NO     YES     
+ROZANA                    ROIQUSUIQ                      NO     YES     
+SAFSUP                    ROIQUSUIQ                      NO     YES     
+SALVIO                    R_INTQ_S                       NO     YES     
+SCM_DP                    SCM_ADM                        NO     YES     
+SCONDE                    SCM_DES                        NO     YES     
+SCONDE                    SCM_USU                        NO     YES     
+SCONDE                    ROIQUSUIQ                      NO     YES     
+SINVAL                    ROIQUSUIQ                      NO     YES     
+SINVAL                    ROLE_SISPRO_PAT_USU            NO     YES     
+SYLVIA                    CALL_USU                       NO     YES     
+SYLVIA                    ROIQUSUIQ                      NO     YES     
+TAINAH                    ROIQUSUIQ                      NO     YES     
+TALVES                    RL_AMEX                        NO     YES     
+TALVES                    ROIQUSUIQ                      NO     YES     
+TALVES                    ROLE_SISPRO_PAT_USU            NO     YES     
+THAISD                    ROIQUSUIQ                      NO     YES     
+TMARIA                    ROIQADM                        NO     YES     
+TMARIA                    ROIQADMIQ                      NO     YES     
+TMARIA                    ROIQUSUIQ                      NO     YES     
+VCOMER                    ROIQUSUIQ                      NO     YES     
+VCOSTA                    CALL_USU                       NO     YES     
+VCOSTA                    ROIQUSUIQ                      NO     YES     
+VLUCIA                    ROIQUSUIQ                      NO     YES     
+WAGNER                    SAL_USR                        NO     YES     
+WAGNER                    ROIQUSUIQ                      NO     YES     
+WAGNER                    ROLE_SAL_USU                   NO     YES     
+WALTER                    SCM_USU                        NO     YES     
+WALTER                    ROIQUSUIQ                      NO     YES     
+ACELIAS                   RL_AMEX                        NO     YES     
+ACELIAS                   ROIQUSUIQ                      NO     YES     
+ACELIAS                   ROLE_SISPRO_PAT_USU            NO     YES     
+AGUEDES                   ROIQUSUIQ                      NO     YES     
+ALTAIRC                   SCM_DES                        NO     YES     
+ALTAIRC                   ROIQUSUIQ                      NO     YES     
+ALTAIRC                   CAD_INVERSAO                   NO     YES     
+ALUCENA                   ROIQUSUIQ                      NO     YES     
+ALUCENA                   ROLE_SISPRO_PAT_USU            NO     YES     
+ALVARON                   ROIQUSUIQ                      NO     YES     
+ANDREAS                   ROIQUSUIQ                      NO     YES     
+ARSOUZA                   ROIQUSUIQ                      NO     YES     
+ARSOUZA                   ROLE_SISPRO_PAT_USU            NO     YES     
+ATEND01                   ROIQUSUIQ                      NO     YES     
+AVIEIRA                   RL_AMEX                        NO     YES     
+AVIEIRA                   ROIQUSUIQ                      NO     YES     
+AVIEIRA                   ROLE_SISPRO_PAT_USU            NO     YES     
+BCAMPOS                   CALL_USU                       NO     YES     
+BCAMPOS                   ROIQUSUIQ                      NO     YES     
+BEZERRA                   SAL_USR                        NO     YES     
+BEZERRA                   ROIQUSUIQ                      NO     YES     
+BEZERRA                   ROLE_SAL_USU                   NO     YES     
+BIANCAB                   RL_AMEX                        NO     YES     
+BIANCAB                   SCM_DES                        NO     YES     
+BIANCAB                   ROIQUSUIQ                      NO     YES     
+BMACEDO                   RL_AMEX                        NO     YES     
+BMACEDO                   SCM_USU                        NO     YES     
+BMACEDO                   ROIQUSUIQ                      NO     YES     
+BMACEDO                   CAD_DECRIPT                    NO     YES     
+BMACEDO                   CAD_INVERSAO                   NO     YES     
+CAETANO                   SCM_USU                        NO     YES     
+CAETANO                   ROIQUSUIQ                      NO     YES     
+CARDOSO                   ROIQUSUIQ                      NO     YES     
+CARDOSO                   ROLE_SISPRO_PAT_USU            NO     YES     
+CENTROS                   ROIQUSUIQ                      NO     YES     
+CINTIAS                   ROIQUSUIQ                      NO     YES     
+CINTIAS                   ROLE_SISPRO_PAT_USU            NO     YES     
+CKHADER                   ROIQUSUIQ                      NO     YES     
+CKHADER                   ROLE_SISPRO_PAT_USU            NO     YES     
+DCALILE                   RL_AMEX                        NO     YES     
+DCALILE                   SCM_DES                        NO     YES     
+DCALILE                   ROIQUSUIQ                      NO     YES     
+DEBORAS                   ROIQUSUIQ                      NO     YES     
+DTEIXEI                   ROIQUSUIQ                      NO     YES     
+ELIASIL                   SCM_USU                        NO     YES     
+ESMANHO                   RESOURCE                       NO     YES     
+ESMANHO                   ROIQUSUIQ                      NO     YES     
+FABIOAL                   SCM_USU                        NO     YES     
+FELIPER                   ROIQUSUIQ                      NO     YES     
+FELIPER                   ROLE_SISPRO_PAT_USU            NO     YES     
+FFARELI                   ROIQUSUIQ                      NO     YES     
+FILIPEF                   ROIQUSUIQ                      NO     YES     
+FLGOMES                   ROIQUSUIQ                      NO     YES     
+FORMS50                   ROIQUSUIQ                      NO     YES     
+FVIEGAS                   ROIQUSUIQ                      NO     YES     
+GCALAES                   SAL_USR                        NO     YES     
+GCALAES                   ROIQUSUIQ                      NO     YES     
+GCALAES                   ROLE_SAL_USU                   NO     YES     
+GRANTEE                   ROIQUSUIQ                      NO     YES     
+GSANTOS                   ROIQUSUIQ                      NO     YES     
+GSANTOS                   ROLE_SISPRO_PAT_USU            NO     YES     
+GSROCHA                   RL_AMEX                        NO     YES     
+GSROCHA                   ROIQUSUIQ                      NO     YES     
+GSROCHA                   ROLE_SISPRO_PAT_USU            NO     YES     
+INTQLNK                   ROIQUSUIQ                      NO     YES     
+ISMAELF                   ROIQADM                        NO     YES     
+ISMAELF                   ROIQADMIQ                      NO     YES     
+ISMAELF                   ROIQUSUIQ                      NO     YES     
+ITTEMP1                   RL_AMEX                        NO     YES     
+ITTEMP1                   ROIQUSUIQ                      NO     YES     
+ITTEMP2                   RL_AMEX                        NO     YES     
+ITTEMP2                   ROIQUSUIQ                      NO     YES     
+JCASTRO                   SRI_ROLE                       NO     YES     
+JCASTRO                   ROIQUSUIQ                      NO     YES     
+JDUARTE                   ROIQUSUIQ                      NO     YES     
+JJUNIOR                   ROIQUSUIQ                      NO     YES     
+JLEONEZ                   RL_AMEX                        NO     YES     
+JLEONEZ                   ROIQUSUIQ                      NO     YES     
+JLEONEZ                   ROLE_SISPRO_PAT_USU            NO     YES     
+LCARLOS                   RL_AMEX                        NO     YES     
+LCARLOS                   ROIQUSUIQ                      NO     YES     
+LCARLOS                   ROLE_SISPRO_PAT_USU            NO     YES     
+LCORREA                   ROIQUSUIQ                      NO     YES     
+LEILAGS                   ROIQUSUIQ                      NO     YES     
+LEITUGA                   ROIQUSUIQ                      NO     YES     
+LIBCAP1                   ROIQUSUIQ                      NO     YES     
+LIBCAP2                   ROIQUSUIQ                      NO     YES     
+LIBCAP3                   ROIQUSUIQ                      NO     YES     
+LIBCAR1                   ROIQUSUIQ                      NO     YES     
+LIBCAR2                   ROIQUSUIQ                      NO     YES     
+LSIMOES                   R_SCM_S                        NO     YES     
+LSIMOES                   R_INTQ_S                       NO     YES     
+LSIMOES                   R_MOEDAS_S                     NO     YES     
+LVIANNA                   ROIQUSUIQ                      NO     YES     
+MAMPARO                   ROIQUSUIQ                      NO     YES     
+MARCIOQ                   ROIQUSUIQ                      NO     YES     
+MARCOSR                   ROIQUSUIQ                      NO     YES     
+MFELIPE                   RL_AMEX                        NO     YES     
+MFELIPE                   SCM_DES                        NO     YES     
+MFELIPE                   SCM_USU                        NO     YES     
+MFELIPE                   ROIQUSUIQ                      NO     YES     
+MFELIPE                   CAD_INVERSAO                   NO     YES     
+MJORDAO                   ROIQUSUIQ                      NO     YES     
+MONICAV                   SCM_DES                        NO     YES     
+MONICAV                   SCM_USU                        NO     YES     
+MONICAV                   ROIQUSUIQ                      NO     YES     
+MVMOURA                   ROIQADM                        NO     YES     
+MVMOURA                   ROIQADMIQ                      NO     YES     
+MVMOURA                   ROIQUSUIQ                      NO     YES     
+NELSONP                   SCM_USU                        NO     YES     
+NELSONP                   ROIQUSUIQ                      NO     YES     
+PCOELHO                   ROIQUSUIQ                      NO     YES     
+PMATULO                   ROIQUSUIQ                      NO     YES     
+PMATULO                   ROLE_SISPRO_PAT_USU            NO     YES     
+PROPHIX                   FORMS5                         NO     YES     
+PROPHIX                   CONNECT                        NO     YES     
+PROPHIX                   RESOURCE                       NO     YES     
+PROPHIX                   ROIQADMIQ                      NO     YES     
+PROPHIX                   ROIQUSUIQ                      NO     YES     
+RAQUINO                   CALL_USU                       NO     YES     
+RAQUINO                   ROIQUSUIQ                      NO     YES     
+RDUARTE                   CONNECT                        NO     YES     
+RICARDO                   ROIQUSUIQ                      NO     YES     
+RMORAES                   ROIQUSUIQ                      NO     YES     
+RMORAES                   ROLE_SISPRO_PAT_USU            NO     YES     
+ROIQADM                   ROIQUSUIQ                      NO     YES     
+ROSANAC                   ROIQUSUIQ                      NO     YES     
+RVARELA                   ROIQUSUIQ                      NO     YES     
+RVARELA                   ROLE_SISPRO_PAT_USU            NO     YES     
+RVELOZO                   ROIQUSUIQ                      NO     YES     
+SAL_USR                   ROIQUSUIQ                      NO     YES     
+SAVANAC                   ROIQUSUIQ                      NO     YES     
+SAVANAC                   ROLE_SISPRO_PAT_USU            NO     YES     
+SCM_ADM                   SCM_USU                        NO     YES     
+SCM_DES                   SCM_USU                        NO     YES     
+SUPORTE                   ROIQUSUIQ                      NO     YES     
+TFORTES                   RL_AMEX                        NO     YES     
+TFORTES                   SCM_DES                        NO     YES     
+TFORTES                   ROIQUSUIQ                      NO     YES     
+TFORTES                   CAD_INVERSAO                   NO     YES     
+USR_DBA                   CONNECT                        NO     YES     
+VALERIA                   ROIQUSUIQ                      NO     YES     
+VGEOVAN                   ROIQUSUIQ                      NO     YES     
+VICTORS                   ROIQUSUIQ                      NO     YES     
+VICTORS                   ROLE_SISPRO_PAT_USU            NO     YES     
+VILCEUE                   ROIQUSUIQ                      NO     YES     
+VSASAKI                   R_AXB_S                        NO     YES     
+VSASAKI                   R_INTQ_S                       NO     YES     
+VSASAKI                   R_COMERCIAL_S                  NO     YES     
+WSANTOS                   ROIQUSUIQ                      NO     YES     
+ACONCEIC                  ROIQUSUIQ                      NO     YES     
+ANDREACA                  RL_AMEX                        NO     YES     
+ANDREACA                  SCM_USU                        NO     YES     
+ANDREACA                  ROIQUSUIQ                      NO     YES     
+ANNAREIS                  ROIQUSUIQ                      NO     YES     
+APRAFAEL                  ROIQADM                        NO     YES     
+APRAFAEL                  ROIQADMIQ                      NO     YES     
+APRAFAEL                  ROIQUSUIQ                      NO     YES     
+ASTAVALE                  ROIQUSUIQ                      NO     YES     
+BLACERDA                  ROIQUSUIQ                      NO     YES     
+BMARCONE                  RL_AMEX                        NO     YES     
+BMARCONE                  ROIQUSUIQ                      NO     YES     
+BMARCONE                  ROLE_SISPRO_PAT_USU            NO     YES     
+CAALMEID                  SAL_USR                        NO     YES     
+CAALMEID                  ROIQUSUIQ                      NO     YES     
+CAALMEID                  ROLE_SAL_USU                   NO     YES     
+CALL_USU                  ROIQUSUIQ                      NO     YES     
+CALVINHO                  ROIQUSUIQ                      NO     YES     
+CAROLINA                  ROIQUSUIQ                      NO     YES     
+CFREITAS                  ROIQUSUIQ                      NO     YES     
+CHRSILVA                  ROIQUSUIQ                      NO     YES     
+CLAUDIOA                  ROIQUSUIQ                      NO     YES     
+CLAUDIOL                  ROIQUSUIQ                      NO     YES     
+DBARBOSA                  R_AXB_A                        NO     YES     
+DBARBOSA                  SCM_USU                        NO     YES     
+DBARBOSA                  ROIQUSUIQ                      NO     YES     
+DBARBOSA                  ROLE_PUBLI                     NO     YES     
+DBENDITO                  CALL_USU                       NO     YES     
+DBENDITO                  ROIQUSUIQ                      NO     YES     
+DFANTATO                  R_AXB_S                        NO     YES     
+DFANTATO                  R_INTQ_S                       NO     YES     
+DFANTATO                  R_COMERCIAL_S                  NO     YES     
+DMARTINS                  RL_AMEX                        NO     YES     
+DMARTINS                  SCM_USU                        NO     YES     
+DMARTINS                  ROIQUSUIQ                      NO     YES     
+EASY_LNK                  R_INTQ_S                       NO     YES     
+EBATISTA                  ROIQUSUIQ                      NO     YES     
+EPEREIRA                  ROIQUSUIQ                      NO     YES     
+ESMANHOT                  ROIQUSUIQ                      NO     YES     
+FBARROSO                  ROIQUSUIQ                      NO     YES     
+FELIPERO                  ROIQUSUIQ                      NO     YES     
+FERNANDO                  ROIQUSUIQ                      NO     YES     
+FKOCHPWC                  ROIQUSUIQ                      NO     YES     
+FKOCHPWL                  ROIQUSUIQ                      NO     YES     
+FRANKLIN                  SCM_USU                        NO     YES     
+GALBERTO                  SCM_USU                        NO     YES     
+GALBERTO                  ROIQUSUIQ                      NO     YES     
+GFEVEREI                  ROIQUSUIQ                      NO     YES     
+GILBERTO                  ROIQUSUIQ                      NO     YES     
+HFBSILVA                  SCM_USU                        NO     YES     
+HFBSILVA                  ROIQUSUIQ                      NO     YES     
+HRIBEIRO                  ROIQUSUIQ                      NO     YES     
+IN68_USU                  ROLE_IN68_USU                  NO     YES     
+IVANILDA                  ROIQUSUIQ                      NO     YES     
+JCASTRO1                  ROIQUSUIQ                      NO     YES     
+JCASTRO2                  ROIQUSUIQ                      NO     YES     
+JCASTRO3                  ROIQUSUIQ                      NO     YES     
+JCFERRAZ                  R_AXB_S                        NO     YES     
+JCFERRAZ                  R_INTQ_S                       NO     YES     
+JCFERRAZ                  R_COMERCIAL_S                  NO     YES     
+JTJUNIOR                  R_AXB_S                        NO     YES     
+JTJUNIOR                  R_INTQ_S                       NO     YES     
+JTJUNIOR                  R_COMERCIAL_S                  NO     YES     
+KALENCAR                  SCM_USU                        NO     YES     
+KALENCAR                  ROIQUSUIQ                      NO     YES     
+LEANDROR                  ROIQUSUIQ                      NO     YES     
+LHENRIQU                  ROIQUSUIQ                      NO     YES     
+LMIRANDA                  RL_AMEX                        NO     YES     
+LMIRANDA                  ROIQUSUIQ                      NO     YES     
+LPAULINO                  RL_AMEX                        NO     YES     
+LPAULINO                  SCM_DES                        NO     YES     
+LPAULINO                  SCM_USU                        NO     YES     
+LPAULINO                  ROIQUSUIQ                      NO     YES     
+LPAULINO                  CAD_INVERSAO                   NO     YES     
+LTEIXEIR                  ROIQUSUIQ                      NO     YES     
+LTEIXEIR                  ROLE_SISPRO_PAT_USU            NO     YES     
+LUCIANAM                  SCM_USU                        NO     YES     
+LUCIANAM                  ROIQUSUIQ                      NO     YES     
+LUCIANAM                  ROLE_PUBLI                     NO     YES     
+LUSANTOS                  SAL_USR                        NO     YES     
+LUSANTOS                  ROIQUSUIQ                      NO     YES     
+LUSANTOS                  ROLE_SAL_USU                   NO     YES     
+LVENANCI                  ROIQUSUIQ                      NO     YES     
+LXIMENES                  ROIQUSUIQ                      NO     YES     
+MAFRANCA                  ROIQUSUIQ                      NO     YES     
+MANDRADE                  ROIQUSUIQ                      NO     YES     
+MARCELOB                  ROIQADM                        NO     YES     
+MARCELOB                  ROIQADMIQ                      NO     YES     
+MARCELOB                  ROIQUSUIQ                      NO     YES     
+MARCELOP                  RL_AMEX                        NO     YES     
+MARCELOP                  ROIQUSUIQ                      NO     YES     
+MARCELOP                  ROLE_SISPRO_PAT_USU            NO     YES     
+MBARBOSA                  SCM_USU                        NO     YES     
+MBARBOSA                  SRI_ROLE                       NO     YES     
+MBARBOSA                  ROIQADMIQ                      NO     YES     
+MBARBOSA                  ROIQUSUIQ                      NO     YES     
+MBARCELL                  ROIQUSUIQ                      NO     YES     
+MDESCHAM                  ROIQUSUIQ                      NO     YES     
+MICHELLE                  ROIQUSUIQ                      NO     YES     
+MLADEIRA                  FORMS5                         NO     YES     
+MLADEIRA                  R_AXB_S                        NO     YES     
+MLADEIRA                  R_INTQ_S                       NO     YES     
+MLADEIRA                  R_PAINEL_S                     NO     YES     
+MLADEIRA                  R_COMERCIAL_S                  NO     YES     
+MLSOARES                  CALL_USU                       NO     YES     
+MLSOARES                  ROIQUSUIQ                      NO     YES     
+MPEREIRA                  RL_AMEX                        NO     YES     
+MPEREIRA                  ROIQUSUIQ                      NO     YES     
+MPEREIRA                  ROLE_SISPRO_PAT_USU            NO     YES     
+MRPEREIR                  RL_AMEX                        NO     YES     
+MRPEREIR                  SCM_USU                        NO     YES     
+MRPEREIR                  ROIQUSUIQ                      NO     YES     
+NATASHAS                  RL_AMEX                        NO     YES     
+NATASHAS                  SCM_USU                        NO     YES     
+NATASHAS                  ROIQUSUIQ                      NO     YES     
+NICOLINI                  ROIQUSUIQ                      NO     YES     
+NLIBERAL                  ROIQUSUIQ                      NO     YES     
+OLIVEIRA                  SCM_USU                        NO     YES     
+OPERACAO                  ROIQUSUIQ                      NO     YES     
+OPS$INTQ                  ROIQADM                        NO     YES     
+OPS$INTQ                  R_AXB_A                        NO     YES     
+OPS$INTQ                  SAL_ADM                        NO     YES     
+OPS$INTQ                  SAL_USR                        NO     YES     
+OPS$INTQ                  SEL_DIC                        NO     YES     
+OPS$INTQ                  ANALISTA                       NO     YES     
+OPS$INTQ                  R_INTQ_A                       NO     YES     
+OPS$INTQ                  SRI_ROLE                       NO     YES     
+OPS$INTQ                  ROIQADMIQ                      NO     YES     
+OPS$INTQ                  ROIQUSUIQ                      NO     YES     
+OPS$INTQ                  R_SISPRO_A                     NO     YES     
+OPS$INTQ                  R_PROPHIX_A                    NO     YES     
+OPS$INTQ                  ROLE_SISPRO_PAT_USU            NO     YES     
+PACKNESS                  ROIQUSUIQ                      NO     YES     
+PERFSTAT                  SELECT_CATALOG_ROLE            NO     YES     
+RBULLARA                  SCM_USU                        NO     YES     
+RBULLARA                  ROIQUSUIQ                      NO     YES     
+RCARVALH                  SRI_ROLE                       NO     YES     
+RCARVALH                  ROIQUSUIQ                      NO     YES     
+REPORTIQ                  ROIQUSUIQ                      NO     YES     
+RFRESSAT                  ROIQUSUIQ                      NO     YES     
+RIGHTWAY                  ROIQUSUIQ                      NO     YES     
+RMARQUES                  SAL_USR                        NO     YES     
+RMARQUES                  ROIQUSUIQ                      NO     YES     
+RMARQUES                  ROLE_SAL_USU                   NO     YES     
+RODRIGOA                  RL_AMEX                        NO     YES     
+RODRIGOA                  ROIQUSUIQ                      NO     YES     
+RODRIGOA                  ROLE_SISPRO_PAT_USU            NO     YES     
+RODRIGUE                  ROIQUSUIQ                      NO     YES     
+ROLIVEIR                  ROIQUSUIQ                      NO     YES     
+RPEREIRA                  SCM_USU                        NO     YES     
+RPEREIRA                  ROIQUSUIQ                      NO     YES     
+RTEIXEIR                  R_SCM_S                        NO     YES     
+RTEIXEIR                  R_INTQ_S                       NO     YES     
+RTEIXEIR                  R_MOEDAS_S                     NO     YES     
+RTEXEIRA                  SCM_USU                        NO     YES     
+RTEXEIRA                  SRI_ROLE                       NO     YES     
+RTEXEIRA                  ROIQUSUIQ                      NO     YES     
+RTEXEIRA                  R_COMERCIAL_FINANC             NO     YES     
+RWAILANP                  ROIQUSUIQ                      NO     YES     
+TALENCAR                  CALL_USU                       NO     YES     
+TALENCAR                  ROIQUSUIQ                      NO     YES     
+TAMIAZZO                  ROIQUSUIQ                      NO     YES     
+TARCISIO                  ROIQUSUIQ                      NO     YES     
+TESTEPAN                  RL_AMEX                        NO     YES     
+TESTEPAN                  SCM_DES                        NO     YES     
+TESTEPAN                  ROIQUSUIQ                      NO     YES     
+THVIEIRA                  RL_AMEX                        NO     YES     
+THVIEIRA                  SCM_USU                        NO     YES     
+THVIEIRA                  ROIQUSUIQ                      NO     YES     
+TLGURGEL                  ROIQUSUIQ                      NO     YES     
+TODTMANN                  ROIQUSUIQ                      NO     YES     
+TSTALKER                  ROIQUSUIQ                      NO     YES     
+VANESSAF                  ROIQUSUIQ                      NO     YES     
+VATHAYDE                  SCM_USU                        NO     YES     
+VATHAYDE                  ROIQUSUIQ                      NO     YES     
+VATHAYDE                  ROLE_PUBLI                     NO     YES     
+VAYSSIER                  ROIQUSUIQ                      NO     YES     
+VERONICA                  ROIQUSUIQ                      NO     YES     
+VIVIANNE                  ROIQUSUIQ                      NO     YES     
+WQUEIROZ                  ROIQUSUIQ                      NO     YES     
+WREZENDE                  ROIQUSUIQ                      NO     YES     
+WZANARDO                  ROIQUSUIQ                      NO     YES     
+AJBUGVISA                 SCM_DES                        NO     YES     
+AJBUGVISA                 ROIQUSUIQ                      NO     YES     
+APPL_R113                 ROIQUSUIQ                      NO     YES     
+BRASIFMAQ                 ROLE_SISPRO_PAT_USU            NO     YES     
+COMERCIAL                 SAL_USR                        NO     YES     
+COMERCIAL                 ROIQADMIQ                      NO     YES     
+COMERCIAL                 ROIQUSUIQ                      NO     YES     
+ESIQUEIRA                 ROIQUSUIQ                      NO     YES     
+INTERFACE                 ROIQUSUIQ                      NO     YES     
+IQCONECTA                 ROIQADM                        NO     YES     
+IQCONECTA                 ROIQADMIQ                      NO     YES     
+IQCONECTA                 ROIQUSUIQ                      NO     YES     
+LFBARRETO                 R_AXB_S                        NO     YES     
+LFBARRETO                 R_INTQ_S                       NO     YES     
+LFBARRETO                 R_COMERCIAL_S                  NO     YES     
+LHENRIQUE                 SCM_USU                        NO     YES     
+LHENRIQUE                 ROIQUSUIQ                      NO     YES     
+LOGISTICO                 ROIQUSUIQ                      NO     YES     
+MCARVALHO                 ROIQUSUIQ                      NO     YES     
+MCARVALHO                 ROLE_SISPRO_PAT_USU            NO     YES     
+SISPRO_DD                 CONNECT                        NO     YES     
+SISPRO_DD                 RESOURCE                       NO     YES     
+VERONICA1                 ROIQUSUIQ                      NO     YES     
+VERONICA2                 ROIQUSUIQ                      NO     YES     
+VERONICA3                 ROIQUSUIQ                      NO     YES     
+VLTAVARES                 R_AXB_S                        NO     YES     
+VLTAVARES                 R_INTQ_S                       NO     YES     
+VLTAVARES                 R_COMERCIAL_S                  NO     YES     
+WQUEIROZ1                 ROIQUSUIQ                      NO     YES     
+WQUEIROZ2                 ROIQUSUIQ                      NO     YES     
+WQUEIROZ3                 ROIQUSUIQ                      NO     YES     
+MANUTENCAO                FORMS5                         NO     YES     
+MANUTENCAO                RL_AMEX                        NO     YES     
+MANUTENCAO                ROIQADM                        NO     YES     
+MANUTENCAO                ROIQTST                        NO     YES     
+MANUTENCAO                ROTESTE                        NO     YES     
+MANUTENCAO                R_AXB_S                        NO     YES     
+MANUTENCAO                R_SCM_S                        NO     YES     
+MANUTENCAO                SAL_ADM                        NO     YES     
+MANUTENCAO                SAL_USR                        NO     YES     
+MANUTENCAO                SCM_ADM                        NO     YES     
+MANUTENCAO                SCM_DES                        NO     YES     
+MANUTENCAO                SCM_USU                        NO     YES     
+MANUTENCAO                SEL_DIC                        NO     YES     
+MANUTENCAO                ANALISTA                       NO     YES     
+MANUTENCAO                CALL_USU                       NO     YES     
+MANUTENCAO                INTQFS93                       NO     YES     
+MANUTENCAO                R_CSEG_S                       NO     YES     
+MANUTENCAO                R_INTQ_S                       NO     YES     
+MANUTENCAO                SRI_ROLE                       NO     YES     
+MANUTENCAO                FAT_FRETE                      NO     YES     
+MANUTENCAO                PRG_AUDIT                      NO     YES     
+MANUTENCAO                ROIQADMIQ                      NO     YES     
+MANUTENCAO                ROIQUSUIQ                      NO     YES     
+MANUTENCAO                SACM_INTQ                      NO     YES     
+MANUTENCAO                SNMPAGENT                      NO     YES     
+MANUTENCAO                RL_TURISMO                     NO     YES     
+MANUTENCAO                ROIQADMTST                     NO     YES     
+MANUTENCAO                ROLE_PRICE                     NO     YES     
+MANUTENCAO                ROLE_PUBLI                     NO     YES     
+MANUTENCAO                R_MOEDAS_S                     NO     YES     
+MANUTENCAO                R_PAINEL_S                     NO     YES     
+MANUTENCAO                R_SISPRO_S                     NO     YES     
+MANUTENCAO                SENIOR_CEB                     NO     YES     
+MANUTENCAO                SQL_FISCAL                     NO     YES     
+MANUTENCAO                APPS_SENIOR                    NO     YES     
+MANUTENCAO                CAD_DECRIPT                    NO     YES     
+MANUTENCAO                DECRIPT_KEY                    NO     YES     
+MANUTENCAO                ENCRIPT_KEY                    NO     YES     
+MANUTENCAO                INTQ_PROMON                    NO     YES     
+MANUTENCAO                OEM_MONITOR                    NO     YES     
+MANUTENCAO                PRICING_MGR                    NO     YES     
+MANUTENCAO                SENIOR_APPS                    NO     YES     
+MANUTENCAO                CAD_INVERSAO                   NO     YES     
+MANUTENCAO                PRICING_INTQ                   NO     YES     
+MANUTENCAO                ROLE_SAL_ADM                   NO     YES     
+MANUTENCAO                ROLE_SAL_USU                   NO     YES     
+MANUTENCAO                COMERCIAL_SCM                  NO     YES     
+MANUTENCAO                INTQ_CONSULTA                  NO     YES     
+MANUTENCAO                ROLE_IN68_ADM                  NO     YES     
+MANUTENCAO                ROLE_IN68_USU                  NO     YES     
+MANUTENCAO                R_COMERCIAL_S                  NO     YES     
+MANUTENCAO                R_SIG_OBRAS_S                  NO     YES     
+MANUTENCAO                SIG_OBRAS_ADM                  NO     YES     
+MANUTENCAO                SIG_OBRAS_USU                  NO     YES     
+MANUTENCAO                ROLE_BRASIFMAQ                 NO     YES     
+MANUTENCAO                ROLE_MARKETING                 NO     YES     
+MANUTENCAO                ROLE_DSV_COMERCIAL             NO     YES     
+MANUTENCAO                ROLE_SCM_BR0629232             NO     YES     
+MANUTENCAO                R_COMERCIAL_FINANC             NO     YES     
+MANUTENCAO                R_SGRH_SIA_RONDA_S             NO     YES     
+MANUTENCAO                ROLE_SACM_RJD10_USU            NO     YES     
+MANUTENCAO                ROLE_SISPRO_PAT_ADM            NO     YES     
+MANUTENCAO                ROLE_SISPRO_PAT_USU            NO     YES     
+OPS$AXBGRL                CONNECT                        NO     YES     
+OPS$AXBGRL                RESOURCE                       NO     YES     
+OPS$MOEDAS                R_SCM_S                        NO     YES     
+OPS$MOEDAS                SCM_DES                        NO     YES     
+OPS$MOEDAS                SCM_USU                        NO     YES     
+OPS$MOEDAS                R_INTQ_S                       NO     YES     
+OPS$MOEDAS                ROIQUSUIQ                      NO     YES     
+OPS$ORACLE                DBA                            NO     YES     
+OPS$ORACLE                CONNECT                        NO     YES     
+OPS$ORACLE                RESOURCE                       NO     YES     
+OPS$PAINEL                R_AXB_A                        NO     YES     
+OPS$PAINEL                R_INTQ_S                       NO     YES     
+OPS$PAINEL                ROIQUSUIQ                      NO     YES     
+ORDPLUGINS                RESOURCE                       NO     YES     
+PUBLI_CAD0                ROIQUSUIQ                      NO     YES     
+PUBLI_CAD0                ROLE_PUBLI                     NO     YES     
+PUBLI_RJD6                ROLE_PUBLI                     NO     YES     
+SACM_RJD10                ROLE_SACM_RJD10_USU            NO     YES     
+SAL_DESENV                SAL_USR                        NO     YES     
+SISPRO_MIA                CONNECT                        NO     YES     
+SISPRO_MIA                RESOURCE                       NO     YES     
+SISPRO_PAT                CONNECT                        NO     YES     
+SISPRO_PAT                RESOURCE                       NO     YES     
+CONSULTORIQ               ROIQADM                        NO     YES     
+CONSULTORIQ               ROIQADMIQ                      NO     YES     
+CONSULTORIQ               ROIQUSUIQ                      NO     YES     
+ENASCIMENTO               R_SCM_S                        NO     YES     
+ENASCIMENTO               R_INTQ_S                       NO     YES     
+ENASCIMENTO               R_MOEDAS_S                     NO     YES     
+JAVASYSPRIV               JAVAUSERPRIV                   NO     YES     
+OPS$AXBPROD               CONNECT                        NO     YES     
+OPS$AXBPROD               RESOURCE                       NO     YES     
+OPS$AXBPROD               ROIQUSUIQ                      NO     YES     
+ROLE_SAL_ADM              ROLE_SAL_USU                   NO     YES     
+SERGIODBAMJV              CONNECT                        NO     YES     
+SISPRO_MIAMI              CONNECT                        NO     YES     
+SISPRO_MIAMI              RESOURCE                       NO     YES     
+DSV_COMERCIAL             ROLE_DSV_COMERCIAL             NO     YES     
+INTQBRASIFMAQ             ROLE_BRASIFMAQ                 NO     YES     
+ROLE_IN68_ADM             ROLE_IN68_USU                  NO     YES     
+SACM_RJADUX05             SACM_INTQ                      NO     YES     
+SCM_BR0629232             ROLE_SCM_BR0629232             NO     YES     
+SIG_OBRAS_ADM             SIG_OBRAS_USU                  NO     YES     
+COMERCIAL_LINK            ROIQUSUIQ                      NO     YES     
+COMERCIAL_RJD6            COMERCIAL_SCM                  NO     YES     
+OSE$HTTP$ADMIN            RESOURCE                       NO     YES     
+OSE$HTTP$ADMIN            JAVAUSERPRIV                   NO     YES     
+COMERCIAL_RJADUX05        PRICING_INTQ                   NO     YES     
+AURORA$JIS$UTILITY$       RESOURCE                       NO     YES     
+ROLE_SISPRO_PAT_ADM       ROLE_SISPRO_PAT_USU            NO     YES     
+LOGSTDBY_ADMINISTRATOR    CONNECT                        NO     YES     
+LOGSTDBY_ADMINISTRATOR    RESOURCE                       NO     YES     
+
+</pre>
+<a HREF=#top><h6>Top</h6></a>
+<hr>
+
+[adclodb04 / rjd5] Collecting CPU...
+
+
+<br>
+
+<b>.CPU.</b>
+
+<pre>
+
+COMMENTS                               ID                                                                               
+------------------------------ ----------                                                                               
+CPUJul2010                        9655027                                                                               
+
+</pre>
+<a HREF=#top><h6>Top</h6></a>
+<hr>
+
+[adclodb04 / rjd5] Collecting Parameters...
+
+
+<br>
+
+<b>.PARAMETERS.</b>
+
+<pre>
+
+NAME                            VALOR                                                     
+------------------------------- -------------------------------------------------------   
+row_locking                     ALWAYS                                                    
+nls_territory                   AMERICA                                                   
+nls_language                    AMERICAN                                                  
+log_archive_format              ARCH_RJD5_%S.DAT                                          
+undo_management                 AUTO                                                      
+workarea_size_policy            AUTO                                                      
+db_domain                       BRASIFNET.COM.BR                                          
+nls_length_semantics            BYTE                                                      
+optimizer_mode                  CHOOSE                                                    
+audit_trail                     DB                                                        
+standby_archive_dest            ?/DBS/ARCH                                                
+dg_broker_config_file1          ?/DBS/DR1@.DAT                                            
+dg_broker_config_file2          ?/DBS/DR2@.DAT                                            
+spfile                          ?/DBS/SPFILE@.ORA                                         
+serial_reuse                    DISABLE                                                   
+log_archive_dest_state_1        ENABLE                                                    
+log_archive_dest_state_10       ENABLE                                                    
+log_archive_dest_state_2        ENABLE                                                    
+log_archive_dest_state_3        ENABLE                                                    
+log_archive_dest_state_4        ENABLE                                                    
+log_archive_dest_state_5        ENABLE                                                    
+log_archive_dest_state_6        ENABLE                                                    
+log_archive_dest_state_7        ENABLE                                                    
+log_archive_dest_state_8        ENABLE                                                    
+log_archive_dest_state_9        ENABLE                                                    
+query_rewrite_integrity         ENFORCED                                                  
+cursor_sharing                  EXACT                                                     
+remote_login_passwordfile       EXCLUSIVE                                                 
+audit_sys_operations            FALSE                                                     
+backup_tape_io_slaves           FALSE                                                     
+blank_trimming                  FALSE                                                     
+cluster_database                FALSE                                                     
+cursor_space_for_time           FALSE                                                     
+db_block_checking               FALSE                                                     
+dblink_encrypt_login            FALSE                                                     
+dg_broker_start                 FALSE                                                     
+drs_start                       FALSE                                                     
+file_mapping                    FALSE                                                     
+global_names                    FALSE                                                     
+lock_sga                        FALSE                                                     
+log_checkpoints_to_alert        FALSE                                                     
+mts_multiple_listeners          FALSE                                                     
+nls_nchar_conv_excp             FALSE                                                     
+oracle_trace_enable             FALSE                                                     
+os_roles                        FALSE                                                     
+O7_DICTIONARY_ACCESSIBILITY     FALSE                                                     
+parallel_adaptive_multi_user    FALSE                                                     
+parallel_automatic_tuning       FALSE                                                     
+parallel_server                 FALSE                                                     
+partition_view_enabled          FALSE                                                     
+plsql_v2_compatibility          FALSE                                                     
+pre_page_sga                    FALSE                                                     
+query_rewrite_enabled           FALSE                                                     
+read_only_open_delayed          FALSE                                                     
+remote_os_roles                 FALSE                                                     
+serializable                    FALSE                                                     
+sql_trace                       FALSE                                                     
+sql92_security                  FALSE                                                     
+star_transformation_enabled     FALSE                                                     
+undo_suppress_errors            FALSE                                                     
+use_indirect_data_buffers       FALSE                                                     
+plsql_compiler_flags            INTERPRETED                                               
+log_archive_dest_1              LOCATION=/U02/ARCHIVE/RJD5                                
+fast_start_parallel_rollback    LOW                                                       
+standby_file_management         MANUAL                                                    
+sql_version                     NATIVE                                                    
+filesystemio_options            NONE                                                      
+db_cache_advice                 ON                                                        
+os_authent_prefix               OPS$                                                      
+oracle_trace_facility_name      ORACLED                                                   
+oracle_trace_collection_path    ?/OTRACE/ADMIN/CDF                                        
+oracle_trace_facility_path      ?/OTRACE/ADMIN/FDF                                        
+background_core_dump            PARTIAL                                                   
+shadow_core_dump                PARTIAL                                                   
+dispatchers                     (PROTOCOL=TCP) (SERVICE=RJD5XDB)                          
+mts_dispatchers                 (PROTOCOL=TCP) (SERVICE=RJD5XDB)                          
+audit_file_dest                 ?/RDBMS/AUDIT                                             
+db_name                         RJD5                                                      
+instance_name                   RJD5                                                      
+mts_service                     RJD5                                                      
+service_names                   RJD5.BRASIFNET.COM.BR                                     
+remote_dependencies_mode        TIMESTAMP                                                 
+db_block_checksum               TRUE                                                      
+disk_asynch_io                  TRUE                                                      
+hash_join_enabled               TRUE                                                      
+hs_autoregister                 TRUE                                                      
+log_archive_start               TRUE                                                      
+remote_archive_enable           TRUE                                                      
+remote_os_authent               TRUE                                                      
+replication_dependency_tracking TRUE                                                      
+resource_limit                  TRUE                                                      
+tape_asynch_io                  TRUE                                                      
+timed_statistics                TRUE                                                      
+trace_enabled                   TRUE                                                      
+transaction_auditing            TRUE                                                      
+statistics_level                TYPICAL                                                   
+undo_tablespace                 UNDOTBS1                                                  
+max_dump_file_size              UNLIMITED                                                 
+background_dump_dest            /U01/APP/ORACLE/PRODUCT/9.2.0/ADMIN/RJD5/BDUMP            
+core_dump_dest                  /U01/APP/ORACLE/PRODUCT/9.2.0/ADMIN/RJD5/CDUMP            
+user_dump_dest                  /U01/APP/ORACLE/PRODUCT/9.2.0/ADMIN/RJD5/UDUMP            
+control_files                   /U02/ORADATA/RJD5/CONTROL01.CTL, /U03/ORADATA/RJD5/CONT   
+                                ROL02.CTL, /U04/ORADATA/RJD5/CONTROL03.CTL                
+                                                                                          
+utl_file_dir                    /U02/UTL_FILE/RJD5                                        
+aq_tm_processes                 0                                                         
+archive_lag_target              0                                                         
+db_block_buffers                0                                                         
+db_keep_cache_size              0                                                         
+db_recycle_cache_size           0                                                         
+dbwr_io_slaves                  0                                                         
+db_16k_cache_size               0                                                         
+db_2k_cache_size                0                                                         
+db_32k_cache_size               0                                                         
+db_4k_cache_size                0                                                         
+db_8k_cache_size                0                                                         
+fast_start_io_target            0                                                         
+hi_shared_memory_address        0                                                         
+instance_number                 0                                                         
+java_max_sessionspace_size      0                                                         
+java_soft_sessionspace_limit    0                                                         
+license_max_sessions            0                                                         
+license_max_users               0                                                         
+license_sessions_warning        0                                                         
+log_archive_trace               0                                                         
+log_checkpoint_interval         0                                                         
+optimizer_index_caching         0                                                         
+parallel_min_percent            0                                                         
+parallel_min_servers            0                                                         
+plsql_native_library_subdir_cou 0                                                         
+nt                                                                                        
+                                                                                          
+recovery_parallelism            0                                                         
+session_cached_cursors          0                                                         
+shared_memory_address           0                                                         
+sort_area_retained_size         0                                                         
+thread                          0                                                         
+timed_os_statistics             0                                                         
+cluster_database_instances      1                                                         
+commit_point_strength           1                                                         
+log_archive_min_succeed_dest    1                                                         
+logmnr_max_persistent_sessions  1                                                         
+log_parallelism                 1                                                         
+mts_servers                     1                                                         
+optimizer_dynamic_sampling      1                                                         
+parallel_server_instances       1                                                         
+shared_servers                  1                                                         
+job_queue_processes             10                                                        
+object_cache_max_size_percent   10                                                        
+session_max_open_files          10                                                        
+optimizer_index_cost_adj        100                                                       
+open_cursors                    1000                                                      
+object_cache_optimal_size       102400                                                    
+bitmap_merge_area_size          1048576                                                   
+db_cache_size                   1073741824                                                
+undo_retention                  10800                                                     
+max_rollback_segments           122                                                       
+java_pool_size                  134217728                                                 
+max_enabled_roles               148                                                       
+open_links_per_instance         15                                                        
+cpu_count                       16                                                        
+db_file_multiblock_read_count   16                                                        
+log_checkpoint_timeout          1800                                                      
+db_writer_processes             2                                                         
+log_archive_max_processes       2                                                         
+parallel_threads_per_cpu        2                                                         
+max_shared_servers              20                                                        
+mts_max_servers                 20                                                        
+sga_max_size                    2016380728                                                
+log_buffer                      2097152                                                   
+parallel_execution_message_size 2152                                                      
+pga_aggregate_target            268435456                                                 
+fast_start_mttr_target          300                                                       
+olap_page_pool_size             33554432                                                  
+shared_pool_reserved_size       33554432                                                  
+sort_area_size                  4194304                                                   
+max_dispatchers                 5                                                         
+mts_max_dispatchers             5                                                         
+parallel_max_servers            5                                                         
+transactions_per_rollback_segme 5                                                         
+nt                                                                                        
+                                                                                          
+open_links                      50                                                        
+db_files                        500                                                       
+dml_locks                       500                                                       
+processes                       500                                                       
+enqueue_resources               520                                                       
+oracle_trace_collection_size    5242880                                                   
+mts_sessions                    550                                                       
+shared_server_sessions          550                                                       
+circuits                        555                                                       
+mts_circuits                    555                                                       
+sessions                        555                                                       
+distributed_lock_timeout        60                                                        
+transactions                    610                                                       
+large_pool_size                 67108864                                                  
+shared_pool_size                671088640                                                 
+control_file_record_keep_time   7                                                         
+max_commit_propagation_delay    700                                                       
+optimizer_max_permutations      80000                                                     
+db_block_size                   8192                                                      
+create_bitmap_area_size         8388608                                                   
+hash_area_size                  8388608                                                   
+optimizer_features_enable       9.2.0                                                     
+compatible                      9.2.0.0.0                                                 
+active_instance_count                                                                     
+buffer_pool_keep                                                                          
+buffer_pool_recycle                                                                       
+cluster_interconnects                                                                     
+db_create_file_dest                                                                       
+db_create_online_log_dest_1                                                               
+db_create_online_log_dest_2                                                               
+db_create_online_log_dest_3                                                               
+db_create_online_log_dest_4                                                               
+db_create_online_log_dest_5                                                               
+db_file_name_convert                                                                      
+event                                                                                     
+fal_client                                                                                
+fal_server                                                                                
+fixed_date                                                                                
+gc_files_to_locks                                                                         
+global_context_pool_size                                                                  
+ifile                                                                                     
+instance_groups                                                                           
+local_listener                                                                            
+lock_name_space                                                                           
+log_archive_dest                                                                          
+log_archive_dest_10                                                                       
+log_archive_dest_2                                                                        
+log_archive_dest_3                                                                        
+log_archive_dest_4                                                                        
+log_archive_dest_5                                                                        
+log_archive_dest_6                                                                        
+log_archive_dest_7                                                                        
+log_archive_dest_8                                                                        
+log_archive_dest_9                                                                        
+log_archive_duplex_dest                                                                   
+log_file_name_convert                                                                     
+mts_listener_address                                                                      
+nls_calendar                                                                              
+nls_comp                                                                                  
+nls_currency                                                                              
+nls_date_format                                                                           
+nls_date_language                                                                         
+nls_dual_currency                                                                         
+nls_iso_currency                                                                          
+nls_numeric_characters                                                                    
+nls_sort                                                                                  
+nls_time_format                                                                           
+nls_timestamp_format                                                                      
+nls_timestamp_tz_format                                                                   
+nls_time_tz_format                                                                        
+oracle_trace_collection_name                                                              
+parallel_instance_group                                                                   
+plsql_native_c_compiler                                                                   
+plsql_native_library_dir                                                                  
+plsql_native_linker                                                                       
+plsql_native_make_file_name                                                               
+plsql_native_make_utility                                                                 
+rdbms_server_dn                                                                           
+remote_listener                                                                           
+resource_manager_plan                                                                     
+rollback_segments                                                                         
+tracefile_identifier                                                                      
+
+</pre>
+<a HREF=#top><h6>Top</h6></a>
+<hr>

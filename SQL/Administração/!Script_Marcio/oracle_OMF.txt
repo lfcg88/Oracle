@@ -1,0 +1,3 @@
+db_create_file_dest 
+db_create_online_log_dest_n
+db_recovery_file_dest

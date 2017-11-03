@@ -1,0 +1,8 @@
+nohup imp '"/ as sysdba"' file=18-06-2012-ext_otcdb01_prd.dmp log=imp_teste-21-06-2012.log fromuser=RM touser=RM buffer=500000 &
+
+ps -ef | grep imp
+
+
+
+
+nohup imp '"/ as sysdba"' file=17-01-2014-exp_otcdb01.dmp log=17-01-2014-exp_otcdb01.log full=y buffer=500000 statistics=none ignore=y &

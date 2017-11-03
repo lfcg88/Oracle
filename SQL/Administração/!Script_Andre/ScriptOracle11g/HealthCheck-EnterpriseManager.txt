@@ -1,0 +1,5 @@
+You can run a health check from Enterprise Manager’s Health Monitor interface or
+by using the DBMS_HM package. You can access the Health Monitor interface in
+Enterprise Manager by clicking the Checkers tab on the Advisor Central page. From
+this page, you can run checks (also called checkers) and view the findings of those
+checks.

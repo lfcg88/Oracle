@@ -1,0 +1,31 @@
+connect target /@tst1 
+connect catalog rman/senha@tst2
+
+#coloca instância em nomount com dummy PFILE que aponta para dummy SPFILE
+
+startup force nomount PFILE=C:\ORACLE\ora92\DATABASE\PFILE_DUMMY_TST1.ORA
+
+# restaura último spfile com nome padrão
+
+run
+{
+  allocate channel ch1 type disk;
+  restore spfile to 'c:\oracle\ora92\database\SPFILETST1.ORA';
+  release channel ch1;
+}
+
+startup force nomount;
+
+run 
+{ 
+  SET UNTIL SEQUENCE 11 THREAD 1;
+  allocate channel ch1 type DISK;
+  restore controlfile;
+  restore database;
+  alter database  mount;
+  recover database;
+  alter database open resetlogs;
+  release channel ch1;
+}
+
+SQL "ALTER TABLESPACE TEMP ADD TEMPFILE ''C:\oracle\oradata\tst1\temp01.dbf'' size 100m REUSE";

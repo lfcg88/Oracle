@@ -1,0 +1,23 @@
+
+
+++++++++++++++++++++++++++++++++++++++++++
+The DBA_TEMP_FREE_SPACE view shows the total free space available, including the space currently allocated to a temporary tablespace and available for reuse as well as space that’s currently unallocated.
+++++++++++++++++++++++++++++++++++++++++++++
+
+
+select * from dba_temp_free_space;
+
+++++++++++++++++++++++++++++++++++++++++++
+ command to shrink a temporary tablespace
+++++++++++++++++++++++++++++++++++++++++++
+
+SQL> alter tablespace temp shrink space;
+
+
+++++++++++++++++++++++++++++++++++++++++++
+To shrink a tempfile
+++++++++++++++++++++++++++++++++++++++++++
+
+SQL> alter tablespace temp shrink
+tempfile '/u01/app/oracle/oradata/or11/temp01.dbf';
+

@@ -1,0 +1,490 @@
+From: <Saved by Microsoft Internet Explorer 5>
+Subject: Oracle Support
+Date: Tue, 8 Apr 2003 15:37:30 -0300
+MIME-Version: 1.0
+Content-Type: multipart/related;
+	boundary="----=_NextPart_000_0018_01C2FDE4.C4643EB0";
+	type="multipart/alternative"
+X-MimeOLE: Produced By Microsoft MimeOLE V6.00.2800.1106
+
+This is a multi-part message in MIME format.
+
+------=_NextPart_000_0018_01C2FDE4.C4643EB0
+Content-Type: image/gif
+Content-Transfer-Encoding: base64
+Content-Location: http://metalink.oracle.com/images/metalink/generic/usaeng/top_left.gif
+
+R0lGODlhDAA7AKL/AP///8zMzJmZmWZmZjMzM8DAwAAAAAAAACH5BAEAAAUALAAAAAAMADsAQAMx
+CLogQ6WMSKu9OOvN+1WTJ45kaTHhCZls675wbDJAsFJLegabwN2yoHBILBqPyGQhAQA7
+
+------=_NextPart_000_0018_01C2FDE4.C4643EB0
+Content-Type: image/gif
+Content-Transfer-Encoding: base64
+Content-Location: http://metalink.oracle.com/images/metalink/generic/usaeng/lines.gif
+
+R0lGODlhCQAIAJH/AP///zMzMwAAAAAAACwAAAAACQAIAEACCoyPecLtD6OcswAAOw==
+
+------=_NextPart_000_0018_01C2FDE4.C4643EB0
+Content-Type: multipart/alternative;
+	boundary="----=_NextPart_001_001D_01C2FDE4.C4643EB0"
+
+
+------=_NextPart_001_001D_01C2FDE4.C4643EB0
+Content-Type: text/html;
+	charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
+Content-Location: http://metalink.oracle.com/metalink/plsql/ml2_documents.showDocument?p_database_id=NOT&p_id=62294.1
+
+=EF=BB=BF<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Frameset//EN">
+<HTML><HEAD><TITLE>Oracle Support</TITLE>
+<META http-equiv=3DContent-Type content=3D"text/html; =
+charset=3Dutf-8"><!-- Header frame, content frame and footer frame -->
+<META content=3D"MSHTML 6.00.2800.1141" =
+name=3DGENERATOR></HEAD><FRAMESET border=3D0=20
+frameSpacing=3D0 rows=3D"75, *, 12" frameBorder=3DNO =
+FRAMESPACE=3D"0"><FRAMESET border=3D0=20
+frameSpacing=3D0 frameBorder=3DNO cols=3D" *,71" FRAMESPACE=3D"0"><FRAME =
+name=3Dheader=20
+marginWidth=3D0 marginHeight=3D0=20
+src=3D"http://metalink.oracle.com/metalink/plsql/ml2_documents.showReleva=
+ncy?p_database_name=3DNOT&amp;p_document_id=3D62294.1"=20
+scrolling=3Dno><FRAME name=3Dhelp marginWidth=3D0 marginHeight=3D0=20
+src=3D"http://metalink.oracle.com/metalink/plsql/ml2_graphics.helpFrame" =
+
+scrolling=3Dno></FRAMESET><FRAMESET border=3D0 frameSpacing=3D0 =
+frameBorder=3DNO=20
+cols=3D2,* FRAMESPACE=3D"0"><FRAME name=3Dborder marginWidth=3D0 =
+marginHeight=3D0=20
+src=3D"http://metalink.oracle.com/metalink/plsql/ml2_draw.showFrame?p_bgc=
+olor=3Dblack"=20
+scrolling=3Dno><FRAME name=3Dcontent marginWidth=3D0 marginHeight=3D0=20
+src=3D"http://metalink.oracle.com/metalink/plsql/ml2_documents.showNOT?p_=
+id=3D62294.1&amp;p_showHeader=3D1&amp;p_showHelp=3D1"></FRAMESET><FRAME=20
+name=3Dfooter marginWidth=3D0 marginHeight=3D0=20
+src=3D"http://metalink.oracle.com/metalink/plsql/ml2_draw.showFooterFrame=
+"=20
+scrolling=3Dno></FRAMESET></HTML>
+
+------=_NextPart_001_001D_01C2FDE4.C4643EB0
+Content-Type: application/octet-stream
+Content-Transfer-Encoding: quoted-printable
+Content-Location: http://metalink.oracle.com/metalink/plsql/ml2_documents.showRelevancy?p_database_name=NOT&p_document_id=62294.1
+
+=EF=BB=BF<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<!-- $Id: ml2_documents_b.sql,2.6.1.2 1.1 2003/03/21 20:06:23 mldev Exp =
+$=0C --><HTML><HEAD><TITLE>Oracle Support Services</TITLE>
+<META http-equiv=3DContent-Type content=3D"text/html; charset=3Dutf-8">
+<SCRIPT language=3DJavaScript>=0A=
+<!-- begin script hideing (for non JavaScript capable browsers) -->=0A=
+// hunt browser=0A=
+preload =3D 0; rollover =3D "no";=0A=
+bName =3D navigator.appName; bVer =3D parseInt(navigator.appVersion);=0A=
+if ((bName =3D=3D "Netscape" && bVer >=3D3) || (bName =3D=3D "Microsoft =
+Internet Explorer"=0A=
+&& bVer >=3D4)) rollover=3D"yes";=0A=
+  function Highlight(x) {if (rollover=3D=3D"yes" && preload=3D=3D"1")=0A=
+  { return true;}=0A=
+  };=0A=
+  function Downlight(x)  {if (rollover=3D=3D"yes" && preload=3D=3D"1")=0A=
+  { return true;}=0A=
+  };=0A=
+  function Depress(x) {if (rollover=3D=3D"yes" && preload=3D=3D"1")=0A=
+  { return true;}=0A=
+  };=0A=
+  if (rollover=3D=3D"yes") {=0A=
+  preload =3D 1;=0A=
+  };=0A=
+  if (rollover=3D=3D"yes") {=0A=
+  // define images=0A=
+  Depressed=3D-1;=0A=
+  Normal=3Dnew Array;=0A=
+  Rollover=3Dnew Array;=0A=
+  Selected=3Dnew Array;=0A=
+  =0A=
+=0A=
+  }=0A=
+  function Highlight(x)=0A=
+  { if (rollover=3D=3D"yes") {=0A=
+  if (Depressed!=3Dx) { document.images[0+x].src=3DRollover[x].src;} } };=0A=
+  function Downlight(x)=0A=
+  { if (rollover=3D=3D"yes") {=0A=
+  if (Depressed!=3Dx) { document.images[0+x].src=3DNormal[x].src;} } };=0A=
+  function Depress(x)=0A=
+  { if (rollover=3D=3D"yes")=0A=
+  { document.images[0+x].src=3DSelected[x].src;=0A=
+  if (Depressed!=3D-1) {=0A=
+  if (Depressed!=3Dx) {=0A=
+  document.images[0+Depressed].src=3DNormal[Depressed].src;=0A=
+  };=0A=
+  };=0A=
+  Depressed=3Dx;=0A=
+  } };=0A=
+  // end script hiding -->=0A=
+  </SCRIPT>
+
+<META content=3D"MSHTML 6.00.2800.1141" name=3DGENERATOR></HEAD>
+<BODY text=3D#ffffff leftMargin=3D0=20
+background=3Dhttp://metalink.oracle.com/images/metalink/generic/usaeng/li=
+nes.gif=20
+topMargin=3D0 MARGINWIDTH=3D"0" MARGINHEIGHT=3D"0">
+<TABLE cellSpacing=3D0 cellPadding=3D0 width=3D"100%" border=3D0>
+  <TBODY>
+  <TR>
+    <TD vAlign=3Dtop align=3Dleft width=3D"2%" rowSpan=3D2><IMG=20
+      =
+src=3D"http://metalink.oracle.com/images/metalink/generic/usaeng/top_left=
+.gif"></TD>
+    <TD vAlign=3Dtop align=3Dleft width=3D"98%"><B><FONT face=3DARIAL=20
+      size=3D2></FONT></B></TD></TR>
+  <TR>
+    <TD vAlign=3Dtop align=3Dleft>
+      <FORM action=3Dml2_documents.saveRelevancy method=3Dpost>
+      <TABLE width=3D"100%" border=3D0>
+        <TBODY>
+        <TR>
+          <TD><SMALL>Did this article help solve your problem? :</SMALL> =
+</TD>
+          <TD ALGIN=3D"LEFT"><SELECT size=3D1 name=3Dp_relevancy> =
+<OPTION value=3D0=20
+              selected>Select<OPTION value=3D3>Yes<OPTION =
+value=3D1>No<OPTION=20
+              value=3D2>Does not apply</OPTION></SELECT> </TD>
+          <TD><SMALL>Would you recommend this document to others? =
+:</SMALL>=20
+</TD>
+          <TD><SELECT size=3D1 name=3Dp_recommendable> <OPTION value=3D2 =
+
+              selected>Select<OPTION value=3D3>Yes<OPTION =
+value=3D1>No<OPTION=20
+              value=3D2>Not sure</OPTION></SELECT> </TD>
+          <TD><INPUT type=3Dsubmit =
+value=3DSubmit></TD></TR></TBODY></TABLE><INPUT=20
+      type=3Dhidden value=3DNOT name=3Dp_database_name ,> <INPUT =
+type=3Dhidden=20
+      value=3D62294.1 name=3Dp_document_id ,> <INPUT type=3Dhidden=20
+      name=3Dp_search_string ,> =
+</FORM></TD></TR></TBODY></TABLE></BODY></HTML>
+
+------=_NextPart_001_001D_01C2FDE4.C4643EB0--
+
+------=_NextPart_000_0018_01C2FDE4.C4643EB0
+Content-Type: image/gif
+Content-Transfer-Encoding: base64
+Content-Location: http://metalink.oracle.com/images/metalink/generic/usaeng/but_help.gif
+
+R0lGODlhRwAXAKL/AP///8zMzJmZmWZmZjMzM8DAwAAAAAAAACH5BAEAAAUALAAAAABHABcAQAPy
+WLrc/jDKRwa4GLghxCCTAwxKIDgEAIYS4a4N58FsrQykjbqP/OnAYOGlSGlinZ8OcCqYCkzPRxUI
+KEZB4ob06nq/4LB4LO51zui0es1uu8/FzCZJE9on2iPDVw9lAFYCASlTBAEjAipZPHMzQAIrOAqC
+XCdVA4NCWkiOd54hm5+iowsyb6eoqWcriXKcOLCxsrO0tba3kkMYjUqko1qJvH0TATkdKJmeRE17
+dEBMJVYFlLoVMsOgjK/YEUwuVVAmVSmG0lhAoaXOSznggoTkhxyKOl1mnb4L4HfpN+v5pPoV4PCB
+jMGDCMf0SMiwYcICCQAAOw==
+
+------=_NextPart_000_0018_01C2FDE4.C4643EB0
+Content-Type: application/octet-stream
+Content-Transfer-Encoding: quoted-printable
+Content-Location: http://metalink.oracle.com/metalink/plsql/ml2_graphics.helpFrame
+
+=EF=BB=BF<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<HTML><HEAD>
+<META http-equiv=3DContent-Type content=3D"text/html; charset=3Dutf-8">
+<META content=3D"MSHTML 6.00.2800.1141" name=3DGENERATOR></HEAD>
+<BODY text=3D#ffffff leftMargin=3D0=20
+background=3Dhttp://metalink.oracle.com/images/metalink/generic/usaeng/li=
+nes.gif=20
+topMargin=3D0 MARGINWIDTH=3D"0" MARGINHEIGHT=3D"0"><A=20
+href=3D"http://metalink.oracle.com/metalink/plsql/ml2_help.display?p_hlp_=
+tag=3D&amp;p_calledFrom=3D&amp;p_backlink=3D"=20
+target=3Dcorner><IMG height=3D23 alt=3DHelp=20
+src=3D"http://metalink.oracle.com/images/metalink/generic/usaeng/but_help=
+.gif"=20
+width=3D71 border=3D0></A> </BODY></HTML>
+
+------=_NextPart_000_0018_01C2FDE4.C4643EB0
+Content-Type: application/octet-stream
+Content-Transfer-Encoding: quoted-printable
+Content-Location: http://metalink.oracle.com/metalink/plsql/ml2_draw.showFrame?p_bgcolor=black
+
+=EF=BB=BF<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<HTML><HEAD><TITLE>Oracle Support</TITLE>
+<META http-equiv=3DContent-Type content=3D"text/html; charset=3Dutf-8">
+<META content=3D"MSHTML 6.00.2800.1141" name=3DGENERATOR></HEAD>
+<BODY bgColor=3Dblack></BODY></HTML>
+
+------=_NextPart_000_0018_01C2FDE4.C4643EB0
+Content-Type: image/gif
+Content-Transfer-Encoding: base64
+Content-Location: http://metalink.oracle.com/images/metalink/generic/usaeng/kur_left_top.gif
+
+R0lGODlhCgAPALMAAP///8zM/5nMzJmZzGaZzAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+AAAAACwAAAAACgAPAAAEHpDISUQAlAzA8bydR4ChRJZb2BFqKLTdCc90bd9zBAA7
+
+------=_NextPart_000_0018_01C2FDE4.C4643EB0
+Content-Type: image/gif
+Content-Transfer-Encoding: base64
+Content-Location: http://metalink.oracle.com/images/metalink/generic/usaeng/kur_right_top.gif
+
+R0lGODlhPAAPALMAAP///8zM/5nMzJmZzGaZzAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+AAAAACwAAAAAPAAPAAAENRDISasNNustiP/EJo4kOYBhqa5kALJwXLmebMf0ra/n7pOpn9AiGBop
+mKNyyWw6n9Co1BcBADs=
+
+------=_NextPart_000_0018_01C2FDE4.C4643EB0
+Content-Type: image/gif
+Content-Transfer-Encoding: base64
+Content-Location: http://metalink.oracle.com/images/metalink/generic/usaeng/kur_left_bottom.gif
+
+R0lGODlhCgAPALMAAP///8z//8zM/5nMzJmZzGaZzAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+AAAAACwAAAAACgAPAAAEHxDISau9ONeQRR5ZwV0FgRUFaKGFV7HtCxMjALODEEQAOw==
+
+------=_NextPart_000_0018_01C2FDE4.C4643EB0
+Content-Type: image/gif
+Content-Transfer-Encoding: base64
+Content-Location: http://metalink.oracle.com/images/metalink/generic/usaeng/kur_right_bottom.gif
+
+R0lGODlhDwAPAKIAAP///8z//8zM/5nMzJmZzGaZzAAAAAAAACwAAAAADwAPAAADIQi63P4wykln
+qEDgUUOpxDcNhRgJpfmgKRSEqQoEAhmXCQA7
+
+------=_NextPart_000_0018_01C2FDE4.C4643EB0
+Content-Type: application/octet-stream
+Content-Transfer-Encoding: quoted-printable
+Content-Location: http://metalink.oracle.com/metalink/plsql/ml2_documents.showNOT?p_id=62294.1&p_showHeader=1&p_showHelp=1
+
+=EF=BB=BF<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<HTML><HEAD><TITLE></TITLE>
+<META http-equiv=3DContent-Type content=3D"text/html; charset=3Dutf-8">
+<SCRIPT language=3DJavaScript>=0A=
+     <!--=0A=
+     =
+top.corner.help.location.replace("ml2_graphics.helpFrame?p_hlp_tag=3DSHOW=
+_NOTE");=0A=
+     //-->=0A=
+     </SCRIPT>
+<!-- $Id: ml2_documents_b.sql,2.6.1.2 1.1 2003/03/21 20:06:23 mldev Exp =
+$ -->
+<META content=3D"MSHTML 6.00.2800.1141" name=3DGENERATOR></HEAD>
+<BODY aLink=3D#000000 link=3D#000000 bgColor=3D#6699cc leftMargin=3D0 =
+topMargin=3D0=20
+MARGINWIDTH=3D"0" MARGINHEIGHT=3D"0">&nbsp;=20
+<CENTER>
+<TABLE height=3D0 cellSpacing=3D0 cellPadding=3D0 width=3D"98%" =
+border=3D0>
+  <TBODY>
+  <TR>
+    <TD vAlign=3Dtop align=3Dleft bgColor=3D#ffffff><IMG height=3D15=20
+      =
+src=3D"http://metalink.oracle.com/images/metalink/generic/usaeng/kur_left=
+_top.gif"=20
+      width=3D10></TD>
+    <TD bgColor=3D#ffffff>&nbsp;</TD>
+    <TD vAlign=3Dtop align=3Dright bgColor=3D#ffffff><IMG height=3D15=20
+      =
+src=3D"http://metalink.oracle.com/images/metalink/generic/usaeng/kur_righ=
+t_top.gif"></TD></TR>
+  <TR>
+    <TD vAlign=3Dtop width=3D"100%" bgColor=3D#ffffff colSpan=3D3><FONT=20
+face=3Dhelvetica>
+      <TABLE cellSpacing=3D0 cellPadding=3D2 width=3D"100%" border=3D0>
+        <TBODY>
+        <TR align=3Dmiddle>
+          <TD align=3Dmiddle><A=20
+            =
+href=3D"http://metalink.oracle.com/metalink/plsql/ml2_bookmarks.addBookma=
+rk?p_title=3DThe%20DBMS_SUPPORT%20Package&amp;p_database_id=3DNOT&amp;p_d=
+ocument_id=3D62294.1&amp;p_username=3DPARTNERS"=20
+            target=3Dcorner><FONT size=3D-1>Bookmark</FONT></A></TD>
+          <TD align=3Dmiddle><A=20
+            =
+href=3D"http://metalink.oracle.com/metalink/plsql/ml2_documents.showNot?p=
+_id=3D62294.1&amp;p_font=3D"><SMALL>Fixed=20
+            font </SMALL></A></TD>
+          <TD align=3Dmiddle><A=20
+            =
+href=3D"http://metalink.oracle.com/metalink/plsql/ml2_documents.showNOT?p=
+_id=3D62294.1&amp;p_showHeader=3D1&amp;p_showHelp=3D1#bottom"><FONT=20
+            size=3D-1>Go to End</FONT></A></TD></TR></TBODY></TABLE><BR>
+      <TABLE cellSpacing=3D0 cellPadding=3D0 width=3D"80%" border=3D0>
+        <TBODY>
+        <TR>
+          <TD>
+            <TABLE cellSpacing=3D0 cellPadding=3D0 border=3D0>
+              <TBODY>
+              <TR>
+                <TD vAlign=3Dtop><STRONG><A=20
+                  =
+href=3D"http://metalink.oracle.com/help/usaeng/Search/search.html#file">D=
+oc=20
+                  ID</A>: </STRONG></TD>
+                <TD>Note:62294.1</TD></TR>
+              <TR>
+                <TD vAlign=3Dtop><STRONG>Subject: </STRONG></TD>
+                <TD>The DBMS_SUPPORT Package</TD></TR>
+              <TR>
+                <TD vAlign=3Dtop><STRONG>Type: </STRONG></TD>
+                <TD>REFERENCE</TD></TR>
+              <TR>
+                <TD vAlign=3Dtop><STRONG>Status: </STRONG></TD>
+                <TD>PUBLISHED</TD></TR></TBODY></TABLE></TD>
+          <TD>
+            <TABLE cellSpacing=3D0 cellPadding=3D0 border=3D0>
+              <TBODY>
+              <TR>
+                <TD vAlign=3Dtop><STRONG>Content Type: </STRONG></TD>
+                <TD>TEXT/PLAIN</TD></TR>
+              <TR>
+                <TD vAlign=3Dtop><STRONG>Creation Date: </STRONG></TD>
+                <TD>11-AUG-1998</TD></TR>
+              <TR>
+                <TD vAlign=3Dtop><STRONG>Last Revision Date: =
+</STRONG></TD>
+                =
+<TD>25-OCT-2002</TD></TR></TBODY></TABLE></TD></TR></TBODY></TABLE><PRE>T=
+he DBMS_SUPPORT Package <P>~~~~~~~~~~~~~~~~~~~~~~~~ <P>  This package is =
+an add on to Oracle releases 7.2 onwards to provide a  <P>  simple =
+interface to some undocumented features of Oracle. As this exposes <P>  =
+undocumented features within Oracle there is no guarantee that the =
+results <P>  will be exactly as described for all releases. <P> <P>  The =
+main feature of this package is to allow user sessions to be traced <P>  =
+with more information than is usually available via SQL_TRACE. <P> <P>  =
+The package is supplied in the files dbmssupp.sql and prvtsupp.plb.  <P> =
+ The files are included in the distribution of the following releases =
+(Solaris): <P> <P>    8.0.6, 8.1.7, 9.0.1, 9.2.0 and above <P> <P>  =
+Versions of these files may be obtained from Oracle Support for use =
+against  <P>  Oracle releases 7.2 onwards. The package CANNOT be used in =
+Oracle 7.1 or earlier <P> <P>Procedures and Functions in DBMS_SUPPORT =
+<P>~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ <P> <P>  The functions / =
+procedures in this package are: <P> <P>	MySid				Function <P>	=
+Start_Trace			Procedure <P>	Stop_Trace			Procedure <P>	=
+Start_Trace_In_Session		Procedure <P>	Stop_Trace_In_Session		Procedure =
+<P> <P>  Each of these are described below. <P> <P> <P>FUNCTION MySid =
+<P>~~~~~~~~~~~~~~ <P>Arguments:	None <P>Returns:	Current SID as a =
+NUMBER. <P> <P>  This simply returns the SID of the current session.  =
+<P>  The function has RNPS, WNPS and WNDS RESTRICT_REFERENCES clause and =
+so <P>  can be used in SELECT operations. <P> <P>  Eg: SELECT =
+DBMS_SUPPORT.MYSID from DUAL; <P> <P> <P>PROCEDURE Start_Trace =
+<P>~~~~~~~~~~~~~~~~~~~~~~~~~~~~ <P>Arguments: 	waits 	IN BOOLEAN  =
+DEFAULT TRUE <P>		binds 	IN BOOLEAN  DEFAULT FALSE	 <P> <P>  This =
+procedure starts tracing in the current session. <P>  The trace output =
+is written, like SQL_TRACE, to the user trace file. <P>  The default is =
+to trace everything SQL_TRACE would capture plus WAIT  <P>  information. =
+<P> <P>  DBMS_SUPPORT.START_TRACE; <P> <P>	is the default and gives =
+information on WAITS as well as SQL_TRACE <P> <P>  =
+DBMS_SUPPORT.START_TRACE( waits=3D&gt;false, binds=3D&gt;false )  <P> =
+<P>	is equivalent to standard SQL_TRACE <P> <P>  =
+DBMS_SUPPORT.START_TRACE( waits=3D&gt;true, binds=3D&gt;false )  <P> <P>	=
+is the same as the default and gives information on WAITS as  <P>	well =
+as SQL_TRACE <P> <P>  DBMS_SUPPORT.START_TRACE( waits=3D&gt;true, =
+binds=3D&gt;true )  <P> <P>	in addition to the above gives information =
+about bind values. <P>	This is typically only of use for Oracle support. =
+<P> <P>  DBMS_SUPPORT.START_TRACE( waits=3D&gt;false, binds=3D&gt;true ) =
+ <P> <P>	Like SQL_TRACE with additional BIND information only. No WAITs =
+are <P>	traced. <P> <P> <P>Known issues: <P> <P>  - Under MTS , XA or =
+Oracle8 session switching the trace output may be  <P>    spread over =
+several different trace files and thus be of little use. <P> <P> =
+<P>PROCEDURE Stop_Trace <P>~~~~~~~~~~~~~~~~~~~~ <P>Arguments:	None <P> =
+<P>  This procedure stops trace in the current session. <P> <P>Known =
+issues: <P> <P>  - If SQL_TRACE was enabled separately this procedure =
+will turn it off. <P> <P> <P> <P>PROCEDURE Start_Trace_In_Session =
+<P>~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ <P>Arguments: 	sid 	IN NUMBER    <P>	=
+	serial  IN NUMBER    <P>		waits 	IN BOOLEAN  DEFAULT TRUE <P>		binds 	=
+IN BOOLEAN  DEFAULT FALSE <P> <P>  This is like START_TRACE except that =
+it allows tracing to be started in a <P>  different session. For ease of =
+use SERIAL may be set to NULL (or 0) to denote <P>  the current session =
+with the given SID. <P> <P>  DBMS_SUPPORT.START_TRACE_IN_SESSION( sid , =
+null ) <P> <P>	Will trace SQL_TRACE and WAITS in the session 'sid'. <P>	=
+Output is written to the target sessions trace file/s. <P> <P>  =
+DBMS_SUPPORT.START_TRACE_IN_SESSION( sid , serial ) <P> <P>	Will trace =
+SQL_TRACE and WAITS in the session 'sid,serial#'. <P>	You only need to =
+specify a SERIAL if you need to be sure a <P>	specific session is =
+traced. If the session ends and the SID is <P>	reused before the =
+START_TRACE_IN_SESSION call is made including <P>	the SERIAL will cause =
+an error to be raised rather than the trace <P>	being started against a =
+different session to the one you intended  <P>	to trace. <P> <P>  =
+DBMS_SUPPORT.START_TRACE_IN_SESSION( sid , 0, waits=3D&gt;TRUE, =
+binds=3D&gt;TRUE ) <P> <P>	Allows WAITS and BINDS to be traced in the =
+target session. <P> <P> <P>Known issues: <P> <P>  - Under MTS , XA or =
+Oracle8 session switching the trace output may be  <P>    spread over =
+several different trace files and thus be of little use. <P> <P> <P> =
+<P>PROCEDURE Stop_Trace_In_Session <P>~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ =
+<P>Arguments:	sid 	IN NUMBER    <P>		serial  IN NUMBER    <P> <P>  This =
+is like STOP_TRACE except that it allows tracing to be stopped in a <P>  =
+different session. For ease of use the SERIAL may be specified as NULL  =
+<P>  to denote the current session with the supplied SID. <P> <P> <P>  =
+DBMS_SUPPORT.STOP_TRACE_IN_SESSION( sid , null ) <P> <P>	will stop =
+tracing in session SID. <P> <P>Known issues: <P> <P>  - If SQL_TRACE was =
+enabled separately this procedure will turn it off. <P> <P> <P> <P>Trace =
+Output <P>~~~~~~~~~~~~ <P>  The trace output is similar to SQL_TRACE =
+output but may include additional <P>  WAIT or BIND lines depending on =
+the tracing options chosen. <P> <P>  A brief description of the trace =
+output can be found in <A =
+href=3D"http://metalink.oracle.com/metalink/plsql/ml2_documents.showDocum=
+ent?p_id=3D39817.1&amp;p_database_id=3DNOT" =
+target=3Dcorner>[NOTE:39817.1]</A> <P> <P> <P>References <P>~~~~~~~~~~ =
+<P>  Summary description of the raw trace output		<A =
+href=3D"http://metalink.oracle.com/metalink/plsql/ml2_documents.showDocum=
+ent?p_id=3D39817.1&amp;p_database_id=3DNOT" =
+target=3Dcorner>[NOTE:39817.1]</A> <P>  Description of how to use this =
+package 		&lt;Note.62160.1&gt; <P></P></PRE><A name=3Dbottom>.</A> =
+</FONT></TD></TR>
+  <TR>
+    <TD bgColor=3D#ffffff colSpan=3D3>
+      <HR align=3Dleft noShade SIZE=3D1>
+    </TD></TR>
+  <TR>
+    <TD vAlign=3Dbottom align=3Dleft bgColor=3D#ffffff><IMG=20
+      =
+src=3D"http://metalink.oracle.com/images/metalink/generic/usaeng/kur_left=
+_bottom.gif"></TD>
+    <TD vAlign=3Dbottom bgColor=3D#ffffff><SMALL><A=20
+      href=3D"http://www.oracle.com/html/copyright.html" =
+target=3D_top>Copyright (c)=20
+      1995,2000 Oracle Corporation</A>. All Rights Reserved.<A=20
+      =
+href=3D"http://metalink.oracle.com/metalink/plsql/ml2.show_legal_text">=20
+      Legal Notices and Terms of Use.</A></SMALL></TD>
+    <TD vAlign=3Dbottom align=3Dright bgColor=3D#ffffff><IMG=20
+      =
+src=3D"http://metalink.oracle.com/images/metalink/generic/usaeng/kur_righ=
+t_bottom.gif"></TD></TR></TBODY></TABLE></CENTER><BR></BODY></HTML>
+
+------=_NextPart_000_0018_01C2FDE4.C4643EB0
+Content-Type: image/gif
+Content-Transfer-Encoding: base64
+Content-Location: http://metalink.oracle.com/images/metalink/generic/usaeng/foot_left.gif
+
+R0lGODlhDAALALMAAP///8zMzJmZmWZmZjMzMwAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+AAAAACwAAAAADAALAAAEIZCUSWsZNodsgeQTIIAhgIFA+mWpyrXpWcGpsBZ0GwxSBAA7
+
+------=_NextPart_000_0018_01C2FDE4.C4643EB0
+Content-Type: image/gif
+Content-Transfer-Encoding: base64
+Content-Location: http://metalink.oracle.com/images/metalink/generic/usaeng/foot_right.gif
+
+R0lGODlhCwALALMAAP///8zMzJmZmWZmZjMzMwAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+AAAAACwAAAAACwALAAAEILDISQm9ZWAa9gReIYDbAJAXcaKTul7mihKjDBBDYK8RADs=
+
+------=_NextPart_000_0018_01C2FDE4.C4643EB0
+Content-Type: application/octet-stream
+Content-Transfer-Encoding: quoted-printable
+Content-Location: http://metalink.oracle.com/metalink/plsql/ml2_draw.showFooterFrame
+
+=EF=BB=BF<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<HTML><HEAD><TITLE>Oracle Support</TITLE>
+<META http-equiv=3DContent-Type content=3D"text/html; charset=3Dutf-8">
+<META content=3D"MSHTML 6.00.2800.1141" name=3DGENERATOR></HEAD>
+<BODY bgColor=3Dblack leftMargin=3D0 topMargin=3D0 MARGINWIDTH=3D"0" =
+MARGINHEIGHT=3D"0">
+<TABLE cellSpacing=3D0 cellPadding=3D0 width=3D"100%" border=3D0>
+  <TBODY>
+  <TR>
+    <TD vAlign=3Dtop align=3Dleft><IMG height=3D15=20
+      =
+src=3D"http://metalink.oracle.com/images/metalink/generic/usaeng/foot_lef=
+t.gif"=20
+      width=3D14 border=3D0></TD>
+    <TD>&nbsp; </TD>
+    <TD vAlign=3Dtop align=3Dright><IMG height=3D15=20
+      =
+src=3D"http://metalink.oracle.com/images/metalink/generic/usaeng/foot_rig=
+ht.gif"=20
+      width=3D11 border=3D0></TD></TR></TBODY></TABLE></BODY></HTML>
+
+------=_NextPart_000_0018_01C2FDE4.C4643EB0--

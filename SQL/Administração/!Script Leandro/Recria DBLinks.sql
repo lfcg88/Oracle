@@ -1,0 +1,6 @@
+select 'DROP '||DECODE(OWNER,'PUBLIC','PUBLIC','')|| ' DATABASE LINK '||DECODE(OWNER,'PUBLIC','',OWNER||'.')||DB_LINK||';'||CHR(10)||CHR(10)||
+       'CREATE '||DECODE(OWNER,'PUBLIC','PUBLIC','')||' DATABASE LINK '||DB_LINK||CHR(10)||
+       'CONNECT TO '||USERNAME||CHR(10)||
+       'IDENTIFIED BY '||USERNAME||CHR(10)||
+       'USING '''||HOST||''';'||CHR(10)||CHR(10) COMANDO
+  from dba_db_links;

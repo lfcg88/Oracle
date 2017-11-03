@@ -1,0 +1,53 @@
+-- gerando um script dinâmico para matar sessões oracle, no exemplo abaixo estamos fazendo do servidor de teste da autenticis.
+select 'alter system kill session ''' || sid || ' , ' || serial# || ''' immediate ;' from v$session where username='AUTENTICIS_COMVENIF';
+
+
+-- verificando as sessões existentes no momento.
+select sid, serial#, status from v$session where username='AUTENTICIS_COMVENIF';
+
+
+
+-- resultado da primeira query
+alter system kill session '106,60937' immediate ;
+alter system kill session '109,26875' immediate ;
+alter system kill session '110,9979' immediate ;
+alter system kill session '111,55197' immediate ;
+alter system kill session '112,11131' immediate ;
+alter system kill session '116,27445' immediate ;
+alter system kill session '119,23890' immediate ;
+alter system kill session '120,14381' immediate ;
+alter system kill session '121,5304' immediate ;
+alter system kill session '125,48248' immediate ;
+alter system kill session '127,40530' immediate ;
+alter system kill session '130,63691' immediate ;
+alter system kill session '132,52809' immediate ;
+alter system kill session '138,60056' immediate ;
+alter system kill session '144,26724' immediate ;
+alter system kill session '151,53033' immediate ;
+
+alter system kill session '138,60083' immediate ;
+138      60083
+
+-- spool para gerar registro do que foi feito.
+set echo on
+spool script_20120117.txt
+
+
+
+
+CREATE INDEX AUTENTICIS_COMVENIF.IDX_ARQ_LINHA_IMPORTACAO_ARQ ON AUTENTICIS_COMVENIF.arq_linha_importacao (fk_arquivo) 
+TABLESPACE AUTENTICIS_COMVENIF;
+
+
+Delete from arq_linha_importacao where fk_arquivo = 141
+
+
+
+SQL> alter session set current_schema=AUTENTICIS_COMVENIF;
+
+Session altered.
+
+SQL> CREATE INDEX AUTENTICIS_COMVENIF.IDX_ARQ_LINHA_IMPORTACAO_ARQ ON AUTENTICIS_COMVENIF.arq_linha_importacao (fk_arquivo)
+  2  TABLESPACE AUTENTICIS_COMVENIF;
+
+Index created.

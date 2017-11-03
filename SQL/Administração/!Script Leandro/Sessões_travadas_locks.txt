@@ -1,0 +1,19 @@
+   Sessões travadas no Oracle são comuns 
+   
+   select c.owner, c.object_name, c.object_type,b.sid, b.serial#, b.status, b.osuser, b.machine
+         from v$locked_object a , v$session b, dba_objects c
+         where b.sid = a.session_id
+          and a.object_id = c.object_id;
+
+ 
+
+
+Feito isso, temos listadas as sessões e podemos indentificar a geradora do problema. O próximo passo é finalizá-la manualmente.
+Sintaxe:
+
+    alter system kill session ‘session_identifier, serial_indentifier’ [MODE];
+
+Exemplo:
+
+    SQL>  alter system kill session ’78, 25373' IMMEDIATE;
+

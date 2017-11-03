@@ -1,0 +1,130 @@
+SET ECHO off 
+REM NAME:   TFSCSDBL.SQL 
+REM USAGE:"@path/tfscsdbl" 
+REM ------------------------------------------------------------------------ 
+REM REQUIREMENTS: 
+REM    DBA privs 
+REM ------------------------------------------------------------------------ 
+REM PURPOSE: 
+REM    Running this script will in turn create a script to build  
+REM    all the database links in the database.  This created script  
+REM    is called 'tfscsdbl.sql'. 
+REM 
+REM    Since a DBA cannot create a private database link on behalf of  
+REM    a user, this script will contain various connect clauses  
+REM    before each create statement.  In order for the database links  
+REM    to be created under the correct schema, it must connect as  
+REM    that individual.  Therefore, before executing the script, you  
+REM    must add each user's password to the connect clause.   
+REM    Duplicate connect clauses can be eliminated being sure that the  
+REM    database link is being created under the correct schema.   
+REM 
+REM    The PUBLIC database links will require a connect as 'SYS'.   
+REM    However, this username can be changed to any user with the  
+REM    DBA role or with the 'CREATE PUBLIC DATABASE LINK' system  
+REM    privilege. 
+REM 
+REM    The spooled output is ordered by the database link owner, a PUBLIC 
+REM    link has 'PUBLIC' as it's owner. 
+REM ------------------------------------------------------------------------ 
+REM EXAMPLE: 
+REM    connect SCOTT/ 
+REM    CREATE DATABASE LINK ahmad CONNECT TO scott IDENTIFIED BY 
+REM    tiger USING 't:otcsun2:V714'; 
+REM 
+REM    CREATE DATABASE LINK cr CONNECT TO surman_us IDENTIFIED BY 
+REM    sc0ttu USING 'crprd'; 
+REM 
+REM    CREATE DATABASE LINK mylink CONNECT TO scott IDENTIFIED BY 
+REM    tiger USING 'V7223'; 
+REM 
+REM    CREATE DATABASE LINK to_otcosf_v716 CONNECT TO scott 
+REM    IDENTIFIED BY tiger USING 'OTCOSF_V716'; 
+REM  
+REM ------------------------------------------------------------------------ 
+REM Main text of script follows: 
+ 
+set verify off 
+set feedback off 
+set termout off 
+set pagesize 0 
+  
+set termout on 
+select 'Creating database link build script...' from dual; 
+set termout off 
+  
+create table dl_temp (lineno NUMBER, grantor_owner varchar2(20), 
+                    text VARCHAR2(800)); 
+  
+DECLARE 
+   CURSOR link_cursor IS select   u.name, 
+                                  l.name,  
+                                  l.userid,  
+      l.password,  
+                                  l.host 
+     from     sys.link$ l, sys.user$ u 
+                         where    l.owner# = u.user# 
+                         order by l.name; 
+   lv_owner    sys.user$.name%TYPE; 
+   lv_db_link  sys.link$.name%TYPE; 
+   lv_username sys.link$.userid%TYPE; 
+   lv_password sys.link$.password%TYPE; 
+   lv_host     sys.link$.host%TYPE; 
+   lv_string     VARCHAR2(800); 
+   lv_user       VARCHAR2(255); 
+   lv_connect VARCHAR2(255); 
+   lv_text       VARCHAR2(800); 
+  
+   procedure write_out(p_string VARCHAR2) is 
+   begin 
+      insert into dl_temp (grantor_owner,text)  
+                values (lv_owner,p_string); 
+   end; 
+  
+BEGIN 
+   OPEN link_cursor; 
+   LOOP 
+      FETCH link_cursor INTO lv_owner, 
+                             lv_db_link, 
+                             lv_username, 
+lv_password, 
+                             lv_host; 
+      EXIT WHEN link_cursor%NOTFOUND; 
+if (lv_owner = 'PUBLIC') then 
+      lv_string := ('CREATE PUBLIC DATABASE LINK '|| 
+                lower(replace(lv_db_link,'.WORLD',''))); 
+else 
+lv_string := ('CREATE DATABASE LINK '|| 
+                lower(replace(lv_db_link,'.WORLD',''))); 
+end if; 
+      if (lv_username is not null) then 
+         lv_user := ('CONNECT TO '||lower(lv_username)|| 
+                   ' IDENTIFIED BY '||lower(lv_password)); 
+      end if; 
+      if (lv_host is not null) then 
+lv_connect := ('USING '''||lv_host||''''||';'); 
+      end if; 
+   lv_text := lv_string || ' ' || lv_user || ' ' || lv_connect; 
+   write_out(lv_text); 
+   lv_user := ' '; 
+   lv_connect := ' '; 
+   END LOOP; 
+   CLOSE link_cursor; 
+END; 
+/ 
+  
+spool c:\temp\db_link_fonte.sql 
+break on downer skip 1 
+col text format a60 word_wrap 
+  
+select   'connect ' || decode (grantor_owner, 'PUBLIC', 'SYS', grantor_owner)  
+         || '/' downer, 
+         text 
+from     dl_temp  
+order by downer  
+/ 
+spool off 
+  
+drop table dl_temp; 
+ 
+ 

@@ -1,0 +1,94 @@
+/**********************************************************************
+ * File:	sesstime80.sql
+ * Type:	SQL*Plus script
+ * Author:	Tim Gorman (SageLogix, Inc)
+ * Date:	25-Mar-02
+ *
+ * Description:
+ *	SQL*Plus script to display total time spent waiting info
+ *	(from V$SESSION_EVENT) along with total time spent processing
+ *	info (from V$SESSTAT for "CPU used by this session" statistic),
+ *	along with a calculation of the percentage of time each session
+ *	spends doing each thing...
+ *
+ * Modifications:
+ *	TGorman 07may02 - adapted for v8.0 and under from "sesstime.sql"
+ *			  which is intended for v8.1.x and above due to
+ *			  new "analytical SQL" syntax...
+ *
+ * Enter : traz informações de todas as sessões
+ *********************************************************************/
+clear breaks
+clear computes
+break on report on username on sid skip 1
+set pagesize 100 lines 110 trimspool on trimout on verify off recsep off
+set trimspool on trimout on
+
+compute sum of tot_secs_spent on sid
+compute sum of nonidle_secs_spent on sid
+compute sum of tot_secs_spent on username
+compute sum of nonidle_secs_spent on username
+
+undef usr
+
+col username format a12 truncate
+col sid format a15 truncate
+col name format a40 truncate
+col tot_secs_spent format 999,999,999,990.00 heading "Total|Secs|Spent"
+col nonidle_secs_spent format 999,999,999,990.00 heading "Non-Idle|Secs|Spent"
+
+select	nvl(s.username, 'SYS') username,
+	s.sid || ' (' || ltrim(s.program) || ')' sid,
+	e.event name,
+	e.time_waited/100 tot_secs_spent,
+	decode(e.event,
+		'rdbms ipc message', 0,
+		'rdbms ipc reply', 0,
+		'SQL*Net message from client', 0,
+		'SQL*Net break/reset to client', 0,
+		'pipe get', 0,
+		'pmon timer', 0,
+		'smon timer', 0,
+		'dispatcher timer', 0,
+		'virtual circuit status', 0,
+		'PX Idle Wait', 0,
+		'PX Deq: Execute Reply', 0,
+		'PX Deq: Execution Msg', 0,
+		'PX Deq: Table Q Normal', 0,
+		'PX Deq Credit: send blkd', 0,
+		'PX Deq Credit: need buffer', 0,
+		'PX Deq: Parse Reply', 0,
+		'PX Deq: Signal ACK', 0,
+		'PX Deq: Join ACK', 0,
+		'PX qref latch', 0,
+		'PX Deq: Msg Fragment', 0,
+		'PL/SQL lock timer', 0,
+		'inactive session', 0,
+			e.time_waited/100) nonidle_secs_spent
+from	v$session_event			e,
+	v$session			s
+where	e.sid = s.sid
+and        s.status = 'ACTIVE'
+and	nvl(s.username, 'SYS') = decode(upper('&&usr'), '', nvl(s.username, 'SYS'), upper('&&usr'))
+and	e.time_waited > 0
+union all
+select	nvl(s.username, 'SYS') username,
+	s.sid || ' (' || ltrim(s.program) || ')' sid,
+	sn.name,
+	ss.value/100 tot_secs_spent,
+	ss.value/100 nonidle_secs_spent
+from	v$sesstat			ss,
+	v$statname			sn,
+	v$session			s
+where	ss.sid = s.sid
+and	ss.value > 0
+and	sn.statistic# = ss.statistic#
+and	sn.name = 'CPU used by this session'
+and	nvl(s.username, 'SYS') = decode(upper('&&usr'), '', nvl(s.username, 'SYS'), upper('&&usr'))
+order by 1, 2, 5 desc, 4 desc, 3
+
+spool sesstime_001.lst
+/
+spool off
+
+ed sesstime_001.lst

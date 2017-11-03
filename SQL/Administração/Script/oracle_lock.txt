@@ -1,0 +1,39 @@
+select username from v$session
+ where sid in (
+ select blocking_session from v$session
+ )
+
+
+
+Verificando usuários que estão aguardando commit de outra sessão.
+
+select sid, username, blocking_session
+ from v$session
+ where blocking_session is not null;
+
+
+
+Usuários que estão com o lock, e usuário que estão aguardando a outra transação.
+
+
+select sid, username, blocking_session
+from v$session where blocking_session is not null
+ UNION ALL
+ select A.sid, A.username, A.blocking_session
+ from v$session A, v$session B
+ where A.sid = B.blocking_session;
+
+
+alter system kill session '139, 1978' immediate;  139       1978
+
+
+SELECT 'alter system kill session '''||SID||','||SERIAL#||''' immediate; '
+from gv$session
+where username = 'SYS';
+
+
+
+
+SELECT 'alter system kill session '''||SID||','||SERIAL#||''' immediate; '
+from gv$session
+where sid = 

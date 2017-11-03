@@ -1,0 +1,57 @@
+Feitos no DWDES / dwprod / wfhomo / wfprod
+
+
+Desabilitar Partitioning - DWDES
+
+1- Baixar o banco
+
+2- Entar no diretório $ORACLE_HOME/bin
+
+3- Executar o comando abaixo
+
+ chopt disable partitioning
+
+
+
+Desabilitar Oracle Tuning Pack / Oracle Diagnostic Pack / 
+
+1- Executar o comando abaixo
+
+alter system set control_management_pack_access=none scope=both;
+
+
+
+Desabilitar 
+
+Change Management Pack
+Configuration Management Pack 
+Data Masking Pack
+Provisioning and Patch Automation Pack for Database
+
+
+1- Acessar o EM
+
+http://172.28.142.131:5500/em/console/aboutApplication
+
+2 - Acessar o link Configuração na parte superior direita
+
+3- Acessar o link acesso ao Management Pack 
+
+4- Desabilitar as opções marcadas e aplicar.
+
+
+
+select * from v$option; 
+
+
+SQL> select * from v$option where PARAMETER = 'Partitioning';
+
+PARAMETER                                                        VALUE
+---------------------------------------------------------------- ----------------------------------------------------------------
+Partitioning                                                     FALSE
+
+
+
+Documentção Oracle - Management Pack
+
+http://docs.oracle.com/cd/E11882_01/license.112/e10594/options.htm#autoId28

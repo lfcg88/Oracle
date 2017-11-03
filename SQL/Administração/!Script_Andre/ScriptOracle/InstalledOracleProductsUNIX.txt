@@ -1,0 +1,111 @@
+Query Installed Oracle Products (UNIX) 
+
+by Jeff Hunter, Sr. Database Administrator 
+
+This month I provide two methods for quering all installed Oracle products 
+along with their version number in the UNIX environment. I have tested both 
+methods on Solaris and Linux using Oracle7 and Oracle8. The first method uses 
+a provided script from Oracle called inspdver. This script is located in the 
+$ORACLE_HOME/orainst directory. The second method uses a custom script called 
+oraproducts. This script provides a bit more information than the default one 
+Oracle provides. 
+
+
+Method #1 : Using Oracle provided script 
+cd $ORACLE_HOME/orainst
+./inspdver
+Method #2 : Using oraproducts script 
+#!/bin/sh
+#
+# $DBA/products
+#
+# Lists all installed Oracle product names and version numbers.
+#
+# Creates a products.sql file for use in loading Oracle product info into
+# DBCare.
+#
+# Restrictions:
+#	1) ORACLE_HOME must be defined.
+#
+# MODIFICATION HISTORY
+# 08/20/97	Brian Lomasky	Remove any "_common" from filenames.  Decrease
+#				  version by 2 columns.  Increase filename by
+#				  2 columns.
+# 04/14/97	Brian Lomasky	Original
+#
+#cat /dev/null > products.sql
+if [ "$ORACLE_HOME" = "" ]
+then
+	echo "ORACLE_HOME is not set - Aborting..."
+	exit 1
+fi
+if [ ! -f $ORACLE_HOME/orainst/unix.rgs ]
+then
+	echo "Can not locate list of installed products - Aborting..."
+	exit 1
+fi
+thiscpu=`uname -n`
+# See if nawk should be used instead of awk
+(nawk '{ print ; exit }' /etc/passwd) > /dev/null 2>&1
+if [ ${?} -eq 0 ]
+then
+	cmd=nawk
+else
+	cmd=awk
+fi
+echo ""
+echo ""
+echo "               Report of all Installed Oracle Products on $thiscpu"
+echo ""
+cat $ORACLE_HOME/orainst/unix.rgs | $cmd 'BEGIN {
+	printf("%-10s %-10s %-37s %-20s\n", \
+		"Version", "Filename", "Product", "Installed")
+	printf("%-10s %-10s %-37s %-20s\n", \
+		"----------", "----------", \
+		"-------------------------------------", \
+		"--------------------")
+} {
+	filename = substr($4, 2, length($4) - 2)
+	i = index(filename,"_common")
+	if (i != 0) {
+		filename = substr(filename, 1, i - 1)
+	}
+	for (i=6; i<NF; i++) {
+		if (index(substr($i, length($i), 1),"\"") == 0) {
+			if (i == 6) {
+				product = substr($i, 2)
+			} else {
+				product = product " " $i
+			}
+		} else {
+			if (i == 6) {
+				product = substr($i, 2, length($i) - 2)
+			} else {
+				product = product " " substr($i,1,length($i)-1)
+			}
+			break
+		}
+	}
+	x = i + 2
+	for (i=x; i<NF; i++) {
+		if (index(substr($i, length($i), 1),"\"") == 0) {
+			if (i == x) {
+				installed = substr($i, 2)
+			} else {
+				installed = installed " " $i
+			}
+		} else {
+			if (i == x) {
+				installed = substr($i, 2, length($i) - 2)
+			} else {
+				installed = installed " " \
+					substr($i, 1, length($i) - 1)
+			}
+			break
+		}
+	}
+	printf("%-10s %-10s %-37s %-20s\n", \
+		substr(substr($5, 2, length($5)-2), 1, 10), \
+		substr(filename, 1, 10), substr(product, 1, 37), \
+		substr(installed, 1, 20))
+}'

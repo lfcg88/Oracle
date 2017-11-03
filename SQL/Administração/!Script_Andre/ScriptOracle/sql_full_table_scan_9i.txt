@@ -1,0 +1,36 @@
+column status format a10
+set feedback off
+
+set serveroutput on size 200000
+
+spool c:\sql_full_table_scan
+
+--select username, sid, serial#, process, status 
+--from v$session 
+--where username is not null and status='ACTIVE' 
+--/
+
+column username format a20
+column sql_text format a55 word_wrapped
+
+begin
+    for x in 
+    ( SELECT distinct  HASH_VALUE
+       FROM v$sql_plan
+        where OPTIONS = 'FULL' AND OBJECT_OWNER NOT IN ( 'SYS','PERFSTAT')
+     ) loop
+
+--
+         dbms_output.put_line( '--------------------' );
+--         dbms_output.put_line( x.username );
+--         dbms_output.put_line( x.logon_time || ' ' || x.current_time);
+--
+        for c1 in ( select /*+ rule */ * from sys.v_$sqltext
+              where HASH_VALUE = x.hash_value order by piece) loop
+          dbms_output.put_line(chr(9)||c1.sql_text);
+        end loop;
+    end loop;
+end;
+/
+
+spool off

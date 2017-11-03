@@ -1,0 +1,181 @@
+=====================================================================
+SQL> @d:\script\sid.txt
+Enter User Id: 20
+=====================================================================
+SID/Serial  : 20,60471
+Foreground  : PID:  -
+Shadow      : PID: 9653 - oracle@uxgu-bil04 (TNS V1-V3)
+Terminal    : / UNKNOWN
+OS User     : oracle on
+Ora User    : PROMUS_ITG
+Status Flags: ACTIVE DEDICATED USER
+Tran Active : 00000003817273A8
+Login Time  : Qui 12:22:52
+Last Call   : Qui 12:22:50 -   23.1 min
+Lock/ Latch : NONE/ NONE
+Latch Spin  : NONE
+Current SQL statement:
+        SELECT "NOME_CLIENTE","DOC_OBJ_NUM","DOC_OBJ_ANO","COD_SUB_CONTA
+        ","COD_ACORDO","PRODUTO","MES_CICLO","ANO_CICLO","DT_INI_REF","D
+        T_FIM_REF","NUM_DOCUMENTO_RETIFICADO","DV_DOCUMENTO_RETIFICADO",
+        "NUM_DOCUMENTO_RECEBIMENTO","DV_DOCUMENTO_RECEBIMENTO","DT_VENCI
+        MENTO","DT_VENCTO_RET","PONTO","CTA_OBJ_NUM","CTA_OBJ_ANO","NOME
+        _CLIENTE_PONTO","MODALIDADE","VSAT","ANTENA","PRAZO","PLATAFORMA
+        ","COD_BLOCO_SERVICO","BLOCO_SERVICO","DESCRICAO","PERIODO","QTD
+        E","NATUREZA_CONTABIL","VALOR_BRUTO","VALOR_LIQUIDOG","ID_CALCUL
+        O","VALOR_BASE_SERVICO","DATA_GERACAO_ITEM","NOME_CLIENTE_PONTO_
+        COMPLETO","NUM_LINHA_CONTA" FROM "PROMUS_ITG"."PR_FA00029_DETALH
+        E" "DETALHE_BILLING"
+Previous SQL statement:
+Session Waits:
+        WAITING: direct path write
+Locks:
+
+
+
+
+SELECT NOME_CLIENTE,DOC_OBJ_NUM,DOC_OBJ_ANO,
+COD_SUB_CONTA,COD_ACORDO,PRODUTO,MES_CICLO,ANO_CICLO,
+DT_INI_REF,DT_FIM_REF,NUM_DOCUMENTO_RETIFICADO,DV_DOCUMENTO_RETIFICADO,
+NUM_DOCUMENTO_RECEBIMENTO,DV_DOCUMENTO_RECEBIMENTO,
+DT_VENCIMENTO,DT_VENCTO_RET,PONTO,CTA_OBJ_NUM,CTA_OBJ_ANO,
+NOME_CLIENTE_PONTO,MODALIDADE,VSAT,ANTENA,PRAZO,
+PLATAFORMA,COD_BLOCO_SERVICO,BLOCO_SERVICO,DESCRICAO,PERIODO,
+QTDE,NATUREZA_CONTABIL,VALOR_BRUTO,VALOR_LIQUIDOG,ID_CALCUL
+O,VALOR_BASE_SERVICO,DATA_GERACAO_ITEM,
+NOME_CLIENTE_PONTO_COMPLETO,NUM_LINHA_CONTA FROM 
+PROMUS_ITG.PR_FA00029_DETALHE DETALHE_BILLING
+
+
+Begin 
+  dbms_refresh.refresh('BO.DETALHE_BILL'); 
+End;
+
+
+================================================
+
+segundo processo
+
+=================================================
+
+
+SID/Serial  : 38,20708
+Foreground  : PID: 1000:1748 - sqlplusw.exe
+Shadow      : PID: 2810 - oracle@uxgu-bil04 (TNS V1-V3)
+Terminal    : HDADFAC003/ UNKNOWN
+OS User     : andre.ramos on BULL\HDADFAC003
+Ora User    : PROMUS_ITG
+Status Flags: ACTIVE DEDICATED USER
+Tran Active : 00000003817261D8
+Login Time  : Qui 18:08:59
+Last Call   : Qui 18:08:59 -    1.9 min
+Lock/ Latch : NONE/ NONE
+Latch Spin  : NONE
+Current SQL statement:
+        SELECT "MESANO_CCONTAB","DH_INICIO_CCONTAB","DH_FIM_CCONTAB","DT
+        _GERACAO_ITEM","AGREGADOR","NRC_AGREGADOR","CONTA","SUBCONTA","P
+        ONTO","USUARIO","UF","VSAT","VENCIMENTO","PERIODO_INICIAL","PERI
+        ODO_FINAL","PERIODO","SG_SERVICO","PLANO","PRAZO","ANTENA","ACOR
+        DO","DESCRICAO","DESCRICAO_ORIGINAL","VALOR_BRUTO","VL_LIQUIDO",
+        "QTDE","PRODUTO","VALOR_BASE_SERVICO","ALIQUOTA_IMPOSTOS","MES_C
+        ICLO","ANO_CICLO","CICLO","COD_BLOCO_SERVICO","BLOCO_SERVICO","N
+        ATUREZA_CONTABIL","ID_CALCULO" FROM "PROMUS_ITG"."PR_FA00TST" "P
+        R_FA00TST"
+Previous SQL statement:
+Session Waits:
+        WAITED UNKNOWN TIME: db file sequential read
+Locks:
+
+
+begin
+     dbms_refresh.refresh('BO.FA00TST');
+     crm.send_mail('CRM','opebull@starone.com.br', to_char(sysdate, 'dd/mm/yy hh24:mi:ss') || ' - Executado o JOB BO.Materialized_View FA00TST!','');
+exception
+  when others then
+       crm.send_mail('CRM','opebull@starone.com.br', to_char(sysdate, 'dd/mm/yy hh24:mi:ss') || ' - Erro no JOB BO.Materialized_View FA00TST! ',SQLERRM(SQLCODE) );
+end ;
+
+
+
+=============================
+testes com group de refresh
+==============================
+
+begin
+     dbms_refresh.refresh('BO.FA00TST');
+end;
+
+begin
+ dbms_refresh.make (name => 'BO.FA00TST', TAB => '',job => 341);
+end;
+
+BEGIN
+   DBMS_REFRESH.MAKE (
+            name => 'BO.FA00TST1',
+      list => '', 
+      next_date => SYSDATE, 
+      interval => 'sysdate + 1/24',
+      implicit_destroy => FALSE, 
+      rollback_seg => '',
+      push_deferred_rpc => TRUE, 
+      refresh_after_errors => FALSE);
+END;
+
+
+PROCEDURE MAKE
+ Nome do Argumento                  Tipo                    In/Out Default?
+ ------------------------------ ----------------------- ------ --------
+ NAME                           VARCHAR2                IN
+ TAB                            TABLE OF VARCHAR2(227)  IN
+ NEXT_DATE                      DATE                    IN
+ INTERVAL                       VARCHAR2                IN
+ IMPLICIT_DESTROY               BOOLEAN                 IN     DEFAULT
+ LAX                            BOOLEAN                 IN     DEFAULT
+ JOB                            BINARY_INTEGER          IN     DEFAULT
+ ROLLBACK_SEG                   VARCHAR2                IN     DEFAULT
+ PUSH_DEFERRED_RPC              BOOLEAN                 IN     DEFAULT
+ REFRESH_AFTER_ERRORS           BOOLEAN                 IN     DEFAULT
+ PURGE_OPTION                   BINARY_INTEGER          IN     DEFAULT
+ PARALLELISM                    BINARY_INTEGER          IN     DEFAULT
+ HEAP_SIZE                      BINARY_INTEGER          IN     DEFAULT
+
+
+BEGIN
+   Dbms_Refresh.Destroy(name => 'BO.FA00TST1');
+END;
+
+begin
+     dbms_refresh.refresh('"BO"."FA00TST"');
+     crm.send_mail('CRM','opebull@starone.com.br', to_char(sysdate, 'dd/mm/yy hh24:mi:ss') || ' - Executado o JOB BO.Materialized_View FA00TST!','');
+exception
+  when others then
+       crm.send_mail('CRM','opebull@starone.com.br', to_char(sysdate, 'dd/mm/yy hh24:mi:ss') || ' - Erro no JOB BO.Materialized_View FA00TST! ',SQLERRM(SQLCODE) );
+end ;
+
+
+
+
+
+
+
+BEGIN
+   DBMS_REFRESH.MAKE (
+            name => 'BO.FA00TST',
+      list => '', 
+      next_date => SYSDATE, 
+      interval => '(SYSDATE) + (7/24) + (12/24) ',
+      implicit_destroy => TRUE, 
+      rollback_seg => '',
+      push_deferred_rpc => TRUE, 
+   --   JOB => 341,
+      refresh_after_errors => FALSE);
+END;
+
+
+BEGIN
+   Dbms_Refresh.Add(
+     name => 'BO.FA00TST',
+     list => 'BO.FA00TST',
+     lax => TRUE);
+END;
+

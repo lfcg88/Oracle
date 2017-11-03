@@ -1,0 +1,35 @@
+
+
+col spid head 'O/S|Process|ID' 
+col sid for 9999 head 'Session|ID' 
+col serial# for 9999999 head 'Session|Serial#' 
+col log_user for a10 
+col job for 999 head 'Job' 
+col broken for a1 head 'B' 
+col failures for 99 head "fail" 
+col what for a30 
+col last_date for a17 head 'Last|Date' 
+col next_date for a17 head 'Next|Date' 
+set linesize 200
+
+select s.spid, 
+s.sid, 
+s.serial#, 
+j.log_user, 
+j.job, 
+j.broken, 
+j.failures, 
+j.what, 
+j.last_date||j.last_sec last_date, 
+j.next_date||j.next_sec next_date 
+from (select djr.SID, 
+dj.JOB, dj.LOG_USER, dj.PRIV_USER, dj.SCHEMA_USER, dj.LAST_DATE, dj.LAST_SEC, dj.THIS_DATE, dj.THIS_SEC, dj.NEXT_DATE, 
+dj.NEXT_SEC, dj.TOTAL_TIME, dj.BROKEN, dj.INTERVAL, dj.FAILURES, dj.WHAT, dj.NLS_ENV, dj.MISC_ENV
+from dba_jobs_running djr, dba_jobs dj 
+where djr.job (+)= dj.job ) j, 
+(select p.spid, s.sid, s.serial# 
+from v$process p, v$session s 
+where p.addr = s.paddr ) s 
+where j.sid = s.sid (+) 
+and j.log_user like decode(upper('&usr'), '','%',upper('&&usr'))
+/ 

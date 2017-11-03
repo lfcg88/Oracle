@@ -1,0 +1,101 @@
+REM
+REM DBAToolZ NOTE:
+REM	This script was obtained from DBAToolZ.com
+REM	It's configured to work with SQL Directory (SQLDIR).
+REM	SQLDIR is a utility that allows easy organization and
+REM	execution of SQL*Plus scripts using user-friendly menu.
+REM	Visit DBAToolZ.com for more details and free SQL scripts.
+REM
+REM 
+REM File:
+REM 	s_db_segs3.sql
+REM
+REM <SQLDIR_GRP>SEGMENT MOST TABSP</SQLDIR_GRP>
+REM 
+REM Author:
+REM 	Vitaliy Mogilevskiy 
+REM	VMOGILEV
+REM	(vit100gain@earthlink.net)
+REM 
+REM Purpose:
+REM	<SQLDIR_TXT>
+REM	Reports segments by owner groupping them by
+REM	the current size from dba_segments.
+REM	
+REM	There is a theory by which you only need 3 types
+REM	of tablespaces:
+REM	  160k (SMALL)
+REM	  5MBm (MEDIUM)
+REM	  160MB (LARGE)
+REM	If you follow this theory you can use this script
+REM	to "place" your segments in the "right" tablespace:
+REM	  1. 160K ts (segs < 5MB)
+REM	  2. 5MB ts (segs < 160MB)
+REM	  3. 160MB ts (segs > 160MB)
+REM	</SQLDIR_TXT>
+REM	
+REM Usage:
+REM	s_db_segs3.sql
+REM 
+REM Example:
+REM	s_db_segs3.sql
+REM
+REM
+REM History:
+REM	08-01-2001	VMOGILEV	Created
+REM
+REM
+
+accept 1 prompt "Enter owner for the segments: "
+accept 2 prompt "Enter segment type (like)[ TABLE% or INDEX% ]: "
+
+spool segs_all.&&1..&&2..log
+
+set pages 1000
+set lines 132
+set trimspool on
+set verify off
+
+col kbs format 999,999,999 heading "KBytes"
+col seg_name format a85 heading "Segment name"
+break on descr skip 2 on report skip 1
+compute sum of kbs on descr
+compute sum of kbs on report
+
+
+select '1. 160K ts (segs < 5MB)' descr
+,      tablespace_name||'.'||segment_type||'.'||segment_name seg_name
+,      bytes/1024 kbs
+from dba_segments 
+where owner='&&1' 
+and   segment_type like '&&2'
+and bytes < 5*1024*1024
+union all
+select '2. 5MB ts (segs < 160MB)' descr
+,      tablespace_name||'.'||segment_type||'.'||segment_name seg_name
+,      bytes/1024 kbs
+from dba_segments 
+where owner='&&1' 
+and   segment_type like '&&2'
+and (bytes < 160*1024*1024 and bytes >= 5*1024*1024)
+union all
+select '3. 160MB ts (segs > 160MB)' descr
+,      tablespace_name||'.'||segment_type||'.'||segment_name seg_name
+,      bytes/1024 kbs
+from dba_segments 
+where owner='&&1' 
+and   segment_type like '&&2'
+and bytes >= 160*1024*1024
+order by 1,2,3
+/
+
+clear breaks
+
+select sum(bytes)/1024 kbs
+from dba_segments 
+where owner='&&1'
+and   segment_type like '&&2'
+/
+
+spool off
+

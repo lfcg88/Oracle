@@ -1,0 +1,6 @@
+select count(*) from goldencross.transacoes;
+select count(*) from goldencross.transacoes_tiss;
+select count(*) from goldencross.servicos;
+select count(*) from goldencross.servicos_tiss;
+select count(*) from goldencross.controle_fechamento;
+select count(*) from goldencross.controle_delivery;

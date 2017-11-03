@@ -1,0 +1,6 @@
+## renomear esse arq. p/ .bat e executá-lo, ele chamará o .sql que criará o banco ##
+set ORACLE_SID=<SID>
+D:\orant\bin\oradim80 -new -sid <SID> -intpwd <SENHA> -startmode auto -pfile e:\orant\database\init<SID>.ora
+D:\orant\bin\oradim80 -startup -sid <SID> -starttype srvc,inst -usrpwd <SENHA> -pfile e:\orant\database\init<SID>.ora
+D:\orant\bin\svrmgr30 @criabanco.sql
+

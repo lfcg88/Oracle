@@ -1,0 +1,50 @@
+Privilégios em objetos:
+
+select grantee, table_name, grantor, privilege from user_tab_privs; 
+
+select grantee, table_name, grantor, privilege from dba_tab_privs; 
+
+
+Privilégios em tabelas
+
+Todos os privilégios
+select * from USER_TAB_PRIVS
+
+select * from DBA_TAB_PRIVS
+
+Previlégios concedidos
+
+select * from USER_TAB_PRIVS_MADE 
+
+Previlégios recebidos
+
+select * from USER_TAB_PRIVS_RECD 
+
+
+Previlégios em colunas
+
+Todos os privilégios
+
+select * form USER_COL_PRIVS 
+
+select * form DBA_COL_PRIVS
+
+Previlégios concedidos
+
+select * from USER_COL_PRIVS_MADE 
+
+Previlégios recebidos
+
+select * from USER_COL_PRIVS_RECD 
+
+
+Grants de role para usuários
+
+select * from user_role_privs;
+
+select * from DBA_role_privs;
+
+
+Grants concedidos a roles 
+
+select * from ROLE_ROLE_PRIVS;

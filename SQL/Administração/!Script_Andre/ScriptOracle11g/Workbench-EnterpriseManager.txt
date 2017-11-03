@@ -1,0 +1,7 @@
+You can investigate any outstanding problems in the database by directly going tothe Support Workbench homepage. However, the best way to access the Support
+Workbench is to first check if there are any outstanding critical alerts in the database.
+To do this, go to the Database Home page in Enterprise Manager and scroll down to the Diagnostic Summary section, where you’ll see the Active Incidents link.
+
+You
+can also click on the Critical Alert link in the Alerts section if you want, to go to
+the Support Workbench.

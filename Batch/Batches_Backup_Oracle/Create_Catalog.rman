@@ -1,0 +1,3 @@
+create catalog tablespace TS_RMAN_D_01;
+
+register database;

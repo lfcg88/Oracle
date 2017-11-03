@@ -1,0 +1,26 @@
+Criar uma seqüência  chamada serial, começando por 1:
+
+CREATE SEQUENCE serial 
+START WITH 1
+INCREMENT BY 1
+MAXVALUE 999999999
+NOCYCLE
+NOCACHE ;
+
+Selecionar o próximo valor desta seqüência:
+SELECT nextval.serial from dual;
+
+
+Na 1º Linha estamos dizendo para o Oracle criar uma sequencia com o nome SERIAL.
+Na 2º Linha será especificado o primeiro número da sequencia, no exemplo está 1.
+A 3º Linha vamos determinar o numero de incremento, no caso 1 em 1.
+Na 4º Linha será determinada o número máximo que a sequencia atingirá, exemplo 999.999.999 números.
+A 5º Linha indica que a geração dos números será após ter atingido o número máximo ou o número minimo para as sequencias decrescentes.
+E a 6º Linha irá especificar para o banco uma quantidade de números que será guardado na memoria para posteriormente fazer uma consulta rápida.
+Bom, agora deu para entender a criação de um objeto sequence dentro do banco, precisamos saber agora como utilizá-la, e para isso basta você incluir o sequence dentro do seu comando Insert, veja o exemplo :
+ 
+SQL >	INSERT INTO TABELA (CODIGO, NOME, EMAIL, SITE)	   
+2	VALUES (ALPHAMEK.NextVal,'RODRIGO', 'rodrigo@noreal.com','www.noreal.com.br');	 
+A linha acima foi incluída com sucesso, mas perceba que apareceu uma palavra-chave em vermelho após digitar o nome da sequence, essa palavra-chave é para obter o próximo número sequencial (NextVal), poderiamos utilizar outra palavra-chave a CurrVal que nos daria o valor atual da sequencia.
+Depois de termos criado a sequence para a tabela, falarei sobre alguns pontos bons e ruins na sua utilização no dia-dia.
+

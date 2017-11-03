@@ -1,0 +1,28 @@
+PEOPLE SOFT RH
+
+
+conn operador/operhr01prod@hrprod;
+
+exec sp_cria_usuario ('<mat>'); 
+//a mat é composta pela 1ª letra do nome do funcionario + mat sem o primeiro 0
+
+exec sp_dropa_usuario ('<mat>');
+
+
+
+PEOPLE SOFT FINANCEIRO
+
+
+conn operador/operdbprod@fdmprod;
+
+exec sp_cria_usuario ('<mat>'); 
+//a mat é composta pela 1ª letra do nome do funcionario + mat sem o primeiro 0
+
+exec sp_dropa_usuario ('<mat>');
+
+
+
+
+
+
+

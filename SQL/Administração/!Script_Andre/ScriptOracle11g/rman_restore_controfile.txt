@@ -1,0 +1,12 @@
+If the log shows which backup piece the controlfile was backed up to, simply do the following:
+
+
+Code:
+restore controlfile from '<backup_piece_name>';
+
+
+thanks davey23uk and ebrian for reply. 
+
+restore controlfile from '' worked.
+
+I used restore controlfile from '/cntrl_29_1_688498299'. 

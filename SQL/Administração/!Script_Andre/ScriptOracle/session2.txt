@@ -1,0 +1,148 @@
+
+-- set serveroutput on size 50000
+set echo off feed off veri off
+-- accept 1 prompt 'Enter User Id: '
+
+
+
+create or replace function retorna_wait2345 (vsid number) 
+return varchar2
+Is
+ -- vquant number;
+  resposta varchar2(100);
+  
+Begin
+   resposta := 'False';
+   select event into resposta
+   from   v$session_wait
+   where sid = vsid;
+--   If vquant > 0 Then
+ --    resposta := 'True';
+--   End If;
+   return(resposta);
+End;
+/   
+
+create or replace   function retorna_lock12345(psid number) return varchar2
+Is
+  vquant number;
+  resposta varchar2(100);
+Begin
+ resposta := 'N';
+--
+   select count(*) into vquant
+   from   v$lock
+   where sid = psid and lmode > 0 ;
+  If vquant > 0 then
+      resposta := 'S';
+   End If;
+--
+   return(resposta);
+End;
+/   
+
+create  or replace  function retorna_Locked12345(psid number)return varchar2
+Is
+  vquant number;
+  resposta varchar2(100);
+Begin
+ resposta := 'N';
+--
+   select count(*) into vquant
+   from   v$lock
+   where sid = psid and request > 0 ;
+  If vquant > 0 then
+      resposta := 'S';
+   End If;
+--
+   return(resposta);
+End;
+/   
+
+set echo on
+
+ -- 1) SID/Serial/PID  : Sid Processo Oracle/Serial Processo Oracle/ PID SO
+ -- 2) UsrOracle/UsrSO : Usuario Oracle/Usuario SO
+ -- 3) machine         : máquina que esta executando o processo
+ -- 4) Wait            : evento pelo qual o processo esta em wait
+ -- 5) L/Ld            : O processo esta fazendo lock (S/N) / O processo esta esperando para realizar Lock (S/N)
+ -- 7) Status          : Active/Inactive
+ -- 6) LastCall        : Tempo em minutos em relação a ultima chamda do processo
+
+set echo off
+
+set linesize 120
+
+--set echo off
+
+  column SID/Serial/PID format a15
+ -- column program format a30
+  column UsrOracle/UsrSO format a19
+  column terminal format a30
+  column program format a20
+  column Wait format a23 
+  column Lock format a4
+  column L/Ld format a4
+  column machine format a19
+  column Status  format a8
+  column LastCall format a8
+
+  select s.sid||'/'||s.serial#||'/'||p.spid "SID/Serial/PID",
+         nvl(s.username,substr(p.program,-6))||'/'||s.osuser "UsrOracle/UsrSO",
+         nvl(s.machine ,substr(p.program,8,9)) "machine",
+         substr(retorna_wait2345(s.sid),1,23) "Wait",
+         retorna_lock12345(s.sid)||'/'||retorna_Locked12345(s.sid) "L/Ld",
+ --        retorna_Locked12345(s.sid) "Lock/Locked",
+         s.status "Status",
+         to_char(s.last_call_et/60, '99990.0') "LastCall"
+--,
+--      to_char(sysdate-(s.last_call_et/60/60/24), 'Dy HH24:MI:SS') "LastCall"
+--,
+--         s.osuser||' on '||s.machine
+--,
+   --      s.machine
+  from sys.v_$session s,sys.v_$process p
+  where p.addr = s.paddr
+  order by &ordenacao
+/
+
+
+  -- dbms_output.put_line('=====================================================================');
+  --dbms_output.put_line('SID/Serial  : '|| s.sid||','||s.serial#);
+  --dbms_output.put_line('Foreground  : '|| 'PID: '||s.process||' - '||s.program);
+  --dbms_output.put_line('Shadow      : '|| 'PID: '||p.spid||' - '||p.program);
+  --dbms_output.put_line('Terminal    : '|| s.terminal || '/ ' || p.terminal);
+  --dbms_output.put_line('OS User     : '|| s.osuser||' on '||s.machine);
+  --dbms_output.put_line('Ora User    : '|| s.username);
+  --dbms_output.put_line('Status Flags: '|| s.status||' '||s.server||' '||s.type);
+  --dbms_output.put_line('Tran Active : '|| nvl(s.taddr, 'NONE'));
+  --dbms_output.put_line('Login Time  : '|| to_char(s.logon_time, 'Dy HH24:MI:SS'));
+  --dbms_output.put_line('Last Call   : '|| to_char(sysdate-(s.last_call_et/60/60/24), 'Dy HH24:MI:SS') || ' - ' || to_char(s.last_call_et/60, '990.0') || ' min');
+  --dbms_output.put_line('Lock/ Latch : '|| nvl(s.lockwait, 'NONE')||'/ '||nvl(p.latchwait, 'NONE'));
+  --dbms_output.put_line('Latch Spin  : '|| nvl(p.latchspin, 'NONE'));
+--
+  --dbms_output.put_line('Current SQL statement:');
+--  for c1 in ( select * from sys.v_$sqltext
+--              where HASH_VALUE = s.sql_hash_value order by piece) loop
+--   dbms_output.put_line(chr(9)||c1.sql_text);
+ -- end loop;
+
+ -- dbms_output.put_line('Previous SQL statement:');
+ -- for c1 in ( select * from sys.v_$sqltext
+ --             where HASH_VALUE = s.prev_hash_value order by piece) loop
+ --   dbms_output.put_line(chr(9)||c1.sql_text);
+--  end loop;
+
+--  dbms_output.put_line('Session Waits:');
+--  for c1 in ( select * from sys.v_$session_wait where sid = s.sid) loop
+--    dbms_output.put_line(chr(9)||c1.state||': '||c1.event);
+--  end loop;
+--
+--  dbms_output.put_line('Connect Info:');
+--  for c1 in ( select * from sys.v_$session_connect_info where sid = s.sid) loop
+--    dbms_output.put_line(chr(9)||': '||c1.network_service_banner);
+--  end loop;
+--
+
+--undef 1
+

@@ -1,0 +1,66 @@
+REM ------------------------------------------------------------------------ 
+REM PURPOSE: 
+REM The following script will generate a view DBA_USER_PRIVS which 
+REM may be queried to obtain information about which privileges 
+REM are available to a given user, or which users enjoy a 
+REM particular privilege. 
+REM ------------------------------------------------------------------------ 
+
+set pause off 
+-- set pause Continues... 
+set verify off 
+set pages 5000
+set linesize 132 
+set feedback off
+
+column Privilegio format a25
+column owner format a15
+column grantee  format a22
+column  COLUMN_NAME  format a20
+
+define a = '&vgrantee'
+
+select grantee,'role'privtype,granted_role privname, null owner, null table_name
+from dba_role_privs
+where grantee in ('CBILL',
+'CBILL_ITG',
+'CBILL_SCH',
+'COMPTECH_SCH',
+'CPQD',
+'CPQDBA',
+'CRM_INTEGR',
+'DIP',
+'REPORT',
+'REPORT_SCH',
+'SUP_SCH')
+union
+select grantee,'SYSPRIVS' privtype,privilege privname,null owner, null table_name
+from dba_sys_privs
+where grantee in
+('CBILL',
+'CBILL_ITG',
+'CBILL_SCH',
+'COMPTECH_SCH',
+'CPQD',
+'CPQDBA',
+'CRM_INTEGR',
+'DIP',
+'REPORT',
+'REPORT_SCH',
+'SUP_SCH')
+union
+select grantee, 'TABPRIV' privtype, privilege privname, owner,table_name
+from dba_tab_privs
+where grantee in ('CBILL',
+'CBILL_ITG',
+'CBILL_SCH',
+'COMPTECH_SCH',
+'CPQD',
+'CPQDBA',
+'CRM_INTEGR',
+'DIP',
+'REPORT',
+'REPORT_SCH',
+'SUP_SCH')
+order by 1,2,3,4,5
+;

@@ -1,0 +1,133 @@
+
+Recovery Manager: Release 9.2.0.1.0 - Production
+
+Copyright (c) 1995, 2002, Oracle Corporation.  All rights reserved.
+
+RMAN> connect target /@tst1 
+2> connect catalog rman/senha@tst2
+3> 
+4> #coloca instância em nomount com dummy PFILE que aponta para dummy SPFILE
+5> 
+6> startup force nomount PFILE=C:\ORACLE\ora92\DATABASE\PFILE_DUMMY_TST1.ORA
+7> 
+8> # restaura último spfile com nome padrão
+9> 
+10> run
+11> {
+12>   allocate channel ch1 type disk;
+13>   restore spfile to 'c:\oracle\ora92\database\SPFILETST1.ORA';
+14>   release channel ch1;
+15> }
+16> 
+17> startup force nomount;
+18> 
+19> run 
+20> { 
+21>   SET UNTIL SEQUENCE 11 THREAD 1;
+22>   allocate channel ch1 type DISK;
+23>   restore controlfile;
+24>   restore database;
+25>   alter database  mount;
+26>   recover database;
+27>   alter database open resetlogs;
+28>   release channel ch1;
+29> }
+30> 
+31> SQL "ALTER TABLESPACE TEMP ADD TEMPFILE ''C:\oracle\oradata\tst1\temp01.dbf'' size 100m REUSE";
+32> 
+conectado ao banco de dados de destino (não iniciado)
+
+conectado ao banco de dados do catálogo de recuperação
+
+instância Oracle iniciada
+
+Total da Área Global do Sistema     118561572 bytes
+
+Fixed Size                      453412 bytes
+Variable Size                 83886080 bytes
+Database Buffers              33554432 bytes
+Redo Buffers                    667648 bytes
+
+canal alocado: ch1
+canal ch1: sid=13 devtype=DISK
+
+Iniciando restore em 14/12/03
+
+canal ch1: iniciando restauração de conjunto de backups de arquivo de dados
+canal ch1: restaurando SPFILE
+nome do arquivo de saída=c:\oracle\ora92\database\SPFILETST1.ORA
+canal ch1: restaurada a parte de backup 1
+handle de componente=C:\ORACLE\ORA92\DATABASE\C-634890407-20031214-03 tag=null parâms=NULL
+canal ch1: restaurar inteiro
+Finalizado restore em 14/12/03
+
+canal liberado: ch1
+
+instância Oracle iniciada
+
+Total da Área Global do Sistema     118561572 bytes
+
+Fixed Size                      453412 bytes
+Variable Size                 83886080 bytes
+Database Buffers              33554432 bytes
+Redo Buffers                    667648 bytes
+
+executando comando: SET until clause
+
+canal alocado: ch1
+canal ch1: sid=13 devtype=DISK
+
+Iniciando restore em 14/12/03
+
+canal ch1: iniciando restauração de conjunto de backups de arquivo de dados
+canal ch1: restaurar arquivo de controle
+nome do arquivo de saída=C:\ORACLE\ORADATA\TST1\CONTROL01.CTL
+canal ch1: restaurada a parte de backup 1
+handle de componente=C:\ORACLE\ORA92\DATABASE\C-634890407-20031214-02 tag=null parâms=NULL
+canal ch1: restaurar inteiro
+duplicar arquivo de controle
+nome do arquivo de entrada=C:\ORACLE\ORADATA\TST1\CONTROL01.CTL
+nome do arquivo de saída=C:\ORACLE\ORADATA\TST1\CONTROL02.CTL
+nome do arquivo de saída=C:\ORACLE\ORADATA\TST1\CONTROL03.CTL
+Finalizado restore em 14/12/03
+
+Iniciando restore em 14/12/03
+
+canal ch1: iniciando restauração de conjunto de backups de arquivo de dados
+canal ch1: especificando arquivo(s) de dados para restauração a partir do conjunto de backups
+restaurando arquivo de dados 00001 para C:\ORACLE\ORADATA\TST1\SYSTEM01.DBF
+restaurando arquivo de dados 00002 para C:\ORACLE\ORADATA\TST1\UNDOTBS01.DBF
+restaurando arquivo de dados 00003 para C:\ORACLE\ORADATA\TST1\DRSYS01.DBF
+restaurando arquivo de dados 00004 para C:\ORACLE\ORADATA\TST1\EXAMPLE01.DBF
+restaurando arquivo de dados 00005 para C:\ORACLE\ORADATA\TST1\INDX01.DBF
+restaurando arquivo de dados 00006 para C:\ORACLE\ORADATA\TST1\ODM01.DBF
+restaurando arquivo de dados 00007 para C:\ORACLE\ORADATA\TST1\TOOLS01.DBF
+restaurando arquivo de dados 00008 para C:\ORACLE\ORADATA\TST1\USERS01.DBF
+restaurando arquivo de dados 00009 para C:\ORACLE\ORADATA\TST1\XDB01.DBF
+restaurando arquivo de dados 00010 para C:\ORACLE\ORADATA\TST1\DF_RMAN_01_01.DBF
+canal ch1: restaurada a parte de backup 1
+handle de componente=C:\ORACLE\BACKUP\TST1\D0_TST1_10_1_20031214.BAK tag=20031210_214800 parâms=NULL
+canal ch1: restaurar inteiro
+Finalizado restore em 14/12/03
+
+banco de dados montado
+
+Iniciando recover em 14/12/03
+
+iniciar recuperação de mídia
+
+log de arquivamento thread 1 seqüência 10 já está no disco como arquivo C:\ORACLE\ORADATA\TST1\ARCHIVE\TST1001001S00010.ARC
+nome do arquivo de log de arquivamento=C:\ORACLE\ORADATA\TST1\ARCHIVE\TST1001001S00010.ARC thread=1 seqüência=10
+recuperação de mídia concluída
+Finalizado recover em 14/12/03
+
+banco de dados aberto
+nova encarnação do banco de dados registrada no catálogo de recuperação
+iniciar ressinc. completa do catálogo de recuperação
+ressinc. inteira completa
+
+canal liberado: ch1
+
+instrução sql: ALTER TABLESPACE TEMP ADD TEMPFILE ''C:\oracle\oradata\tst1\temp01.dbf'' size 100m REUSE
+
+Recovery Manager completo.

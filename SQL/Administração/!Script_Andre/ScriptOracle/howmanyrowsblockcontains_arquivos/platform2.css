@@ -1,0 +1,276 @@
+BODY {
+	PADDING-RIGHT: 0px; PADDING-LEFT: 0px; PADDING-BOTTOM: 0px; MARGIN: 0px; PADDING-TOP: 0px; BACKGROUND-COLOR: #ffffff
+}
+.infobox {
+	PADDING-RIGHT: 8px; PADDING-LEFT: 12px; FONT-SIZE: 10pt; COLOR: #000000; PADDING-TOP: 4px; FONT-FAMILY: Arial, Helvetica, Geneva, sans-serif
+}
+.atab {
+	BACKGROUND-IMAGE: url(/i/asybaseb2.gif); VERTICAL-ALIGN: bottom; WHITE-SPACE: nowrap; HEIGHT: 5px
+}
+.atab0 {
+	BACKGROUND: #cccc99; VERTICAL-ALIGN: top; HEIGHT: 22px; TEXT-ALIGN: right
+}
+.atab1 {
+	VERTICAL-ALIGN: bottom; WHITE-SPACE: nowrap; HEIGHT: 22px; TEXT-ALIGN: right
+}
+.atab2 {
+	BACKGROUND: #cccc99; VERTICAL-ALIGN: bottom
+}
+.ptableft {
+	VERTICAL-ALIGN: top; WIDTH: 1%; BACKGROUND-COLOR: #cccc99; TEXT-ALIGN: left
+}
+.ptabmid {
+	BORDER-RIGHT: medium none; BORDER-TOP: medium none; BORDER-LEFT: medium none; WIDTH: 1%; BORDER-BOTTOM: medium none; BACKGROUND-COLOR: #cccc99; TEXT-ALIGN: left
+}
+.ptabright {
+	VERTICAL-ALIGN: top; WIDTH: 1%; BACKGROUND-COLOR: #cccc99; TEXT-ALIGN: right
+}
+.stableft {
+	BACKGROUND: #336699; WIDTH: 1%; WHITE-SPACE: nowrap
+}
+.apptabtextoff {
+	FONT-SIZE: 10pt; COLOR: #000000; FONT-FAMILY: Arial, Helvetica, Geneva, sans-serif; TEXT-DECORATION: none
+}
+.apptabtexton {
+	FONT-SIZE: 10pt; COLOR: #ffffff; FONT-FAMILY: Arial, Helvetica, Geneva, sans-serif; TEXT-DECORATION: none
+}
+.parenttabtextoff {
+	FONT-SIZE: 10pt; COLOR: #000000; FONT-FAMILY: Arial, Helvetica, Geneva, sans-serif; TEXT-DECORATION: none
+}
+.parenttabtexton {
+	FONT-SIZE: 10pt; COLOR: #ffffff; FONT-FAMILY: Arial, Helvetica, Geneva, sans-serif; TEXT-DECORATION: none
+}
+.tabtextoff {
+	FONT-SIZE: 10pt; COLOR: #cccc99; FONT-FAMILY: Arial, Helvetica, Geneva, sans-serif; TEXT-DECORATION: none
+}
+.tabtexton {
+	FONT-WEIGHT: bold; FONT-SIZE: 10pt; COLOR: #ffffff; FONT-FAMILY: Arial, Helvetica, Geneva, sans-serif; TEXT-DECORATION: none
+}
+.listitemoff {
+	FONT-SIZE: 10pt; COLOR: #000000; FONT-FAMILY: Arial, Helvetica, Geneva, sans-serif
+}
+.listitemon {
+	FONT-WEIGHT: bold; FONT-SIZE: 10pt; BACKGROUND: #336699; COLOR: #000000; FONT-FAMILY: Arial, Helvetica, Geneva, sans-serif
+}
+.smwhite {
+	FONT-SIZE: 10pt; COLOR: #ffffff; FONT-FAMILY: Arial, Helvetica, Geneva, sans-serif
+}
+.xsmwhite {
+	FONT-SIZE: 8pt; COLOR: #ffffff; FONT-FAMILY: Arial, Helvetica, Geneva, sans-serif
+}
+.xsmblack {
+	FONT-SIZE: 8pt; COLOR: #000000; FONT-FAMILY: Arial, Helvetica, Geneva, sans-serif
+}
+.smbrown {
+	FONT-SIZE: 8pt; COLOR: brown; FONT-FAMILY: Arial, Helvetica, Geneva, sans-serif
+}
+.xswhite {
+	FONT-SIZE: 9pt; COLOR: #ffffff; FONT-FAMILY: Arial, Helvetica, Geneva, sans-serif
+}
+.stan {
+	FONT-SIZE: 10pt; COLOR: #cccc99; FONT-FAMILY: Arial, Helvetica, Geneva, sans-serif
+}
+.xstan {
+	FONT-SIZE: 9pt; COLOR: #cccc99; FONT-FAMILY: Arial, Helvetica, Geneva, sans-serif
+}
+.regionheader {
+	FONT-WEIGHT: bold; FONT-SIZE: 12pt; COLOR: #ffffff; FONT-FAMILY: Arial, Helvetica, Geneva, sans-serif
+}
+.dkblueregionleft {
+	BACKGROUND: #336699; VERTICAL-ALIGN: top; WIDTH: 5px; TEXT-ALIGN: left
+}
+.dkblueregionrt {
+	BACKGROUND: #336699; VERTICAL-ALIGN: top; WIDTH: 5px; TEXT-ALIGN: right
+}
+.blueregionleft {
+	BACKGROUND: #6699cc; VERTICAL-ALIGN: top; WIDTH: 5px; TEXT-ALIGN: left
+}
+.blueregionright {
+	BACKGROUND: #6699cc; VERTICAL-ALIGN: top; WIDTH: 5px; TEXT-ALIGN: right
+}
+.tanregionleft {
+	BACKGROUND: #cccc99; VERTICAL-ALIGN: top; WIDTH: 5px; TEXT-ALIGN: left
+}
+.tanregionright {
+	BACKGROUND: #cccc99; VERTICAL-ALIGN: top; WIDTH: 5px; TEXT-ALIGN: right
+}
+.header {
+	FONT-WEIGHT: bold; FONT-SIZE: 16pt; COLOR: #336699; FONT-FAMILY: Arial, Helvetica, Geneva, sans-serif
+}
+.stepheader {
+	FONT-WEIGHT: bold; FONT-SIZE: 12pt; COLOR: #ffffff; FONT-FAMILY: Arial, Helvetica, Geneva, sans-serif
+}
+.subheader1 {
+	FONT-WEIGHT: bold; FONT-SIZE: 13pt; COLOR: #336699; FONT-FAMILY: Arial, Helvetica, Geneva, sans-serif
+}
+.subheader2 {
+	FONT-WEIGHT: bold; FONT-SIZE: 11pt; COLOR: #336699; FONT-FAMILY: Arial, Helvetica, Geneva, sans-serif
+}
+.tab3archiveslink {
+	FONT-SIZE: 9pt; COLOR: #663300; FONT-FAMILY: Arial, Helvetica, Geneva, sans-serif
+}
+.tab3heading {
+	FONT-WEIGHT: bold; FONT-SIZE: 14pt; COLOR: #003366; FONT-FAMILY: Arial, Helvetica, Geneva, sans-serif
+}
+.headerondark {
+	FONT-WEIGHT: bold; FONT-SIZE: 16pt; COLOR: #003366; FONT-FAMILY: Arial, Helvetica, Geneva, sans-serif
+}
+.subheaderondark1 {
+	FONT-WEIGHT: bold; FONT-SIZE: 14pt; COLOR: #003366; FONT-FAMILY: Arial, Helvetica, Geneva, sans-serif
+}
+.subheaderondark2 {
+	FONT-WEIGHT: bold; FONT-SIZE: 11pt; COLOR: #003366; FONT-FAMILY: Arial, Helvetica, Geneva, sans-serif
+}
+.headeronlight {
+	FONT-WEIGHT: bold; FONT-SIZE: 16pt; COLOR: #6699cc; FONT-FAMILY: Arial, Helvetica, Geneva, sans-serif
+}
+.subheaderonlight1 {
+	FONT-WEIGHT: bold; FONT-SIZE: 14pt; COLOR: #6699cc; FONT-FAMILY: Arial, Helvetica, Geneva, sans-serif
+}
+.subheaderonlight2 {
+	FONT-WEIGHT: bold; FONT-SIZE: 11pt; COLOR: #6699cc; FONT-FAMILY: Arial, Helvetica, Geneva, sans-serif
+}
+.contenttext {
+	FONT-SIZE: 10pt; COLOR: #000000; FONT-FAMILY: Arial, Helvetica, Geneva, sans-serif
+}
+.contenttextheader {
+	FONT-WEIGHT: bold; FONT-SIZE: 10pt; COLOR: #000000; FONT-FAMILY: Arial, Helvetica, Geneva, sans-serif
+}
+.subheader1black {
+	FONT-WEIGHT: bold; FONT-SIZE: 13pt; COLOR: #000000; FONT-FAMILY: Arial, Helvetica, Geneva, sans-serif
+}
+.fieldtitle {
+	FONT-SIZE: 10pt; COLOR: #000000; FONT-FAMILY: Arial, Helvetica, Geneva, sans-serif; TEXT-ALIGN: right
+}
+.fieldtitlebold {
+	FONT-WEIGHT: bold; FONT-SIZE: 10pt; COLOR: #000000; FONT-FAMILY: Arial, Helvetica, Geneva, sans-serif; TEXT-ALIGN: right
+}
+.fieldtitleleft {
+	FONT-SIZE: 10pt; COLOR: #000000; FONT-FAMILY: Arial, Helvetica, Geneva, sans-serif
+}
+.fielddata {
+	FONT-SIZE: 10pt; COLOR: #000000; FONT-FAMILY: Arial, Helvetica, Geneva, sans-serif
+}
+.fielddatasmall {
+	FONT-SIZE: 8pt; COLOR: #000000; FONT-FAMILY: Arial, Helvetica, Geneva, sans-serif
+}
+.fielddatabold {
+	FONT-WEIGHT: bold; FONT-SIZE: 10pt; COLOR: #000000; FONT-FAMILY: Arial, Helvetica, Geneva, sans-serif
+}
+.instructiontext {
+	FONT-SIZE: 10pt; COLOR: #000000; FONT-FAMILY: Arial, Helvetica, Geneva, sans-serif
+}
+.buttontext {
+	FONT-SIZE: 10pt; COLOR: #000000; FONT-FAMILY: Arial, Helvetica, Geneva, sans-serif
+}
+.confirmationtext {
+	FONT-SIZE: 10pt; COLOR: #336699; FONT-FAMILY: Arial, Helvetica, Geneva, sans-serif
+}
+.tiptext {
+	FONT-SIZE: 9pt; COLOR: #336699; FONT-FAMILY: Arial, Helvetica, Geneva, sans-serif
+}
+.OraTipLabel {
+	FONT-WEIGHT: bold; FONT-SIZE: 10pt; COLOR: #336699; FONT-FAMILY: Arial, Helvetica, Geneva, sans-serif
+}
+.OraTipText {
+	FONT-SIZE: 10pt; COLOR: #336699; FONT-FAMILY: Arial, Helvetica, Geneva, sans-serif
+}
+.errortext {
+	FONT-WEIGHT: bold; FONT-SIZE: 10pt; COLOR: #cc0000; FONT-FAMILY: Arial, Helvetica, Geneva, sans-serif
+}
+.urgenttext {
+	FONT-SIZE: 10pt; COLOR: #cc0000; FONT-FAMILY: Arial, Helvetica, Geneva, sans-serif
+}
+.errorheader {
+	FONT-WEIGHT: bold; FONT-SIZE: 13pt; COLOR: #cc0000; FONT-FAMILY: Arial, Helvetica, Geneva, sans-serif
+}
+.disabledtext {
+	FONT-SIZE: 10pt; COLOR: #cccc99; FONT-FAMILY: Arial, Helvetica, Geneva, sans-serif
+}
+.footerlinks {
+	FONT-SIZE: 10pt; COLOR: #000000; FONT-FAMILY: Arial, Helvetica, Geneva, sans-serif
+}
+.tableheader {
+	FONT-WEIGHT: bold; FONT-SIZE: 10pt; BACKGROUND: #cccc99; COLOR: #336699; FONT-FAMILY: Arial, Helvetica, Geneva, sans-serif
+}
+.tableheaderinverse {
+	FONT-WEIGHT: bold; FONT-SIZE: 10pt; BACKGROUND: #336699; COLOR: #cccc99; FONT-FAMILY: Arial, Helvetica, Geneva, sans-serif
+}
+.tableheaderhighlight {
+	FONT-WEIGHT: bold; FONT-SIZE: 10pt; BACKGROUND: #336699; COLOR: #ffffff; FONT-FAMILY: Arial, Helvetica, Geneva, sans-serif
+}
+.tabledata {
+	FONT-SIZE: 10pt; BACKGROUND: #f7f7e7; COLOR: #000000; FONT-FAMILY: Arial, Helvetica, Geneva, sans-serif
+}
+.tabledatabold {
+	FONT-WEIGHT: bold; FONT-SIZE: 10pt; BACKGROUND: #f7f7e7; COLOR: #000000; FONT-FAMILY: Arial, Helvetica, Geneva, sans-serif
+}
+.tabactivelevel2 {
+	FONT-WEIGHT: bold; FONT-SIZE: 10pt; BACKGROUND: #336699; COLOR: #cccc99; FONT-FAMILY: Arial, Helvetica, Geneva, sans-serif
+}
+.tabinactivelevel2 {
+	FONT-WEIGHT: bold; FONT-SIZE: 10pt; BACKGROUND: #336699; COLOR: #ffffff; FONT-FAMILY: Arial, Helvetica, Geneva, sans-serif
+}
+.controlbar {
+	FONT-WEIGHT: bold; FONT-SIZE: 10pt; BACKGROUND: #cccc99; COLOR: #336699; FONT-FAMILY: Arial, Helvetica, Geneva, sans-serif
+}
+.approvalhistdata {
+	FONT-SIZE: 10pt; BACKGROUND: #f7f7e7; COLOR: #000000; FONT-FAMILY: Arial, Helvetica, Geneva, sans-serif
+}
+.approvalhistpending {
+	FONT-WEIGHT: bold; FONT-SIZE: 10pt; BACKGROUND: #f7f7e7; COLOR: #000000; FONT-FAMILY: Arial, Helvetica, Geneva, sans-serif
+}
+.approvalhistpastaction {
+	FONT-SIZE: 10pt; BACKGROUND: #f7f7e7; COLOR: #009966; FONT-FAMILY: Arial, Helvetica, Geneva, sans-serif
+}
+.approvalhistreject {
+	FONT-SIZE: 10pt; BACKGROUND: #f7f7e7; COLOR: #cc0000; FONT-FAMILY: Arial, Helvetica, Geneva, sans-serif
+}
+.linkheader {
+	FONT-SIZE: 9pt; COLOR: #666666; FONT-FAMILY: Arial, Helvetica, Geneva, sans-serif
+}
+.helptextbold {
+	FONT-WEIGHT: bold; FONT-SIZE: 10pt; COLOR: #003366; FONT-FAMILY: Arial, Helvetica, Geneva, sans-serif
+}
+.helptextwhitebold {
+	FONT-WEIGHT: bold; FONT-SIZE: 10pt; BACKGROUND: #336699; COLOR: #ffffff; FONT-FAMILY: Arial, Helvetica, Geneva, sans-serif
+}
+.helptextwhite {
+	FONT-SIZE: 9pt; BACKGROUND: #336699; COLOR: #ffffff; FONT-FAMILY: Arial, Helvetica, Geneva, sans-serif
+}
+.helpmainsubheader2 {
+	FONT-WEIGHT: bold; FONT-SIZE: 12pt; COLOR: #336699; FONT-FAMILY: Arial, Helvetica, Geneva, sans-serif
+}
+.sidebarlink {
+	FONT-WEIGHT: bold; FONT-SIZE: 10pt; COLOR: #003366; FONT-FAMILY: Arial, Helvetica, Geneva, sans-serif
+}
+.sidebartext {
+	FONT-WEIGHT: bold; FONT-SIZE: 10pt; COLOR: #ffffff; FONT-FAMILY: Arial, Helvetica, Geneva, sans-serif
+}
+.chiclettitle {
+	FONT-SIZE: 11pt; FONT-FAMILY: Arial, Helvetica, Geneva, sans-serif
+}
+.nomatchtext {
+	FONT-SIZE: 10pt; COLOR: #336699; FONT-FAMILY: Arial, Helvetica, Geneva, sans-serif
+}
+.searchtext {
+	FONT-WEIGHT: bold; FONT-SIZE: 10pt; COLOR: #000000; FONT-FAMILY: Arial, Helvetica, Geneva, sans-serif
+}
+UL.platform {
+	FONT-SIZE: 10pt; LIST-STYLE-IMAGE: url(/i/hideshow_infohidden.gif); PADDING-BOTTOM: 2em; MARGIN-LEFT: 2em; FONT-FAMILY: Arial, Helvetica, Geneva, sans-serif; LIST-STYLE-TYPE: circle
+}
+.nounderline {
+	TEXT-DECORATION: none
+}
+.OraTreeRow {
+	FONT-SIZE: x-small; COLOR: #003366; FONT-FAMILY: Arial,Helvetica,Geneva,sans-serif
+}
+SPAN.OraTreeRow A:link {
+	COLOR: #663300
+}
+SPAN.OraTreeRow A:active {
+	COLOR: #663300
+}
+SPAN.OraTreeRow A:visited {
+	COLOR: #663300
+}

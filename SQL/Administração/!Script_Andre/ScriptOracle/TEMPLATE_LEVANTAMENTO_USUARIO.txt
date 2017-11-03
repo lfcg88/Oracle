@@ -1,0 +1,429 @@
+
+spool c:\UsuarioBanco
+
+set lines 130
+set pages 100
+set numf 99,999,999,999,999
+prompt ==================================
+prompt I N S T A N C E 
+prompt ==================================
+select * from global_name;
+prompt
+prompt
+prompt
+set pages 1000 lines 132;
+prompt ==========================================
+prompt USUARIOS
+prompt ==========================================
+prompt
+prompt
+col username format a12 heading 'Username' ;
+col role     format a21 heading 'Role (admin,grant)' ;
+col dts      format a20 heading 'Default|Tablespace'  ; 
+col tts      format a20 heading 'Temporary|Tablespace' ;
+col prof     format a18 heading 'Profile' ;
+break on username skip 1 on dts on tts on prof on role 
+select username, default_tablespace dts,   
+         temporary_tablespace  tts, 
+         profile   prof,   
+         granted_role ||'-'||decode(admin_option,'YES','Y','N')||decode(granted_role,'YES','Y','N') role 
+from dba_users,   dba_role_privs 
+where username = grantee 
+  and username not in ('PUBLIC','SYS','SYSTEM') 
+order by 1,2,3,4,5;
+clear columns;
+clear breaks;
+prompt
+prompt
+prompt
+prompt ==========================================
+prompt GRANT P/ PUBLIC
+prompt ==========================================
+prompt
+prompt
+ select  substr(grantor,1,10) c1,
+   	     ltrim(rtrim(substr(owner,1,10)))||'.'||substr(table_name,1,20) "Table",
+    	     substr(privilege,1,9) "Privilege"
+    from    sys.dba_tab_privs
+    where   grantee = 'PUBLIC'
+    order by owner, table_name;
+
+
+prompt ==========================================
+prompt This script lists the database user details and their status.
+prompt ==========================================
+prompt
+prompt
+prompt
+set pages 200
+col username form a10
+col temporary_tablespace form a15
+col default_tablespace form a15
+col account_status form a20
+select username
+     , temporary_tablespace
+     , default_tablespace
+     , account_status
+     , created
+from dba_users;
+prompt
+prompt
+prompt
+prompt ==========================================
+prompt usuarios e objetos
+prompt ==========================================
+prompt
+prompt
+select owner,object_type,status,count(*)
+from dba_objects
+group by owner,object_type,status;
+prompt
+prompt
+prompt
+prompt ==========================================
+prompt usuarios sem objetos
+prompt ==========================================
+prompt
+prompt
+select username from dba_users
+minus
+select distinct owner
+from dba_objects
+prompt
+prompt
+prompt
+prompt ==========================================
+prompt usuarios somente com sinonimos
+prompt ==========================================
+prompt
+prompt
+
+prompt
+prompt
+prompt
+
+prompt ==========================================
+prompt privilegios de sistema concedido por role
+prompt ==========================================
+prompt
+prompt
+prompt
+SELECT DECODE(SA1.GRANTEE#, 1, 'PUBLIC', U1.NAME) "Grantee" , SUBSTR(U2.NAME,1,20) "Role", 
+SUBSTR(SPM.NAME,1,27) "Privilegio"
+FROM SYS.SYSAUTH$ SA1, SYS.SYSAUTH$ SA2, SYS.USER$ U1, 
+SYS.USER$ U2, SYS.SYSTEM_PRIVILEGE_MAP SPM 
+WHERE SA1.GRANTEE# = U1.USER# 
+AND SA1.PRIVILEGE# = U2.USER# 
+AND U2.USER# = SA2.GRANTEE# 
+AND SA2.PRIVILEGE# = SPM.PRIVILEGE 
+AND DECODE(SA1.GRANTEE#, 1, 'PUBLIC', U1.NAME) like upper('%&&grantee%') 
+AND DECODE(SA1.GRANTEE#, 1, 'PUBLIC', U1.NAME) NOT IN ('SYS')
+/
+prompt
+prompt
+prompt
+prompt ==================================
+prompt Privilegios de Sistema 1
+prompt ==================================
+prompt
+prompt
+prompt
+column grantee format a25 heading "Grantee";
+column admin_option heading "Admin?";
+column privilege format a25 heading "Privilege";
+ttitle center "System Privileges (ordered by Grantee/Privilege)" skip 3;
+break on grantee;
+select grantee,privilege,admin_option
+from dba_sys_privs
+order by grantee, privilege;
+clear columns;
+prompt
+prompt
+prompt
+prompt ==================================
+prompt Privilegios de Sistema 2
+prompt ==================================
+prompt
+prompt
+prompt
+column grantee format a25 heading "Grantee";
+column admin_option heading "Admin?";
+column privilege format a25 heading "Privilege";
+break on Grantee
+SELECT U.NAME "Grantee", SUBSTR(SPM.NAME,1,27) "Privilegio Sistema" 
+FROM SYS.SYSTEM_PRIVILEGE_MAP SPM, SYS.SYSAUTH$ SA, SYS.USER$ U 
+WHERE SA.GRANTEE#=U.USER# 
+AND SA.PRIVILEGE#=SPM.PRIVILEGE 
+and u.name  NOT IN ('SYS','SYSTEM')
+ORDER BY  U.NAME
+/ 
+prompt
+prompt
+prompt
+prompt ==================================
+prompt roles X usuarios
+prompt ==================================
+prompt
+prompt
+prompt
+col username form a12 head 'Username'             just c 
+col role     form a21 head 'Role (admin,grant)'   just c 
+col prof     form a18 head 'Profile'              just c 
+col default_role heading 'Default|Role?' format a7
+ 
+break on granted_role
+ 
+select 
+  granted_role,
+   username,
+  decode(admin_option,'YES','A',' ') "Admin Option",
+  decode(granted_role,'YES','G',' ') "Grant Option",
+  default_role
+from 
+  dba_users, 
+  dba_role_privs 
+where 
+  dba_users.username = dba_role_privs.grantee and 
+  username not in ('PUBLIC') 
+order by   1
+/ 
+prompt
+prompt
+prompt
+prompt ==================================
+prompt Usuario com privilegio ANY
+prompt ==================================
+prompt
+prompt
+set linesize 100
+column GRANTEE format a10
+break on GRANTEE
+SELECT  GRANTEE,PRIVILEGE, 'NO ROLE' GRANTED_ROLE
+FROM DBA_SYS_PRIVS,v$database
+WHERE privilege like '%ANY%'
+	AND	grantee not in('SYSTEM','SYS')
+	AND	GRANTEE Not In(select role from dba_roles)
+/
+
+
+SELECT 
+	A.GRANTEE,
+	A.GRANTED_ROLE,
+	B.PRIVILEGE
+FROM
+	DBA_ROLE_PRIVS A,
+	DBA_SYS_PRIVS B
+WHERE
+		A.GRANTED_ROLE = B.GRANTEE
+	AND	A.GRANTED_ROLE IN(SELECT GRANTEE FROM DBA_SYS_PRIVS WHERE PRIVILEGE LIKE '%ANY%')
+	AND	A.GRANTEE NOT IN('DBA','SYS','SYSTEM','DBSNMP')
+ORDER BY 1,2
+/
+
+
+prompt
+prompt
+prompt
+prompt ==================================
+prompt Usuario com senha igual ao login
+prompt ==================================
+prompt
+prompt
+prompt
+prompt
+prompt =========================================
+prompt QUANTIDADE DE USUÁRIOS POR PROFILE 
+prompt =========================================
+ select profile, count(*) from dba_users
+group by profile;
+prompt
+prompt
+prompt
+prompt
+prompt ======================================
+prompt USERNAME QUE UTILIZA SYSTEM TABLESPACE
+prompt ======================================
+ select username, default_tablespace,temporary_tablespace
+from dba_users
+where default_tablespace = 'SYSTEM' or
+temporary_tablespace= 'SYSTEM' ;
+prompt
+prompt
+prompt ======================================
+prompt USERNAME COM OBJETOS NA TABLESPACE SYSTEM
+prompt ======================================
+prompt
+prompt
+select owner,segment_type,count(*)
+from sys.dba_segments t
+where t.tablespace_name = 'SYSTEM'
+and t.owner not in ('SYS','SYSTEM')
+group by owner,segment_type;
+prompt
+prompt
+prompt ======================================
+prompt QUOTA NA TABELSPACE
+prompt ======================================
+prompt
+prompt
+set linesize 80;
+set pagesize 1000;
+set long 50;
+set echo on;
+column "Max Blocks" format a10;
+break on "Username" on "Table Space";
+set echo off;
+select
+   substr(username,1,10)                                 "Username",
+   substr(tablespace_name, 1, 20)                        "Table Space",
+   substr(to_char(bytes/1096,'999,999,999'), 1, 12)      "Bytes(K)",
+   substr(to_char(max_bytes/1096,'999,999,999'), 1, 12)  "Max Bytes(K)",
+   substr(to_char(blocks, '999,999'), 1, 8)         	"Blocks",
+   substr(to_char(max_blocks, '999,999'), 1, 8)     	"Max Blocks"
+from sys.dba_ts_quotas
+order by 1, 2, 3;
+prompt
+prompt
+prompt ======================================
+prompt usuarios com sinonimo utilizando dblink
+prompt ======================================
+select * from dba_synonyms
+where db_link is not null
+/
+prompt
+prompt
+prompt
+prompt
+set serveroutput on feedback off verify off pages 0
+declare
+     wuser varchar2 (30) := '%';
+     /*  Users */
+     cursor cusr is select username, default_tablespace || ' / ' || 
+            temporary_tablespace tablespace, profile
+     from dba_users where
+     username like upper(wuser);
+     /* Roles granted */
+     cursor crole (u in varchar2) is
+     select granted_role, admin_option, default_role
+     from dba_role_privs where
+     grantee = upper(u)
+     order by granted_role;
+     /* System privileges granted */
+     cursor csys (u in varchar2) is
+     select privilege, admin_option
+     from dba_sys_privs where
+     grantee = upper(u)
+     order by privilege;
+     /* Object privileges granted */
+     cursor cobj (u in varchar2) is
+     select (owner ||'.'|| table_name) object, privilege
+     from dba_tab_privs where
+     grantee = upper(u)
+     order by owner, table_name;
+     /* Column privileges granted */
+     cursor ccol (u in varchar2) is
+     select (owner ||'.'|| table_name ||'.'|| column_name) wcolumn, privilege
+     from dba_col_privs where
+     grantee = upper(u)
+     order by  owner, table_name, column_name;
+     wcount number := 0;
+     wdate varchar2 (25) := to_char(sysdate,'Mon DD, YYYY  HH:MI AM');
+     w5space char(5) := '.    ';
+     wdum1 varchar2 (255);
+     wdum2 varchar2 (255);
+     wdum3 varchar2 (255);
+     wdum4 varchar2 (255);
+     wdum5 varchar2 (255);
+     wdum6 varchar2 (255);
+     wdum7 varchar2 (255);
+  begin
+    dbms_output.enable(100000);
+    for rusr in cusr loop
+      dbms_output.put_line('********** USER INFORMATION **********                ' || wdate);
+      dbms_output.put_line('*--------------------------------------------------------------------------*');
+      dbms_output.put_line('Username         Default / Temporary Tablespace          Profile');
+      dbms_output.put_line('*--------------------------------------------------------------------------*');
+      wcount := wcount + 1;
+      dbms_output.put_line(rpad(rusr.username,17) || rpad(rusr.tablespace,40) || rpad(rusr.profile,20));
+      dbms_output.put_line(w5space);
+      open crole (rusr.username);
+      fetch crole into wdum1, wdum2, wdum3;
+      if crole%notfound then
+         dbms_output.put_line('********** ' || rusr.username || ' - NO ROLES GRANTED  *********');
+         close crole;
+      else
+         close crole;
+         dbms_output.put_line('********** ' || rusr.username || ' - ROLES GRANTED  *********');
+
+         dbms_output.put_line(w5space || 'Role name                                         Admin     Default');
+         dbms_output.put_line(w5space || '*---------------------------------------------------------------------*');
+         for rrole  in crole (rusr.username) loop
+          dbms_output.put_line(w5space || rpad(rrole.granted_role,50) || rpad(rrole.admin_option,10) || rpad(rrole.default_role,10));
+         end loop;
+         dbms_output.put_line(w5space);
+      end if;
+      dbms_output.put_line(w5space);
+      open csys (rusr.username);
+      fetch csys into wdum1, wdum2;
+      if csys%notfound then
+         dbms_output.put_line('********** ' || rusr.username || ' - NO SYSTEM PRIVILEGES GRANTED  *********');
+         close csys;
+      else
+         close csys;
+         dbms_output.put_line('********** ' || rusr.username || ' - SYSTEM PRIVILEGES GRANTED  *********');
+
+         dbms_output.put_line(w5space || 'System Privilege                                  Admin');
+         dbms_output.put_line(w5space || '*---------------------------------------------------------------------*');
+         for rsys  in csys (rusr.username) loop
+          dbms_output.put_line(w5space || rpad(rsys.privilege,50) || rpad(rsys.admin_option,10));
+         end loop;
+         dbms_output.put_line(w5space);
+      end if;
+      dbms_output.put_line(w5space);
+      open cobj (rusr.username);
+      fetch cobj into wdum1, wdum2;
+      if cobj%notfound then
+         dbms_output.put_line('********** ' || rusr.username || ' - NO OBJECT PRIVILEGES GRANTED  *********');
+         close cobj;
+      else
+         close cobj;
+         dbms_output.put_line('********** ' || rusr.username || ' - OBJECT PRIVILEGES GRANTED  *********');
+
+         dbms_output.put_line(w5space || 'Object Name                             Privilege');
+         dbms_output.put_line(w5space || '*---------------------------------------------------------------------*');
+         for robj  in cobj (rusr.username) loop
+          dbms_output.put_line(w5space || rpad(robj.object,40) || rpad(robj.privilege,30));
+         end loop;
+         dbms_output.put_line(w5space);
+      end if;
+      dbms_output.put_line(w5space);
+      open ccol (rusr.username);
+      fetch ccol into wdum1, wdum2;
+      if ccol%notfound then
+         dbms_output.put_line('********** ' || rusr.username || ' - NO COLUMN PRIVILEGES GRANTED  *********');
+         close ccol;
+      else
+         close ccol;
+         dbms_output.put_line('********** ' || rusr.username || ' - COLUMN PRIVILEGES GRANTED  *********');
+
+         dbms_output.put_line(w5space || 'Column Name                                       Privilege');
+         dbms_output.put_line(w5space || '*---------------------------------------------------------------------*');
+         for rcol  in ccol (rusr.username) loop
+          dbms_output.put_line(w5space || rpad(rcol.wcolumn,50) || rpad(rcol.privilege,20));
+         end loop;
+         dbms_output.put_line(w5space);
+      end if;
+      dbms_output.put_line('*--------------------------------------------------------------------------*');
+    end loop;
+    if wcount =0 then
+      dbms_output.put_line('******************************************************');
+      dbms_output.put_line('*                                                    *');
+      dbms_output.put_line('* Plese Verify Input Parameters... No Matches Found! *');
+      dbms_output.put_line('*                                                    *');
+      dbms_output.put_line('******************************************************');
+    end if;
+  end;
+/
+set serveroutput off feedback on verify on pages 999
+
+spool off

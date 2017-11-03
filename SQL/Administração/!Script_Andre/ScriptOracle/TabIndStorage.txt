@@ -1,0 +1,128 @@
+rem
+rem Storage Information about a table 
+rem
+rem Biju Thomas
+rem
+rem Provide the owner name and table name along with the script with a space
+rem
+
+set echo on
+/*
+1. Table Owner (Wild character % may be used)
+2. Table Name (Wild character % may be used) 
+Command Line SQL> @tabstore scott emp 
+*/
+set echo off
+
+set serveroutput on feedback off verify off pages 0
+spool c:\tabstore.lst
+declare
+     wuser varchar2 (15) := '&user';
+     wtable varchar2 (30) := '&table';
+     /*  Tables */
+     cursor ctabs is select table_name, owner, tablespace_name,
+          initial_extent, next_extent, pct_increase, num_rows, blocks,
+          pct_used, pct_free, max_extents, freelists, avg_space, avg_row_len,
+          ini_trans
+     from all_tables where
+     owner like upper(wuser)
+     and table_name like upper(wtable);
+     /* Indexes */
+     cursor cinds (o in varchar2, t in varchar2) is
+     select owner, index_name,decode(uniqueness,'UNIQUE','UNIQUE') unq,
+            decode(status, 'VALID', '( VALID )', '(INVALID)') status,
+            initial_extent, next_extent, max_extents, pct_increase, ini_trans,
+            tablespace_name, freelists, distinct_keys
+     from   all_indexes where
+            table_name = upper(t) and
+            table_owner = upper(o);
+
+     wcount   number := 0;
+     wdate    varchar2 (25) := to_char(sysdate,'Mon DD, YYYY  HH:MI AM');
+     w3space  char(3) := '.  ';
+     wnumext    number;
+     wcollen    number;
+
+     wtotal_blocks               number;
+     wtotal_bytes                number;
+     wunused_blocks              number;
+     wunused_bytes               number;
+     wlast_used_extent_file_id   number;
+     wlast_used_extent_block_id  number;
+     wlast_used_block            number;
+
+
+  begin
+  dbms_output.enable(100000);
+  for rtabs in ctabs loop
+    dbms_output.put_line('********** TABLE STORAGE INFORMATION **********        ' || wdate);
+    dbms_space.unused_space (rtabs.owner, rtabs.table_name, 'TABLE',
+                             wtotal_blocks,  wtotal_bytes,  wunused_blocks,
+                             wunused_bytes, wlast_used_extent_file_id,
+                             wlast_used_extent_block_id, wlast_used_block);
+    wcount := wcount + 1;
+
+    select count(*)
+    into   wnumext
+    from   dba_extents
+    where  segment_type = 'TABLE'
+    and    segment_name = rtabs.table_name
+    and    owner = rtabs.owner;
+
+    dbms_output.put_line(rpad('Table Owner',20)||rpad(rtabs.owner,30)||rpad('Initial Ext KB',20)||rtabs.initial_extent/1024);
+    dbms_output.put_line(rpad('Table Name',20)||rpad(rtabs.table_name,30)||rpad('Next Ext KB',20)||rtabs.next_extent/1024);
+    dbms_output.put_line(rpad('Tablespace Name',20)||rpad(rtabs.tablespace_name,30)||rpad('# of Rows',20)||rtabs.num_rows);
+    dbms_output.put_line(rpad('Bytes Free/Block',20)||rpad(rtabs.avg_space,30)||rpad('PCT Used/Free',20)||rpad(rtabs.pct_used || ' / ' || rtabs.pct_free,15));
+    dbms_output.put_line(rpad('Max Ext',15)||rpad(rtabs.max_extents,10)||rpad('Ext Used',15)||rpad(wnumext,10)||rpad('KBytes Alloc',20)||wtotal_bytes/1024);
+    dbms_output.put_line(rpad('Pct Inc',15)||rpad(rtabs.pct_increase,10)||rpad('Blocks Used',15)||rpad(rtabs.blocks,10)||rpad('KBytes Used',20)||(wtotal_bytes - wunused_Bytes)/1024);
+    dbms_output.put_line(rpad('Freelist',15)||rpad(rtabs.freelists,10)||rpad('Init Trans',15)||rpad(rtabs.ini_trans,10)||rpad('Avg Row Len',20)||rtabs.avg_row_len);
+    dbms_output.put_line(w3space);
+
+    dbms_output.put_line('.  ********** ' || rtabs.table_name || ' - INDEX STORAGE INFORMATION **********');
+
+   for rinds in cinds (rtabs.owner, rtabs.table_name) loop
+
+     dbms_space.unused_space (rinds.owner, rinds.index_name, 'INDEX',
+                             wtotal_blocks,  wtotal_bytes,  wunused_blocks,
+                             wunused_bytes, wlast_used_extent_file_id,
+                             wlast_used_extent_block_id, wlast_used_block);
+
+     select count(*)
+     into   wnumext
+     from   dba_extents
+     where  segment_type = 'INDEX'
+     and    segment_name = rinds.index_name
+     and    owner = rinds.owner;
+
+     select sum(column_length) into wcollen
+     from   all_ind_columns where table_name = rtabs.table_name and
+     index_name = rinds.index_name and
+     index_owner = rinds.owner;
+
+     dbms_output.put_line(w3space || rpad('Index Owner',17) || rpad(rinds.owner,30) || rpad('Initial Ext KB',20) || rinds.initial_extent/1024); 
+     dbms_output.put_line(w3space || rpad('Index Name',17) || rpad(rinds.Index_name,30) || rpad('Next Ext KB',20) || rinds.next_extent/1024); 
+     dbms_output.put_line(w3space || rpad('Tablespace ',17) || rpad(rinds.tablespace_name,30) || rpad('Distinct Keys',20) || rinds.distinct_keys); 
+     dbms_output.put_line(w3space || rpad('Max Ext',13)||rpad(rinds.max_extents,9)||rpad('Ext Used',15)||rpad(wnumext,10)||rpad('KBytes Alloc',20)||wtotal_bytes/1024);
+     dbms_output.put_line(w3space || rpad('Pct Inc',13)||rpad(rinds.pct_increase,9)||rpad('Blocks Used',15)||rpad(wtotal_blocks,10)||rpad('KBytes Used',20)||(wtotal_bytes - wunused_bytes)/1024);
+     dbms_output.put_line(w3space || rpad('Freelist',13)||rpad(rinds.freelists,9)||rpad('Init Trans',15)||rpad(rinds.ini_trans,10)||rpad('Ind Col Len',20)||wcollen);
+     dbms_output.put_line(w3space);
+
+   end loop;
+
+   dbms_output.put_line('********** ' || rtabs.table_name || ' - END INFO **********');
+   dbms_output.put_line(w3space);
+  end loop;
+  if wcount =0 then
+    dbms_output.put_line('******************************************************');
+    dbms_output.put_line('*                                                    *');
+    dbms_output.put_line('* Plese Verify Input Parameters... No Matches Found! *');
+    dbms_output.put_line('*                                                    *');
+    dbms_output.put_line('******************************************************');
+  end if;
+  end;
+/
+set serveroutput off feedback on verify on pages 999
+spool off
+prompt
+
+

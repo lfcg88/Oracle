@@ -1,0 +1,14 @@
+CONNECT TARGET sys/dontknow; 
+CONNECT CATALOG rman/rman@rcvcat;
+
+startup force nomount;
+
+run
+{
+allocate channel ch1 type DISK;
+restore validate check logical controlfile;
+restore validate check logical database;
+#restore validate check logical archivelog all;
+restore validate check logical spfile to '/oracle/product/9.2/dbs/spfileteste.ora';
+release channel ch1;
+}

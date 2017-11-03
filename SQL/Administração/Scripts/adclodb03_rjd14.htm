@@ -1,0 +1,902 @@
+<i>ver: 8.2</i>
+<hr>
+
+
+<html>
+<a name=top></a>
+
+<b> HOST: adclodb03 </b>
+<hr>
+<b> INSTANCE: rjd14 </b>
+<hr>
+<b> VERSION: 9.2.0.8.0 </b>
+<hr>
+<b> DATE: 10-DEZ-2010 </b>
+<hr>
+<pre>
+
+
+BANNER                                                                          
+----------------------------------------------------------------                
+Oracle9i Enterprise Edition Release 9.2.0.8.0 - 64bit Production                
+PL/SQL Release 9.2.0.8.0 - Production                                           
+CORE	9.2.0.8.0	Production                                                       
+TNS for Linux: Version 9.2.0.8.0 - Production                                   
+NLSRTL Version 9.2.0.8.0 - Production                                           
+
+
+.CLIENT_CONFIGURATION.                                                          
+----------------------                                                          
+CURRENT_USER                  HOST                                              
+----------------------------- ---------------------------                       
+SYSTEM                        DUFRY\INV01220
+
+
+</pre>
+<hr>
+<hr>
+
+[adclodb03 / rjd14] Collecting default passwords...
+
+
+<br>
+
+<b>.DEFAULT PASSWORDS.</b>
+
+<pre>
+		 from	dba_users, user$, v$instance
+		     	           *
+ERRO na linha 20:
+ORA-06550: line 20, column 20: 
+PL/SQL: ORA-00942: table or view does not exist 
+ORA-06550: line 16, column 3: 
+PL/SQL: SQL Statement ignored 
+ORA-06550: line 3222, column 7: 
+PLS-00364: loop index variable 'LV_USER' use is invalid 
+ORA-06550: line 3222, column 4: 
+PL/SQL: Statement ignored 
+
+
+
+</pre>
+<a HREF=#top><h6>Top</h6></a>
+<hr>
+
+[adclodb03 / rjd14] Collecting DBlinks...
+
+
+<br>
+
+<b>.DBLINKS.</b>
+
+<pre>
+	select name, userid, password, host from sys.link$
+	                                             *
+ERRO na linha 1:
+ORA-01031: insufficient privileges 
+
+
+
+</pre>
+<a HREF=#top><h6>Top</h6></a>
+<hr>
+
+[adclodb03 / rjd14] Collecting RESTRICTED OBJECTS ACCCESS...
+
+
+<br>
+
+<b>.RESTRICTED OBJECTS ACCESS.</b>
+
+'ALL_USERS','AUD$','LINK$','ALL_DB_LINKS', 'DBMS_SYSTEM'
+
+<pre>
+
+PRIVILEGE            GRANTEE                   TABLE_NAME                                 
+-------------------- ------------------------- ----------------------------------------   
+SELECT               XDB                       ALL_USERS                                  
+EXECUTE              OEM_MONITOR               DBMS_SYSTEM                                
+
+</pre>
+<a HREF=#top><h6>Top</h6></a>
+<hr>
+
+[adclodb03 / rjd14] Collecting Account/Passwords Policy ...
+
+
+<br>
+
+<b>.USER PROFILES.</b>
+
+<pre>
+
+PROFILE                        RESOURCE_NAME                  LIMIT               
+------------------------------ ------------------------------ --------------------
+DEFAULT                        FAILED_LOGIN_ATTEMPTS          UNLIMITED           
+DEFAULT                        PASSWORD_LIFE_TIME             UNLIMITED           
+DEFAULT                        PASSWORD_REUSE_TIME            UNLIMITED           
+DEFAULT                        PASSWORD_REUSE_MAX             UNLIMITED           
+DEFAULT                        PASSWORD_VERIFY_FUNCTION       NULL                
+DEFAULT                        PASSWORD_GRACE_TIME            UNLIMITED           
+DEFAULT                        PASSWORD_LOCK_TIME             UNLIMITED           
+PF_USER_GERAL                  FAILED_LOGIN_ATTEMPTS          4                   
+PF_USER_GERAL                  PASSWORD_LIFE_TIME             20                  
+PF_USER_GERAL                  PASSWORD_REUSE_MAX             3                   
+PF_USER_GERAL                  PASSWORD_LOCK_TIME             1                   
+PF_USER_GERAL                  PASSWORD_GRACE_TIME            10                  
+PF_USER_GERAL                  PASSWORD_VERIFY_FUNCTION       VERIFY_FUNCTION     
+PF_USER_GERAL                  PASSWORD_REUSE_TIME            1                   
+USER_MANUTENCAO                FAILED_LOGIN_ATTEMPTS          DEFAULT             
+USER_MANUTENCAO                PASSWORD_REUSE_TIME            DEFAULT             
+USER_MANUTENCAO                PASSWORD_GRACE_TIME            DEFAULT             
+USER_MANUTENCAO                PASSWORD_LOCK_TIME             DEFAULT             
+USER_MANUTENCAO                PASSWORD_VERIFY_FUNCTION       DEFAULT             
+USER_MANUTENCAO                PASSWORD_REUSE_MAX             DEFAULT             
+USER_MANUTENCAO                PASSWORD_LIFE_TIME             DEFAULT             
+
+</pre>
+<a HREF=#top><h6>Top</h6></a>
+<hr>
+
+[adclodb03 / rjd14] Collecting users in profiles ...
+
+
+<br>
+
+<b>.TOTAL USERS IN PROFILES.</b>
+
+<pre>
+
+ TOT_USERS PROFILE                                                                
+---------- ------------------------------                                         
+        39 DEFAULT                                                                
+         1 USER_MANUTENCAO                                                        
+
+</pre>
+<a HREF=#top><h6>Top</h6></a>
+<hr>
+
+[adclodb03 / rjd14] Collecting OS Authentications Prefix...
+
+
+<br>
+
+<b>.AUTHENT PREFIX.</b>
+
+<pre>
+
+NAME                         VALUE                                    
+---------------------------- ---------------                          
+remote_os_authent            TRUE                                     
+
+</pre>
+<a HREF=#top><h6>Top</h6></a>
+<hr>
+
+[adclodb03 / rjd14] Collecting parameter dblink_encrypt...
+
+
+<br>
+
+<b>.DBLink_encrypt.</b>
+
+<pre>
+
+NAME                         VALUE                                    
+---------------------------- ---------------                          
+dblink_encrypt_login         FALSE                                    
+
+</pre>
+<a HREF=#top><h6>Top</h6></a>
+<hr>
+
+[adclodb03 / rjd14] Collecting Parameter O7_DICTIONARY...
+
+
+<br>
+
+<b>.O7_DICTIONARY.</b>
+
+<pre>
+
+</pre>
+<a HREF=#top><h6>Top</h6></a>
+<hr>
+
+[adclodb03 / rjd14] Collecting Remote Logins...
+
+
+<br>
+
+<b>.REMOTE LOGINS.</b>
+
+<pre>
+
+NAME                         VALUE                     
+---------------------------- --------------------------
+remote_login_passwordfile    EXCLUSIVE                 
+
+</pre>
+<a HREF=#top><h6>Top</h6></a>
+<hr>
+
+[adclodb03 / rjd14] Collecting privileges "ADMIN OPTION"...
+
+
+<br>
+
+<b>.ADMIN OPTION.</b>
+
+<pre>
+
+GRANTEE                        PRIVILEGE                                ADM                                    
+------------------------------ ---------------------------------------- ---                                    
+HELPDESK                       CREATE SESSION                           YES                                    
+
+</pre>
+<a HREF=#top><h6>Top</h6></a>
+<hr>
+
+[adclodb03 / rjd14] Collecting users with "OLAP_DBA"...
+
+
+<br>
+
+<b>.OLAP_ADMIN.</b>
+
+<pre>
+
+</pre>
+<a HREF=#top><h6>Top</h6></a>
+<hr>
+
+[adclodb03 / rjd14] Collecting "SPECIAL PRIVS"...
+
+
+<br>
+
+<b>.SPECIAL PRIVS.</b>
+
+<pre>
+
+GRANTEE                   PRIVILEGE                                             
+------------------------- --------------------------------------------------    
+HELPDESK                  ALTER USER                                            
+XDB                       ADMINISTER DATABASE TRIGGER                           
+XDB                       CREATE PUBLIC SYNONYM                                 
+XDB                       DROP PUBLIC SYNONYM                                   
+
+</pre>
+<a HREF=#top><h6>Top</h6></a>
+<hr>
+
+[adclodb03 / rjd14] Collecting "RISK PACKAGES"...
+
+
+<br>
+
+<b>.RISK_PACKAGES.</b>
+
+<pre>
+
+PRIVILEGE  OWNER           TABLE_NAME                GRANTEE                    
+---------- --------------- ------------------------- -------------------------  
+EXECUTE    SYS             DBMS_LOB                  PUBLIC                     
+EXECUTE    SYS             DBMS_DDL                  PUBLIC                     
+EXECUTE    SYS             DBMS_EXPORT_EXTENSION     PUBLIC                     
+EXECUTE    SYS             DBMS_STATS                PUBLIC                     
+EXECUTE    SYS             DBMS_XRWMV                PUBLIC                     
+EXECUTE    SYS             DBMS_RANDOM               PUBLIC                     
+EXECUTE    SYS             DBMS_CDC_SUBSCRIBE        PUBLIC                     
+EXECUTE    SYS             OWA_OPT_LOCK              PUBLIC                     
+DEBUG      SYS             OWA_OPT_LOCK              PUBLIC                     
+EXECUTE    SYS             DBMS_REPUTIL              PUBLIC                     
+EXECUTE    SYS             DBMS_REPCAT_RGT_EXP       PUBLIC                     
+EXECUTE    SYS             DBMS_REPCAT_INSTANTIATE   PUBLIC                     
+EXECUTE    ORDSYS          ORDIMGIDXMETHODS          PUBLIC                     
+EXECUTE    MDSYS           MD2                       PUBLIC                     
+EXECUTE    MDSYS           SDO_CATALOG               PUBLIC                     
+EXECUTE    MDSYS           RTREE_IDX                 PUBLIC                     
+EXECUTE    MDSYS           SDO_RTREE_ADMIN           PUBLIC                     
+EXECUTE    MDSYS           SDO_TUNE                  PUBLIC                     
+EXECUTE    MDSYS           SDO_UTIL                  PUBLIC                     
+EXECUTE    CTXSYS          CATSEARCH                 PUBLIC                     
+EXECUTE    CTXSYS          CTX_DOC                   PUBLIC                     
+EXECUTE    CTXSYS          CTX_QUERY                 PUBLIC                     
+EXECUTE    CTXSYS          DRILOAD                   PUBLIC                     
+EXECUTE    XDB             DBMS_XMLSCHEMA_INT        PUBLIC                     
+EXECUTE    XDB             DBMS_XMLSCHEMA            PUBLIC                     
+EXECUTE    XDB             DBMS_XDBZ0                PUBLIC                     
+EXECUTE    SYSTEM          DBMS_STATS                PUBLIC                     
+EXECUTE    SYSTEM          DBMS_DDL                  PUBLIC                     
+EXECUTE    SYSTEM          OWA_OPT_LOCK              PUBLIC                     
+EXECUTE    SYSTEM          DBMS_RANDOM               PUBLIC                     
+EXECUTE    SYSTEM          DBMS_LOB                  PUBLIC                     
+EXECUTE    SYS             DBMS_METADATA             PUBLIC                     
+EXECUTE    XDB             DBMS_XMLSCHEMA_INT        PUBLIC                     
+EXECUTE    XDB             DBMS_XMLSCHEMA            PUBLIC                     
+EXECUTE    MDSYS           PRVT_IDX                  PUBLIC                     
+
+</pre>
+<a HREF=#top><h6>Top</h6></a>
+<hr>
+
+[adclodb03 / rjd14] Collecting privileges "ANY"...
+
+
+<br>
+
+<b>.PRIVILEGE_ANY.</b>
+
+<pre>
+
+GRANTEE                                            PRIVILEGE                     
+-------------------------------------------------- ------------------------------
+SYNCHRO                                            EXECUTE ANY PROCEDURE         
+EASYIRPJ                                           ALTER ANY SNAPSHOT            
+EASYTRPR                                           ALTER ANY SNAPSHOT            
+HELPDESK                                           GRANT ANY ROLE                
+ORA_MONITOR                                        SELECT ANY TABLE              
+OPS$ORACLE9I                                       ALTER ANY PROCEDURE           
+JAVADEBUGPRIV                                      DEBUG ANY PROCEDURE           
+
+</pre>
+<a HREF=#top><h6>Top</h6></a>
+<hr>
+
+[adclodb03 / rjd14] Collecting Default TableSpaces...
+
+
+<br>
+
+<b>.DEFAULT TABLESPACES.</b>
+
+<pre>
+
+</pre>
+<a HREF=#top><h6>Top</h6></a>
+<hr>
+
+[adclodb03 / rjd14] Collecting PUBLIC permission on system privileges...
+
+
+<br>
+
+<b>.PUBLIC SYS.</b>
+
+<pre>
+
+</pre>
+<a HREF=#top><h6>Top</h6></a>
+<hr>
+
+[adclodb03 / rjd14] Collecting AUDIT value...
+
+
+<br>
+
+<b>.AUDITING CONFIGURATION OPTIONS.</b>
+
+<pre>
+
+</pre>
+<a HREF=#top><h6>Top</h6></a>
+<hr>
+
+[adclodb03 / rjd14] Collecting Auditing Configutation...
+
+
+<br>
+
+<b>.AUDITING COMMANDS.</b>
+
+<pre>
+
+USER_NAME                      AUDIT_OPTION                        SUCCESS    FAILURE     
+------------------------------ ----------------------------------- ---------- ----------  
+                               CREATE SESSION                      BY ACCESS  BY ACCESS   
+
+</pre>
+<a HREF=#top><h6>Top</h6></a>
+<hr>
+
+[adclodb03 / rjd14] Collecting TABLESPACE_AUD$...
+
+
+<br>
+
+<b>.TABLESPACE_AUD$.</b>
+
+<pre>
+
+</pre>
+<a HREF=#top><h6>Top</h6></a>
+<hr>
+
+[adclodb03 / rjd14] Collecting public privileges on UTL_packages ...
+
+
+<br>
+
+<b>.UTL_packages.</b>
+
+<pre>
+
+PRIVILEGE            GRANTEE                   TABLE_NAME                                 
+-------------------- ------------------------- ----------------------------------------   
+EXECUTE              PUBLIC                    UTL_FILE                                   
+EXECUTE              PUBLIC                    UTL_HTTP                                   
+EXECUTE              PUBLIC                    UTL_SMTP                                   
+EXECUTE              PUBLIC                    UTL_TCP                                    
+EXECUTE              PUBLIC                    UTL_HTTP                                   
+
+</pre>
+<a HREF=#top><h6>Top</h6></a>
+<hr>
+
+[adclodb03 / rjd14] Collecting users with DBA role...
+
+
+<br>
+
+<b>.USERS_DBA_ROLE.</b>
+
+<pre>
+
+GRANTEE                   DEFA ADMI                                                                 
+------------------------- ---- ----                                                                 
+CTXSYS                    YES  NO                                                                   
+
+</pre>
+<a HREF=#top><h6>Top</h6></a>
+<hr>
+<br>
+
+<b>.SYSDBA AND SYSOPER USERS.</b>
+
+<pre>
+
+</pre>
+<a HREF=#top><h6>Top</h6></a>
+<hr>
+
+[adclodb03 / rjd14] Collecting privileges "CATALOG_ROLE"...
+
+
+<br>
+
+<b>.CATALOG_ROLES.</b>
+
+<pre>
+
+GRANTEE                        GRANTED_ROLE                  
+------------------------------ ------------------------------
+PERFSTAT                       SELECT_CATALOG_ROLE           
+
+</pre>
+<a HREF=#top><h6>Top</h6></a>
+<hr>
+
+[adclodb03 / rjd14] Collecting DBA Users...
+
+
+<br>
+
+<b>.DBA_USERS.</b>
+
+<pre>
+
+USERNAME                            PROFILE           PASSWORD           ACCOUNT_STATUS                                 
+----------------------------------- ----------------- ------------------ ------------------                             
+EASYTRPR                            DEFAULT           *****************  OPEN                                           
+EASYIRPJ                            DEFAULT           *****************  OPEN                                           
+NFE                                 DEFAULT           *****************  OPEN                                           
+NFE_CONNECT                         DEFAULT           *****************  OPEN                                           
+SYNCHRO                             DEFAULT           *****************  OPEN                                           
+DBL_SYNCHRO                         DEFAULT           *****************  OPEN                                           
+PERFSTAT                            DEFAULT           *****************  LOCKED                                         
+XDB                                 DEFAULT           *****************  LOCKED                                         
+ANONYMOUS                           DEFAULT           *****************  LOCKED                                         
+MANUTENCAO                          USER_MANUTENCAO   *****************  OPEN                                           
+SYSTEM                              DEFAULT           *****************  OPEN                                           
+FRED                                DEFAULT           *****************  OPEN                                           
+OPER                                DEFAULT           *****************  OPEN                                           
+OPERACAO                            DEFAULT           *****************  OPEN                                           
+APPMAN                              DEFAULT           *****************  OPEN                                           
+OPS$ORACLE                          DEFAULT           *****************  OPEN                                           
+HELPDESK                            DEFAULT           *****************  OPEN                                           
+PROTEUS                             DEFAULT           *****************  OPEN                                           
+BALOGH                              DEFAULT           *****************  OPEN                                           
+JVICENTE                            DEFAULT           *****************  OPEN                                           
+EASYIRPJ_USER                       DEFAULT           *****************  OPEN                                           
+EASYTRPR_USER                       DEFAULT           *****************  OPEN                                           
+RTEIXEIR                            DEFAULT           *****************  OPEN                                           
+CBESSA                              DEFAULT           *****************  OPEN                                           
+FGONCALV                            DEFAULT           *****************  LOCKED                                         
+OPS$ORACLE8I                        DEFAULT           *****************  LOCKED                                         
+DSV_COMERCIAL                       DEFAULT           *****************  LOCKED                                         
+RECADUSU                            DEFAULT           *****************  LOCKED                                         
+ORA_MONITOR                         DEFAULT           *****************  LOCKED                                         
+OPS$ORACLE9I                        DEFAULT           *****************  LOCKED                                         
+MLADEIRA                            DEFAULT           *****************  LOCKED                                         
+ENASCIMENTO                         DEFAULT           *****************  LOCKED                                         
+CTXSYS                              DEFAULT           *****************  LOCKED                                         
+SYS                                 DEFAULT           *****************  OPEN                                           
+OUTLN                               DEFAULT           *****************  LOCKED                                         
+DBSNMP                              DEFAULT           *****************  LOCKED                                         
+WMSYS                               DEFAULT           *****************  LOCKED                                         
+ORDSYS                              DEFAULT           *****************  LOCKED                                         
+ORDPLUGINS                          DEFAULT           *****************  LOCKED                                         
+MDSYS                               DEFAULT           *****************  LOCKED                                         
+
+</pre>
+<a HREF=#top><h6>Top</h6></a>
+<hr>
+
+[adclodb03 / rjd14] Collecting externally users...
+
+
+<br>
+
+<b>.Externally Users.</b>
+
+<pre>
+
+USERNAME                            PROFILE           PASSWORD         ACCOUNT_STATUS                                   
+----------------------------------- ----------------- ---------------- ------------------                               
+OPS$ORACLE                          DEFAULT           *************    OPEN                                             
+OPS$ORACLE                          DEFAULT           EXTERNAL         OPEN                                             
+OPS$ORACLE8I                        DEFAULT           *************    LOCKED                                           
+OPS$ORACLE9I                        DEFAULT           *************    LOCKED                                           
+OPS$ORACLE9I                        DEFAULT           EXTERNAL         LOCKED                                           
+
+</pre>
+<a HREF=#top><h6>Top</h6></a>
+<hr>
+
+[adclodb03 / rjd14] Collecting Roles...
+
+
+<br>
+
+<b>.ROLES.</b>
+
+<pre>
+
+GRANTEE                   GRANTED_ROLE                   ADMIN_ DEFAULT 
+------------------------- ------------------------------ ------ ------- 
+XDB                       RESOURCE                       NO     YES     
+XDB                       JAVAUSERPRIV                   NO     YES     
+FRED                      R_SYNCHRO_S                    NO     YES     
+OPER                      CONNECT                        NO     YES     
+WMSYS                     CONNECT                        NO     YES     
+WMSYS                     RESOURCE                       NO     YES     
+WMSYS                     WM_ADMIN_ROLE                  YES    YES     
+BALOGH                    R_EASY_S                       NO     NO      
+BALOGH                    R_SYNCHRO_S                    NO     YES     
+CBESSA                    R_EASY_S                       NO     YES     
+CBESSA                    R_SYNCHRO_S                    NO     YES     
+ORDSYS                    RESOURCE                       NO     YES     
+ORDSYS                    JAVAUSERPRIV                   NO     YES     
+SYNCHRO                   CONNECT                        NO     YES     
+SYNCHRO                   RESOURCE                       NO     YES     
+EASYIRPJ                  CONNECT                        NO     YES     
+EASYIRPJ                  RESOURCE                       NO     YES     
+EASYTRPR                  CONNECT                        NO     YES     
+EASYTRPR                  RESOURCE                       NO     YES     
+EASYTRPR                  R_SYNCHRO_S                    NO     YES     
+JVICENTE                  R_SYNCHRO_S                    NO     YES     
+PERFSTAT                  SELECT_CATALOG_ROLE            NO     YES     
+RTEIXEIR                  R_EASY_S                       NO     YES     
+RTEIXEIR                  R_SYNCHRO_S                    NO     YES     
+MANUTENCAO                SYNCHRO_PROD_TUDO              NO     YES     
+ORDPLUGINS                RESOURCE                       NO     YES     
+ENASCIMENTO               R_SYNCHRO_S                    NO     YES     
+JAVASYSPRIV               JAVAUSERPRIV                   NO     YES     
+ORA_MONITOR               RESOURCE                       NO     YES     
+OPS$ORACLE8I              CONNECT                        NO     YES     
+OPS$ORACLE9I              CONNECT                        NO     YES     
+OPS$ORACLE9I              RESOURCE                       NO     YES     
+DSV_COMERCIAL             ROLE_DSV_COMERCIAL             NO     YES     
+EASYIRPJ_USER             R_EASY_A                       NO     YES     
+EASYTRPR_USER             R_EASY_A                       NO     YES     
+LOGSTDBY_ADMINISTRATOR    CONNECT                        NO     YES     
+LOGSTDBY_ADMINISTRATOR    RESOURCE                       NO     YES     
+
+</pre>
+<a HREF=#top><h6>Top</h6></a>
+<hr>
+
+[adclodb03 / rjd14] Collecting CPU...
+
+
+<br>
+
+<b>.CPU.</b>
+
+<pre>
+
+</pre>
+<a HREF=#top><h6>Top</h6></a>
+<hr>
+
+[adclodb03 / rjd14] Collecting Parameters...
+
+
+<br>
+
+<b>.PARAMETERS.</b>
+
+<pre>
+
+NAME                            VALOR                                                     
+------------------------------- -------------------------------------------------------   
+row_locking                     ALWAYS                                                    
+nls_territory                   AMERICA                                                   
+nls_language                    AMERICAN                                                  
+undo_management                 AUTO                                                      
+workarea_size_policy            AUTO                                                      
+nls_length_semantics            BYTE                                                      
+optimizer_mode                  CHOOSE                                                    
+audit_trail                     DB                                                        
+standby_archive_dest            ?/DBS/ARCH                                                
+dg_broker_config_file1          ?/DBS/DR1@.DAT                                            
+dg_broker_config_file2          ?/DBS/DR2@.DAT                                            
+spfile                          ?/DBS/SPFILE@.ORA                                         
+serial_reuse                    DISABLE                                                   
+log_archive_dest_state_1        ENABLE                                                    
+log_archive_dest_state_10       ENABLE                                                    
+log_archive_dest_state_2        ENABLE                                                    
+log_archive_dest_state_3        ENABLE                                                    
+log_archive_dest_state_4        ENABLE                                                    
+log_archive_dest_state_5        ENABLE                                                    
+log_archive_dest_state_6        ENABLE                                                    
+log_archive_dest_state_7        ENABLE                                                    
+log_archive_dest_state_8        ENABLE                                                    
+log_archive_dest_state_9        ENABLE                                                    
+query_rewrite_integrity         ENFORCED                                                  
+cursor_sharing                  EXACT                                                     
+remote_login_passwordfile       EXCLUSIVE                                                 
+audit_sys_operations            FALSE                                                     
+backup_tape_io_slaves           FALSE                                                     
+blank_trimming                  FALSE                                                     
+cluster_database                FALSE                                                     
+cursor_space_for_time           FALSE                                                     
+db_block_checking               FALSE                                                     
+dblink_encrypt_login            FALSE                                                     
+dg_broker_start                 FALSE                                                     
+drs_start                       FALSE                                                     
+file_mapping                    FALSE                                                     
+global_names                    FALSE                                                     
+lock_sga                        FALSE                                                     
+log_checkpoints_to_alert        FALSE                                                     
+mts_multiple_listeners          FALSE                                                     
+nls_nchar_conv_excp             FALSE                                                     
+oracle_trace_enable             FALSE                                                     
+os_roles                        FALSE                                                     
+O7_DICTIONARY_ACCESSIBILITY     FALSE                                                     
+parallel_adaptive_multi_user    FALSE                                                     
+parallel_automatic_tuning       FALSE                                                     
+parallel_server                 FALSE                                                     
+partition_view_enabled          FALSE                                                     
+plsql_v2_compatibility          FALSE                                                     
+pre_page_sga                    FALSE                                                     
+query_rewrite_enabled           FALSE                                                     
+read_only_open_delayed          FALSE                                                     
+remote_os_roles                 FALSE                                                     
+serializable                    FALSE                                                     
+sql_trace                       FALSE                                                     
+sql92_security                  FALSE                                                     
+star_transformation_enabled     FALSE                                                     
+undo_suppress_errors            FALSE                                                     
+use_indirect_data_buffers       FALSE                                                     
+plsql_compiler_flags            INTERPRETED                                               
+fast_start_parallel_rollback    LOW                                                       
+standby_file_management         MANUAL                                                    
+sql_version                     NATIVE                                                    
+filesystemio_options            NONE                                                      
+db_cache_advice                 ON                                                        
+os_authent_prefix               OPS$                                                      
+oracle_trace_facility_name      ORACLED                                                   
+oracle_trace_collection_path    ?/OTRACE/ADMIN/CDF                                        
+oracle_trace_facility_path      ?/OTRACE/ADMIN/FDF                                        
+background_core_dump            PARTIAL                                                   
+shadow_core_dump                PARTIAL                                                   
+dispatchers                     (PROTOCOL=TCP) (SERVICE=RJD14XDB)                         
+mts_dispatchers                 (PROTOCOL=TCP) (SERVICE=RJD14XDB)                         
+audit_file_dest                 ?/RDBMS/AUDIT                                             
+db_name                         RJD14                                                     
+instance_name                   RJD14                                                     
+mts_service                     RJD14                                                     
+service_names                   RJD14                                                     
+log_archive_format              RJD14_%S.DAT                                              
+remote_dependencies_mode        TIMESTAMP                                                 
+db_block_checksum               TRUE                                                      
+disk_asynch_io                  TRUE                                                      
+hash_join_enabled               TRUE                                                      
+hs_autoregister                 TRUE                                                      
+log_archive_start               TRUE                                                      
+remote_archive_enable           TRUE                                                      
+remote_os_authent               TRUE                                                      
+replication_dependency_tracking TRUE                                                      
+resource_limit                  TRUE                                                      
+tape_asynch_io                  TRUE                                                      
+timed_statistics                TRUE                                                      
+trace_enabled                   TRUE                                                      
+transaction_auditing            TRUE                                                      
+statistics_level                TYPICAL                                                   
+undo_tablespace                 UNDOTBS1                                                  
+background_dump_dest            /U01/APP/ORACLE/ADMIN/RJD14/BDUMP                         
+core_dump_dest                  /U01/APP/ORACLE/ADMIN/RJD14/CDUMP                         
+user_dump_dest                  /U01/APP/ORACLE/ADMIN/RJD14/UDUMP                         
+utl_file_dir                    /U01/APP/ORACLE/ADMIN/RJD14/UTL_FILE/LOG                  
+control_files                   /U01/APP/ORACLE/ORADATA/RJD14/CONTROL01.CTL, /U01/APP/O   
+                                RACLE/ORADATA/RJD14/CONTROL02.CTL, /U01/APP/ORACLE/ORAD   
+                                ATA/RJD14/CONTROL03.CTL                                   
+                                                                                          
+log_archive_dest                /U02/ARCHIVE/RJD14/ARCH_                                  
+aq_tm_processes                 0                                                         
+archive_lag_target              0                                                         
+db_block_buffers                0                                                         
+db_keep_cache_size              0                                                         
+db_recycle_cache_size           0                                                         
+dbwr_io_slaves                  0                                                         
+db_16k_cache_size               0                                                         
+db_2k_cache_size                0                                                         
+db_32k_cache_size               0                                                         
+db_4k_cache_size                0                                                         
+db_8k_cache_size                0                                                         
+fast_start_io_target            0                                                         
+hi_shared_memory_address        0                                                         
+instance_number                 0                                                         
+java_max_sessionspace_size      0                                                         
+java_soft_sessionspace_limit    0                                                         
+license_max_sessions            0                                                         
+license_max_users               0                                                         
+license_sessions_warning        0                                                         
+log_archive_trace               0                                                         
+log_checkpoint_interval         0                                                         
+optimizer_index_caching         0                                                         
+parallel_min_percent            0                                                         
+parallel_min_servers            0                                                         
+plsql_native_library_subdir_cou 0                                                         
+nt                                                                                        
+                                                                                          
+recovery_parallelism            0                                                         
+session_cached_cursors          0                                                         
+shared_memory_address           0                                                         
+sort_area_retained_size         0                                                         
+thread                          0                                                         
+timed_os_statistics             0                                                         
+cluster_database_instances      1                                                         
+commit_point_strength           1                                                         
+log_archive_min_succeed_dest    1                                                         
+logmnr_max_persistent_sessions  1                                                         
+log_parallelism                 1                                                         
+mts_servers                     1                                                         
+optimizer_dynamic_sampling      1                                                         
+parallel_server_instances       1                                                         
+shared_servers                  1                                                         
+job_queue_processes             10                                                        
+object_cache_max_size_percent   10                                                        
+session_max_open_files          10                                                        
+open_cursors                    1000                                                      
+object_cache_optimal_size       102400                                                    
+bitmap_merge_area_size          1048576                                                   
+hash_area_size                  1048576                                                   
+undo_retention                  10800                                                     
+java_pool_size                  117440512                                                 
+large_pool_size                 117440512                                                 
+cpu_count                       16                                                        
+db_file_multiblock_read_count   16                                                        
+sga_max_size                    1680835928                                                
+log_checkpoint_timeout          1800                                                      
+dml_locks                       1956                                                      
+db_writer_processes             2                                                         
+log_archive_max_processes       2                                                         
+parallel_threads_per_cpu        2                                                         
+max_shared_servers              20                                                        
+mts_max_servers                 20                                                        
+db_files                        200                                                       
+log_buffer                      2097152                                                   
+pga_aggregate_target            209715200                                                 
+parallel_execution_message_size 2152                                                      
+enqueue_resources               2176                                                      
+max_enabled_roles               30                                                        
+optimizer_index_cost_adj        30                                                        
+fast_start_mttr_target          300                                                       
+shared_pool_reserved_size       31876710                                                  
+olap_page_pool_size             33554432                                                  
+open_links                      4                                                         
+open_links_per_instance         4                                                         
+processes                       400                                                       
+mts_sessions                    440                                                       
+shared_server_sessions          440                                                       
+circuits                        445                                                       
+mts_circuits                    445                                                       
+sessions                        445                                                       
+transactions                    489                                                       
+max_dispatchers                 5                                                         
+mts_max_dispatchers             5                                                         
+parallel_max_servers            5                                                         
+transactions_per_rollback_segme 5                                                         
+nt                                                                                        
+                                                                                          
+max_dump_file_size              5120                                                      
+sort_area_size                  524288                                                    
+oracle_trace_collection_size    5242880                                                   
+distributed_lock_timeout        60                                                        
+shared_pool_size                637534208                                                 
+db_cache_size                   687865856                                                 
+control_file_record_keep_time   7                                                         
+max_commit_propagation_delay    700                                                       
+optimizer_max_permutations      80000                                                     
+db_block_size                   8192                                                      
+create_bitmap_area_size         8388608                                                   
+optimizer_features_enable       9.2.0                                                     
+compatible                      9.2.0.0.0                                                 
+max_rollback_segments           97                                                        
+active_instance_count                                                                     
+buffer_pool_keep                                                                          
+buffer_pool_recycle                                                                       
+cluster_interconnects                                                                     
+db_create_file_dest                                                                       
+db_create_online_log_dest_1                                                               
+db_create_online_log_dest_2                                                               
+db_create_online_log_dest_3                                                               
+db_create_online_log_dest_4                                                               
+db_create_online_log_dest_5                                                               
+db_domain                                                                                 
+db_file_name_convert                                                                      
+event                                                                                     
+fal_client                                                                                
+fal_server                                                                                
+fixed_date                                                                                
+gc_files_to_locks                                                                         
+global_context_pool_size                                                                  
+ifile                                                                                     
+instance_groups                                                                           
+local_listener                                                                            
+lock_name_space                                                                           
+log_archive_dest_1                                                                        
+log_archive_dest_10                                                                       
+log_archive_dest_2                                                                        
+log_archive_dest_3                                                                        
+log_archive_dest_4                                                                        
+log_archive_dest_5                                                                        
+log_archive_dest_6                                                                        
+log_archive_dest_7                                                                        
+log_archive_dest_8                                                                        
+log_archive_dest_9                                                                        
+log_archive_duplex_dest                                                                   
+log_file_name_convert                                                                     
+mts_listener_address                                                                      
+nls_calendar                                                                              
+nls_comp                                                                                  
+nls_currency                                                                              
+nls_date_format                                                                           
+nls_date_language                                                                         
+nls_dual_currency                                                                         
+nls_iso_currency                                                                          
+nls_numeric_characters                                                                    
+nls_sort                                                                                  
+nls_time_format                                                                           
+nls_timestamp_format                                                                      
+nls_timestamp_tz_format                                                                   
+nls_time_tz_format                                                                        
+oracle_trace_collection_name                                                              
+parallel_instance_group                                                                   
+plsql_native_c_compiler                                                                   
+plsql_native_library_dir                                                                  
+plsql_native_linker                                                                       
+plsql_native_make_file_name                                                               
+plsql_native_make_utility                                                                 
+rdbms_server_dn                                                                           
+remote_listener                                                                           
+resource_manager_plan                                                                     
+rollback_segments                                                                         
+tracefile_identifier                                                                      
+
+</pre>
+<a HREF=#top><h6>Top</h6></a>
+<hr>

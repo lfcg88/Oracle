@@ -1,0 +1,409 @@
+no sqlplus 
+select DESTINATION from V$ARCHIVE_DEST     where  status=‘VALID’;
+
+select log_mode from v$database;.
+
+rman / target
+
+
+1- backup database plus archivelog;
+2 -list backup;
+
+ele da shutdown abort ;
+no banco apaga todos os arquivos na mão;
+del *
+
+vai no sqlplus tenta o startup;
+aparecerá o seguinte erro error in identifying control
+file, check alert log from more info.
+
+shutdown abort;
+
+ 
+rman / target
+
+startup nomount;
+restore controlfile from 'nomearqbkp';
+
+rman / target
+alter database mount;
+restore database;
+recover database;
+alter database open resetlogs;
+
+
+sqlplus /as sysdba;
+
+select name from v$database;
+select open_mode from v$database;
+select tablespace_names from dba_tablespaces;
+
+
+
+
+[oracle@localhost ~]$ cd /home/oracle/app/oracle/oradata/orcl/
+[oracle@localhost orcl]$ ls
+afiedt.buf                 APEX_2610402357158758.dbf  control01.ctl  system01.dbf
+APEX_1930613455248703.dbf  APEX_2611417663389985.dbf  example01.dbf  undotbs01.dbf
+APEX_2041602962184952.dbf  APEX_2614203650434107.dbf  sysaux01.dbf   users01.dbf
+[oracle@localhost orcl]$ ls -lh
+total 2.6G
+-rw-rw-r-- 1 oracle oracle  142 May  9  2012 afiedt.buf
+-rw-rw---- 1 oracle oracle 2.1M Jul  2 12:06 APEX_1930613455248703.dbf
+-rw-rw---- 1 oracle oracle 2.1M Jul  2 12:06 APEX_2041602962184952.dbf
+-rw-rw---- 1 oracle oracle 2.1M Jul  2 12:06 APEX_2610402357158758.dbf
+-rw-rw---- 1 oracle oracle 2.1M Jul  2 12:06 APEX_2611417663389985.dbf
+-rw-rw---- 1 oracle oracle 7.1M Jul  2 12:07 APEX_2614203650434107.dbf
+-rw-rw---- 1 oracle oracle 9.4M Jul  5 06:09 control01.ctl
+-rw-rw---- 1 oracle oracle  83M Jul  2 12:08 example01.dbf
+-rw-rw---- 1 oracle oracle 1.3G Jul  2 12:16 sysaux01.dbf
+-rw-rw---- 1 oracle oracle 842M Jul  2 12:14 system01.dbf
+-rw-rw---- 1 oracle oracle 171M Jul  2 12:07 undotbs01.dbf
+-rw-rw---- 1 oracle oracle 226M Jul  2 12:09 users01.dbf
+[oracle@localhost orcl]$ vi control01.ctl
+[oracle@localhost orcl]$ rman target /
+
+
+RMAN> list backup;
+
+
+List of Backup Sets
+===================
+
+
+BS Key  Size       Device Type Elapsed Time Completion Time
+------- ---------- ----------- ------------ ---------------
+5       838.45M    DISK        00:02:44     02-JUL-13      
+        BP Key: 5   Status: AVAILABLE  Compressed: NO  Tag: TAG20130702T072704
+        Piece Name: /home/oracle/app/oracle/flash_recovery_area/ORCL/backupset/2013_07_02/o1_mf_annnn_TAG20130702T072704_8x5rstq2_.bkp
+
+  List of Archived Logs in backup set 5
+  Thrd Seq     Low SCN    Low Time  Next SCN   Next Time
+  ---- ------- ---------- --------- ---------- ---------
+  1    614     14022326   21-MAY-13 14059909   22-MAY-13
+  1    615     14059909   22-MAY-13 14095750   27-MAY-13
+  1    616     14095750   27-MAY-13 14128281   28-MAY-13
+  1    617     14128281   28-MAY-13 14165491   28-MAY-13
+  1    618     14165491   28-MAY-13 14202080   29-MAY-13
+  1    619     14202080   29-MAY-13 14229781   04-JUN-13
+  1    620     14229781   04-JUN-13 14250100   05-JUN-13
+  1    621     14250100   05-JUN-13 14271033   05-JUN-13
+  1    622     14271033   05-JUN-13 14308376   06-JUN-13
+  1    623     14308376   06-JUN-13 14319580   06-JUN-13
+  1    624     14319580   06-JUN-13 14355706   14-JUN-13
+  1    625     14355706   14-JUN-13 14360025   14-JUN-13
+  1    626     14360025   14-JUN-13 14388017   17-JUN-13
+  1    627     14388017   17-JUN-13 14426508   17-JUN-13
+  1    628     14426508   17-JUN-13 14462489   18-JUN-13
+  1    629     14462489   18-JUN-13 14498745   18-JUN-13
+  1    630     14498745   18-JUN-13 14535537   19-JUN-13
+  1    631     14535537   19-JUN-13 14571022   20-JUN-13
+  1    632     14571022   20-JUN-13 14606780   20-JUN-13
+  1    633     14606780   20-JUN-13 14641885   21-JUN-13
+  1    634     14641885   21-JUN-13 14678568   21-JUN-13
+  1    635     14678568   21-JUN-13 14713461   22-JUN-13
+  1    636     14713461   22-JUN-13 14747018   22-JUN-13
+  1    637     14747018   22-JUN-13 14779258   23-JUN-13
+  1    638     14779258   23-JUN-13 14808179   25-JUN-13
+  1    639     14808179   25-JUN-13 14841824   25-JUN-13
+  1    640     14841824   25-JUN-13 14892974   02-JUL-13
+  1    641     14892974   02-JUL-13 14895628   02-JUL-13
+
+BS Key  Type LV Size       Device Type Elapsed Time Completion Time
+------- ---- -- ---------- ----------- ------------ ---------------
+6       Full    2.07G      DISK        00:10:16     02-JUL-13      
+        BP Key: 6   Status: AVAILABLE  Compressed: NO  Tag: TAG20130702T072956
+        Piece Name: /home/oracle/app/oracle/flash_recovery_area/ORCL/backupset/2013_07_02/o1_mf_nnndf_TAG20130702T072956_8x5rz7lx_.bkp
+  List of Datafiles in backup set 6
+  File LV Type Ckp SCN    Ckp Time  Name
+  ---- -- ---- ---------- --------- ----
+  1       Full 14895728   02-JUL-13 /home/oracle/app/oracle/oradata/orcl/system01.dbf
+  2       Full 14895728   02-JUL-13 /home/oracle/app/oracle/oradata/orcl/sysaux01.dbf
+  3       Full 14895728   02-JUL-13 /home/oracle/app/oracle/oradata/orcl/undotbs01.dbf
+  4       Full 14895728   02-JUL-13 /home/oracle/app/oracle/oradata/orcl/users01.dbf
+  5       Full 14895728   02-JUL-13 /home/oracle/app/oracle/oradata/orcl/example01.dbf
+  6       Full 14895728   02-JUL-13 /home/oracle/app/oracle/oradata/orcl/APEX_1930613455248703.dbf
+  7       Full 14895728   02-JUL-13 /home/oracle/app/oracle/oradata/orcl/APEX_2041602962184952.dbf
+  8       Full 14895728   02-JUL-13 /home/oracle/app/oracle/oradata/orcl/APEX_2610402357158758.dbf
+  9       Full 14895728   02-JUL-13 /home/oracle/app/oracle/oradata/orcl/APEX_2611417663389985.dbf
+  10      Full 14895728   02-JUL-13 /home/oracle/app/oracle/oradata/orcl/APEX_2614203650434107.dbf
+
+BS Key  Size       Device Type Elapsed Time Completion Time
+------- ---------- ----------- ------------ ---------------
+7       159.47M    DISK        00:00:36     02-JUL-13      
+        BP Key: 7   Status: AVAILABLE  Compressed: NO  Tag: TAG20130702T074031
+        Piece Name: /home/oracle/app/oracle/flash_recovery_area/ORCL/backupset/2013_07_02/o1_mf_annnn_TAG20130702T074031_8x5sm0v9_.bkp
+
+  List of Archived Logs in backup set 7
+  Thrd Seq     Low SCN    Low Time  Next SCN   Next Time
+  ---- ------- ---------- --------- ---------- ---------
+  1    642     14895628   02-JUL-13 14899310   02-JUL-13
+  1    643     14899310   02-JUL-13 14899761   02-JUL-13
+  1    644     14899761   02-JUL-13 14900207   02-JUL-13
+  1    645     14900207   02-JUL-13 14901712   02-JUL-13
+
+RMAN> shutdown immediate;
+
+database dismounted
+Oracle instance shut down
+
+
+[oracle@localhost orcl]$ rman target /
+
+Recovery Manager: Release 11.2.0.2.0 - Production on Fri Jul 5 06:23:31 2013
+
+Copyright (c) 1982, 2009, Oracle and/or its affiliates.  All rights reserved.
+
+connected to target database (not started)
+
+RMAN> SET DBID 1229390655
+
+executing command: SET DBID
+
+RMAN> STARTUP FORCE NOMOUNT;
+
+Oracle instance started
+
+Total System Global Area     456146944 bytes
+
+Fixed Size                     1344840 bytes
+Variable Size                381684408 bytes
+Database Buffers              67108864 bytes
+Redo Buffers                   6008832 bytes
+
+RMAN> RESTORE CONTROLFILE FROM AUTOBACKUP; 
+
+Starting restore at 05-JUL-13
+using target database control file instead of recovery catalog
+allocated channel: ORA_DISK_1
+channel ORA_DISK_1: SID=19 device type=DISK
+
+recovery area destination: /home/oracle/app/oracle/flash_recovery_area
+database name (or database unique name) used for search: ORCL
+channel ORA_DISK_1: AUTOBACKUP /home/oracle/app/oracle/flash_recovery_area/ORCL/autobackup/2013_07_02/o1_mf_s_819704479_8x5snl2l_.bkp found in the recovery area
+channel ORA_DISK_1: looking for AUTOBACKUP on day: 20130705
+channel ORA_DISK_1: looking for AUTOBACKUP on day: 20130704
+channel ORA_DISK_1: looking for AUTOBACKUP on day: 20130703
+channel ORA_DISK_1: looking for AUTOBACKUP on day: 20130702
+channel ORA_DISK_1: restoring control file from AUTOBACKUP /home/oracle/app/oracle/flash_recovery_area/ORCL/autobackup/2013_07_02/o1_mf_s_819704479_8x5snl2l_.bkp
+channel ORA_DISK_1: control file restore from AUTOBACKUP complete
+output file name=/home/oracle/app/oracle/oradata/orcl/control01.ctl
+output file name=/home/oracle/app/oracle/flash_recovery_area/orcl/control02.ctl
+Finished restore at 05-JUL-13
+
+RMAN> ALTER DATABASE MOUNT; 
+
+database mounted
+released channel: ORA_DISK_1
+
+RMAN> RESTORE DATABASE PREVIEW;
+
+Starting restore at 05-JUL-13
+Starting implicit crosscheck backup at 05-JUL-13
+allocated channel: ORA_DISK_1
+channel ORA_DISK_1: SID=19 device type=DISK
+Crosschecked 3 objects
+Finished implicit crosscheck backup at 05-JUL-13
+
+Starting implicit crosscheck copy at 05-JUL-13
+using channel ORA_DISK_1
+Finished implicit crosscheck copy at 05-JUL-13
+
+searching for all files in the recovery area
+cataloging files...
+cataloging done
+
+List of Cataloged Files
+=======================
+File Name: /home/oracle/app/oracle/flash_recovery_area/ORCL/autobackup/2013_07_02/o1_mf_s_819704479_8x5snl2l_.bkp
+
+using channel ORA_DISK_1
+
+
+List of Backup Sets
+===================
+
+
+BS Key  Type LV Size       Device Type Elapsed Time Completion Time
+------- ---- -- ---------- ----------- ------------ ---------------
+6       Full    2.07G      DISK        00:10:16     02-JUL-13      
+        BP Key: 6   Status: AVAILABLE  Compressed: NO  Tag: TAG20130702T072956
+        Piece Name: /home/oracle/app/oracle/flash_recovery_area/ORCL/backupset/2013_07_02/o1_mf_nnndf_TAG20130702T072956_8x5rz7lx_.bkp
+  List of Datafiles in backup set 6
+  File LV Type Ckp SCN    Ckp Time  Name
+  ---- -- ---- ---------- --------- ----
+  1       Full 14895728   02-JUL-13 /home/oracle/app/oracle/oradata/orcl/system01.dbf
+  2       Full 14895728   02-JUL-13 /home/oracle/app/oracle/oradata/orcl/sysaux01.dbf
+  3       Full 14895728   02-JUL-13 /home/oracle/app/oracle/oradata/orcl/undotbs01.dbf
+  4       Full 14895728   02-JUL-13 /home/oracle/app/oracle/oradata/orcl/users01.dbf
+  5       Full 14895728   02-JUL-13 /home/oracle/app/oracle/oradata/orcl/example01.dbf
+  6       Full 14895728   02-JUL-13 /home/oracle/app/oracle/oradata/orcl/APEX_1930613455248703.dbf
+  7       Full 14895728   02-JUL-13 /home/oracle/app/oracle/oradata/orcl/APEX_2041602962184952.dbf
+  8       Full 14895728   02-JUL-13 /home/oracle/app/oracle/oradata/orcl/APEX_2610402357158758.dbf
+  9       Full 14895728   02-JUL-13 /home/oracle/app/oracle/oradata/orcl/APEX_2611417663389985.dbf
+  10      Full 14895728   02-JUL-13 /home/oracle/app/oracle/oradata/orcl/APEX_2614203650434107.dbf
+
+
+List of Backup Sets
+===================
+
+
+BS Key  Size       Device Type Elapsed Time Completion Time
+------- ---------- ----------- ------------ ---------------
+7       159.47M    DISK        00:00:36     02-JUL-13      
+        BP Key: 7   Status: AVAILABLE  Compressed: NO  Tag: TAG20130702T074031
+        Piece Name: /home/oracle/app/oracle/flash_recovery_area/ORCL/backupset/2013_07_02/o1_mf_annnn_TAG20130702T074031_8x5sm0v9_.bkp
+
+  List of Archived Logs in backup set 7
+  Thrd Seq     Low SCN    Low Time  Next SCN   Next Time
+  ---- ------- ---------- --------- ---------- ---------
+  1    642     14895628   02-JUL-13 14899310   02-JUL-13
+  1    643     14899310   02-JUL-13 14899761   02-JUL-13
+  1    644     14899761   02-JUL-13 14900207   02-JUL-13
+List of Archived Log Copies for database with db_unique_name ORCL
+=====================================================================
+
+Key     Thrd Seq     S Low Time 
+------- ---- ------- - ---------
+32      1    645     A 02-JUL-13
+        Name: /home/oracle/app/oracle/flash_recovery_area/ORCL/archivelog/2013_07_02/o1_mf_1_645_8x5slps3_.arc
+
+Media recovery start SCN is 14895728
+Recovery must be done beyond SCN 14900309 to clear datafile fuzziness
+Finished restore at 05-JUL-13
+
+RMAN> RESTORE DATABASE;
+
+Starting restore at 05-JUL-13
+using channel ORA_DISK_1
+
+skipping datafile 6; already restored to file /home/oracle/app/oracle/oradata/orcl/APEX_1930613455248703.dbf
+skipping datafile 7; already restored to file /home/oracle/app/oracle/oradata/orcl/APEX_2041602962184952.dbf
+skipping datafile 8; already restored to file /home/oracle/app/oracle/oradata/orcl/APEX_2610402357158758.dbf
+skipping datafile 9; already restored to file /home/oracle/app/oracle/oradata/orcl/APEX_2611417663389985.dbf
+skipping datafile 10; already restored to file /home/oracle/app/oracle/oradata/orcl/APEX_2614203650434107.dbf
+channel ORA_DISK_1: starting datafile backup set restore
+channel ORA_DISK_1: specifying datafile(s) to restore from backup set
+channel ORA_DISK_1: restoring datafile 00001 to /home/oracle/app/oracle/oradata/orcl/system01.dbf
+channel ORA_DISK_1: restoring datafile 00002 to /home/oracle/app/oracle/oradata/orcl/sysaux01.dbf
+channel ORA_DISK_1: restoring datafile 00003 to /home/oracle/app/oracle/oradata/orcl/undotbs01.dbf
+channel ORA_DISK_1: restoring datafile 00004 to /home/oracle/app/oracle/oradata/orcl/users01.dbf
+channel ORA_DISK_1: restoring datafile 00005 to /home/oracle/app/oracle/oradata/orcl/example01.dbf
+channel ORA_DISK_1: reading from backup piece /home/oracle/app/oracle/flash_recovery_area/ORCL/backupset/2013_07_02/o1_mf_nnndf_TAG20130702T072956_8x5rz7lx_.bkp
+channel ORA_DISK_1: piece handle=/home/oracle/app/oracle/flash_recovery_area/ORCL/backupset/2013_07_02/o1_mf_nnndf_TAG20130702T072956_8x5rz7lx_.bkp tag=TAG20130702T072956
+channel ORA_DISK_1: restored backup piece 1
+channel ORA_DISK_1: restore complete, elapsed time: 00:14:18
+Finished restore at 05-JUL-13
+
+
+RMAN> recover database;
+
+Starting recover at 05-JUL-13
+using channel ORA_DISK_1
+
+starting media recovery
+
+archived log for thread 1 with sequence 645 is already on disk as file /home/oracle/app/oracle/flash_recovery_area/ORCL/archivelog/2013_07_02/o1_mf_1_645_8x5slps3_.arc
+channel ORA_DISK_1: starting archived log restore to default destination
+channel ORA_DISK_1: restoring archived log
+archived log thread=1 sequence=642
+channel ORA_DISK_1: restoring archived log
+archived log thread=1 sequence=643
+channel ORA_DISK_1: restoring archived log
+archived log thread=1 sequence=644
+channel ORA_DISK_1: reading from backup piece /home/oracle/app/oracle/flash_recovery_area/ORCL/backupset/2013_07_02/o1_mf_annnn_TAG20130702T074031_8x5sm0v9_.bkp
+channel ORA_DISK_1: piece handle=/home/oracle/app/oracle/flash_recovery_area/ORCL/backupset/2013_07_02/o1_mf_annnn_TAG20130702T074031_8x5sm0v9_.bkp tag=TAG20130702T074031
+channel ORA_DISK_1: restored backup piece 1
+channel ORA_DISK_1: restore complete, elapsed time: 00:00:25
+archived log file name=/home/oracle/app/oracle/flash_recovery_area/ORCL/archivelog/2013_07_05/o1_mf_1_642_8xg51b54_.arc thread=1 sequence=642
+channel default: deleting archived log(s)
+archived log file name=/home/oracle/app/oracle/flash_recovery_area/ORCL/archivelog/2013_07_05/o1_mf_1_642_8xg51b54_.arc RECID=33 STAMP=819978320
+archived log file name=/home/oracle/app/oracle/flash_recovery_area/ORCL/archivelog/2013_07_05/o1_mf_1_643_8xg519th_.arc thread=1 sequence=643
+channel default: deleting archived log(s)
+archived log file name=/home/oracle/app/oracle/flash_recovery_area/ORCL/archivelog/2013_07_05/o1_mf_1_643_8xg519th_.arc RECID=35 STAMP=819978321
+archived log file name=/home/oracle/app/oracle/flash_recovery_area/ORCL/archivelog/2013_07_05/o1_mf_1_644_8xg51b17_.arc thread=1 sequence=644
+channel default: deleting archived log(s)
+archived log file name=/home/oracle/app/oracle/flash_recovery_area/ORCL/archivelog/2013_07_05/o1_mf_1_644_8xg51b17_.arc RECID=34 STAMP=819978321
+archived log file name=/home/oracle/app/oracle/flash_recovery_area/ORCL/archivelog/2013_07_02/o1_mf_1_645_8x5slps3_.arc thread=1 sequence=645
+unable to find archived log
+archived log thread=1 sequence=646
+RMAN-00571: ===========================================================
+RMAN-00569: =============== ERROR MESSAGE STACK FOLLOWS ===============
+RMAN-00571: ===========================================================
+RMAN-03002: failure of recover command at 07/05/2013 11:46:22
+RMAN-06054: media recovery requesting unknown archived log for thread 1 with sequence 646 and starting SCN of 14901712
+
+RMAN> recover database until sequence=646
+2> ;
+
+Starting recover at 05-JUL-13
+using channel ORA_DISK_1
+
+starting media recovery
+media recovery complete, elapsed time: 00:00:00
+
+Finished recover at 05-JUL-13
+
+RMAN> shutdown
+
+database dismounted
+Oracle instance shut down
+
+
+
+RMAN> exit  
+
+
+Recovery Manager complete.
+[oracle@localhost orcl]$ export ORACLE_SID=orcl
+[oracle@localhost orcl]$ sqlplus /nolog
+
+SQL*Plus: Release 11.2.0.2.0 Production on Fri Jul 5 11:52:18 2013
+
+Copyright (c) 1982, 2010, Oracle.  All rights reserved.
+
+SQL> conn /as sysdba
+Connected to an idle instance.
+SQL> startup
+ORACLE instance started.
+
+Total System Global Area  456146944 bytes
+Fixed Size                  1344840 bytes
+Variable Size             381684408 bytes
+Database Buffers           67108864 bytes
+Redo Buffers                6008832 bytes
+Database mounted.
+ORA-01589: must use RESETLOGS or NORESETLOGS option for database open
+
+
+SQL> shutdown
+ORA-01109: database not open
+
+
+Database dismounted.
+ORACLE instance shut down.
+
+SQL> ALTER DATABASE MOUNT; 
+
+Database altered.
+
+SQL>  ALTER DATABASE OPEN RESETLOGS; 
+
+Database altered.
+
+SQL> shutdown immediate;
+Database closed.
+Database dismounted.
+ORACLE instance shut down.
+SQL> startup
+ORACLE instance started.
+
+Total System Global Area  456146944 bytes
+Fixed Size                  1344840 bytes
+Variable Size             381684408 bytes
+Database Buffers           67108864 bytes
+Redo Buffers                6008832 bytes
+Database mounted.
+Database opened.
+SQL> 
+

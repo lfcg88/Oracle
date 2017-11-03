@@ -1,0 +1,4 @@
+Recuperação de Blocos
+consultar a V$DATABASE_BLOCK_CORRUPTION
+Comando "RMAN recover datafile XX block YY"
+Comando "RMAN recover corruption list" permite recuperar todos os blocos presentes na lista de V$DATABASE_BLOCK_CORRUPTION

@@ -1,0 +1,76 @@
+SQL> select sum(value) from v$sga;
+
+
+SUM(VALUE)
+----------
+2204696576
+
+SQL> SQL> select sga_size from v$sga_target_advice where sga_size_factor=1;
+
+  SGA_SIZE
+----------
+      1264
+
+SQL> select value from v$pgastat where name like 'total%alloc%';
+
+     VALUE
+----------
+ 467040256
+
+SQL>  with data
+  2     as
+  3     (
+  4      select decode( grouping( pool ), 1, 'total:', pool ) "Pool",
+  5             sum(bytes) bytes
+  6        from (select nvl(pool,'*'||name) pool, bytes from v$sgastat )
+  7       group by rollup (pool)
+  8    )
+  9      select "Pool", bytes, round(bytes/1024/1024) mbytes
+ 10       from data
+ 11      union all
+ 12     select 'PGA target', v-bytes, round((v-bytes)/1024/1024)
+ 13       from data, (select to_number(value) v
+ 14                    from v$parameter
+ 15                                where name = 'memory_target')
+ 16     where "Pool" = 'total:'
+ 17  /
+
+Pool                             BYTES     MBYTES
+--------------------------- ---------- ----------
+*buffer_cache                150994944        144
+*fixed_sga                     2228360          2
+*log_buffer                    4648960          4
+java pool                     16777216         16
+large pool                   201326592        192
+shared pool                  956301520        912
+streams pool                  16777216         16
+total:                      1349054808       1287
+PGA target                   865537704        825
+
+
+==============================================
+
+
+set linesize 120
+set pagesize 100
+
+
+column Parameter format a20
+
+column Session_Value formta a20
+
+column Instance_Value format a30
+
+
+select a.ksppinm  "Parameter",
+       b.ksppstvl "Session_Value",
+       c.ksppstvl "Instance_Value",
+       a.ksppdesc "Description"
+from   x$ksppi a, x$ksppcv b, x$ksppsv c
+where  a.indx = b.indx and a.indx = c.indx
+and    substr(a.ksppinm,1,2)='__'
+and    a.ksppinm like '%size'
+order  by a.ksppinm;
+
+
+

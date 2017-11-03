@@ -1,0 +1,14 @@
+
+Connected to: Oracle9i Enterprise Edition Release 9.2.0.4.0 - Production
+With the Partitioning, OLAP and Oracle Data Mining options
+JServer Release 9.2.0.4.0 - Production
+Export done in WE8ISO8859P1 character set and AL16UTF16 NCHAR character set
+. exporting pre-schema procedural objects and actions
+. exporting foreign function library names for user RMAN 
+. exporting PUBLIC type synonyms
+. exporting private type synonyms
+. exporting object type definitions for user RMAN 
+EXP-00008: ORACLE error 942 encountered
+ORA-00942: table or view does not exist
+EXP-00024: Export views not installed, please notify your DBA
+EXP-00000: Export terminated unsuccessfully

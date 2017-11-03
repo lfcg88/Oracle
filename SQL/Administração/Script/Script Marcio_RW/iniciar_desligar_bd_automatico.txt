@@ -1,0 +1,68 @@
+Os passos a seguir são executados com o usuario root
+
+1- Acessar o diretorio /etc e editar o arquivo oratab através do vi
+
+	Procedimentos:
+	
+	cd /etc
+	
+	vi oratab
+
+    Exemplo <nome_instancia>:<ORACLE_HOME>:<N/Y> Trocar o N pelo Y para subir e descer o banco automaticamente.
+
+    teste:/u01/app/oracle/product/10.2.0/db_1:N
+
+    teste:/u01/app/oracle/product/10.2.0/db_1:Y
+
+2- Montar o script dbora no diretório /etc/init.d 
+	
+	Procedimento
+	
+	cd etc/init.d
+	
+	vi dbora
+	
+#export ORACLE_HOME=/u01/app/oracle/product/11.2.0/db_1
+#export O_DBSTART="$ORACLE_HOME/bin/dbstart"
+#export O_DBSHUT="$ORACLE_HOME/bin/dbshut"
+#export O_LSNR_START="$ORACLE_HOME/bin/lsnrctl start"
+#export O_LSNR_STOP="$ORACLE_HOME/bin/lsnrctl stop"
+
+case "$1" in
+
+        start)
+
+                su - oracle -c /u01/app/oracle/product/11.2.0/db_1/bin/dbstart /u01/app/oracle/product/11.2.0/db_1;
+                su - oracle -c "/u01/app/oracle/product/11.2.0/db_1/bin/lsnrctl start"
+
+        ;;
+
+        stop)
+
+                su - oracle -c /u01/app/oracle/product/11.2.0/db_1/bin/dbshut /u01/app/oracle/product/11.2.0/db_1;
+                su - oracle -c "/u01/app/oracle/product/11.2.0/db_1/bin/lsnrctl stop"
+
+        ;;
+
+  *)
+
+esac
+
+
+Após criar o arquivo trocar o modo de leitura do mesmo
+
+	chmod 750 dbora
+
+
+3- Criar links simbolicos (para start e shutdown das instâncias) no diretório /etc/rc5.d
+
+	--ln -s  <diretorio> <nome_link>--
+	
+	Procedimentos:
+	
+	cd /etc/rc5.d
+	 
+	ln -s ../init.d/dbora S99dbora
+	
+	ln -s ../init.d/dbora K99dbora
+	

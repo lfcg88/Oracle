@@ -1,0 +1,15 @@
+1) Financeiro (FS89PRD)
+
+SYSADM - fs#89prd
+VP1 - vp1#fs89prd
+PS - ps#fs89prd
+PSEM - psem#fs89prd
+PEOPLE - peop1e
+
+2) RH (HCM9PRD)
+
+SYSADM - hcm#9prd
+VP1 - vp1#hcm9prd
+PS - ps#hcm9prd
+PSEM - psem#hcm9prd
+PEOPLE - peop1e

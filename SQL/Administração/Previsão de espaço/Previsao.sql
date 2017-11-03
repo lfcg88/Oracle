@@ -1,0 +1,34 @@
+SELECT Tablespace_name as "Tablespace",T.Owner AS "Owner",T.TABLE_NAME as "Tabela",IOT_TYPE ,0 as "Linhas",Colunas as "Colunas",Bytes as "Bytes"
+  from
+(SELECT   OWNER,table_name, count(*) as Colunas,
+          sum (CASE WHEN DATA_TYPE IN('VARCHAR2','CHAR') and DATA_LENGTH < 20 THEN DATA_LENGTH
+                    WHEN DATA_TYPE IN('VARCHAR2','CHAR') and DATA_LENGTH <= 60 THEN CEIL(DATA_LENGTH*.7)
+                    WHEN DATA_TYPE IN('VARCHAR2','CHAR') and DATA_LENGTH > 60 THEN CEIL(DATA_LENGTH*.5)
+                    WHEN DATA_TYPE = 'NUMBER' THEN CEIL(GREATEST(DATA_PRECISION/2,2))
+                    WHEN DATA_TYPE = 'BLOB' OR DATA_TYPE = 'CLOB' THEN 0
+                    ELSE DATA_LENGTH END) AS Bytes
+    FROM dba_tab_columns
+    where owner in ('EDWC','DMAT','DMCO')
+    GROUP BY OWNER,TABLE_NAME) TC,DBA_TABLES T
+    where T.OWNER = TC.OWNER AND T.TABLE_NAME = TC.TABLE_NAME
+ORDER BY TABLESPACE_NAME,T.OWNER,T.TABLE_NAME;
+
+
+SELECT Tablespace_name as "Tablespace",I.OWNER as "Owner",I.TABLE_NAME as "Tabela",I.INDEX_NAME AS "Índice",0 as "Linhas",Colunas as "Colunas",Bytes as "Bytes"
+FROM
+(SELECT   INDEX_OWNER ,TABLE_NAME,INDEX_NAME,0 as "Linhas",count(*) as Colunas,SUM(COLUMN_LENGTH) as Bytes
+    FROM DBA_IND_COLUMNS
+    WHERE TABLE_OWNER IN ('EDWC','DMAT','DMCO')
+    GROUP BY INDEX_OWNER,TABLE_NAME,INDEX_NAME) CI,DBA_INDEXES I
+    where CI.INDEX_OWNER = I.OWNER AND CI.TABLE_NAME = I.TABLE_NAME AND CI.INDEX_NAME = I.INDEX_NAME
+ORDER BY I.OWNER,I.TABLESPACE_NAME,I.TABLE_NAME,I.INDEX_NAME;
+
+
+SELECT OWNER,TABLE_NAME
+      FROM DBA_TAB_COLUMNS
+      WHERE DATA_TYPE IN ('BLOB','CLOB','RAW','LONG','LONG RAW') and
+            owner in ('EDWC','DMAT','DMCO')
+      GROUP BY OWNER,TABLE_NAME;
+
+
+

@@ -1,0 +1,10 @@
+select d.ctime, a.xidusn, a.xidslot, a.xidsqn,
+       c.sid, c.serial#, c.osuser, c.terminal, b.owner, b.object_name, b.object_type, 
+       d.lmode, d.request, d.block,d.ctime,
+       oracle_username
+from  v$locked_object a, all_objects b, v$session c, v$lock d --, v$lock d_presa
+where a.object_id   = b.object_id  and
+      a.session_id  = c.sid        and
+	  a.session_id  = d.sid        and 
+	  a.object_id   = d.id1
+order by d.ctime desc, b.owner asc, b.object_name asc;

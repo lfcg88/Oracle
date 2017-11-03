@@ -1,0 +1,127 @@
+REM
+REM DBAToolZ NOTE:
+REM     This script was obtained from DBAToolZ.com
+REM     It's configured to work with SQL Directory (SQLDIR).
+REM     SQLDIR is a utility that allows easy organization and
+REM     execution of SQL*Plus scripts using user-friendly menu.
+REM     Visit DBAToolZ.com for more details and free SQL scripts.
+REM
+REM 
+REM File:
+REM     c_clone_grants.sql
+REM
+REM <SQLDIR_GRP>REVERSE MOST</SQLDIR_GRP>
+REM
+REM SQLDIR Group Descriptions:
+REM	APPS		-	APPS General
+REM	APPS_INST	-	APPS Installation
+REM	APPS_CONC_PROG	-	APPS Concurrent Programs
+REM	APPS_CONC_MAN	-	APPS Concurrent Managers
+REM	APPS_ADMIN	-	APPS Administration
+REM	DBF		- 	Data Files
+REM	TABSP		- 	Tablespace
+REM	UTIL		- 	Utility
+REM	INDX		- 	Index
+REM	LOG		- 	Redo Log
+REM	RBS		- 	Rollback
+REM	MAINT		- 	Maintenance
+REM	REVERSE		- 	Reverse Engineering
+REM	SGA		- 	SGA Maintenance
+REM	TAB		- 	Table
+REM	USER		- 	User Management
+REM	STATS		- 	Statistics
+REM	STORAGE		- 	Storage Management
+REM	INIT		- 	Database Init Parameters
+REM	LATCH		- 	Latches
+REM	LOCK		- 	Locks
+REM	SEGMENT		- 	Segment Management
+REM	BACKUP		- 	Backup Management
+REM	PQ		- 	Parallel Query
+REM	TRACE		- 	SQL Tracing Tuning
+REM	PART		- 	Partitioning
+REM	MOST		- 	Favorite Scripts
+REM 
+REM Author:
+REM	Vitaliy Mogilevskiy vit100gain@earthlink.net
+REM
+REM
+REM 
+REM Purpose:
+REM     <SQLDIR_TXT>
+REM	This script will "clone" SYS, OBJECT and ROLE level privs for any schema
+REM	by creating a SQL script that can be used to copy these privs to another
+REM	schema within the same database or a different database.
+REM     </SQLDIR_TXT>
+REM
+REM Usage:
+REM     c_clone_grants.sql
+REM 
+REM Example:
+REM     c_clone_grants.sql
+REM
+REM
+REM History:
+REM	03-18-2002	Vitaliy Mogilevskiy	Created
+REM
+REM
+
+
+set lines 300
+col l format a300
+col grantor format a300
+set trims on
+set pages 0
+break on grantor
+
+accept 1 prompt "Enter schema name you need to copy grants from: "
+
+set verify off
+
+var original_grantee VARCHAR2(500)
+exec SELECT '&&1' INTO :original_grantee FROM DUAL ;
+
+spool grants.&&1..run
+set scan off
+set term off
+
+prompt set echo on
+prompt set feed on
+prompt set verify on
+prompt undefine database_name
+prompt undefine new_grantee
+prompt connect sys@&&database_name
+
+-- SYS level privs
+--
+select 'grant '||PRIVILEGE||' to &&new_grantee '||DECODE(ADMIN_OPTION,'YES','with admin option')||';'  l
+from DBA_SYS_PRIVS 
+where GRANTEE = :original_grantee;
+
+-- granted ROLES
+--
+select 'grant '||GRANTED_ROLE||' to &&new_grantee '||DECODE(ADMIN_OPTION,'YES','with admin option')||';'  l
+from DBA_ROLE_PRIVS 
+where GRANTEE = :original_grantee;
+
+
+-- TAB/VIEW/PROC level privs
+-- granted directly
+-- we have to connect as grantor
+-- to be able to give these grants
+--
+select 'connect '||GRANTOR||'@&&database_name ' grantor
+,      'grant '||PRIVILEGE||' on '||OWNER||'.'||TABLE_NAME||' to &&new_grantee '||DECODE(GRANTABLE,'YES','WITH GRANT OPTION')||';' l
+from DBA_TAB_PRIVS 
+where GRANTEE = :original_grantee
+order by GRANTOR;
+
+prompt undefine database_name
+prompt undefine new_grantee
+
+spool off
+set verify on
+set scan on
+set term on
+prompt Created grants.&&1..run please review before using it ...
+
+

@@ -1,0 +1,44 @@
+SELECT SEGMENT_NAME,SEGMENT_TYPE,TABLESPACE_NAME FROM DBA_SEGMENTS;
+
+Para você dar continuidade ao trabalho de realocação dos objetos nas suas devidas Tablespaces,
+ seguem abaixo os comandos. Temos que evitar de deixar usuários com a Tablespace Default sendo
+ a USERS ou SYSTEM.
+
+-- Movimentação de Tabelas
+
+select  'ALTER TABLE '||a.OWNER||'.'||a.object_name||' MOVE TABLESPACE TBS_DESTINO;' 
+from    dba_objects a, dba_segments b 
+where A.OBJECT_NAME=B.segment_name
+AND object_type = 'TABLE'
+AND b.tablespace_name = 'TBS_ORIGEM'
+
+** Ao executar o comando acima, todos os índices referentes as tabelas alteradas ficarão com o status
+ de 'INVALID', sendo necessário fazer um reduild dos mesmos(comando abaixo).
+
+select  'ALTER INDEX '||OWNER||'.'||INDEX_NAME||' REBUILD;' 
+from    dba_indexes
+where STATUS = 'INVALID'
+
+
+-- Movimentação de Indices 
+
+select  'ALTER INDEX '||a.OWNER||'.'||a.object_name||' REBUILD TABLESPACE STAGE;' 
+from    dba_objects a, dba_segments b 
+where A.OBJECT_NAME=B.segment_name
+AND object_type = 'INDEX'
+AND b.tablespace_name = 'PSINDEX'
+
+select  * 
+from    dba_objects a, dba_segments b 
+where A.OBJECT_NAME=B.segment_name
+AND b.tablespace_name = 'TS_SIM'
+
+select  * 
+from    dba_objects a, dba_segments b 
+where A.OBJECT_NAME=B.segment_name
+AND b.tablespace_name = 'NFE_IDX'
+
+select  * 
+from    dba_objects a, dba_segments b 
+where A.OBJECT_NAME=B.segment_name
+AND a.owner = 'NFE'

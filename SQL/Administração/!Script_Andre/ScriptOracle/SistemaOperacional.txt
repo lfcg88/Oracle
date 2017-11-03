@@ -1,0 +1,71 @@
+#*****************************************************************************
+# Mostar parametros do kernel (Livro: ORACLE9I Unix Admnistration Handbook pag. 76
+#*****************************************************************************
+
+a) HP-UX
+*********
+
+- antes da versao 11
+lsdev
+
+- versao 11
+kmtune
+
+b) AIX-UNIX
+
+llsdev -C
+
+lsattr -E1 sys0
+
+
+#*****************************************************************************
+# interpretando o vmstat ( Livro: ORACLE9I Unix Admnistration Handbook pag 110
+#*****************************************************************************
+
+a coluna r (run queue): mostra o numero de tarefas executando e eseprando por CPU,Qaundo este numero superar
+a quantidade de cpu, entaão estara ocorendo um garglo, deste modo algumas
+taerfas estarão em wait.
+
+#*****************************************************************************
+# volume group geral ( Livro: ORACLE9I Unix Admnistration Handbook pag 146 )
+#*****************************************************************************
+
+lsvg -o
+
+#*****************************************************************************
+# volume group  detalhado ( Livro: ORACLE9I Unix Admnistration Handbook pag 146 )
+#*****************************************************************************
+
+lsvg -l  <nome volume grupo>
+
+lsvg -o |  xargs lsvg -l
+
+
+#*****************************************************************************
+# mostra os mount point mapeado para um disco ( Livro: ORACLE9I Unix Admnistration Handbook pag 148 )
+#*****************************************************************************
+
+a) AIX
+
+lspv -l <disco>
+
+#*****************************************************************************
+copia um cd para o dh
+#*****************************************************************************
+
+
+
+comando para copiar  conteudo de um CD para um Diretorio
+
+
+O comando é para ser dado do cdrom "/media/cdrecorder"
+
+O diretorio desteino é /u01/cd3
+
+ 
+
+tar -cvf - ./* | ( cd /u01/cd4 ; tar -xvf - )
+
+
+
+ 

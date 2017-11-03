@@ -1,0 +1,30 @@
+
+
+set serveroutput on size 1000000
+
+Declare
+--
+Cursor c_endereco  IS
+  select distinct ADDRESS,HASH_VALUE
+  from v$sqltext
+  where 
+-- SQL_TEXT like '%DISTINCT%a.i_recuper%' and 
+   SQL_TEXT like '%147331%';
+--
+Cursor c_sql (paddress raw, phash_value number) Is
+  select sql_text
+  from v$sqltext
+--  where ADDRESS='A07FCCB4' and HASH_VALUE='3816094125'
+ where ADDRESS=paddress and HASH_VALUE=phash_value
+  order by PIECE;
+Begin
+--
+   For r_endereco in c_endereco  Loop
+     For r_sql in c_sql(r_endereco.address,r_endereco.hash_value)  Loop
+        Dbms_Output.Put_Line(r_sql.sql_text);
+     End Loop;
+         Dbms_Output.Put_Line('-----------------------------------------------');
+   End Loop;
+End;
+
+

@@ -1,0 +1,7 @@
+
+SQL*Plus: Release 9.2.0.1.0 - Production on Qua Dez 15 10:37:47 2010
+
+Copyright (c) 1982, 2002, Oracle Corporation.  All rights reserved.
+
+
+Conectado.

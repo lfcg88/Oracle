@@ -1,0 +1,2 @@
+
+more /etc/hosts

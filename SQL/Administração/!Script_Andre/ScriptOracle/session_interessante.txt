@@ -1,0 +1,104 @@
+- Get the sid from the pid or vice versa: 
+
+SELECT s.sid, p.spid 
+FROM v$session s, v$process p 
+WHERE s.paddr = p.addr 
+AND ... < p.spid = <os pid> or perhaps s.sid = <sid from v$session> > 
+
+- What SQL statement is being executed? 
+
+SELECT s.sid, s.status, q.sql_text 
+FROM v$session s, v$sqltext q 
+WHERE s.sql_hash_value = q.hash_value 
+AND s.sql_address = q.address 
+AND s.sid = 273 
+order by q.piece; 
+
+-Get output from V$SESSION_WAIT 
+
+column sid format 990 
+column seq# format 99990 
+column wait_time heading 'WTime' format 99990 
+column event format a30 
+column p1 format 9999999990 
+column p2 format 9999999990 
+column p3 format 9990 
+select sid,event,seq#,p1,p2,p3,wait_time from V$session_wait 
+where sid=<SID> 
+order by sid; 
+
+
+*** It is needed to run this statement a few times to see if the wait events actually change 
+
+- What is LOCKWAIT column set to in V$SESSION? 
+
+SELECT lockwait 
+FROM v$session 
+WHERE sid = <sid>; 
+
+- If not null, who's holding what lock on which object? 
+
+col Username format A15 
+col Sid format 9990 heading SID 
+col Type format A4 
+col Lmode format 990 heading 'HELD' 
+col Request format 990 heading 'REQ' 
+col Id1 format 9999990 
+col Id2 format 9999990 
+select SN.Username, M.Sid, M.Type, 
+DECODE(M.Lmode, 0, 'None', 1, 'Null', 2, 'Row Share', 3, 'Row 
+Excl.', 4, 'Share', 5, 'S/Row Excl.', 6, 'Exclusive', 
+LTRIM(TO_CHAR(Lmode,'990'))) Lmode, 
+DECODE(M.Request, 0, 'None', 1, 'Null', 2, 'Row Share', 3, 'Row 
+Excl.', 4, 'Share', 5, 'S/Row Excl.', 6, 'Exclusive', 
+LTRIM(TO_CHAR(M.Request, '990'))) Request, 
+M.Id1, M.Id2 from V$SESSION SN, V$LOCK M 
+WHERE (SN.Sid = M.Sid and M.Request ! = 0) 
+or (SN.Sid = M.Sid and M.Request = 0 and Lmode != 4 and (id1, id2) 
+in (select S.Id1, S.Id2 from V$LOCK S where Request != 0 and S.Id1 
+= M.Id1 and S.Id2 = M.Id2) ) order by Id1, Id2, M.Request; 
+
+- What is LATCHWAIT column set to in V$PROCESS? 
+
+SELECT latchwait 
+FROM v$process 
+WHERE spid = <pid>; 
+- If not null, who's holding what latch? 
+column name format a32 heading 'LATCH NAME' 
+column pid heading 'HOLDER PID' 
+select c.name,a.addr,a.gets,a.misses,a.sleeps, 
+a.immediate_gets,a.immediate_misses,b.pid 
+from v$latch a, v$latchholder b, v$latchname c 
+where a.addr = b.laddr(+) and a.latch# = c.latch# 
+and c.name like '&latch_name%' order by a.latch#; 
+
+-- Did the lock holder or latch holder shut off his/her 
+-- terminal without logging off? This can leave a zombie shadow 
+--process holding the resource. Kill it with 
+
+"alter system kill session '<sid, serial# from v$session>'". 
+
+-- If on sqlnet 2.1 
+-- or above, try setting sqlnet.expire_time in the sqlnet.ora 
+-- on the server side. (For more info, see page A-16 of 
+-- "Understanding SQL*NET" v2.1). 
+
+- If session is not frozen but slow, get session-specific statistics: 
+
+SELECT s.sid, s.value, t.name 
+FROM v$sesstat s, v$statname t 
+WHERE s.statistic# = t.statistic# 
+AND s.sid = 273; 
+
+
+- If session is extremely slow or truly frozen, get session- specific wait info: 
+
+SELECT * 
+FROM v$session_wait 
+where sid = <sid>; 
+
+- repeat above query 3 times. 
+
+SPOOL OFF; 
+peat above query 3 times.              
+SPOOL OFF; 

@@ -1,0 +1,28 @@
+
+-- =======================================================================
+--Capitulo 3
+--
+--Informa quen esta utilizando o rollback e o que esta sendo feito
+--
+-- ========================================================================
+
+set pagesize 300
+
+set linesize 100
+
+column name         format a10   heading "Rollback"
+column username     format a10   heading "User"
+column sqltext      format a40   heading Text word_wrapped
+
+break on name,xacts,sid,serial#,username
+
+select a.name, b.xacts, c.sid, c.serial#, c.username, d.sql_text sqltext
+from v$rollname a, v$rollstat b, v$session c, v$sqltext d,
+v$transaction e
+where a.usn = b.usn
+and b.usn = e.xidusn
+and c.taddr = e.addr
+and c.sql_address = d.address
+and c.sql_hash_value = d.hash_value
+order by a.name, c.sid, d.piece;
+

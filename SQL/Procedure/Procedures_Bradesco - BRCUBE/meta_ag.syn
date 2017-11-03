@@ -1,0 +1,3 @@
+create or replace synonym SGPB_PROC.META_AG
+  for SGPB.META_AG;
+

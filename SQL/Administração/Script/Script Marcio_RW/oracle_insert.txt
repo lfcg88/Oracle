@@ -1,0 +1,1 @@
+insert into <esquema>.<tabela> (<campos>) values (<valores>);

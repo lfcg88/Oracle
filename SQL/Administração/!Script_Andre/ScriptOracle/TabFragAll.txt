@@ -1,0 +1,131 @@
+--
+--
+--
+create table fragtable123456756
+( owner           varchar2(40),
+  table_name      varchar2(40),
+  num_rows        number(8),
+  frag_block      number (8,3)
+);
+--
+---------------------------------------------------------------------------------------
+---------------------------------------------------------------------------------------
+-- Digite o <owner> 
+--  Digite <enter> para todos o esquemas
+-- Obs: para ter um resultado mais preciso deveria ser substituido os blocos ate marca d'agua
+--      e colocar os blocos que relamente tenha registros
+---------------------------------------------------------------------------------------
+----------------------------------------------------------------------------------------
+
+-- accept vowner prompt ' Owner =>  ';
+
+--
+--
+declare
+  cursor c_table(powner varchar2) is
+    select owner,table_name,num_rows,blocks,avg_row_len
+    from dba_tables
+    where owner not in ('SYS','SYSTEM') and owner = upper(powner);
+--
+    cursor c_table_all is
+    select owner,table_name,num_rows,blocks,avg_row_len
+    from dba_tables
+    where owner not in ('SYS','SYSTEM') 
+    and table_name <> 'ATTRIBUTES';
+--
+--%&vowner%' ) or ( lower(powner) like '%&vowner%' ));
+  cursor c_blok is
+    select value
+    from v$parameter
+    where name='db_block_size'; 
+  vblock number;
+--
+--
+vtotal_block  number(10);
+testeowner varchar2(30);
+testetable varchar2(30);
+--
+ function recupera_total_block(powner varchar2, ptable varchar2) return number
+is
+   l_cursor    int default dbms_sql.open_cursor;
+   l_status    int;
+   vsql varchar2(100);
+   vcount number;
+Begin
+ -- vsql := 'select count(distinct dbms_rowid.rowid_block_number(rowid)) from '||powner||'.'||ptable;
+  vsql := 'SELECT COUNT (DISTINCT SUBSTR(rowid,1,15))  from '||powner||'.'||ptable;
+--
+  dbms_sql.parse( l_cursor,vsql,dbms_sql.native );
+  DBMS_SQL.DEFINE_COLUMN(l_cursor, 1, vcount);
+  l_status := dbms_sql.execute( l_cursor );
+--
+  l_status :=DBMS_SQL.FETCH_ROWS(l_cursor);
+  DBMS_SQL.COLUMN_VALUE(l_cursor,1,vcount);
+--
+  dbms_sql.close_cursor( l_cursor );
+  return(vcount);
+End;
+--
+--
+ -- vpesquisa varchar2(40);
+--  
+begin
+    If not c_blok%ISOPEN then open c_blok; end if;
+    fetch c_blok into vblock;
+    if '&vowner' is not null then
+      For r_table in c_table('&vowner')  Loop
+        testeowner := r_table.owner;
+        testetable :=r_table.table_name;
+        vtotal_block := recupera_total_block(r_table.owner,r_table.table_name);
+        IF vtotal_block <> 0 THEN
+   --       Dbms_Output.Put_Line(r_table.owner||' --> '||r_table.table_name);
+   --     Else
+          insert into fragtable123456756 (owner,table_name,num_rows,frag_block)
+          values (r_table.owner,r_table.table_name,r_table.num_rows,(r_table.num_rows*r_table.avg_row_len)/(vtotal_block*vblock));
+        End If;	
+       commit;
+      End Loop;
+     -- commit;
+    Else
+       For r_table in c_table_all  Loop
+        vtotal_block := recupera_total_block(r_table.owner,r_table.table_name);
+        IF (vtotal_block) <> 0 THEN
+  --        Dbms_Output.Put_Line(r_table.owner||' --> '||r_table.table_name);
+  --      Else
+          insert into fragtable123456756 (owner,table_name,num_rows,frag_block)
+          values (r_table.owner,r_table.table_name,r_table.num_rows,(r_table.num_rows*r_table.avg_row_len)/(vtotal_block*vblock));
+        End If;	
+      commit;
+       End Loop;
+        -- commit;
+   End If;
+  EXCEPTION
+   WHEN OTHERS THEN
+       insert into fragtable123456756 (owner,table_name) values ('erro'||testeowner,testetable);
+       commit;
+--);
+ End;
+/
+--
+--
+column owner format a20
+column table_name format a30
+set pagesize 5000
+set linesize 100
+---------------------------------------------------------------------------------------
+---------------------------------------------------------------------------------------
+-- 1) Owner da tabela
+-- 2) Nome da tabela
+-- 3) Quantidade de linhas
+-- 4) Pct de uso do bloco (indica fragmentação de bloco -- valor < 50% pode ser problema
+---------------------------------------------------------------------------------------
+----------------------------------------------------------------------------------------
+spool c:\fragtable123.lst
+  select owner,table_name,num_rows,frag_block * 100 "Pct Used Bloco" from fragtable123456756
+  order by 4 asc;
+--ed c:\fragtable123.lst
+SPOOL OFF
+--
+--
+drop table fragtable123456756;
+

@@ -1,0 +1,7 @@
+The following are the steps to access the SQL Test Case Builder from the Support
+Workbench page:
+1. Click the Problem ID you are interested in to get to the problem details page.
+2. Click the Oracle Support tab.
+3. Click “Generate Additional Dumps and Test Cases.”
+4. On the “Additional Dumps and test Cases” page, click the icon in the Go to
+Task column to start the SQL Test Case Builder analysis.

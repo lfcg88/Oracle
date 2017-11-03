@@ -1,0 +1,72 @@
+
+ run { allocate channel t1 type disk format '/backup/rman/BKP_CF_%d_%t_%s.rman';
+backup current controlfile tag 'BKP_CF';
+release channel t1;
+}
+
+
+
+SQL> shutdown immediate;
+
+    ORA-01507: banco de dados não montado
+    Instância ORACLE desativada.
+
+SQL> exit
+
+    Desconectado de Oracle Database 10g Express Edition Release 10.2.0.1.0 – Production
+
+Depois de todo o processo, e ao deletar o CONTROL.DBF, CONTROL.CTL , tentei iniciar o banco de dados e apareceu a seguinte mensagem de erro, ORA-00205, onde não foi possível encontrar um controlfile para montar o banco de dados e posteriormente abrir aos usuários.
+
+Isso é comum quando se perde um controlfile, em ambiente corporativos o controlfile sempre estará multiplexado, ou seja, sempre terá uma cópia fiel dos controlfile na abertura do banco, porém, dependentdo do crash, o Oracle pode dizer que um controlfile está mais atualizado que o outro, e isso é um assunto para outro post. rs.
+
+Mas, vamos em frente, o que temos que fazer agora é apenas restaurar o controlfile que fizemos backup no início do post, aquele que foi gerado no caminho “c:\oracle\backup\rman”, e o processo de restauração também é bem fácil, observe a recuperação abaixo:
+
+C:\oracle\oradata\XE>rman target /
+
+    Gerenciador de Recuperação: Release 10.2.0.1.0 – Production on Sex Ago 22 13:36:05 2008
+    Copyright (c) 1982, 2005, Oracle. All rights reserved.
+    conectado ao banco de dados de destino (não iniciado)
+
+RMAN> startup nomount;
+
+    instância Oracle iniciada
+    Total da área Global do Sistema 146800640 bytes
+    Fixed Size 1286220 bytes
+    Variable Size 62918580 bytes
+    Database Buffers 79691776 bytes
+    Redo Buffers 2904064 bytes
+
+RMAN> restore controlfile from '/backup/rman/BKP_CF_ORCL_822650333_40.rman' ;
+
+    Iniciando restore em 22/08/08
+    usar o arquivo de controle do banco de dados de destino em vez do catálogo de recuperação
+    canal alocado: ORA_DISK_1
+    canal ORA_DISK_1: sid=36 devtype=DISK
+    canal ORA_DISK_1: restaurando arquivo de controle
+    canal ORA_DISK_1: restauração concluída, tempo decorrido: 00:00:03
+    nome do arquivo de saída=C:\ORACLE\ORADATA\XE\CONTROL.DBF
+    Finalizado restore em 22/08/08
+
+RMAN> alter database mount;
+
+    banco de dados montado
+    canal liberado: ORA_DISK_1
+
+RMAN> alter database open resetlogs;
+
+    banco de dados aberto.
+
+C:\oracle\oradata\XE>sqlplus "/ as sysdba"
+
+    SQL*Plus: Release 10.2.0.1.0 – Production on Sex Ago 22 13:38:15 2008
+    Copyright (c) 1982, 2005, Oracle. All rights reserved.
+    Conectado a:
+    Oracle Database 10g Express Edition Release 10.2.0.1.0 – Production
+
+
+
+PRONTO! Olhe no início do LOG que ao se conectar ao RMAN, peço para realizar a restauração do controlfile pelo arquivo gerado pelo backup, ou seja, do arquivo ‘c:\oracle\backup\rman\BKP_CF_XE_663427972_18.RMAN’, e assim sendo após a restauração com sucesso é só mandar abrir o banco de dados com a opção RESETLOGS (será gerado uma nova incarnação) e permitir o acesso novamente dos usuários.
+
+A ideia do post, vou comentar de maneira bem rápida e de fácil entendimento, como podemos realizar um backup e restore do controlfile de um banco de dados. Espero que tenham gostado.
+
+Abraços,

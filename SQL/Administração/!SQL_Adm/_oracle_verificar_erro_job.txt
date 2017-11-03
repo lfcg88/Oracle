@@ -1,0 +1,9 @@
+-- Verificar os jobs que estão rodando
+
+SELECT * FROM dba_scheduler_running_jobs
+
+-- QUERY PARA PEGAR O ERRO OCORRIDO COM O NOME DO JOB QUE FALHOU
+
+SELECT LOG_ID, JOB_NAME, JOB_SUBNAME, STATUS, ADDITIONAL_INFO
+FROM dba_scheduler_job_run_details
+WHERE STATUS = 'FAILED'

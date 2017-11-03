@@ -1,0 +1,4 @@
+select spid from v$session s,v$process p where s.paddr = p.ADDR 
+
+no servidor:
+orakill instance spid

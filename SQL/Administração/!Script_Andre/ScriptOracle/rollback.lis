@@ -1,0 +1,74 @@
+Enter value for 1: 
+
+GETS  - # of gets on the rollback segment header: 1017590                       
+WAITS - # of waits for the rollback segment header: 2                           
+The ratio of Rollback waits/gets is 0%                                          
+  If ratio is more than 1%, create more rollback segments                       
+                                                                                
+
+Roll                                      Hi    #    #                          
+Segm            %                   Opt  Wtr  Shr  Ext Avgsz    #    #   Wr   Av
+Name    Wait Wait Gets  Write   Mb   Mb   Mb  ink  end Activ  Ext  Trn  aps  Shr
+------ ----- ---- ----- ----- ---- ---- ---- ---- ---- ----- ---- ---- ---- ----
+SYSTEM     0    0  2109  13 k    4         4    0    0     0   69    0    0    0
+RBS01O     0    0  32 k 535 k    3    3    3    0    0 604 k    5    0   35    0
+RBS02O     0    0  35 k 644 k    3    3    3    0    0 647 k    5    0   41    0
+RBS03O     0    0  33 k 499 k    3    3    3    0    0 603 k    5    0   36    0
+RBS04O     0    0  32 k 452 k    3    3    3    0    0 623 k    5    0   37    0
+RBS05O     0    0  36 k 636 k    3    3    3    0    0 605 k    5    0   38    0
+RBS06O     0    0  34 k 494 k    3    3    3    0    0 604 k    5    0   37    0
+RBS07O     0    0  34 k 673 k    3    3    3    0    0 676 k    5    0   39    0
+RBS08O     0    0  34 k 712 k    3    3    3    0    0 814 k    5    0   41    0
+RBS09O     0    0  33 k 496 k    3    3    3    0    0 603 k    5    0   36    0
+RBS10O     0    0  34 k 533 k    3    3    3    0    0 637 k    5    0   38    0
+RBS01      0    0  34 k 602 k    4   10    4    0    0 959 k    4    0   22    0
+RBS02      0    0  32 k 575 k    8   10    8    0    0 107 k    8    0   23    0
+RBS03      0    0  33 k 754 k   10   10   10    0    0 108 k   10    0   23    0
+RBS04      0    0  33 k 473 k    4   10    4    0    0 969 k    4    0   23    0
+RBS05      0    0  33 k 562 k    9   10    9    0    0 102 k    9    0   22    0
+RBS06      0    0  34 k 600 k    8   10    8    0    0 979 k    8    0   24    0
+RBS07      0    0  34 k 998 k    8   10    8    0    0 105 k    8    0   26    0
+RBS08      0    0  32 k 450 k   10   10   10    0    0 959 k   10    0   22    0
+RBS09      1    0  33 k 442 k    4   10    4    0    0 947 k    4    0   21    0
+RBS10      0    0  32 k 419 k   10   10   10    0    0 959 k   10    0   22    0
+RBS11      0    0  33 k 834 k   10   10   10    0    0 107 k   10    0   24    0
+RBS12      0    0  33 k 580 k    3   10    3    0    0 978 k    3    0   24    0
+RBS13      0    0  36 k 648 k    9   10    9    0    0 959 k    9    0   22    0
+RBS14      0    0  35 k 744 k   10   10   10    0    0 988 k   10    0   25    0
+RBS15      0    0  33 k 590 k    3   10    3    0    0 969 k    3    0   23    0
+RBS16      0    0  34 k 655 k    5   10    5    0    0 997 k    5    0   24    0
+RBS17      1    0  34 k 449 k    3   10    3    0    0 934 k    3    0   20    0
+RBS18      0    0  32 k 586 k    4   10    4    0    0 969 k    4    1   23    0
+RBS19      0    0  32 k 441 k    9   10    9    0    0 935 k    9    0   20    0
+RBS20      0    0  32 k 570 k    8   10    8    0    0 107 k    8    1   23    0
+
+If # Shrink is low:                                                             
+    If AvShr is low:                                                            
+        If Avgsz Activ is much smaller than Opt Mb:                             
+            Reduce OPTIMAL (since not many shrinks occur).                      
+    If AvShr is high:                                                           
+        Good value for OPTIMAL.                                                 
+If # Shrink is high:                                                            
+    If AvShr is low:                                                            
+        Too many shrinks being performed, since OPTIMAL is                      
+        somewhat (but not hugely) too small.                                    
+    If AvShr is high:                                                           
+        Increase OPTIMAL until # of Shrnk decreases.  Periodic                  
+        long transactions are probably causing this.                            
+                                                                                
+A high value in the #Ext column indicates dynamic extension, in                 
+which case you should consider increasing your rollback segment                 
+size.  (Also, increase it if you get a "Shapshot too old" error).               
+                                                                                
+A high value in the # Extend and # Shrink columns indicate                      
+allocation and deallocation of extents, due to rollback segments                
+with a smaller optimal size.  It also may be due to a batch                     
+processing transaction assigned to a smaller rollback segment.                  
+Consider increasing OPTIMAL.                                                    
+                                                                                
+
+Rollback contention for system undo header = 0%   (Total reads = 10030000000)   
+Rollback contention for system undo block  = 0%   (Total reads = 10030000000)   
+Rollback contention for undo header        = 0%   (Total reads = 10030000000)   
+Rollback contention for undo block         = 0%   (Total reads = 10030000000)   
+If percentage is more than 1%, create more rollback segments                    

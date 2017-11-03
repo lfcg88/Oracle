@@ -1,0 +1,3 @@
+create or replace synonym SGPB_PROC.SQ01_HIERQ_PBLIC_ALVO_DSTAQ
+  for SGPB.SQ01_HIERQ_PBLIC_ALVO_DSTAQ;
+

@@ -1,0 +1,3 @@
+create or replace synonym SGPB_PROC.HIST_CTBIL
+  for SGPB.HIST_CTBIL;
+

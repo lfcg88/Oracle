@@ -1,0 +1,365 @@
+
+
+=========================
+EVENTOS SISTEMA
+=========================
+
+
+SELECT
+  h.event "Wait Event",
+  SUM(h.wait_time + h.time_waited) "Total Wait Time"
+FROM
+  dba_hist_active_sess_history H,
+  v$event_name e
+WHERE
+   --   h.sample_time BETWEEN sysdate - 1/24 AND sysdate
+  --AND 
+  h.event_id = e.event_id
+  AND e.wait_class <> 'Idle'  
+  AND  SQL_EXEC_START > TO_DATE('04/08/2011 14:30','DD/MM/YYYY HH24:MI') 
+  AND  SQL_EXEC_START < TO_DATE('04/08/2011 15:30','DD/MM/YYYY HH24:MI')
+GROUP BY h.event
+ORDER BY 2 DESC
+
+
+Wait Event                                                       Total Wait Time
+---------------------------------------------------------------- ---------------
+library cache: mutex X                                                  47393886
+db file sequential read                                                  1358862
+Data Guard Broker Wait                                                   1010999
+latch: shared pool                                                        387271
+db file scattered read                                                     27223
+SQL*Net more data to client                                                 6026
+direct path write temp                                                      5588
+virtual circuit wait                                                        1950
+db file parallel read                                                         56
+library cache lock                                                             0
+library cache load lock                                                        0
+enq: SQ - contention                                                           0
+row cache lock                                                                 0
+
+
+
+SELECT
+  h.event "Wait Event",
+  SUM(h.wait_time + h.time_waited) "Total Wait Time"
+FROM
+  dba_hist_active_sess_history h,
+  v$event_name e
+WHERE
+   --   h.sample_time BETWEEN sysdate - 1/24 AND sysdate
+  --AND 
+  h.event_id = e.event_id
+  AND e.wait_class <> 'Idle'  
+  AND SQL_EXEC_START > TO_DATE('01/08/2011 09:30','DD/MM/YYYY HH24:MI')
+  AND SQL_EXEC_START < TO_DATE('01/08/2011 10:30','DD/MM/YYYY HH24:MI')
+GROUP BY h.event
+ORDER BY 2 DESC
+
+
+
+Wait Event                                                       Total Wait Time
+---------------------------------------------------------------- ---------------
+library cache lock                                                    3231591347
+virtual circuit wait                                                  1033113703
+library cache: mutex X                                                 199106328
+library cache load lock                                                 12272802
+db file scattered read                                                   6674609
+db file sequential read                                                  3013746
+read by other session                                                    2254073
+latch: shared pool                                                       1232871
+Parameter File I/O                                                       1015901
+latch: cache buffers chains                                               943130
+kksfbc child completion                                                   407924
+enq: TX - row lock contention                                              48991
+db file parallel read                                                      11622
+direct path read                                                            8958
+latch: cache buffers lru chain                                               867
+Disk file operations I/O                                                     670
+SQL*Net more data to client                                                   21
+enq: TM - contention                                                           0
+row cache lock                                                                 0
+cursor: pin S wait on X                                                        0
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+====================================
+
+
+select  event,count(*)
+from dba_hist_active_sess_history 
+where SQL_EXEC_START > TO_DATE('04/08/2011 14:45','DD/MM/YYYY HH24:MI') AND 
+SQL_EXEC_START < TO_DATE('04/08/2011 15:30','DD/MM/YYYY HH24:MI')
+group by event
+/
+
+
+
+select distinct  a.SESSION_ID,a.USER_ID,c.username,to_char(a.SQL_EXEC_START,'DD/MM/YYYY HH24:MI:SS') execucao,a.event,
+a.SESSION_STATE,a.TIME_WAITED,
+a.BLOCKING_SESSION_STATUS,        
+a.BLOCKING_SESSION,               
+a.BLOCKING_SESSION_SERIAL#
+-- ,
+--b.sql_text         
+from dba_hist_active_sess_history a,DBA_HIST_SQLTEXT b, dba_users c
+where SQL_EXEC_START > TO_DATE('04/08/2011 14:45','DD/MM/YYYY HH24:MI') AND 
+SQL_EXEC_START < TO_DATE('04/08/2011 15:30','DD/MM/YYYY HH24:MI')
+and a.sql_id=b.sql_id
+and a.USER_ID=c.USER_ID 
+and a.event='library cache: mutex X'
+/
+
+
+
+
+
+
+select   distinct e.SESSION_ID,e.USER_ID,to_char(e.SQL_EXEC_START,'DD/MM/YYYY HH24:MI:SS') execucao,e.event,
+e.SESSION_STATE,e.TIME_WAITED,d.SESSION_ID bloqueador, d.username
+from (
+select  a.SESSION_ID,a.USER_ID,c.username,to_char(a.SQL_EXEC_START,'DD/MM/YYYY HH24:MI:SS') execucao,a.event,
+a.SESSION_STATE,a.TIME_WAITED,
+--a.BLOCKING_SESSION_STATUS,        
+a.BLOCKING_SESSION,               
+a.BLOCKING_SESSION_SERIAL#
+-- ,
+--b.sql_text         
+from dba_hist_active_sess_history a,DBA_HIST_SQLTEXT b, dba_users c
+where SQL_EXEC_START > TO_DATE('04/08/2011 14:45','DD/MM/YYYY HH24:MI') AND 
+SQL_EXEC_START < TO_DATE('04/08/2011 15:30','DD/MM/YYYY HH24:MI')
+and a.sql_id=b.sql_id
+and a.USER_ID=c.USER_ID 
+---and a.SESSION_ID =424
+) d, dba_hist_active_sess_history e
+where e.session_id = d.blocking_session 
+and e.SQL_EXEC_START > TO_DATE('04/08/2011 14:45','DD/MM/YYYY HH24:MI') AND 
+e.SQL_EXEC_START < TO_DATE('04/08/2011 15:30','DD/MM/YYYY HH24:MI')
+
+
+
+
+set feed off
+set linesize 100
+set pagesize 300
+column blocker format a20
+column blockee format a20
+select /*+ ordered */     c.username||'('||c.sid||')' blocker,  
+d.username||'('||d.sid||')' blockee
+from dba_hist_active_sess_history a, dba_hist_active_sess_history b
+where a.block = 1
+       and b.request > 0
+       and a.session_id = b.id1
+       and a.id2 = b.id2
+      
+
+
+
+
+
+variable my_rept CLOB;
+BEGIN
+  :my_rept :=DBMS_SQLTUNE.REPORT_SQL_MONITOR();
+END;
+
+
+
+set long 10000000
+set longchunksize 10000000
+set linesize 200
+select dbms_sqltune.report_sql_monitor from dual;
+
+
+
+select username,to_char(SQL_EXEC_START,'DD/MM/YYYY HH24:MI') 
+from v$sql_monitor 
+where SQL_EXEC_START > TO_DATE('04/08/2011 14:50','DD/MM/YYYY HH24:MI') AND 
+SQL_EXEC_START < TO_DATE('04/08/2011 15:30','DD/MM/YYYY HH24:MI')
+
+
+
+select SESSION_ID,to_char(SQL_EXEC_START,'DD/MM/YYYY HH24:MI'),event
+from v$active_session_history
+where SQL_EXEC_START > TO_DATE('01/08/2011 09:30','DD/MM/YYYY HH24:MI') AND 
+SQL_EXEC_START < TO_DATE('01/08/2011 10:30','DD/MM/YYYY HH24:MI')
+
+
+
+
+select SESSION_ID,to_char(SQL_EXEC_START,'DD/MM/YYYY HH24:MI'),event
+from dba_hist_active_sess_history
+where SQL_EXEC_START > TO_DATE('01/08/2011 09:45','DD/MM/YYYY HH24:MI') AND 
+SQL_EXEC_START < TO_DATE('01/08/2011 10:00','DD/MM/YYYY HH24:MI')
+order by to_char(SQL_EXEC_START,'DD/MM/YYYY HH24:MI')
+
+
+
+
+
+
+
+column sample_time format a19
+
+select
+   to_char(min(sub1.sample_time), 'YYYY-MM-DD HH24:MI:SS') as sample_time,
+   round(avg(sub1.on_cpu),1) as cpu_avg,
+   round(avg(sub1.waiting),1) as wait_avg,
+   round(avg(sub1.active_sessions),1) as act_avg
+from
+   ( -- sub1: one row per second, the resolution of SAMPLE_TIME
+     select
+        sample_id,
+        sample_time,
+        sum(decode(session_state, 'ON CPU', 1, 0))  as on_cpu,
+        sum(decode(session_state, 'WAITING', 1, 0)) as waiting,
+        count(*) as active_sessions
+     from
+        v$active_session_history
+     where
+        sample_time > sysdate - (0.25/1440)
+     group by
+        sample_id,
+        sample_time
+   ) sub1
+;
+
+
+
+
+column sample_time format a25
+
+select
+   sample_id,
+   sample_time,
+   sum(decode(session_state, 'ON CPU', 1, 0))  as on_cpu,
+   sum(decode(session_state, 'WAITING', 1, 0)) as waiting,
+   count(*) as active_sessions
+from
+   v$active_session_history
+where
+   -- last 15 seconds
+   sample_time > sysdate - (0.25/1440)
+group by
+   sample_id,
+   sample_time
+order by
+   sample_id
+;
+
+
+
+
+
+For a library cache pine, the key part of this query is the P1RAW 
+column that gives the handle address of the object that is blocking 
+this particular session. For other types of waits, you should reference 
+Oracle documentation to find which P value corresponds to an object or 
+resource being waited on.
+
+SELECT sid, event, p1raw 
+  FROM sys.v_$session_wait
+ WHERE event = 'library cache pin'
+   AND state = 'WAITING';
+
+
+We can then execute the following query to find the library cache 
+object being waited for. If you don’t currently have any particular waits occurring, 
+this query is just fun to execute without the where clause to see what is in the library cache. 
+
+SELECT kglnaown AS owner, kglnaobj as Object
+  FROM sys.x$kglob
+ WHERE kglhdadr='&P1RAW';
+
+To find those users that are waiting on the object in question you can use the DBA_WAITERS view 
+and issue the following query. This is a very simple query but can be used to find the blocking 
+session quite nicely. I basically try and find the waiting session that matches the above session 
+we got from the V$SESSION_WAIT query and then see what the holding_session is. It is also good to
+ note how many other sessions are waiting behind this blocking session. If there are a lot,
+ you may need to take action quickly.
+
+SELECT waiting_session, holding_session FROM dba_waiters;If you want to investigate the actual 
+
+
+
+SQL being done by the holding session, you can issue the following SQL statement. 
+
+select sesion.sid,
+       sql_text
+  from v$sqlarea sqlarea, v$session sesion
+ where sesion.sql_hash_value = sqlarea.hash_value
+   and sesion.sql_address    = sqlarea.address;
+This is sometimes good to see what the originating issue really is
+
+
+
+SQL> select sample_time,program, session_id, session_state, event, seq#, sql_id, '0' || trim(to_char(p1,'XXXXXXXXXXXXXXXXX')) "p1raw", p3  2  from v$active_session_history  3  where  4  sample_time >= to_date('18-7-2010 13:50:10','dd-mm-yyyy hh24:mi:ss')  5  and sample_time <= to_date('18-7-2010 13:54:58','dd-mm-yyyy hh24:mi:ss')  6  and event like 'library%'  7  order by sample_time desc  8  /
+
+
+
+
+
+Following SQL can be used to print session wait details. 
+select  distinct    ses.ksusenum sid, ses.ksuseser serial#, ses.ksuudlna username,ses.ksuseunm machine,
+   ob.kglnaown obj_owner, ob.kglnaobj obj_name
+   ,pn.kglpncnt pin_cnt, pn.kglpnmod pin_mode, pn.kglpnreq pin_req
+   , w.state, w.event, w.wait_Time, w.seconds_in_Wait
+   -- lk.kglnaobj, lk.user_name, lk.kgllksnm,
+   --,lk.kgllkhdl,lk.kglhdpar
+   --,trim(lk.kgllkcnt) lock_cnt, lk.kgllkmod lock_mode, lk.kgllkreq lock_req,
+   --,lk.kgllkpns, lk.kgllkpnc,pn.kglpnhdl
+ from  x$kglpn pn,  x$kglob ob,x$ksuse ses,   , v$session_wait w
+where pn.kglpnhdl in
+(select kglpnhdl from x$kglpn where kglpnreq >0 )
+and ob.kglhdadr = pn.kglpnhdl
+and pn.kglpnuse = ses.addr
+and w.sid = ses.indx
+order by seconds_in_wait desc;
+
+To see library cache lock waits,
+
+select  distinct ses.ksusenum sid, ses.ksuseser serial#, ses.ksuudlna username,KSUSEMNM module,
+ob.kglnaown obj_owner, ob.kglnaobj obj_name
+,lk.kgllkcnt lck_cnt, lk.kgllkmod lock_mode, lk.kgllkreq lock_req
+,w.state, w.event, w.wait_Time, w.seconds_in_Wait
+from  x$kgllk lk,  x$kglob ob,x$ksuse ses  , v$session_wait w
+where lk.kgllkhdl in
+(select kgllkhdl from x$kgllk where kgllkreq >0 )
+and ob.kglhdadr = lk.kgllkhdl
+and lk.kgllkuse = ses.addr
+and w.sid = ses.indx
+order by seconds_in_wait desc;
+
+Identify which object is being waited for: 
+
+SELECT kglnaown "Owner", kglnaobj "Object"
+FROM x$kglob WHERE kglhdadr='value of p1raw';
+
+Who is pinning the object? 
+SELECT s.sid, s.serial#, s.username, s.osuser, s.machine, s.status,
+kglpnmod "Mode", kglpnreq "Req"
+FROM x$kglpn p, v$session s WHERE p.kglpnuse=s.saddr AND
+kglpnhdl='value of p1raw';
+
+Use the following script to generate SQL to kill off multiple sessions all waiting for the same library cache pin.
+
+SELECT 'alter system kill session ''' || s.sid || ','  || s.serial# || ''';'
+FROM x$kglpn p, v$session s
+WHERE p.kglpnuse=s.saddr
+AND kglpnhdl='value of p1raw';
+
+
+

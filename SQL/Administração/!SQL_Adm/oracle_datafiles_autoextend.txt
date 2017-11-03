@@ -1,0 +1,2 @@
+select  'ALTER DATABASE DATAFILE '''||substr(file_name,1,70)||''' AUTOEXTEND ON NEXT 10M;' 
+from dba_data_files;

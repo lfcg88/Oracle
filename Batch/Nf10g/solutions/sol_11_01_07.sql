@@ -1,0 +1,3 @@
+SELECT DBMS_ROWID.ROWID_TO_RESTRICTED(rowid,1)
+FROM sys.emp
+WHERE rownum<2;

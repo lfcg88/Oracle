@@ -1,0 +1,144 @@
+#
+# Copyright (c) 1991, 2000 by Oracle Corporation
+#
+##############################################################################
+# Example INIT.ORA file
+#
+# This file is provided by Oracle Corporation to help you customize
+# your RDBMS installation for your site.  Important system parameters
+# are discussed, and example settings given.
+#
+# Some parameter settings are generic to any size installation.
+# For parameters that require different values in different size
+# installations, three scenarios have been provided: SMALL, MEDIUM
+# and LARGE.  Any parameter that needs to be tuned according to
+# installation size will have three settings, each one commented
+# according to installation size.
+#
+# Use the following table to approximate the SGA size needed for the
+# three scenarious provided in this file:
+#
+#                     -------Installation/Database Size------
+#                      SMALL           MEDIUM           LARGE
+#  Block         2K    4500K            6800K           17000K
+#  Size          4K    5500K            8800K           21000K
+#
+# To set up a database that multiple instances will be using, place
+# all instance-specific parameters in one file, and then have all
+# of these files point to a master file using the IFILE command.
+# This way, when you change a public
+# parameter, it will automatically change on all instances.  This is
+# necessary, since all instances must run with the same value for many
+# parameters. For example, if you choose to use private rollback segments,
+# these must be specified in different files, but since all gc_*
+# parameters must be the same on all instances, they should be in one file.
+#
+# INSTRUCTIONS: Edit this file and the other INIT files it calls for
+# your site, either by using the values provided here or by providing
+# your own.  Then place an IFILE= line into each instance-specific
+# INIT file that points at this file.
+#
+# NOTE: Parameter values suggested in this file are based on conservative
+# estimates for computer memory availability. You should adjust values upward
+# for modern machines.
+#
+###############################################################################
+
+db_name = "MIAFISDP" # db_name = "MIAFIS" somente para TSPITR
+#LOCK_NAME_SPACE=MIAFISDP - somente para TSPITR
+instance_name = MIAFISDP
+
+service_names = MIAFISDP
+
+db_files = 1024
+
+control_files = ("E:\oracle\oradata\MIAFISDP\CF\control01.ctl", "E:\oracle\oradata\MIAFISDP\CF\control02.ctl", "E:\oracle\oradata\MIAFISDP\CF\control03.ctl")
+
+open_cursors = 400 #MS
+max_enabled_roles = 60 #MS
+db_file_multiblock_read_count = 32 #MS
+
+db_block_buffers = 3840 #MS
+
+shared_pool_size = 31457280 #MS
+
+large_pool_size = 2097152 #MS
+java_pool_size = 0
+
+log_checkpoint_interval = 10000
+log_checkpoint_timeout = 1800
+
+processes = 200
+
+parallel_max_servers = 5
+
+log_buffer = 524288
+
+#audit_trail = true  # if you want auditing
+#timed_statistics = true  # if you want timed statistics
+max_dump_file_size = 10240  # limit trace file size to 5M each
+
+
+##### For archiving if archiving is enabled #####
+log_archive_start = false
+log_archive_dest_1 = "location=E:\oracle\oradata\MIAFISDP\archive"
+#log_archive_dest_2 = "location=C:\oracle\oradata\MIAFISDP\archive" #MS
+log_archive_format = %%ORACLE_SID%%T%TS%S.ARC
+log_archive_max_processes = 1
+
+#DBCA uses the default database value (30) for max_rollback_segments
+#100 rollback segments (or more) may be required in the future
+#Uncomment the following entry when additional rollback segments are created and made online
+#max_rollback_segments = 51
+# If using private rollback segments, place lines of the following
+# form in each of your instance-specific init.ora files:
+#rollback_segments = ( RBS0, RBS1, RBS2, RBS3, RBS4, RBS5, RBS6, RBS7, RBS8, RBS9, RBS10, RBS11, RBS12, RBS13, RBS14, RBS15, RBS16, RBS17, RBS18, RBS19, RBS20, RBS21, RBS22, RBS23, RBS24, RBS25, RBS26, RBS27, RBS28 )
+
+# Global Naming -- enforce that a dblink has same name as the db it connects to
+global_names = false
+
+# Uncomment the following line if you wish to enable the Oracle Trace product
+# to trace server activity.  This enables scheduling of server collections
+# from the Oracle Enterprise Manager Console.
+# Also, if the oracle_trace_collection_name parameter is non-null,
+# every session will write to the named collection, as well as enabling you
+# to schedule future collections from the console.
+# oracle_trace_enable = true
+
+oracle_trace_collection_name = ""
+# define directories to store trace and alert files
+background_dump_dest = D:\oracle\admin\MIAFISDP\bdump
+#Uncomment this parameter to enable resource management for your database.
+#The SYSTEM_PLAN is provided by default with the database.
+#Change the plan name if you have created your own resource plan.# resource_manager_plan = system_plan
+user_dump_dest = D:\oracle\admin\MIAFISDP\udump
+
+db_block_size = 8192
+
+remote_login_passwordfile = exclusive
+
+os_authent_prefix = ""
+
+#Un-comment the following entry in order to use Oracle Workflow
+#aq_tm_processes = 1
+
+
+distributed_transactions = 500 #MS
+compatible = 8.1.7.4.1 #MS
+sort_area_size = 655360 #MS
+sort_area_retained_size = 655360 #MS
+control_file_record_keep_time=30 #MS
+remote_os_authent = true #MS
+fast_start_io_target = 5000 #MS
+recovery_parallelism = 4 #MS
+fast_start_parallel_rollback = HIGH #MS
+db_block_checking = true #MS
+backup_tape_io_slaves = true #MS
+utl_file_dir = d:\oracle\file #
+utl_file_dir = d:\oracle\admin\MIAFISDP\udump #MS - Trace
+hash_multiblock_io_count = 32 # MS
+job_queue_processes=2
+timed_statistics=true
+
+db_file_name_convert = ("d:\oracle\oradata\MIAFIS\Datafile","e:\oracle\oradata\MIAFISDP\Datafile")
+log_file_name_convert = ("d:\oracle\oradata\MIAFIS\Redo","e:\oracle\oradata\MIAFISDP\Redo")

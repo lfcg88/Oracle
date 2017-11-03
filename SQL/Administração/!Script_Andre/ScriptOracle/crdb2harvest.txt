@@ -1,0 +1,51 @@
+
+set echo on
+
+
+create tablespace RBS01 datafile
+	'/u001/oradata/harvest/rbs01_01.dbf'      size    500M
+default storage (
+	initial          1M
+	next             1M
+	pctincrease        0
+	minextents         2
+) permanent
+  online;
+
+
+
+create tablespace TEMP datafile
+	'/u001/oradata/harvest/temp_01.dbf'       size   500M
+default storage (
+	initial      1M
+	next         1M
+	pctincrease  0
+) temporary
+  online;
+
+
+create tablespace TOOLS datafile
+	'/u001/oradata/harvest/tools_01.dbf'      size    50M
+default storage (
+	initial      256k
+	next         128k
+	pctincrease  1
+) permanent
+  online;
+
+
+create tablespace USERS datafile
+	'/u01/oradata/harvest/users_01.dbf'       size   10M
+default storage (
+	initial      128k
+	next         64k
+	pctincrease  1
+) permanent
+  online;
+
+
+alter user sys temporary tablespace TEMP;
+
+alter user system default tablespace system temporary tablespace TEMP;
+
+

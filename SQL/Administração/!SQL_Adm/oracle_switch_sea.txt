@@ -1,0 +1,37 @@
+Conectar, via terminal services no servidor de contingência (seacont01rjo)
+
+Abrir uma sessão de prompt
+
+set ORACLE_SID=seacont
+dgmgrl
+connect sys
+
+DGMGRL> show configuration
+
+Configuration
+  Name:                dg_sea
+  Enabled:             YES
+  Protection Mode:     MaxAvailability
+  Fast-Start Failover: DISABLED
+  Databases:
+    seaprod - Primary database
+    seacont - Logical standby database
+
+Current status for "dg_sea":
+SUCCESS
+
+DGMGRL>switchover to dgpry
+
+DGMGRL> show configuration
+
+Configuration
+  Name:                dg_sea
+  Enabled:             YES
+  Protection Mode:     MaxAvailability
+  Fast-Start Failover: DISABLED
+  Databases:
+    seacont - Primary database
+    seaprod - Logical standby database
+
+Current status for "dg_sea":
+SUCCESS

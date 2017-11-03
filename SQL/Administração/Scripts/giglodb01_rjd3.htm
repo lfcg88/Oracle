@@ -1,0 +1,957 @@
+SQL>  prompt <i>ver: 8.2</i>
+<i>ver: 8.2</i>
+SQL>  prompt <hr>
+<hr>
+SQL>  prompt
+
+SQL>  prompt
+
+SQL>  prompt <html>
+<html>
+SQL>  prompt <a name=top></a>
+<a name=top></a>
+SQL>  prompt
+
+SQL>  prompt <b> HOST: &MAQUINA. </b>
+<b> HOST: giglodb01 </b>
+SQL>  prompt <hr>
+<hr>
+SQL>  prompt <b> INSTANCE: &INSTANCIA. </b>
+<b> INSTANCE: rjd3 </b>
+SQL>  prompt <hr>
+<hr>
+SQL>  prompt <b> VERSION: &VERSAO. </b>
+<b> VERSION: 9.2.0.8.0 </b>
+SQL>  prompt <hr>
+<hr>
+SQL>  PROMPT <b> DATE: &DATA. </b>
+<b> DATE: 13-DEZ-2010 </b>
+SQL>  prompt <hr>
+<hr>
+SQL> 
+SQL>  prompt <pre>
+<pre>
+SQL>  prompt
+
+SQL>  select banner from v$version;
+
+BANNER                                                                          
+----------------------------------------------------------------                
+Oracle9i Enterprise Edition Release 9.2.0.8.0 - 64bit Production                
+PL/SQL Release 9.2.0.8.0 - Production                                           
+CORE	9.2.0.8.0	Production                                                       
+TNS for Linux: Version 9.2.0.8.0 - Production                                   
+NLSRTL Version 9.2.0.8.0 - Production                                           
+SQL>  prompt
+
+SQL>  prompt
+
+SQL> 
+SQL> -- ======================================
+SQL> -- =    VERSIONS COMPATIBILITY          =
+SQL> -- ======================================
+SQL> 
+SQL> 
+SQL> DECLARE
+  2  
+  3  V_MACHINE varchar2(30);
+  4  V_USER varchar2(30);
+  5  
+  6  
+  7   BEGIN
+  8  
+  9    select user into V_USER from dual;
+ 10    select distinct machine into V_MACHINE from v$session where username = (select user from dual) and rownum=1;
+ 11  
+ 12  
+ 13    dbms_output.put_line('.CLIENT_CONFIGURATION.');
+ 14    dbms_output.put_line('----------------------');
+ 15    dbms_output.put_line(rpad('CURRENT_USER',30,' ')||rpad('HOST',30,' '));
+ 16    dbms_output.put_line(rpad('-----------------------------',30,' ')||rpad('---------------------------',30,' '));
+ 17    dbms_output.put_line(rpad(V_USER,30,' ')||rpad(V_MACHINE,30,' '));
+ 18  
+ 19   END;
+ 20  /
+.CLIENT_CONFIGURATION.                                                          
+----------------------                                                          
+CURRENT_USER                  HOST                                              
+----------------------------- ---------------------------                       
+SYSTEM                        DUFRY\INV01220
+SQL>   prompt
+
+SQL>   prompt
+
+SQL>   prompt </pre>
+</pre>
+SQL>   prompt <hr>
+<hr>
+SQL>   prompt <hr>
+<hr>
+SQL> DECLARE
+  2  
+  3  V_MACHINE varchar2(30);
+  4  V_USER varchar2(30);
+  5  
+  6  
+  7   BEGIN
+  8  
+  9    select user into V_USER from dual;
+ 10    select distinct machine into V_MACHINE from v$session where username = (select user from dual) and rownum=1;
+ 11  
+ 12  
+ 13    dbms_output.put_line('.CLIENT_CONFIGURATION.');
+ 14    dbms_output.put_line('----------------------');
+ 15    dbms_output.put_line(rpad('CURRENT_USER',30,' ')||rpad('HOST',30,' '));
+ 16    dbms_output.put_line(rpad('-----------------------------',30,' ')||rpad('---------------------------',30,' '));
+ 17    dbms_output.put_line(rpad(V_USER,30,' ')||rpad(V_MACHINE,30,' '));
+ 18  
+ 19   END;
+ 20  /
+.CLIENT_CONFIGURATION.                                                          
+----------------------                                                          
+CURRENT_USER                  HOST                                              
+----------------------------- ---------------------------                       
+SYSTEM                        DUFRY\INV01220
+SQL> 
+SQL> -- set termout on
+SQL>  prompt
+
+SQL> prompt     [&MAQUINA. / &INSTANCIA.] Collecting default passwords...
+[giglodb01 / rjd3] Collecting default passwords...
+SQL>  prompt
+
+SQL>  prompt
+
+SQL> set termout off
+SQL> 
+SQL> clear col
+columns conteúdo removido
+SQL> 
+SQL> set linesize 50
+SQL> 
+SQL> set linesize 80
+SQL> set serveroutput  on format wrapped size  1000000
+SQL> 
+SQL> 
+SQL>  prompt <br>
+<br>
+SQL>  prompt
+
+SQL>  prompt <b>.DEFAULT PASSWORDS.</b>
+<b>.DEFAULT PASSWORDS.</b>
+SQL>  prompt
+
+SQL>  prompt <pre>
+<pre>
+SQL> 
+SQL> 
+SQL> 
+SQL> declare
+  2   type user_tab is table of varchar2(30) index by binary_integer;
+  3   type pwd_tab is table of varchar2(30) index by binary_integer;
+  4   type sta_tab is table of varchar2(30) index by binary_integer;
+  5   type hash_tab is table of varchar2(16) index by binary_integer;
+  6  
+  7   username user_tab;
+  8   password pwd_tab;
+  9   account_status sta_tab;
+ 10   hash hash_tab;
+ 11  
+ 12   tab_key binary_integer:=1;
+ 13   i binary_integer:=1;
+ 14   --
+ 15     cursor  c_user is
+ 16    select  dba_users.username, dba_users.account_status,case when (substr(v$instance.version,1,2))=11
+ 17                                              then user$.password
+ 18                                              else dba_users.password
+ 19                                              end as password
+ 20     from dba_users, user$, v$instance
+ 21        where dba_users.username = user$.name;
+ 22  
+ 23   --
+ 24   found  number:=0;
+ 25   --
+ 26  
+ 27  begin
+ 28  ----------------------
+ 29  tab_key:=1;
+ 30  username(tab_key):='!DEMO_USER';
+ 31  password(tab_key):='!DEMO_USER';
+ 32  hash(tab_key):='F5815FA39C791FED';
+ 33  ----------------------
+ 34  tab_key:=2;
+ 35  username(tab_key):='#INTERNAL';
+ 36  password(tab_key):='ORACLE';
+ 37  hash(tab_key):='87DADF57B623B777';
+ 38  ----------------------
+ 39  tab_key:=3;
+ 40  username(tab_key):='#INTERNAL';
+ 41  password(tab_key):='SYS_STNT';
+ 42  hash(tab_key):='38379FC3621F7DA2';
+ 43  ----------------------
+ 44  tab_key:=4;
+ 45  username(tab_key):='ABM';
+ 46  password(tab_key):='ABM';
+ 47  hash(tab_key):='D0F2982F121C7840';
+ 48  ----------------------
+ 49  tab_key:=5;
+ 50  username(tab_key):='ADAMS';
+ 51  password(tab_key):='WOOD';
+ 52  hash(tab_key):='72CDEF4A3483F60D';
+ 53  ----------------------
+ 54  tab_key:=6;
+ 55  username(tab_key):='ADAMS';
+ 56  password(tab_key):='ADAMS';
+ 57  hash(tab_key):='0CDB0D6C522BEF86';
+ 58  ----------------------
+ 59  tab_key:=7;
+ 60  username(tab_key):='ADLDEMO';
+ 61  password(tab_key):='ADLDEMO';
+ 62  hash(tab_key):='147215F51929A6E8';
+ 63  ----------------------
+ 64  tab_key:=8;
+ 65  username(tab_key):='ADMIN';
+ 66  password(tab_key):='JETSPEED';
+ 67  hash(tab_key):='CAC22318F162D597';
+ 68  ----------------------
+ 69  tab_key:=9;
+ 70  username(tab_key):='ADMIN';
+ 71  password(tab_key):='ADMIN';
+ 72  hash(tab_key):='95F3C64472751462';
+ 73  ----------------------
+ 74  tab_key:=10;
+ 75  username(tab_key):='ADMIN';
+ 76  password(tab_key):='WELCOME';
+ 77  hash(tab_key):='B8B15AC9A946886A';
+ 78  ----------------------
+ 79  tab_key:=11;
+ 80  username(tab_key):='ADMINISTRATOR';
+ 81  password(tab_key):='ADMIN';
+ 82  hash(tab_key):='F9ED601D936158BD';
+ 83  ----------------------
+ 84  tab_key:=12;
+ 85  username(tab_key):='ADMINISTRATOR';
+ 86  password(tab_key):='ADMINISTRATOR';
+ 87  hash(tab_key):='1848F0A31D1C5C62';
+ 88  ----------------------
+ 89  /
+----------------------
+                     *
+ERRO na linha 88:
+ORA-06550: line 88, column 22: 
+PLS-00103: Encountered the symbol "end-of-file" when expecting one of the 
+following: 
+begin case declare end exception exit for goto if loop mod 
+null pragma raise return select update while with 
+<an identifier> <a double-quoted delimited-identifier> 
+<a bind variable> << close current delete fetch lock insert 
+open rollback savepoint set sql execute commit forall merge 
+<a single-quoted SQL string> pipe 
+
+
+SQL> tab_key:=166;
+SP2-0734: início de comando desconhecido "tab_key:=1..." - restante da linha ignorado.
+SQL> username(tab_key):='EXAMPLE';
+SP2-0734: início de comando desconhecido "username(t..." - restante da linha ignorado.
+SQL> password(tab_key):='EXAMPLE';
+Alterando senha para (tab_key):='EXAMPLE'
+SP2-0650: As novas senhas não coincidem
+Senha inalterada
+SQL> tab_key:=167;
+SP2-0734: início de comando desconhecido "tab_key:=1..." - restante da linha ignorado.
+SQL> username(tab_key):='EXFSYS';
+SP2-0734: início de comando desconhecido "username(t..." - restante da linha ignorado.
+SQL> password(tab_key):='EXFSYS';
+Alterando senha para (tab_key):='EXFSYS'
+SP2-0650: As novas senhas não coincidem
+Senha inalterada
+SQL> tab_key:=168;
+SP2-0734: início de comando desconhecido "tab_key:=1..." - restante da linha ignorado.
+SQL> username(tab_key):='EXTDEMO';
+SP2-0734: início de comando desconhecido "username(t..." - restante da linha ignorado.
+SQL> password(tab_key):='EXTDEMO';
+Alterando senha para (tab_key):='EXTDEMO'
+SP2-0650: As novas senhas não coincidem
+Senha inalterada
+SQL> tab_key:=169;
+SP2-0734: início de comando desconhecido "tab_key:=1..." - restante da linha ignorado.
+SQL> username(tab_key):='EXTDEMO2';
+SP2-0734: início de comando desconhecido "username(t..." - restante da linha ignorado.
+SQL> password(tab_key):='EXTDEMO2';
+Alterando senha para (tab_key):='EXTDEMO2'
+SP2-0650: As novas senhas não coincidem
+Senha inalterada
+SQL> tab_key:=170;
+SP2-0734: início de comando desconhecido "tab_key:=1..." - restante da linha ignorado.
+SQL> username(tab_key):='FA';
+SP2-0734: início de comando desconhecido "username(t..." - restante da linha ignorado.
+SQL> password(tab_key):='FA';
+Alterando senha para (tab_key):='FA'
+SP2-0650: As novas senhas não coincidem
+Senha inalterada
+SQL> tab_key:=171;
+SP2-0734: início de comando desconhecido "tab_key:=1..." - restante da linha ignorado.
+SQL> username(tab_key):='FEM';
+SP2-0734: início de comando desconhecido "username(t..." - restante da linha ignorado.
+SQL> password(tab_key):='FEM';
+Alterando senha para (tab_key):='FEM'
+SP2-0650: As novas senhas não coincidem
+Senha inalterada
+SQL> tab_key:=172;
+SP2-0734: início de comando desconhecido "tab_key:=1..." - restante da linha ignorado.
+SQL> username(tab_key):='FII';
+SP2-0734: início de comando desconhecido "username(t..." - restante da linha ignorado.
+SQL> password(tab_key):='FII';
+Alterando senha para (tab_key):='FII'
+SP2-0650: As novas senhas não coincidem
+Senha inalterada
+SQL> tab_key:=173;
+SP2-0734: início de comando desconhecido "tab_key:=1..." - restante da linha ignorado.
+SQL> username(tab_key):='FINANCE';
+SP2-0734: início de comando desconhecido "username(t..." - restante da linha ignorado.
+SQL> password(tab_key):='FINANCE';
+Alterando senha para (tab_key):='FINANCE'
+SP2-0650: As novas senhas não coincidem
+Senha inalterada
+SQL> tab_key:=174;
+SP2-0734: início de comando desconhecido "tab_key:=1..." - restante da linha ignorado.
+SQL> username(tab_key):='FINPROD';
+SP2-0734: início de comando desconhecido "username(t..." - restante da linha ignorado.
+SQL> password(tab_key):='FINPROD';
+Alterando senha para (tab_key):='FINPROD'
+SP2-0650: As novas senhas não coincidem
+Senha inalterada
+SQL> tab_key:=175;
+SP2-0734: início de comando desconhecido "tab_key:=1..." - restante da linha ignorado.
+SQL> username(tab_key):='FLM';
+SP2-0734: início de comando desconhecido "username(t..." - restante da linha ignorado.
+SQL> password(tab_key):='FLM';
+Alterando senha para (tab_key):='FLM'
+SP2-0650: As novas senhas não coincidem
+Senha inalterada
+SQL> tab_key:=176;
+SP2-0734: início de comando desconhecido "tab_key:=1..." - restante da linha ignorado.
+SQL> username(tab_key):='FND';
+SP2-0734: início de comando desconhecido "username(t..." - restante da linha ignorado.
+SQL> password(tab_key):='FND';
+Alterando senha para (tab_key):='FND'
+SP2-0650: As novas senhas não coincidem
+Senha inalterada
+SQL> tab_key:=177;
+SP2-0734: início de comando desconhecido "tab_key:=1..." - restante da linha ignorado.
+SQL> username(tab_key):='FOO';
+SP2-0734: início de comando desconhecido "username(t..." - restante da linha ignorado.
+SQL> password(tab_key):='BAR';
+Alterando senha para (tab_key):='BAR'
+SP2-0650: As novas senhas não coincidem
+Senha inalterada
+SQL> tab_key:=178;
+SP2-0734: início de comando desconhecido "tab_key:=1..." - restante da linha ignorado.
+SQL> username(tab_key):='FPT';
+SP2-0734: início de comando desconhecido "username(t..." - restante da linha ignorado.
+SQL> password(tab_key):='FPT';
+Alterando senha para (tab_key):='FPT'
+SP2-0650: As novas senhas não coincidem
+Senha inalterada
+SQL> tab_key:=179;
+SP2-0734: início de comando desconhecido "tab_key:=1..." - restante da linha ignorado.
+SQL> username(tab_key):='FRM';
+SP2-0734: início de comando desconhecido "username(t..." - restante da linha ignorado.
+SQL> password(tab_key):='FRM';
+Alterando senha para (tab_key):='FRM'
+SP2-0650: As novas senhas não coincidem
+Senha inalterada
+SQL> tab_key:=180;
+SP2-0734: início de comando desconhecido "tab_key:=1..." - restante da linha ignorado.
+SQL> username(tab_key):='FROSTY';
+SP2-0734: início de comando desconhecido "username(t..." - restante da linha ignorado.
+SQL> password(tab_key):='SNOWMAN';
+Alterando senha para (tab_key):='SNOWMAN'
+SP2-0650: As novas senhas não coincidem
+Senha inalterada
+SQL> tab_key:=181;
+SP2-0734: início de comando desconhecido "tab_key:=1..." - restante da linha ignorado.
+SQL> username(tab_key):='FROSTY';
+SP2-0734: início de comando desconhecido "username(t..." - restante da linha ignorado.
+SQL> password(tab_key):='FROSTY';
+Alterando senha para (tab_key):='FROSTY'
+SP2-0650: As novas senhas não coincidem
+Senha inalterada
+SQL> tab_key:=182;
+SP2-0734: início de comando desconhecido "tab_key:=1..." - restante da linha ignorado.
+SQL> username(tab_key):='FTE';
+SP2-0734: início de comando desconhecido "username(t..." - restante da linha ignorado.
+SQL> password(tab_key):='FTE';
+Alterando senha para (tab_key):='FTE'
+SP2-0650: As novas senhas não coincidem
+Senha inalterada
+SQL> tab_key:=183;
+SP2-0734: início de comando desconhecido "tab_key:=1..." - restante da linha ignorado.
+SQL> username(tab_key):='FV';
+SP2-0734: início de comando desconhecido "username(t..." - restante da linha ignorado.
+SQL> password(tab_key):='FV';
+Alterando senha para (tab_key):='FV'
+SP2-0650: As novas senhas não coincidem
+Senha inalterada
+SQL> tab_key:=184;
+SP2-0734: início de comando desconhecido "tab_key:=1..." - restante da linha ignorado.
+SQL> username(tab_key):='GL';
+SP2-0734: início de comando desconhecido "username(t..." - restante da linha ignorado.
+SQL> password(tab_key):='GL';
+Alterando senha para (tab_key):='GL'
+SP2-0650: As novas senhas não coincidem
+Senha inalterada
+SQL> tab_key:=185;
+SP2-0734: início de comando desconhecido "tab_key:=1..." - restante da linha ignorado.
+SQL> username(tab_key):='GMA';
+SP2-0734: início de comando desconhecido "username(t..." - restante da linha ignorado.
+SQL> password(tab_key):='GMA';
+Alterando senha para (tab_key):='GMA'
+SP2-0650: As novas senhas não coincidem
+Senha inalterada
+SQL> tab_key:=186;
+SP2-0734: início de comando desconhecido "tab_key:=1..." - restante da linha ignorado.
+SQL> username(tab_key):='GMD';
+SP2-0734: início de comando desconhecido "username(t..." - restante da linha ignorado.
+SQL> password(tab_key):='GMD';
+Alterando senha para (tab_key):='GMD'
+SP2-0650: As novas senhas não coincidem
+Senha inalterada
+SQL> tab_key:=187;
+SP2-0734: início de comando desconhecido "tab_key:=1..." - restante da linha ignorado.
+SQL> username(tab_key):='GME';
+SP2-0734: início de comando desconhecido "username(t..." - restante da linha ignorado.
+SQL> password(tab_key):='GME';
+Alterando senha para (tab_key):='GME'
+SP2-0650: As novas senhas não coincidem
+Senha inalterada
+SQL> tab_key:=188;
+SP2-0734: início de comando desconhecido "tab_key:=1..." - restante da linha ignorado.
+SQL> username(tab_key):='GMF';
+SP2-0734: início de comando desconhecido "username(t..." - restante da linha ignorado.
+SQL> password(tab_key):='GMF';
+Alterando senha para (tab_key):='GMF'
+SP2-0650: As novas senhas não coincidem
+Senha inalterada
+SQL> tab_key:=189;
+SP2-0734: início de comando desconhecido "tab_key:=1..." - restante da linha ignorado.
+SQL> username(tab_key):='GMI';
+SP2-0734: início de comando desconhecido "username(t..." - restante da linha ignorado.
+SQL> password(tab_key):='GMI';
+Alterando senha para (tab_key):='GMI'
+SP2-0650: As novas senhas não coincidem
+Senha inalterada
+SQL> tab_key:=190;
+SP2-0734: início de comando desconhecido "tab_key:=1..." - restante da linha ignorado.
+SQL> username(tab_key):='GML';
+SP2-0734: início de comando desconhecido "username(t..." - restante da linha ignorado.
+SQL> password(tab_key):='GML';
+Alterando senha para (tab_key):='GML'
+SP2-0650: As novas senhas não coincidem
+Senha inalterada
+SQL> tab_key:=191;
+SP2-0734: início de comando desconhecido "tab_key:=1..." - restante da linha ignorado.
+SQL> username(tab_key):='GMP';
+SP2-0734: início de comando desconhecido "username(t..." - restante da linha ignorado.
+SQL> password(tab_key):='GMP';
+Alterando senha para (tab_key):='GMP'
+SP2-0650: As novas senhas não coincidem
+Senha inalterada
+SQL> tab_key:=192;
+SP2-0734: início de comando desconhecido "tab_key:=1..." - restante da linha ignorado.
+SQL> username(tab_key):='GMS';
+SP2-0734: início de comando desconhecido "username(t..." - restante da linha ignorado.
+SQL> password(tab_key):='GMS';
+Alterando senha para (tab_key):='GMS'
+SP2-0650: As novas senhas não coincidem
+Senha inalterada
+SQL> tab_key:=193;
+SP2-0734: início de comando desconhecido "tab_key:=1..." - restante da linha ignorado.
+SQL> username(tab_key):='GPFD';
+SP2-0734: início de comando desconhecido "username(t..." - restante da linha ignorado.
+SQL> password(tab_key):='GPFD';
+Alterando senha para (tab_key):='GPFD'
+SP2-0650: As novas senhas não coincidem
+Senha inalterada
+SQL> tab_key:=194;
+SP2-0734: início de comando desconhecido "tab_key:=1..." - restante da linha ignorado.
+SQL> username(tab_key):='GPLD';
+SP2-0734: início de comando desconhecido "username(t..." - restante da linha ignorado.
+SQL> password(tab_key):='GPLD';
+Alterando senha para (tab_key):='GPLD'
+SP2-0650: As novas senhas não coincidem
+Senha inalterada
+SQL> 
+SQL> 
+SQL> 
+SQL> 
+SQL> 
+SQL> 
+SQL> 
+SQL> 
+SQL> --- =========================================
+SQL> --- =========================================
+SQL> --- =====        DEFAULT PASSWORDS    =======
+SQL> --- =========================================
+SQL> --- =========================================
+SQL> 
+SQL> 
+SQL> -- set termout on
+SQL>  prompt
+
+SQL> prompt     [&MAQUINA. / &INSTANCIA.] Collecting default passwords...
+[giglodb01 / rjd3] Collecting default passwords...
+SQL>  prompt
+
+SQL>  prompt
+
+SQL> set termout off
+SQL> 
+SQL> clear col
+columns conteúdo removido
+SQL> 
+SQL> set linesize 50
+SQL> 
+SQL> set linesize 80
+SQL> set serveroutput  on format wrapped size  1000000
+SQL> 
+SQL> 
+SQL>  prompt <br>
+<br>
+SQL>  prompt
+
+SQL>  prompt <b>.DEFAULT PASSWORDS.</b>
+<b>.DEFAULT PASSWORDS.</b>
+SQL>  prompt
+
+SQL>  prompt <pre>
+<pre>
+SQL> 
+SQL> 
+SQL> 
+SQL> declare
+  2   type user_tab is table of varchar2(30) index by binary_integer;
+  3   type pwd_tab is table of varchar2(30) index by binary_integer;
+  4   type sta_tab is table of varchar2(30) index by binary_integer;
+  5   type hash_tab is table of varchar2(16) index by binary_integer;
+  6  
+  7   username user_tab;
+  8   password pwd_tab;
+  9   account_status sta_tab;
+ 10   hash hash_tab;
+ 11  
+ 12   tab_key binary_integer:=1;
+ 13   i binary_integer:=1;
+ 14   --
+ 15     cursor  c_user is
+ 16    select  dba_users.username, dba_users.account_status,case when (substr(v$instance.version,1,2))=11
+ 17                                              then user$.password
+ 18                                              else dba_users.password
+ 19                                              end as password
+ 20     from dba_users, user$, v$instance
+ 21        where dba_users.username = user$.name;
+ 22  
+ 23   --
+ 24   found  number:=0;
+ 25   --
+ 26  
+ 27  begin
+ 28  ----------------------
+ 29  tab_key:=1;
+ 30  username(tab_key):='!DEMO_USER';
+ 31  password(tab_key):='!DEMO_USER';
+ 32  hash(tab_key):='F5815FA39C791FED';
+ 33  tab_key:=166;
+ 34  username(tab_key):='EXAMPLE';
+ 35  password(tab_key):='EXAMPLE';
+ 36  hash(tab_key):='637417B1DC47C2E5';
+ 37  ----------------------
+ 38  tab_key:=167;
+ 39  username(tab_key):='EXFSYS';
+ 40  password(tab_key):='EXFSYS';
+ 41  hash(tab_key):='66F4EF5650C20355';
+ 42  ----------------------
+ 43  ----------------------
+ 44  tab_key:=637;
+ 45  username(tab_key):='SCOTT';
+ 46  password(tab_key):='TIGER9IFS';
+ 47  hash(tab_key):='A53ECFD6E124729D';
+ 48  ----------------------
+ 49  tab_key:=638;
+ 50  username(tab_key):='GUEST';
+ 51  password(tab_key):='WELCOME9IFS';
+ 52  hash(tab_key):='54CF6A9DC2276702';
+ 53  ----------------------
+ 54  
+ 55   for lv_user in c_user loop
+ 56    for i in 1..tab_key loop
+ 57     if lv_user.username=username(i) then
+ 58      if lv_user.password=hash(i) then
+ 59       dbms_output.put_line(username(i)||' / '||password(i)||'     ['||lv_user.account_status||']');
+ 60       exit;
+ 61      end if;
+ 62     end if;
+ 63    end loop;
+ 64   end loop;
+ 65  end;
+ 66  /
+   from dba_users, user$, v$instance
+                   *
+ERRO na linha 20:
+ORA-06550: line 20, column 20: 
+PL/SQL: ORA-00942: table or view does not exist 
+ORA-06550: line 16, column 3: 
+PL/SQL: SQL Statement ignored 
+ORA-06550: line 57, column 7: 
+PLS-00364: loop index variable 'LV_USER' use is invalid 
+ORA-06550: line 57, column 4: 
+PL/SQL: Statement ignored 
+
+
+SQL>  prompt
+
+SQL>  prompt </pre>
+</pre>
+SQL>  prompt <a HREF=#top><h6>Top</h6></a>
+<a HREF=#top><h6>Top</h6></a>
+SQL>  prompt <hr>
+<hr>
+SQL> 
+SQL> 
+SQL> 
+SQL> 
+SQL> select  dba_users.username, dba_users.account_status,case when (substr(v$instance.version,1,2
+  2  
+SQL>                                           then user$.password
+SP2-0734: início de comando desconhecido "then user$..." - restante da linha ignorado.
+SQL>                                           else dba_users.password
+SP2-0734: início de comando desconhecido "else dba_u..." - restante da linha ignorado.
+SQL>                                           end as password
+SP2-0734: início de comando desconhecido "end as pas..." - restante da linha ignorado.
+SQL>  from dba_users, user$, v$instance
+SP2-0734: início de comando desconhecido "from dba_u..." - restante da linha ignorado.
+SP2-0044: P/lista comandos conhec., informe HELP
+. P/sair, informe EXIT.
+SQL>     where dba_users.username = user$.name;
+SP2-0734: início de comando desconhecido "where dba_..." - restante da linha ignorado.
+SQL> 
+SQL> 
+SQL> 
+SQL> select  dba_users.username, dba_users.account_status,case when (substr(v$instance.version,1,2))=11
+  2                                              then user$.password
+  3                                              else dba_users.password
+  4                                              end as password
+  5     from dba_users, user$, v$instance
+  6  ;
+   from dba_users, user$, v$instance
+                   *
+ERRO na linha 5:
+ORA-00942: table or view does not exist 
+
+
+SQL> select  * from dba_users, user$, v$instance;
+select  * from dba_users, user$, v$instance
+                          *
+ERRO na linha 1:
+ORA-00942: table or view does not exist 
+
+
+SQL> select  * from dba_users, user$, v$instance;
+select  * from dba_users, user$, v$instance
+                          *
+ERRO na linha 1:
+ORA-00942: table or view does not exist 
+
+
+SQL> @onde
+
+ONDE                      QUEM                                                  
+------------------------- -------------------------                             
+RJD3.BRASIFNET.COM.BR     SYSTEM                                                
+SQL> @onde
+
+ONDE                      QUEM                                                  
+------------------------- -------------------------                             
+RJD3.BRASIFNET.COM.BR     SYSTEM                                                
+SQL> 
+SQL> 
+SQL> 
+SQL> @onde
+
+ONDE                      QUEM                                                  
+------------------------- -------------------------                             
+RJD3.BRASIFNET.COM.BR     SYSTEM                                                
+SQL> 
+SQL> 
+SQL> 
+SQL> 
+SQL> @onde
+
+ONDE                      QUEM                                                  
+------------------------- -------------------------                             
+RJD3.BRASIFNET.COM.BR     SYSTEM                                                
+SQL> ---------------------------
+SQL> Oracle SQL*Plus
+SP2-0734: início de comando desconhecido "Oracle SQL..." - restante da linha ignorado.
+SQL> ---------------------------
+SQL> Nenhum texto foi recortado!
+SP2-0734: início de comando desconhecido "Nenhum tex..." - restante da linha ignorado.
+SQL> ---------------------------
+SQL> OK
+SP2-0042: comando desconhecido "OK" - restante da linha ignorado.
+SQL> ---------------------------
+SQL> 
+SQL> 
+SQL> 
+SQL> ---------------------------
+SQL> Oracle SQL*Plus
+SP2-0734: início de comando desconhecido "Oracle SQL..." - restante da linha ignorado.
+SQL> ---------------------------
+SQL> Nenhum texto foi recortado!
+SP2-0734: início de comando desconhecido "Nenhum tex..." - restante da linha ignorado.
+SQL> ---------------------------
+SQL> OK
+SP2-0042: comando desconhecido "OK" - restante da linha ignorado.
+SQL> ---------------------------
+SQL> 
+SQL> 
+SQL> onde
+SP2-0042: comando desconhecido "onde" - restante da linha ignorado.
+SQL> 
+SQL> -- set termout on
+SQL>  prompt
+
+SQL> prompt     [&MAQUINA. / &INSTANCIA.] Collecting default passwords...
+[giglodb01 / rjd3] Collecting default passwords...
+SQL>  prompt
+
+SQL>  prompt
+
+SQL> set termout off
+SQL> 
+SQL> clear col
+columns conteúdo removido
+SQL> 
+SQL> set linesize 50
+SQL> 
+SQL> set linesize 80
+SQL> set serveroutput  on format wrapped size  1000000
+SQL> 
+SQL> 
+SQL>  prompt <br>
+<br>
+SQL>  prompt
+
+SQL>  prompt <b>.DEFAULT PASSWORDS.</b>
+<b>.DEFAULT PASSWORDS.</b>
+SQL>  prompt
+
+SQL>  prompt <pre>
+<pre>
+SQL> 
+SQL> 
+SQL> 
+SQL> declare
+  2   type user_tab is table of varchar2(30) index by binary_integer;
+  3   type pwd_tab is table of varchar2(30) index by binary_integer;
+  4   type sta_tab is table of varchar2(30) index by binary_integer;
+  5   type hash_tab is table of varchar2(16) index by binary_integer;
+  6  
+  7   username user_tab;
+  8   password pwd_tab;
+  9   account_status sta_tab;
+ 10   hash hash_tab;
+ 11  
+ 12   tab_key binary_integer:=1;
+ 13   i binary_integer:=1;
+ 14   --
+ 15     cursor  c_user is
+ 16    select  dba_users.username, dba_users.account_status,case when (substr(v$instance.version,1,2))=11
+ 17                                              then user$.password
+ 18                                              else dba_users.password
+ 19                                              end as password
+ 20     from dba_users, user$, v$instance
+ 21        where dba_users.username = user$.name;
+ 22  
+ 23   --
+ 24   found  number:=0;
+ 25   --
+ 26  
+ 27  begin
+ 28  ----------------------
+ 29  tab_key:=1;
+ 30  username(tab_key):='!DEMO_USER';
+ 31  password(tab_key):='!DEMO_USER';
+ 32  hash(tab_key):='F5815FA39C791FED';
+ 33  tab_key:=166;
+ 34  username(tab_key):='EXAMPLE';
+ 35  password(tab_key):='EXAMPLE';
+ 36  hash(tab_key):='637417B1DC47C2E5';
+ 37  ----------------------
+ 38  
+ 39   for lv_user in c_user loop
+ 40    for i in 1..tab_key loop
+ 41     if lv_user.username=username(i) then
+ 42      if lv_user.password=hash(i) then
+ 43       dbms_output.put_line(username(i)||' / '||password(i)||'     ['||lv_user.account_status||']');
+ 44       exit;
+ 45      end if;
+ 46     end if;
+ 47    end loop;
+ 48   end loop;
+ 49  end;
+ 50  /
+   from dba_users, user$, v$instance
+                   *
+ERRO na linha 20:
+ORA-06550: line 20, column 20: 
+PL/SQL: ORA-00942: table or view does not exist 
+ORA-06550: line 16, column 3: 
+PL/SQL: SQL Statement ignored 
+ORA-06550: line 41, column 7: 
+PLS-00364: loop index variable 'LV_USER' use is invalid 
+ORA-06550: line 41, column 4: 
+PL/SQL: Statement ignored 
+
+
+SQL>  prompt
+
+SQL>  prompt </pre>
+</pre>
+SQL>  prompt <a HREF=#top><h6>Top</h6></a>
+<a HREF=#top><h6>Top</h6></a>
+SQL>  prompt <hr>
+<hr>
+SQL> 
+SQL> 
+SQL> 
+SQL> -- set termout on
+SQL>  prompt
+
+SQL> prompt     [&MAQUINA. / &INSTANCIA.] Collecting default passwords...
+[giglodb01 / rjd3] Collecting default passwords...
+SQL>  prompt
+
+SQL>  prompt
+
+SQL> set termout off
+SQL> 
+SQL> clear col
+columns conteúdo removido
+SQL> 
+SQL> set linesize 50
+SQL> 
+SQL> set linesize 80
+SQL> set serveroutput  on format wrapped size  1000000
+SQL> 
+SQL> 
+SQL>  prompt <br>
+<br>
+SQL>  prompt
+
+SQL>  prompt <b>.DEFAULT PASSWORDS.</b>
+<b>.DEFAULT PASSWORDS.</b>
+SQL>  prompt
+
+SQL>  prompt <pre>
+<pre>
+SQL> 
+SQL> 
+SQL> 
+SQL> declare
+  2   type user_tab is table of varchar2(30) index by binary_integer;
+  3   type pwd_tab is table of varchar2(30) index by binary_integer;
+  4   type sta_tab is table of varchar2(30) index by binary_integer;
+  5   type hash_tab is table of varchar2(16) index by binary_integer;
+  6  
+  7   username user_tab;
+  8   password pwd_tab;
+  9   account_status sta_tab;
+ 10   hash hash_tab;
+ 11  
+ 12   tab_key binary_integer:=1;
+ 13   i binary_integer:=1;
+ 14   --
+ 15     cursor  c_user is
+ 16    select  dba_users.username, dba_users.account_status,case when (substr(v$instance.version,1,2))=11
+ 17                                              then user$.password
+ 18                                              else dba_users.password
+ 19                                              end as password
+ 20     from dba_users, user$, v$instance
+ 21        where dba_users.username = user$.name;
+ 22  
+ 23   --
+ 24   found  number:=0;
+ 25   --
+ 26  
+ 27  begin
+ 28  ----------------------
+ 29  tab_key:=1;
+ 30  username(tab_key):='!DEMO_USER';
+ 31  password(tab_key):='!DEMO_USER';
+ 32  hash(tab_key):='F5815FA39C791FED';
+ 33  -------------------------------------
+ 34  tab_key:=166;
+ 35  username(tab_key):='EXAMPLE';
+ 36  password(tab_key):='EXAMPLE';
+ 37  hash(tab_key):='637417B1DC47C2E5';
+ 38  ----------------------
+ 39  
+ 40   for lv_user in c_user loop
+ 41    for i in 1..tab_key loop
+ 42     if lv_user.username=username(i) then
+ 43      if lv_user.password=hash(i) then
+ 44       dbms_output.put_line(username(i)||' / '||password(i)||'     ['||lv_user.account_status||']');
+ 45       exit;
+ 46      end if;
+ 47     end if;
+ 48    end loop;
+ 49   end loop;
+ 50  end;
+ 51  /
+   from dba_users, user$, v$instance
+                   *
+ERRO na linha 20:
+ORA-06550: line 20, column 20: 
+PL/SQL: ORA-00942: table or view does not exist 
+ORA-06550: line 16, column 3: 
+PL/SQL: SQL Statement ignored 
+ORA-06550: line 42, column 7: 
+PLS-00364: loop index variable 'LV_USER' use is invalid 
+ORA-06550: line 42, column 4: 
+PL/SQL: Statement ignored 
+
+
+SQL>  prompt
+
+SQL>  prompt </pre>
+</pre>
+SQL>  prompt <a HREF=#top><h6>Top</h6></a>
+<a HREF=#top><h6>Top</h6></a>
+SQL>  prompt <hr>
+<hr>
+SQL> 
+SQL> 
+SQL> 
+SQL> clear col
+columns conteúdo removido
+SQL> 
+SQL> 
+SQL> 
+SQL> show errors
+Não há erros.
+SQL> conn sys@rjd3
+ERROR:
+ORA-28009: connection to sys should be as sysdba or sysoper 
+
+
+Advertência: Você não está mais conectado ao ORACLE.
+SQL> conn sys@rjd3 as sysdba
+Conectado.
+SQL> @conn sys@bhd1
+SP2-0310: não foi possível abrir o arquivo "conn.sql"
+SQL> conn sys@bhd1 as sysdba
+Conectado.
+SQL> 
+SQL> 
+SQL> spool c:\bhd1a.sql

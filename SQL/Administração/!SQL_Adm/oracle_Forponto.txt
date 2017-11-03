@@ -1,0 +1,8 @@
+FORPONTO
+
+conn operador/operador@oraprod;
+
+exec sp_cria_usuario ('<mat>'); 
+//a mat é composta pela letra M + mat sem o primeiro 0
+
+exec sp_dropa_usuario ('<mat>');

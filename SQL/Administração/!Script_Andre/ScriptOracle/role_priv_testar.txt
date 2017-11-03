@@ -1,0 +1,8 @@
+SELECT ROLE, table_name "Object Name", owner 
+, DECODE(SUM(decode(privilege, 'UPDATE', 1, 0)), 1, 'UPDATE') "UPDATE_" 
+, DECODE(SUM(decode(privilege, 'INSERT', 1, 0)), 1, 'INSERT') "INSERT_" 
+, DECODE(SUM(decode(privilege, 'SELECT', 1, 0)), 1, 'SELECT') "SELECT_" 
+, DECODE(SUM(decode(privilege, 'DELETE', 1, 0)), 1, 'DELETE') "DELETE_" 
+, DECODE(SUM(decode(privilege, 'EXECUTE', 1, 0)), 1, 'EXECUTE') "EXECUTE_" 
+FROM ROLE_TAB_PRIVS 
+GROUP BY owner, ROLE, TABLE_NAME; 

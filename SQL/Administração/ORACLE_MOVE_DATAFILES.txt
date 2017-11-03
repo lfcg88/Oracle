@@ -1,0 +1,67 @@
+Move/rename datafiles in Oracle 
+
+  Moving datafiles of a database: The datafiles reside under /home/oracle/OraHome1/databases/ora9 and have go to /home/oracle/databases/ora9. 
+
+  SQL> select tablespace_name, substr(file_name,1,70) from dba_data_files;
+TABLESPACE_NAME                SUBSTR(FILE_NAME,1,70)
+------------------------------ ----------------------------------------------------------------------
+SYSTEM                         /home/oracle/OraHome1/databases/ora9/system.dbf
+UNDO                           /home/oracle/OraHome1/databases/ora9/undo.dbf
+DATA                           /home/oracle/OraHome1/databases/ora9/data.dbf
+
+SQL> select member from v$logfile;
+MEMBER
+--------------------------------------------------------------------------------
+/home/oracle/OraHome1/databases/ora9/redo1.ora
+/home/oracle/OraHome1/databases/ora9/redo2.ora
+/home/oracle/OraHome1/databases/ora9/redo3.ora
+
+SQL> select name from v$controlfile;
+NAME
+--------------------------------------------------------------------------------
+/home/oracle/OraHome1/databases/ora9/ctl_1.ora
+/home/oracle/OraHome1/databases/ora9/ctl_2.ora
+/home/oracle/OraHome1/databases/ora9/ctl_3.ora
+
+Now, as the files to be moved are known, the database can be shut down: 
+
+SQL> shutdown
+
+The files can be copied to their destination: 
+$ cp /home/oracle/OraHome1/databases/ora9/system.dbf  /home/oracle/databases/ora9/system.dbf
+$ cp /home/oracle/OraHome1/databases/ora9/undo.dbf    /home/oracle/databases/ora9/undo.dbf
+$ cp /home/oracle/OraHome1/databases/ora9/data.dbf    /home/oracle/databases/ora9/data.dbf
+$ 
+$ cp /home/oracle/OraHome1/databases/ora9/redo1.ora   /home/oracle/databases/ora9/redo1.ora
+$ cp /home/oracle/OraHome1/databases/ora9/redo2.ora   /home/oracle/databases/ora9/redo2.ora
+$ cp /home/oracle/OraHome1/databases/ora9/redo3.ora   /home/oracle/databases/ora9/redo3.ora
+$ 
+$ cp /home/oracle/OraHome1/databases/ora9/ctl_1.ora   /home/oracle/databases/ora9/ctl_1.ora
+$ cp /home/oracle/OraHome1/databases/ora9/ctl_2.ora   /home/oracle/databases/ora9/ctl_2.ora
+$ cp /home/oracle/OraHome1/databases/ora9/ctl_3.ora   /home/oracle/databases/ora9/ctl_3.ora
+
+The init.ora file is also copied because it references the control files. I name the copied file just init.ora because it is not in a standard place anymore and it will have to be named explicitely anyway when the database is started up. 
+
+$ cp /home/oracle/OraHome1/dbs/initORA9.ora /home/oracle/databases/ora9/init.ora
+
+The new location for the control files must be written into the (copied) init.ora file: 
+
+/home/oracle/databases/ora9/init.ora
+
+control_files = (/home/oracle/databases/ora9/ctl_1.ora,
+                 /home/oracle/databases/ora9/ctl_2.ora,
+                 /home/oracle/databases/ora9/ctl_3.ora)
+
+
+$ sqlplus "/ as sysdba"
+
+SQL> startup exclusive mount pfile=/home/oracle/databases/ora9/init.ora
+SQL> alter database rename file '/home/oracle/OraHome1/databases/ora9/system.dbf' to '/home/oracle/databases/ora9/system.dbf';
+SQL> alter database rename file '/home/oracle/OraHome1/databases/ora9/undo.dbf'   to '/home/oracle/databases/ora9/undo.dbf';
+SQL> alter database rename file '/home/oracle/OraHome1/databases/ora9/data.dbf'   to '/home/oracle/databases/ora9/data.dbf';
+SQL> alter database rename file '/home/oracle/OraHome1/databases/ora9/redo1.ora'  to '/home/oracle/databases/ora9/redo1.ora';
+SQL> alter database rename file '/home/oracle/OraHome1/databases/ora9/redo2.ora'  to '/home/oracle/databases/ora9/redo2.ora';
+SQL> alter database rename file '/home/oracle/OraHome1/databases/ora9/redo3.ora'  to '/home/oracle/databases/ora9/redo3.ora';
+SQL> shutdown
+SQL> startup pfile=/home/oracle/databases/ora9/init.ora
+ 

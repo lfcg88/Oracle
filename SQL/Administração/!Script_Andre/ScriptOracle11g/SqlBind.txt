@@ -1,0 +1,36 @@
+Acabei montando esse aqui, pega todo mundo que está em execução
+ 
+ 
+select    s.sql_id,
+        position,
+     t.sql_text SQL_TEXT,
+     b.name BIND_NAME,
+     b.value_string BIND_STRING
+     from v$sql t
+          join v$sql_bind_capture b using (sql_id)
+     where b.value_string is not null
+     and sql_id in (SELECT    s.SQL_ID
+                     FROM V$SESSION s
+                     WHERE s.STATUS = 'ACTIVE'
+                     AND s.USERNAME is not NULL)
+        order by 1,2;
+
+
+
+Usei esta query para pegar o valor das bind
+ 
+ 
+select
+  sql_id,
+  t.sql_text SQL_TEXT,
+  b.name BIND_NAME,
+  b.value_string BIND_STRING
+from
+  v$sql t
+  join v$sql_bind_capture b
+  using (sql_id)
+where
+  b.value_string is not null
+  and sql_id='8wyvnc29ypb59'
+/
+

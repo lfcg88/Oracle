@@ -1,0 +1,59 @@
+rem *******************************************************
+rem  Oracle DBA Essencial – Volume II – Administração
+rem
+rem             Eduardo T. Morelli
+rem
+rem *******************************************************
+rem     Cap. 4 - TABLESPACES
+rem
+rem       04_Espaco_Disponivel.sql
+rem
+rem *******************************************************
+ 
+
+column Total_Livre 	format '999,999.99' heading 'Espaço Total Livre (MB)'
+column Total_Alocado 	format '999,999.99' heading 'Espaço Total Alocado (MB)'
+column tablespace 	format a20
+column livres 		format '999,999.99' heading 'MB Livres'
+column total 		format '9,999,999.99' heading 'Total MB'
+column percentual format '999,999.99' heading '% Livre'
+column AUTOEXTENT 	format a20
+
+-- Query 1: mostra quanto espaço LIVRE há em todo banco
+select sum(mb_livres) Total_Livre 
+from (select tablespace_name, round(SUM(d.BYTES)/ 1048576,2) MB_LIVRES
+	FROM dba_free_space d
+	GROUP BY tablespace_name) l;
+
+-- Query 2: mostra quanto espaço ALOCADO há em todo o banco
+select sum(mb_total) Total_Alocado from (select tablespace_name, SUM(BYTES/1048576)  MB_TOTAL
+	FROM DBA_DATA_FILES
+	GROUP BY tablespace_name
+	union
+	select tablespace_name, SUM(BYTES/1048576)  MB_TOTAL
+	FROM DBA_temp_FILES
+	GROUP BY tablespace_name) a;
+
+-- Query 3: relação de tablespaces com espaços ocupados e livres. Ainda mostramos o percentual para cada uma e se esta em autoextent
+select a.tablespace_name TABLESPACE,  
+       mb_livres LIVRES, 
+       mb_total TOTAL,        
+       ROUND(mb_livres/mb_total*100,2)  PERCENTUAL_USADO,
+	   c.autoextensible AUTOEXTENT
+from 
+(select tablespace_name, round(SUM(d.BYTES)/ 1048576,2) MB_LIVRES
+	FROM dba_free_space d
+	GROUP BY tablespace_name) l, 
+(select tablespace_name, SUM(BYTES/1048576)  MB_TOTAL
+	FROM DBA_DATA_FILES
+	GROUP BY tablespace_name
+	union
+	select tablespace_name, SUM(BYTES/1048576)  MB_TOTAL
+	FROM DBA_temp_FILES
+	GROUP BY tablespace_name) a,
+	dba_data_files c
+where l.tablespace_name (+) = a.tablespace_name
+      and c.tablespace_name = l.tablespace_name
+order by 1;
+
+

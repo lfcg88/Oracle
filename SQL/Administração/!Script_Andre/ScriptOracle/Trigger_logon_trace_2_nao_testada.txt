@@ -1,0 +1,27 @@
+CREATE OR REPLACE TRIGGER SYS.TGR_ENABLE_TRACE
+after
+logon
+on database
+begin
+	IF USER = 'SUP' THEN
+		EXECUTE IMMEDIATE 'alter session set TIMED_STATISTICS=TRUE';
+		EXECUTE IMMEDIATE 'alter session set STATISTICS_LEVEL=ALL';
+		EXECUTE IMMEDIATE 'alter session set max_dump_file_size=UNLIMITED';
+		EXECUTE IMMEDIATE 'ALTER SESSION SET EVENTS ''10046 TRACE NAME CONTEXT FOREVER, LEVEL 12''';
+	END IF;
+END;
+/
+
+
+
+
+
+
+CREATE OR REPLACE TRIGGER SYS.TGR_LOGON
+after
+logon
+on database
+begin
+   EXECUTE IMMEDIATE 'alter session set hash_area_size=5242880';
+END;
+/

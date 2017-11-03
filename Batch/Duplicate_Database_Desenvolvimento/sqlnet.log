@@ -1,0 +1,76 @@
+
+
+***********************************************************************
+Fatal NI connect error 12514, connecting to:
+ (DESCRIPTION=(ADDRESS=(PROTOCOL=TCP)(HOST=RJNOTEB-02530)(PORT=1521))(CONNECT_DATA=(SERVICE_NAME=MIAFISNB)(CID=(PROGRAM=C:\Oracle\ora817\bin\SQLPLUS.EXE)(HOST=RJNOTEB-02530)(USER=mauro))))
+
+  VERSION INFORMATION:
+	TNS for 32-bit Windows: Version 8.1.7.4.0 - Production
+	Windows NT TCP/IP NT Protocol Adapter for 32-bit Windows: Version 8.1.7.4.0 - Production
+  Time: 23-JUL-2004 16:10:39
+  Tracing not turned on.
+  Tns error struct:
+    nr err code: 0
+    ns main err code: 12564
+    TNS-12564: TNS:connection refused
+    ns secondary err code: 0
+    nt main err code: 0
+    nt secondary err code: 0
+    nt OS err code: 0
+
+
+***********************************************************************
+Fatal NI connect error 12514, connecting to:
+ (DESCRIPTION=(ADDRESS=(PROTOCOL=TCP)(HOST=RJNOTEB-02530)(PORT=1521))(CONNECT_DATA=(SERVICE_NAME=MIAFISNB)(CID=(PROGRAM=C:\Oracle\ora817\bin\SQLPLUS.EXE)(HOST=RJNOTEB-02530)(USER=mauro))))
+
+  VERSION INFORMATION:
+	TNS for 32-bit Windows: Version 8.1.7.4.0 - Production
+	Windows NT TCP/IP NT Protocol Adapter for 32-bit Windows: Version 8.1.7.4.0 - Production
+  Time: 23-JUL-2004 16:12:34
+  Tracing not turned on.
+  Tns error struct:
+    nr err code: 0
+    ns main err code: 12564
+    TNS-12564: TNS:connection refused
+    ns secondary err code: 0
+    nt main err code: 0
+    nt secondary err code: 0
+    nt OS err code: 0
+
+
+***********************************************************************
+Fatal NI connect error 12514, connecting to:
+ (DESCRIPTION=(ADDRESS=(PROTOCOL=TCP)(HOST=RJNOTEB-02530)(PORT=1521))(CONNECT_DATA=(SERVICE_NAME=MIAFISNB)(CID=(PROGRAM=C:\Oracle\ora817\bin\SQLPLUS.EXE)(HOST=RJNOTEB-02530)(USER=mauro))))
+
+  VERSION INFORMATION:
+	TNS for 32-bit Windows: Version 8.1.7.4.0 - Production
+	Windows NT TCP/IP NT Protocol Adapter for 32-bit Windows: Version 8.1.7.4.0 - Production
+  Time: 23-JUL-2004 16:13:59
+  Tracing not turned on.
+  Tns error struct:
+    nr err code: 0
+    ns main err code: 12564
+    TNS-12564: TNS:connection refused
+    ns secondary err code: 0
+    nt main err code: 0
+    nt secondary err code: 0
+    nt OS err code: 0
+
+
+***********************************************************************
+Fatal NI connect error 12514, connecting to:
+ (DESCRIPTION=(ADDRESS=(PROTOCOL=TCP)(HOST=RJNOTEB-02530)(PORT=1521))(CONNECT_DATA=(SERVICE_NAME=MIAFISNB)(CID=(PROGRAM=C:\Oracle\ora817\bin\SQLPLUS.EXE)(HOST=RJNOTEB-02530)(USER=mauro))))
+
+  VERSION INFORMATION:
+	TNS for 32-bit Windows: Version 8.1.7.4.0 - Production
+	Windows NT TCP/IP NT Protocol Adapter for 32-bit Windows: Version 8.1.7.4.0 - Production
+  Time: 23-JUL-2004 16:14:16
+  Tracing not turned on.
+  Tns error struct:
+    nr err code: 0
+    ns main err code: 12564
+    TNS-12564: TNS:connection refused
+    ns secondary err code: 0
+    nt main err code: 0
+    nt secondary err code: 0
+    nt OS err code: 0

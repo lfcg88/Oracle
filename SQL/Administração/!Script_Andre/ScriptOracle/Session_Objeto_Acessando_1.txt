@@ -1,0 +1,38 @@
+
+rem Script Description: This query can be used to determine all of the objects that are 
+rem                     currently being accessed by a user. 
+rem
+rem Output file:        ops.lis
+rem
+rem Prepared By:        TheOracleResourceStop Script Archive
+rem                     www.orsweb.com
+rem
+rem Usage Information:  SQLPLUS SYS/pswd
+rem                     @objpersess.sql
+rem
+
+set pages 100;
+set lines 132;
+
+col username format A15 head "User Name";
+col owner    format A20 head "Schema Owner";
+col object   format A30 head "Object Name";
+col type     format A10 head "Object Type";
+
+break on sid on username on N on owner
+
+spool c:\sessao_acessando_objeto
+
+SELECT a.sid, a.username, b.owner, b.object, b.type
+FROM   v$session a, v$access b 
+WHERE  a.sid = b.sid
+and status='ACTIVE' and username is not null;
+
+spool off;
+
+break off
+
+undefine username;
+undefine owner;
+undefine object;
+clear columns;

@@ -1,0 +1,840 @@
+
+
+
+spool EstruturaFisica
+
+
+
+
+
+spool c:\duedil.lst
+set lines 130
+set pages 100
+set numf 99,999,999,999,999
+prompt ==================================
+prompt D A T A B A S E
+prompt ==================================
+select * from v$database;
+prompt
+prompt
+prompt
+prompt ==================================
+prompt DATABASE VERSION
+prompt ==================================
+select * from v$version;
+prompt
+prompt
+prompt
+prompt ==================================
+prompt DATABASE SIZE 
+prompt ==================================
+select t.totaloc "TOTAL ALLOCATED(bytes)",
+       (t.totaloc - f.totfree) "TOTAL USED",
+       f.totfree "TOTAL FREE(bytes)",
+       ((t.totaloc - f.totfree)/t.totaloc)*100 "% USED"
+  from (select sum(bytes) totaloc from dba_data_files) t,
+       (select sum(bytes) totfree from dba_free_space) f ;
+prompt
+prompt
+prompt
+prompt ==================================
+prompt S G A
+prompt ==================================
+SHOW SGA;
+prompt
+prompt
+prompt
+prompt ==================================
+prompt L A N G U A G E
+prompt ==================================
+select name, '*',
+substr(value$,1,30), '*',
+ substr(comment$,1,30)
+ from sys.props$;
+prompt
+prompt
+prompt
+prompt ==================================
+prompt PARAMETER INFORMATION - ALL
+prompt ==================================
+rem
+rem Prints out the current SGA parameters
+rem
+ttitle left ' SGA Parameter Values' -
+right 'Page: ' format 999 sql.pno -
+skip 2
+column num format 999 heading 'Nbr'
+column name format a41 heading 'Parameter Name'
+column value format a50 heading 'Parameter Value'
+select num,
+name,
+value
+from v$parameter
+order by name
+/
+rem
+prompt
+prompt ==================================
+prompt PARAMETER INFORMATION - NO DEFAULT
+prompt ==================================
+rem
+rem Prints out the current SGA parameters
+rem
+column num format 999 heading 'Nbr'
+column name format a41 heading 'Parameter Name'
+column value format a50 heading 'Parameter Value'
+select num,
+name,
+value
+from v$parameter
+WHERE ISDEFAULT='FALSE'
+order by name
+/
+rem
+prompt
+prompt
+prompt
+prompt ==================================
+prompt ARCHIVE INFORMATION
+prompt ==================================
+set pagesize 200
+set linesize 100
+column parametro format a30 
+column valor     format a40
+ select substr(name,1,35) parametro, substr(value,1,70) valor
+ from v$parameter
+where name like '%arch%';
+prompt
+prompt
+
+
+prompt ==================================
+prompt TABLESPACE INFORMATION
+prompt ==================================
+
+set linesize 110
+column init/next format a25
+column min/max format a15
+column pct format 999
+column tablespace_name format a25 heading "Tablespace"
+column status format a8
+column Ext_Man format a7
+select a.tablespace_name,a.initial_extent||'/'||a.next_extent "Init/Next",
+a.min_extents||'/'||a.max_extents "Min/Max",a.pct_increase pct,a.status,
+a.CONTENTS,substr(a.EXTENT_MANAGEMENT,1,7) "Ext_Man", ALLOCATION_TYPE     
+from sys.dba_tablespaces a
+/
+
+prompt
+prompt ==================================
+prompt TABLESPACE SPACE
+prompt ==================================
+set linesize 100
+set pagesize 300
+column  "Used %" format 999.9       heading "Perc|Used"
+column  Name    format a20      heading "Tablespace Name"
+column  "Used (M)"    format 999,999,999.99   heading "Used (M)"
+column  "Size (M)" format a10  heading Size (M)"
+column "Used %" format a10  heading "Used %"
+column  free    format 999,999,999  heading "Free"
+
+
+SELECT d.status "Status", d.tablespace_name "Name", d.contents "Type",
+  d.extent_management "Extent Management", TO_CHAR(NVL(a.bytes / 1024 / 1024,
+  0),'99,999,990.900') "Size (M)", 
+  NVL(a.bytes - NVL(f.bytes, 0), 0)/1024/1024  "Used (M)",
+--||'/'||NVL(a.bytes/1024/1024, 0) "Used (M)",
+  TO_CHAR(  NVL((a.bytes - NVL(f.bytes, 0)) / a.bytes * 100, 0), '990.00')  "Used %"
+FROM
+ sys.dba_tablespaces d, (select tablespace_name, sum(bytes) bytes from
+  dba_data_files group by tablespace_name) a, (select tablespace_name,
+  sum(bytes) bytes from dba_free_space group by tablespace_name) f WHERE
+  d.tablespace_name = a.tablespace_name(+) AND d.tablespace_name =
+  f.tablespace_name(+) AND NOT (d.extent_management like 'LOCAL' AND
+  d.contents like 'TEMPORARY') UNION ALL SELECT d.status "Status",
+  d.tablespace_name "Name", d.contents "Type", d.extent_management "Extent
+  Management", TO_CHAR(NVL(a.bytes / 1024 / 1024, 0),'99,999,990.900') "Size
+  (M)", 
+  NVL(t.bytes, 0)/1024/1024 "Used (M)",
+--||'/'||NVL(a.bytes/1024/1024, 0) "Used (M)",
+   TO_CHAR(NVL(t.bytes / a.bytes * 100, 0), '990.00') "Used %" FROM
+  sys.dba_tablespaces d, (select tablespace_name, sum(bytes) bytes from
+  dba_temp_files group by tablespace_name) a, (select tablespace_name,
+  sum(bytes_cached) bytes from v$temp_extent_pool group by tablespace_name) t
+  WHERE d.tablespace_name = a.tablespace_name(+) AND d.tablespace_name =
+  t.tablespace_name(+) AND d.extent_management like 'LOCAL' AND d.contents 
+like 'TEMPORARY'  
+/
+
+prompt
+prompt
+prompt
+prompt ======================================
+prompt TAMANHO DO TABLESPACE(bytes) POR OWNER  
+prompt ======================================
+col total format 999,999,999,999,999
+ select owner,tablespace_name, sum(bytes)total
+ from dba_segments
+ group by owner, tablespace_name;
+prompt
+prompt
+prompt
+prompt ==================================
+prompt ARQUIVO POR DIRETORIO
+prompt ==================================
+
+break on diretorio
+
+set linesize 90
+
+column diretorio format a35
+column arquivo format a40
+
+select *
+from ( 
+	select substr(name,1,instr(name,'/',-1)) diretorio ,substr(name, instr(name, '/', -1)) arquivo,'DF  '  "tipo"
+	FROM V$DATAFILE 
+	UNION
+	select substr(file_name,1,instr(file_name,'/',-1)) diretorio ,substr(file_name, instr(file_name, '/', -1)) arquivo,'DF  '  "tipo"
+	FROM DBA_TEMP_FILES 
+	UNION
+	select substr(member,1,instr(member,'/',-1)) diretorio ,substr(member, instr(member, '/', -1)) arquivo,'LF  '  "tipo"  
+	FROM V$LOGFILE  
+	UNION
+	select substr(name,1,instr(name,'/',-1)) diretorio ,substr(name, instr(name, '/', -1)) arquivo,'CF  '  "tipo"   
+	FROM V$CONTROLFILE
+)
+order by diretorio;
+prompt
+prompt
+prompt
+prompt ==================================
+prompt ARQUIVO POR MOUNT POINT
+prompt ==================================
+
+break on MounPoint
+
+set linesize 90
+
+column MounPoint format a10
+column arquivo format a40
+
+select *
+from (
+	select substr(name,1,5) MounPoint ,substr(name, instr(name, '/', -1)) arquivo,'DF  '  "tipo"
+	FROM V$DATAFILE  
+	UNION
+	select substr(file_name,1,5) MounPoint ,substr(file_name, instr(file_name, '/', -1)) arquivo,'DF  '  "tipo"
+	FROM DBA_TEMP_FILES   
+	UNION
+	select substr(member,1,5) MounPoint ,substr(member, instr(member, '/', -1)) arquivo,'LF  '  "tipo"  
+	FROM V$LOGFILE  
+	UNION
+	select substr(name,1,5) MounPoint ,substr(name, instr(name, '/', -1)) arquivo,'CF  '  "tipo"   
+	FROM V$CONTROLFILE
+)
+order by MounPoint;
+
+prompt
+prompt
+prompt
+prompt ==================================
+prompt diretorio no init.ora
+prompt ==================================
+
+set linesize 90
+
+column parametro format a40
+column diretorio format a40
+
+
+select NAME parametro,VALUE diretorio from v$parameter
+where name in ('background_dump_dest','user_dump_dest','core_dump_dest','log_archive_dest');
+prompt
+prompt
+prompt
+prompt ==================================
+prompt REDOLOG INFORMATION
+prompt ==================================
+column membro format a50
+column status format a8
+column group# format 99
+column bytes format 999,999,999
+select a.group#,substr(a.member,1,70) membro,b.bytes,b.status
+from v$logfile a,v$log b
+where a.group#=b.group#;
+
+prompt
+prompt
+prompt
+prompt ==================================
+prompt ROLLBACK SEGMENT INFORMATION
+prompt ==================================
+col segment format a10
+col tablespace format a8 heading TBS
+col owner format a10
+col initial format 99,999,999
+col next format 99,999,999
+col min_ext format 99,999,999
+col opt format 99,999,999
+col max_ext format 99,999,999
+col status format a15
+set linesize 120
+select segment_name "segment",tablespace_name "tablespace",owner,
+initial_extent "initial", next_extent "next", min_extents "min_ext",
+optsize "optsize",max_extents "max_ext",pct_increase, 
+d.status
+from dba_rollback_segs d, v$rollname n, v$rollstat s
+  where segment_name = name and
+        n.usn = s.usn
+order by segment_name;
+prompt
+prompt
+prompt
+
+prompt ======================================
+prompt ANALYZE - DATE
+prompt ======================================
+col owner format a20
+select owner,trunc(LAST_ANALYZED),count(*)    
+from dba_tables                               
+group by owner,trunc(LAST_ANALYZED); 
+prompt
+prompt
+prompt         
+prompt ======================================
+prompt ANALYZE - TYPE
+prompt ======================================
+col owner format a20
+select owner,trunc(LAST_ANALYZED),count(*)    
+from dba_tables                               
+group by owner,trunc(LAST_ANALYZED);   
+prompt
+prompt
+prompt       
+prompt =========================================
+prompt RELAÇÃO DE PROFILE 
+prompt =========================================
+ select * from dba_profiles
+   order by profile;
+prompt
+prompt
+prompt
+prompt =========================================
+prompt QUANTIDADE DE USUÁRIOS POR PROFILE 
+prompt =========================================
+ select profile, count(*) from dba_users
+group by profile;
+prompt
+prompt
+prompt ==================================
+prompt DB_LINKS
+prompt ==================================
+SET LINESIZE 200
+col owner format a10
+col db_link format a30
+col username format a30
+col host format a30
+select owner, db_link, username,host 
+ from dba_db_links
+  order by owner;
+prompt
+prompt
+prompt
+prompt ==================================
+prompt SNAPSHOTS
+prompt ==================================
+col owner format a10
+col master_link format a50
+select owner, master_link, count(*) 
+ from dba_snapshots
+  group by owner,master_link
+  order by master_link;
+prompt
+prompt
+prompt
+prompt ==================================
+prompt DBA_JOBS
+prompt ==================================
+col spid head 'O/S|Process|ID' 
+col sid for 9999 head 'Session|ID' 
+col serial# for 9999999 head 'Session|Serial#' 
+col log_user for a10 
+col job for 999 head 'Job' 
+col broken for a1 head 'B' 
+col failures for 99 head "fail" 
+col what for a30 
+col last_date for a17 head 'Last|Date' 
+col next_date for a17 head 'Next|Date' 
+set linesize 200
+
+select s.spid, 
+s.sid, 
+s.serial#, 
+j.log_user, 
+j.job, 
+j.broken, 
+j.failures, 
+j.what, 
+j.last_date||j.last_sec last_date, 
+j.next_date||j.next_sec next_date 
+from (select djr.SID, 
+dj.JOB, dj.LOG_USER, dj.PRIV_USER, dj.SCHEMA_USER, dj.LAST_DATE, dj.LAST_SEC, dj.THIS_DATE, dj.THIS_SEC, dj.NEXT_DATE, 
+dj.NEXT_SEC, dj.TOTAL_TIME, dj.BROKEN, dj.INTERVAL, dj.FAILURES, dj.WHAT, dj.NLS_ENV, dj.MISC_ENV
+from dba_jobs_running djr, dba_jobs dj 
+where djr.job (+)= dj.job ) j, 
+(select p.spid, s.sid, s.serial# 
+from v$process p, v$session s 
+where p.addr = s.paddr ) s 
+where j.sid = s.sid (+) 
+/ 
+prompt
+prompt
+prompt
+prompt ==================================
+prompt QTDE de JOBS por usuário DBA_JOBS
+prompt ==================================
+ col log_user format a10
+ select log_user,trunc(next_date),count(*) from dba_jobs
+ group by log_user,trunc(next_date);
+prompt
+prompt
+prompt
+prompt
+prompt
+prompt
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+prompt =========================================
+prompt QUANTIDADE DE USUÁRIOS POR PROFILE 
+prompt =========================================
+ select profile, count(*) from dba_users
+group by profile;
+prompt
+prompt
+prompt
+prompt =========================================
+prompt QUANTIDADE DE TOTAL DE USUÁRIOS
+prompt =========================================
+ select count(*)"total de usuários" from dba_users;
+prompt
+prompt
+prompt
+
+prompt =========================================
+prompt USUARIOS COM PRIVILEGIO DE DBA
+prompt =========================================
+ select * from dba_role_privs
+  where  GRANTED_ROLE   = 'DBA';
+prompt ==================================
+prompt QUANTIDADE DE SEGMENTOS POR OWNER 
+prompt ==================================
+select owner, segment_type,count(*) from dba_segments 
+group by owner,segment_type order by owner;
+prompt
+prompt
+prompt
+prompt ======================================
+prompt USERNAME QUE UTILIZA SYSTEM TABLESPACE
+prompt ======================================
+ select username, default_tablespace,temporary_tablespace
+from dba_users
+where default_tablespace = 'SYSTEM' or
+temporary_tablespace= 'SYSTEM' ;
+
+
+
+********************************
+ROLES RECEBEM PRIVILEGIOS DA LOJA
+*********************************
+
+select * from dba_role_privs
+  where substr(GRANTED_ROLE,1,3) = 'MBA';
+
+********************************
+USUARIOS RECEM  PRIVILEGIOS DA LOJA
+********************************
+
+select GRANTEE,GRANTOR,count(*)
+  from dba_tab_privs
+   where owner like 'MBA%'
+  group by GRANTEE,GRANTOR
+
+
+********************************
+  dependencia 
+********************************
+
+
+select OWNER,REFERENCED_OWNER,count(*)
+    from dba_dependencies
+    where REFERENCED_OWNER like 'MBA%' and OWNER <> REFERENCED_OWNER
+    group by OWNER,REFERENCED_OWNER
+   /
+
+
+select OWNER,REFERENCED_OWNER,REFERENCED_TYPE,count(*)
+      from dba_dependencies
+      where REFERENCED_OWNER like 'MBA%' and OWNER <> REFERENCED_OWNER
+       group by OWNER,REFERENCED_OWNER,REFERENCED_TYPE
+/
+
+
+column owner format a8 heading "Owner"
+column type format a4 tru heading "Type"
+column name format a25 heading "Name"
+column referenced_owner format a8 heading "Depend|Owner"
+column referenced_type format a4  tru heading "Depend|Type"
+column referenced_name format a25 heading "Depend On Name"
+ttitle "Object Dependency Report"
+select owner, type, name,
+       referenced_owner, referenced_type, referenced_name
+from dba_dependencies
+where ((owner like upper('&1')
+and   name  like upper('&2') ) or
+      (referenced_owner like upper('&&1')
+and   referenced_name  like upper('&&2') ))
+and   referenced_owner != 'SYS'
+and   referenced_type != 'NON-EXISTENT'
+order by owner, type, name
+/
+
+
+********************************
+1) Quantidade de objetos 
+********************************
+
+select owner,object_type,count(*)
+from dba_objects
+where owner like 'MBA%' and owner not like 'MBA_PRI%'
+GROUP BY OWNER,OBJECT_TYPE
+/
+
+
+********************************
+2) Status de objetos 
+********************************
+
+select owner,object_type,status,count(*)
+from dba_objetcs
+where owner LIKE '%MBA%'
+/
+
+===============================
+3) LSISTAGEM DE OBJETOS INVALIDOS
+==================================
+
+select owner,object_type,status,count(*)
+from dba_objects
+where owner LIKE '%MBA%'
+AND STATUS 'INVALID'
+
+
+===============================
+3) tipo de index
+==================================
+
+select distinct index_type from dba_indexes;
+
+==========================
+tabela sem pk
+==========================
+
+
+
+
+===========================
+fk sem indice
+===========================
+
+
+======================
+grau de parallelimos
+====================
+
+SQL> select distinct owner,DEGREE
+  2  from dba_tables;
+
+
+=================
+indice com inical pk porém não é unico
+=======================
+
+SQL> select owner,table_owner,table_name,index_name
+  2  from dba_indexes
+  3  where index_name like 'PK%' and UNIQUENESS = 'NONUNIQUE';
+
+
+
+
+==============================
+3) STATUS DAS TRIGGER
+=============================
+
+select  status,COUNT(*) from dba_triggers
+WHERE OWNER LIKE 'MBA%' and owner not like 'MBA_PRI%'
+/
+
+
+=====================================
+3) LSISTAGEM DE TRIGGERS DISABILITADA
+======================================
+
+select 'ALTER TRIGGER '||owner||'.'||TRIGGER_NAME||' DISABLE;'
+from from dba_triggers
+WHERE ( OWNER LIKE 'MBA%' and owner not like 'MBA_PRI%') AND STATUS='DISABLED'
+/
+
+
+
+=====================================
+5) verificar status dos inddices
+======================================
+
+select owner,status,count(*)
+from dba_indexes
+group by owner,status
+
+
+===============================
+4) QUANTIDADE DE CONSTRAINTS
+==============================
+
+SELECT OWNER,CONSTRAINT_TYPE,COUNT(*)
+FROM DBA_CONSTRAINTS
+WHERE  OWNER LIKE 'MBA%' and owner not like 'MBA_PRI%'
+GROUP BY OWNER,CONSTRAINT_TYPE
+/
+
+
+=====================================
+5) STATUS CONSTRAINTS
+======================================
+
+SELECT OWNER,CONSTRAINT_TYPE,STATUS,COUNT(*)
+FROM DBA_CONSTRAINTS
+WHERE  OWNER LIKE 'MBA%' and owner not like 'MBA_PRI%'
+and status='DISABLED'
+GROUP BY OWNER,CONSTRAINT_TYPE,STATUS
+
+
+
+=========================================
+5) LISTAGEM DE  CONSTRAINTS DISABILIDATAS
+==========================================
+
+SELECT 'ALTER TABLE '||OWNER||'.'||TABLE_NAME||' DISABLE CONSTRAINT '||CONSTRAINT_NAME||';'
+FROM DBA_CONSTRAINTS
+WHERE  OWNER LIKE 'MBA%' and owner not like 'MBA_PRI%';
+AND STATUS='DISABLED';
+
+
+========================================
+6)  sinonimo para role/usuario default
+=========================================
+
+SELECT 'CREATE SYNONYM '||OWNER||'.'||SYNONYM_NAME||' FOR '||TABLE_OWNER||'.'||TABLE_NAME||';'
+ FROM DBA_SYNONYMS
+WHERE  TABLE_OWNER IN ( 'STG_RMS','PCO_RMS','STG','PCO') AND   OWNER LIKE '%MBA%'
+UNION ALL
+select 'crEate public synonym '||synonym_name||' for '||table_owner||'.'||table_name||';'
+from dba_synonyms
+wherE owner='PUBLIC' AND TABLE_OWNER IN ( 'STG_RMS','PCO_RMS','STG','PCO')
+
+
+=========================
+6)  sinonimo (ok)
+=========================
+
+
+select owner,table_owner,COUNT(*)
+from dba_synonyms
+where owner='PUBLIC' and table_owner not in ('SYS','SYSTEM')
+GROUP BY owner,table_owner
+
+
+select OWNER,TABLE_OWNER,COUNT(*)
+from dba_synonyms
+wherE ( owner='PUBLIC' OR OWNER LIKE '%MBA%') AND  ( TABLE_OWNER IN ( 'STG_RMS','PCO_RMS','STG','PCO') or table_owner like '%MBA%' )
+GROUP BY OWNER,TABLE_OWNER
+/
+
+
+=========================================
+7) ROLE DA INSTANCE EXEMPLO RJ02_COLETOR (ok)
+==========================================
+
+
+SELECT OWNER,GRANTOR,COUNT(*)
+FROM DBA_TAB_PRIVS
+WHERE GRANTEE='RJ02_COLETOR' AND GRANTOR LIKE '%MBA%'
+GROUP BY OWNER,GRANTOR
+
+
+
+=========================================
+8) GRANTS Objetos (ok)
+==========================================
+
+
+select grantee,privilege,owner,count(*)
+from dba_tab_privs
+where owner like '%MBA%'
+GROUP BY grantee,privilege,owner
+
+=========================================
+9) GRANTS SISTEMA (ok)
+==========================================
+
+SELECT * FROM DBA_SYS_PRIVS
+WHERE GRANTEE LIKE '%MBA%'
+/
+
+
+=========================================
+9) GRANTS recebidos dos usuarios padrão
+==========================================
+
+
+SELECT 'GRANT '||PRIVILEGE||' ON '||TABLE_NAME||' TO '||GRANTEE||';'
+FROM DBA_TAB_PRIVS
+WHERE OWNER='STG_RMS' AND GRANTEE LIKE '%MBA%'
+/
+
+
+SELECT 'GRANT '||PRIVILEGE||' ON '||TABLE_NAME||' TO '||GRANTEE||';'
+FROM DBA_TAB_PRIVS
+WHERE OWNER='PCO_RMS' AND GRANTEE LIKE '%MBA%'
+/
+
+SELECT 'GRANT '||PRIVILEGE||' ON '||TABLE_NAME||' TO '||GRANTEE||';'
+FROM DBA_TAB_PRIVS
+WHERE OWNER='STG' AND GRANTEE LIKE '%MBA%'
+/
+
+=========================================
+9) GRANTS PASSADOS PARA A ROLE DA INSTANCE
+==========================================
+
+SELECT 'GRANT '||PRIVILEGE||' ON '||TABLE_NAME||' TO PSLS03_COLETOR;'
+FROM DBA_TAB_PRIVS
+WHERE GRANTEE='PSLS03_COLETOR' AND GRANTOR LIKE '%MBA%'
+ORDER BY GRANTOR 
+
+
+===================================
+10) ROLES CONEDIDAS
+=================================
+
+SELECT * FROM DBA_ROLE_PRIVS
+  WHERE GRANTEE LIKE '%MBA%';
+
+=================================
+11) DB LINK
+=================================
+
+COLUMN HOST FORMAT A20
+COLUMN DB_LINK FORMAT A20
+COLUMN USERNAME FORMAT A15
+COLUMN OWNER FORMAT A15
+SET PAGESIZE 3000
+
+
+SELECT * FROM DBA_DB_LINKS;
+
+
+========================================
+12) PRIVILEGIOS DAS ROLES
+=========================================
+
+ SELECT * FROM DBA_SYS_PRIVS
+   WHERE GRANTEE = 'CONNECT';
+
+=========================================
+13) JOBS
+=========================================
+
+
+col spid head 'O/S|Process|ID' 
+col sid for 9999 head 'Session|ID' 
+col serial# for 9999999 head 'Session|Serial#' 
+col log_user for a10 
+col job for 999 head 'Job' 
+col broken for a1 head 'B' 
+col failures for 99 head "fail" 
+col what for a30 
+col last_date for a17 head 'Last|Date' 
+col next_date for a17 head 'Next|Date' 
+set linesize 200
+
+select s.spid, 
+s.sid, 
+s.serial#, 
+j.log_user, 
+j.job, 
+j.broken, 
+j.failures, 
+j.what, 
+j.last_date||j.last_sec last_date, 
+j.next_date||j.next_sec next_date 
+from (select djr.SID, 
+dj.JOB, dj.LOG_USER, dj.PRIV_USER, dj.SCHEMA_USER, dj.LAST_DATE, dj.LAST_SEC, dj.THIS_DATE, dj.THIS_SEC, dj.NEXT_DATE, 
+dj.NEXT_SEC, dj.TOTAL_TIME, dj.BROKEN, dj.INTERVAL, dj.FAILURES, dj.WHAT, dj.NLS_ENV, dj.MISC_ENV
+from dba_jobs_running djr, dba_jobs dj 
+where djr.job (+)= dj.job ) j, 
+(select p.spid, s.sid, s.serial# 
+from v$process p, v$session s 
+where p.addr = s.paddr ) s 
+where j.sid = s.sid (+) 
+and j.log_user like decode(upper('&usr'), '','%',upper('&&usr'))
+/ 
+
+
+===============================
+OBJETOS POR OWNER
+===============================
+
+select owner,count(*)
+from dba_segments
+where owner like 'MBA%'
+GROUP BY owner
+/
+
+
+select owner,tablespace_name,count(*)
+from dba_segments
+where owner like 'MBA%'
+group by owner,tablespace_name
+/
+
+
+===============================
+VERIFICAR ANALYZE
+================================
+
+ select owner,trunc(LAST_ANALYZED),count(*)
+   from dba_tables
+   where owner like 'MBA%'
+   GROUP BY owner,trunc(LAST_ANALYZED);
+
+
+

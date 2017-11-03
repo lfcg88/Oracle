@@ -1,0 +1,2388 @@
+<i>ver: 8.2</i>
+<hr>
+
+
+<html>
+<a name=top></a>
+
+<b> HOST: MIBSUX04.DUFRY.COM.BR </b>
+<hr>
+<b> INSTANCE: mia0 </b>
+<hr>
+<b> VERSION: 8.1.7.4.0 </b>
+<hr>
+<b> DATE: 10-DEZ-2010 </b>
+<hr>
+<pre>
+
+
+BANNER                                                                          
+----------------------------------------------------------------                
+Oracle8i Enterprise Edition Release 8.1.7.4.0 - Production                      
+PL/SQL Release 8.1.7.4.0 - Production                                           
+CORE	8.1.7.0.0	Production                                                       
+TNS for Linux: Version 8.1.7.4.0 - Production                                   
+NLSRTL Version 3.4.1.0.0 - Production                                           
+
+
+.CLIENT_CONFIGURATION.                                                          
+----------------------                                                          
+CURRENT_USER                  HOST                                              
+----------------------------- ---------------------------                       
+SYSTEM                        DUFRY\INV01220
+
+
+</pre>
+<hr>
+<hr>
+
+[MIBSUX04.DUFRY.COM.BR / mia0] Collecting default passwords...
+
+
+<br>
+
+<b>.DEFAULT PASSWORDS.</b>
+
+<pre>
+		select 	dba_users.username, dba_users.account_status,case when (substr(v$instance.version,1,2))=11
+		       	                                             *
+ERRO na linha 16:
+ORA-06550: line 16, column 56: 
+PLS-00103: Encountered the symbol "CASE" when expecting one of the following: 
+( - + mod null <an identifier> 
+<a double-quoted delimited-identifier> <a bind variable> 
+table avg count current max min prior sql stddev sum variance 
+execute the forall time timestamp interval date 
+<a string literal with character set specification> 
+<a number> <a single-quoted SQL string> 
+
+
+
+</pre>
+<a HREF=#top><h6>Top</h6></a>
+<hr>
+
+[MIBSUX04.DUFRY.COM.BR / mia0] Collecting DBlinks...
+
+
+<br>
+
+<b>.DBLINKS.</b>
+
+<pre>
+
+NAME                                     USERID               PASSWORD           HOST                                    
+---------------------------------------- -------------------- ------------------ ----------------------------------------
+DFD0_SIA.BRASIFNET.COM.BR                COMERCIAL            IAL$00#DF          dfd0                                    
+DFD0.BRASIFNET.COM.BR                                                            DFD0.BRASIFNET.COM.BR                   
+FZD0.BRASIFNET.COM.BR                                                            fzd0                                    
+RJD3_SIA.BRASIFNET.COM.BR                COMERCIAL            IAL$03#RJ          rjd3                                    
+RJD6T.BRASIFNET.COM.BR                   COMERCIAL            SUT357Y            rjd6t                                   
+MIA2_INTQ.BRASIFNET.COM.BR               INTQMIA0             INTQMIA0           mia2                                    
+RJD6_PUBLI.BRASIFNET.COM.BR              PUBLI                BLI$06#RJ          rjd6                                    
+RJD11.BRASIFNET.COM.BR                                                           RJD11.BRASIFNET.COM.BR                  
+RJD17.BRASIFNET.COM.BR                                                           rjd17                                   
+RJD3.BRASIFNET.COM.BR                                                            RJD3.FREE.BRASIF.COM                    
+RJD5.BRASIFNET.COM.BR                    COMERCIAL_LINK       SUT357Y            RJD5                                    
+BHD1_SIA.BRASIFNET.COM.BR                COMERCIAL            IAL$01#BH          bhd1                                    
+RSD0.BRASIFNET.COM.BR                                                            RSD0.BRASIFNET.COM.BR                   
+SPD1.BRASIFNET.COM.BR                                                            SPD1.FREE.BRASIF.COM                    
+DFTPUX01_SIA.BRASIFNET.COM.BR            COMERCIAL            IAL$01#DF          dftpux01                                
+FLD0_SIA.BRASIFNET.COM.BR                COMERCIAL            IAL$00#FL          fld0                                    
+FZD0_SIA.BRASIFNET.COM.BR                COMERCIAL            IAL$00#FZ          fzd0                                    
+PED0_SIA.BRASIFNET.COM.BR                COMERCIAL            IAL$00#PE          ped0                                    
+RJD11_SIA.BRASIFNET.COM.BR               COMERCIAL            IAL$11#RJ          rjd11                                   
+MIA1.BRASIFNET.COM.BR                    COMERCIAL            SUT357Y            mia1                                    
+FZD0.BRASIFNET.COM.BR                                                            fzd0                                    
+SPD1.BRASIFNET.COM.BR                    COMERCIAL            IAL$01#SP          spd1                                    
+LINK_RJD6.BRASIFNET.COM.BR               LINK                 INK$06#RJ          rjd6                                    
+RJD10.BRASIFNET.COM.BR                   SACM                 ACM$10#RJ          rjd10                                   
+MIA2.BRASIFNET.COM.BR                    INTQ                 NTQ$02#MI          mia2                                    
+CAD0.BRASIFNET.COM.BR                    REPADMIN             METALINK           cad0                                    
+RJD11.BRASIFNET.COM.BR                   REPADMIN             METALINK           rjd11                                   
+RJD3.BRASIFNET.COM.BR                    REPADMIN             METALINK           rjd3                                    
+RJD6.BRASIFNET.COM.BR                    REPADMIN             METALINK           rjd6                                    
+SPD1.BRASIFNET.COM.BR                    REPADMIN             METALINK           spd1                                    
+CAD0.BRASIFNET.COM.BR                    REPSYS               METALINK           cad0                                    
+RJD11.BRASIFNET.COM.BR                   REPSYS               METALINK           rjd11                                   
+RJD3.BRASIFNET.COM.BR                    REPSYS               METALINK           rjd3                                    
+RJD6.BRASIFNET.COM.BR                    REPSYS               METALINK           rjd6                                    
+SPD1.BRASIFNET.COM.BR                    REPSYS               METALINK           spd1                                    
+RJD3.BRASIFNET.COM.BR                    COMERCIAL            IAL$03#RJ          rjd3                                    
+MIA1.BRASIFNET.COM.BR                    COMERCIAL            SUT357Y            mia1                                    
+RSD0_SIA.BRASIFNET.COM.BR                COMERCIAL            IAL$00#RS          rsd0                                    
+SPD1_SIA.BRASIFNET.COM.BR                COMERCIAL            IAL$01#SP          spd1                                    
+RJD4.BRASIFNET.COM.BR                    COMERCIAL            SUT357Y            RJD4                                    
+RJD6.BRASIFNET.COM.BR                    COMERCIAL            IAL$06#RJ          rjd6                                    
+BAD0_SIA.BRASIFNET.COM.BR                COMERCIAL            IAL$00#BA          bad0                                    
+RJD5.BRASIFNET.COM.BR                    PUBLI                PUBLI              rjd5                                    
+RJD6.BRASIFNET.COM.BR                    PUBLI                BLI$06#RJ          rjd6                                    
+RJD10.BRASIFNET.COM.BR                                                           rjd10                                   
+RJD11.BRASIFNET.COM.BR                   COMERCIAL            IAL$11#RJ          rjd11                                   
+CAD0.BRASIFNET.COM.BR                    COMERCIAL            SUT357Y            cad0                                    
+MIA2.BRASIFNET.COM.BR                    INTQ                 NTQ$02#MI          mia2                                    
+RJD19.BRASIFNET.COM.BR                   PRGARTEDUFRY         MARCO99S           rjd19                                   
+RJD6.BRASIFNET.COM.BR                                                            rjd6                                    
+
+</pre>
+<a HREF=#top><h6>Top</h6></a>
+<hr>
+
+[MIBSUX04.DUFRY.COM.BR / mia0] Collecting RESTRICTED OBJECTS ACCCESS...
+
+
+<br>
+
+<b>.RESTRICTED OBJECTS ACCESS.</b>
+
+'ALL_USERS','AUD$','LINK$','ALL_DB_LINKS', 'DBMS_SYSTEM'
+
+<pre>
+
+</pre>
+<a HREF=#top><h6>Top</h6></a>
+<hr>
+
+[MIBSUX04.DUFRY.COM.BR / mia0] Collecting Account/Passwords Policy ...
+
+
+<br>
+
+<b>.USER PROFILES.</b>
+
+<pre>
+
+PROFILE                        RESOURCE_NAME                  LIMIT               
+------------------------------ ------------------------------ --------------------
+DEFAULT                        FAILED_LOGIN_ATTEMPTS          UNLIMITED           
+DEFAULT                        PASSWORD_LIFE_TIME             UNLIMITED           
+DEFAULT                        PASSWORD_REUSE_MAX             UNLIMITED           
+DEFAULT                        PASSWORD_LOCK_TIME             UNLIMITED           
+DEFAULT                        PASSWORD_GRACE_TIME            UNLIMITED           
+DEFAULT                        PASSWORD_VERIFY_FUNCTION       UNLIMITED           
+DEFAULT                        PASSWORD_REUSE_TIME            UNLIMITED           
+PF_USER_GERAL                  FAILED_LOGIN_ATTEMPTS          4                   
+PF_USER_GERAL                  PASSWORD_LIFE_TIME             20                  
+PF_USER_GERAL                  PASSWORD_REUSE_MAX             DEFAULT             
+PF_USER_GERAL                  PASSWORD_LOCK_TIME             1                   
+PF_USER_GERAL                  PASSWORD_GRACE_TIME            10                  
+PF_USER_GERAL                  PASSWORD_VERIFY_FUNCTION       VERIFY_FUNCTION     
+PF_USER_GERAL                  PASSWORD_REUSE_TIME            DEFAULT             
+
+</pre>
+<a HREF=#top><h6>Top</h6></a>
+<hr>
+
+[MIBSUX04.DUFRY.COM.BR / mia0] Collecting users in profiles ...
+
+
+<br>
+
+<b>.TOTAL USERS IN PROFILES.</b>
+
+<pre>
+
+ TOT_USERS PROFILE                                                                
+---------- ------------------------------                                         
+       177 DEFAULT                                                                
+
+</pre>
+<a HREF=#top><h6>Top</h6></a>
+<hr>
+
+[MIBSUX04.DUFRY.COM.BR / mia0] Collecting OS Authentications Prefix...
+
+
+<br>
+
+<b>.AUTHENT PREFIX.</b>
+
+<pre>
+
+NAME                         VALUE                                    
+---------------------------- ---------------                          
+remote_os_authent            TRUE                                     
+
+</pre>
+<a HREF=#top><h6>Top</h6></a>
+<hr>
+
+[MIBSUX04.DUFRY.COM.BR / mia0] Collecting parameter dblink_encrypt...
+
+
+<br>
+
+<b>.DBLink_encrypt.</b>
+
+<pre>
+
+</pre>
+<a HREF=#top><h6>Top</h6></a>
+<hr>
+
+[MIBSUX04.DUFRY.COM.BR / mia0] Collecting Parameter O7_DICTIONARY...
+
+
+<br>
+
+<b>.O7_DICTIONARY.</b>
+
+<pre>
+
+NAME                         VALUE                                    
+---------------------------- ---------------                          
+O7_DICTIONARY_ACCESSIBILITY  TRUE                                     
+
+</pre>
+<a HREF=#top><h6>Top</h6></a>
+<hr>
+
+[MIBSUX04.DUFRY.COM.BR / mia0] Collecting Remote Logins...
+
+
+<br>
+
+<b>.REMOTE LOGINS.</b>
+
+<pre>
+
+</pre>
+<a HREF=#top><h6>Top</h6></a>
+<hr>
+
+[MIBSUX04.DUFRY.COM.BR / mia0] Collecting privileges "ADMIN OPTION"...
+
+
+<br>
+
+<b>.ADMIN OPTION.</b>
+
+<pre>
+
+GRANTEE                        PRIVILEGE                                ADM                                    
+------------------------------ ---------------------------------------- ---                                    
+HELPDESK                       CREATE SESSION                           YES                                    
+
+</pre>
+<a HREF=#top><h6>Top</h6></a>
+<hr>
+
+[MIBSUX04.DUFRY.COM.BR / mia0] Collecting users with "OLAP_DBA"...
+
+
+<br>
+
+<b>.OLAP_ADMIN.</b>
+
+<pre>
+
+</pre>
+<a HREF=#top><h6>Top</h6></a>
+<hr>
+
+[MIBSUX04.DUFRY.COM.BR / mia0] Collecting "SPECIAL PRIVS"...
+
+
+<br>
+
+<b>.SPECIAL PRIVS.</b>
+
+<pre>
+
+GRANTEE                   PRIVILEGE                                             
+------------------------- --------------------------------------------------    
+AXB                       CREATE PUBLIC SYNONYM                                 
+COMERCIAL                 CREATE PUBLIC SYNONYM                                 
+COMERCIAL                 DROP PUBLIC SYNONYM                                   
+ESMANHO                   CREATE PUBLIC SYNONYM                                 
+HELPDESK                  ALTER USER                                            
+PUBLI                     CREATE PUBLIC SYNONYM                                 
+
+</pre>
+<a HREF=#top><h6>Top</h6></a>
+<hr>
+
+[MIBSUX04.DUFRY.COM.BR / mia0] Collecting "RISK PACKAGES"...
+
+
+<br>
+
+<b>.RISK_PACKAGES.</b>
+
+<pre>
+
+PRIVILEGE  OWNER           TABLE_NAME                GRANTEE                    
+---------- --------------- ------------------------- -------------------------  
+EXECUTE    SYS             DBMS_DDL                  PUBLIC                     
+EXECUTE    SYS             DBMS_EXPORT_EXTENSION     PUBLIC                     
+EXECUTE    SYS             DBMS_STATS                PUBLIC                     
+EXECUTE    SYS             DBMS_LOB                  PUBLIC                     
+EXECUTE    SYS             DBMS_RANDOM               PUBLIC                     
+EXECUTE    SYS             OWA_OPT_LOCK              PUBLIC                     
+EXECUTE    SYS             DBMS_REPUTIL              PUBLIC                     
+EXECUTE    SYS             DBMS_REPCAT_RGT_EXP       PUBLIC                     
+EXECUTE    SYS             DBMS_REPCAT_INSTANTIATE   PUBLIC                     
+
+</pre>
+<a HREF=#top><h6>Top</h6></a>
+<hr>
+
+[MIBSUX04.DUFRY.COM.BR / mia0] Collecting privileges "ANY"...
+
+
+<br>
+
+<b>.PRIVILEGE_ANY.</b>
+
+<pre>
+
+GRANTEE                                            PRIVILEGE                     
+-------------------------------------------------- ------------------------------
+AXB                                                ALTER ANY PROCEDURE           
+AXB                                                ALTER ANY TABLE               
+AXB                                                CREATE ANY PROCEDURE          
+AXB                                                CREATE ANY SNAPSHOT           
+AXB                                                CREATE ANY SYNONYM            
+AXB                                                CREATE ANY TABLE              
+AXB                                                CREATE ANY VIEW               
+AXB                                                DROP ANY SNAPSHOT             
+AXB                                                EXECUTE ANY PROCEDURE         
+AXB                                                SELECT ANY TABLE              
+COMERCIAL                                          ALTER ANY CLUSTER             
+COMERCIAL                                          ALTER ANY INDEX               
+COMERCIAL                                          ALTER ANY PROCEDURE           
+COMERCIAL                                          ALTER ANY SEQUENCE            
+COMERCIAL                                          ALTER ANY SNAPSHOT            
+COMERCIAL                                          ALTER ANY TABLE               
+COMERCIAL                                          ALTER ANY TRIGGER             
+COMERCIAL                                          CREATE ANY CLUSTER            
+COMERCIAL                                          CREATE ANY INDEX              
+COMERCIAL                                          CREATE ANY PROCEDURE          
+COMERCIAL                                          CREATE ANY SEQUENCE           
+COMERCIAL                                          CREATE ANY SNAPSHOT           
+COMERCIAL                                          CREATE ANY SYNONYM            
+COMERCIAL                                          CREATE ANY TABLE              
+COMERCIAL                                          CREATE ANY TRIGGER            
+COMERCIAL                                          CREATE ANY VIEW               
+COMERCIAL                                          DELETE ANY TABLE              
+COMERCIAL                                          DROP ANY CLUSTER              
+COMERCIAL                                          DROP ANY INDEX                
+COMERCIAL                                          DROP ANY PROCEDURE            
+COMERCIAL                                          DROP ANY SEQUENCE             
+COMERCIAL                                          DROP ANY SNAPSHOT             
+COMERCIAL                                          DROP ANY SYNONYM              
+COMERCIAL                                          DROP ANY TABLE                
+COMERCIAL                                          DROP ANY TRIGGER              
+COMERCIAL                                          DROP ANY VIEW                 
+COMERCIAL                                          EXECUTE ANY PROCEDURE         
+COMERCIAL                                          INSERT ANY TABLE              
+COMERCIAL                                          LOCK ANY TABLE                
+COMERCIAL                                          SELECT ANY TABLE              
+CONSULTA                                           EXECUTE ANY PROCEDURE         
+CONSULTA                                           SELECT ANY TABLE              
+ESMANHO                                            EXECUTE ANY PROCEDURE         
+HELPDESK                                           GRANT ANY ROLE                
+LIR_GERAL                                          EXECUTE ANY PROCEDURE         
+LIR_GERAL                                          SELECT ANY TABLE              
+LIR_GLOBAL                                         EXECUTE ANY PROCEDURE         
+LIR_GLOBAL                                         SELECT ANY TABLE              
+OPS$AXBGRL                                         CREATE ANY SYNONYM            
+OPS$AXBGRL                                         EXECUTE ANY PROCEDURE         
+OPS$AXBGRL                                         SELECT ANY TABLE              
+OPS$AXBPROD                                        CREATE ANY PROCEDURE          
+OPS$AXBPROD                                        CREATE ANY SYNONYM            
+OPS$AXBPROD                                        EXECUTE ANY PROCEDURE         
+OPS$AXBPROD                                        SELECT ANY TABLE              
+OPS$ORACLE7                                        ALTER ANY CLUSTER             
+OPS$ORACLE7                                        ALTER ANY INDEX               
+OPS$ORACLE7                                        ALTER ANY PROCEDURE           
+OPS$ORACLE7                                        ALTER ANY SEQUENCE            
+OPS$ORACLE7                                        ALTER ANY SNAPSHOT            
+OPS$ORACLE7                                        ALTER ANY TABLE               
+OPS$ORACLE7                                        ALTER ANY TRIGGER             
+OPS$ORACLE7                                        CREATE ANY CLUSTER            
+OPS$ORACLE7                                        CREATE ANY INDEX              
+OPS$ORACLE7                                        CREATE ANY PROCEDURE          
+OPS$ORACLE7                                        CREATE ANY SEQUENCE           
+OPS$ORACLE7                                        CREATE ANY SNAPSHOT           
+OPS$ORACLE7                                        CREATE ANY SYNONYM            
+OPS$ORACLE7                                        CREATE ANY TABLE              
+OPS$ORACLE7                                        CREATE ANY TRIGGER            
+OPS$ORACLE7                                        CREATE ANY VIEW               
+OPS$ORACLE7                                        DELETE ANY TABLE              
+OPS$ORACLE7                                        DROP ANY CLUSTER              
+OPS$ORACLE7                                        DROP ANY INDEX                
+OPS$ORACLE7                                        DROP ANY PROCEDURE            
+OPS$ORACLE7                                        DROP ANY SEQUENCE             
+OPS$ORACLE7                                        DROP ANY SNAPSHOT             
+OPS$ORACLE7                                        DROP ANY SYNONYM              
+OPS$ORACLE7                                        DROP ANY TABLE                
+OPS$ORACLE7                                        DROP ANY TRIGGER              
+OPS$ORACLE7                                        DROP ANY VIEW                 
+OPS$ORACLE7                                        EXECUTE ANY PROCEDURE         
+OPS$ORACLE7                                        INSERT ANY TABLE              
+OPS$ORACLE7                                        LOCK ANY TABLE                
+OPS$ORACLE7                                        SELECT ANY TABLE              
+OPS$ORACLE8                                        ALTER ANY PROCEDURE           
+REPADMIN                                           ALTER ANY CLUSTER             
+REPADMIN                                           ALTER ANY INDEX               
+REPADMIN                                           ALTER ANY PROCEDURE           
+REPADMIN                                           ALTER ANY SEQUENCE            
+REPADMIN                                           ALTER ANY SNAPSHOT            
+REPADMIN                                           ALTER ANY TABLE               
+REPADMIN                                           ALTER ANY TRIGGER             
+REPADMIN                                           CREATE ANY CLUSTER            
+REPADMIN                                           CREATE ANY INDEX              
+REPADMIN                                           CREATE ANY PROCEDURE          
+REPADMIN                                           CREATE ANY SEQUENCE           
+REPADMIN                                           CREATE ANY SNAPSHOT           
+REPADMIN                                           CREATE ANY SYNONYM            
+REPADMIN                                           CREATE ANY TABLE              
+REPADMIN                                           CREATE ANY TRIGGER            
+REPADMIN                                           CREATE ANY VIEW               
+REPADMIN                                           DELETE ANY TABLE              
+REPADMIN                                           DROP ANY CLUSTER              
+REPADMIN                                           DROP ANY INDEX                
+REPADMIN                                           DROP ANY PROCEDURE            
+REPADMIN                                           DROP ANY SEQUENCE             
+REPADMIN                                           DROP ANY SNAPSHOT             
+REPADMIN                                           DROP ANY SYNONYM              
+REPADMIN                                           DROP ANY TABLE                
+REPADMIN                                           DROP ANY TRIGGER              
+REPADMIN                                           DROP ANY VIEW                 
+REPADMIN                                           EXECUTE ANY PROCEDURE         
+REPADMIN                                           INSERT ANY TABLE              
+REPADMIN                                           LOCK ANY TABLE                
+REPADMIN                                           SELECT ANY TABLE              
+REPSYS                                             ALTER ANY CLUSTER             
+REPSYS                                             ALTER ANY INDEX               
+REPSYS                                             ALTER ANY PROCEDURE           
+REPSYS                                             ALTER ANY SEQUENCE            
+REPSYS                                             ALTER ANY SNAPSHOT            
+REPSYS                                             ALTER ANY TABLE               
+REPSYS                                             ALTER ANY TRIGGER             
+REPSYS                                             CREATE ANY CLUSTER            
+REPSYS                                             CREATE ANY INDEX              
+REPSYS                                             CREATE ANY PROCEDURE          
+REPSYS                                             CREATE ANY SEQUENCE           
+REPSYS                                             CREATE ANY SNAPSHOT           
+REPSYS                                             CREATE ANY SYNONYM            
+REPSYS                                             CREATE ANY TABLE              
+REPSYS                                             CREATE ANY TRIGGER            
+REPSYS                                             CREATE ANY VIEW               
+REPSYS                                             DELETE ANY TABLE              
+REPSYS                                             DROP ANY CLUSTER              
+REPSYS                                             DROP ANY INDEX                
+REPSYS                                             DROP ANY PROCEDURE            
+REPSYS                                             DROP ANY SEQUENCE             
+REPSYS                                             DROP ANY SNAPSHOT             
+REPSYS                                             DROP ANY SYNONYM              
+REPSYS                                             DROP ANY TABLE                
+REPSYS                                             DROP ANY TRIGGER              
+REPSYS                                             DROP ANY VIEW                 
+REPSYS                                             EXECUTE ANY PROCEDURE         
+REPSYS                                             INSERT ANY TABLE              
+REPSYS                                             LOCK ANY TABLE                
+REPSYS                                             SELECT ANY TABLE              
+ROLE_COMERCIAL                                     EXECUTE ANY PROCEDURE         
+SANTOS                                             ALTER ANY CLUSTER             
+SANTOS                                             ALTER ANY INDEX               
+SANTOS                                             ALTER ANY PROCEDURE           
+SANTOS                                             ALTER ANY SEQUENCE            
+SANTOS                                             ALTER ANY SNAPSHOT            
+SANTOS                                             ALTER ANY TABLE               
+SANTOS                                             ALTER ANY TRIGGER             
+SANTOS                                             CREATE ANY CLUSTER            
+SANTOS                                             CREATE ANY INDEX              
+SANTOS                                             CREATE ANY PROCEDURE          
+SANTOS                                             CREATE ANY SEQUENCE           
+SANTOS                                             CREATE ANY SNAPSHOT           
+SANTOS                                             CREATE ANY SYNONYM            
+SANTOS                                             CREATE ANY TABLE              
+SANTOS                                             CREATE ANY TRIGGER            
+SANTOS                                             CREATE ANY VIEW               
+SANTOS                                             DELETE ANY TABLE              
+SANTOS                                             DROP ANY CLUSTER              
+SANTOS                                             DROP ANY INDEX                
+SANTOS                                             DROP ANY PROCEDURE            
+SANTOS                                             DROP ANY SEQUENCE             
+SANTOS                                             DROP ANY SNAPSHOT             
+SANTOS                                             DROP ANY SYNONYM              
+SANTOS                                             DROP ANY TABLE                
+SANTOS                                             DROP ANY TRIGGER              
+SANTOS                                             DROP ANY VIEW                 
+SANTOS                                             EXECUTE ANY PROCEDURE         
+SANTOS                                             GRANT ANY PRIVILEGE           
+SANTOS                                             GRANT ANY ROLE                
+SANTOS                                             INSERT ANY TABLE              
+SANTOS                                             LOCK ANY TABLE                
+SANTOS                                             SELECT ANY TABLE              
+TMARIA                                             EXECUTE ANY PROCEDURE         
+
+</pre>
+<a HREF=#top><h6>Top</h6></a>
+<hr>
+
+[MIBSUX04.DUFRY.COM.BR / mia0] Collecting Default TableSpaces...
+
+
+<br>
+
+<b>.DEFAULT TABLESPACES.</b>
+
+<pre>
+
+</pre>
+<a HREF=#top><h6>Top</h6></a>
+<hr>
+
+[MIBSUX04.DUFRY.COM.BR / mia0] Collecting PUBLIC permission on system privileges...
+
+
+<br>
+
+<b>.PUBLIC SYS.</b>
+
+<pre>
+
+</pre>
+<a HREF=#top><h6>Top</h6></a>
+<hr>
+
+[MIBSUX04.DUFRY.COM.BR / mia0] Collecting AUDIT value...
+
+
+<br>
+
+<b>.AUDITING CONFIGURATION OPTIONS.</b>
+
+<pre>
+
+</pre>
+<a HREF=#top><h6>Top</h6></a>
+<hr>
+
+[MIBSUX04.DUFRY.COM.BR / mia0] Collecting Auditing Configutation...
+
+
+<br>
+
+<b>.AUDITING COMMANDS.</b>
+
+<pre>
+
+USER_NAME                      AUDIT_OPTION                        SUCCESS    FAILURE     
+------------------------------ ----------------------------------- ---------- ----------  
+                               CREATE SESSION                      BY ACCESS  BY ACCESS   
+
+</pre>
+<a HREF=#top><h6>Top</h6></a>
+<hr>
+
+[MIBSUX04.DUFRY.COM.BR / mia0] Collecting TABLESPACE_AUD$...
+
+
+<br>
+
+<b>.TABLESPACE_AUD$.</b>
+
+<pre>
+
+</pre>
+<a HREF=#top><h6>Top</h6></a>
+<hr>
+
+[MIBSUX04.DUFRY.COM.BR / mia0] Collecting public privileges on UTL_packages ...
+
+
+<br>
+
+<b>.UTL_packages.</b>
+
+<pre>
+
+PRIVILEGE            GRANTEE                   TABLE_NAME                                 
+-------------------- ------------------------- ----------------------------------------   
+EXECUTE              PUBLIC                    UTL_HTTP                                   
+EXECUTE              PUBLIC                    UTL_FILE                                   
+EXECUTE              PUBLIC                    UTL_TCP                                    
+EXECUTE              PUBLIC                    UTL_SMTP                                   
+
+</pre>
+<a HREF=#top><h6>Top</h6></a>
+<hr>
+
+[MIBSUX04.DUFRY.COM.BR / mia0] Collecting users with DBA role...
+
+
+<br>
+
+<b>.USERS_DBA_ROLE.</b>
+
+<pre>
+
+GRANTEE                   DEFA ADMI                                                                 
+------------------------- ---- ----                                                                 
+REPADMIN                  YES  NO                                                                   
+
+</pre>
+<a HREF=#top><h6>Top</h6></a>
+<hr>
+<br>
+
+<b>.SYSDBA AND SYSOPER USERS.</b>
+
+<pre>
+
+</pre>
+<a HREF=#top><h6>Top</h6></a>
+<hr>
+
+[MIBSUX04.DUFRY.COM.BR / mia0] Collecting privileges "CATALOG_ROLE"...
+
+
+<br>
+
+<b>.CATALOG_ROLES.</b>
+
+<pre>
+
+</pre>
+<a HREF=#top><h6>Top</h6></a>
+<hr>
+
+[MIBSUX04.DUFRY.COM.BR / mia0] Collecting DBA Users...
+
+
+<br>
+
+<b>.DBA_USERS.</b>
+
+<pre>
+
+USERNAME                            PROFILE           PASSWORD           ACCOUNT_STATUS                                 
+----------------------------------- ----------------- ------------------ ------------------                             
+SYS                                 DEFAULT           *****************  OPEN                                           
+SYSTEM                              DEFAULT           *****************  OPEN                                           
+OUTLN                               DEFAULT           *****************  OPEN                                           
+HDESK                               DEFAULT           *****************  OPEN                                           
+RZISMAN                             DEFAULT           *****************  OPEN                                           
+OPS$HDESK                           DEFAULT           *****************  OPEN                                           
+OPS$LIR                             DEFAULT           *****************  OPEN                                           
+COMERCIAL                           DEFAULT           *****************  OPEN                                           
+CHENELLE                            DEFAULT           *****************  OPEN                                           
+OPS$OPER                            DEFAULT           *****************  OPEN                                           
+AXB                                 DEFAULT           *****************  OPEN                                           
+BEZERRA                             DEFAULT           *****************  OPEN                                           
+PROTEUS                             DEFAULT           *****************  OPEN                                           
+SACM                                DEFAULT           *****************  OPEN                                           
+MANUTENCAO                          DEFAULT           *****************  OPEN                                           
+INTQ                                DEFAULT           *****************  OPEN                                           
+AMUNIZ                              DEFAULT           *****************  OPEN                                           
+DURAN                               DEFAULT           *****************  OPEN                                           
+MLEVY                               DEFAULT           *****************  OPEN                                           
+EJORDAN                             DEFAULT           *****************  OPEN                                           
+AMARANTE                            DEFAULT           *****************  OPEN                                           
+JUROCHA                             DEFAULT           *****************  OPEN                                           
+MKAYAT                              DEFAULT           *****************  OPEN                                           
+TMARIA                              DEFAULT           *****************  OPEN                                           
+MSUAREZ                             DEFAULT           *****************  OPEN                                           
+MRESENDE                            DEFAULT           *****************  OPEN                                           
+MGANDARA                            DEFAULT           *****************  OPEN                                           
+OPS$AXBGRL                          DEFAULT           *****************  OPEN                                           
+WAGNER                              DEFAULT           *****************  OPEN                                           
+MARTOREL                            DEFAULT           *****************  OPEN                                           
+PLANILHA_COMPRAS                    DEFAULT           *****************  OPEN                                           
+PUBLI                               DEFAULT           *****************  OPEN                                           
+NNIXON                              DEFAULT           *****************  OPEN                                           
+LEKESHA                             DEFAULT           *****************  OPEN                                           
+SPEICH                              DEFAULT           *****************  OPEN                                           
+OPERACAO                            DEFAULT           *****************  OPEN                                           
+ELISE                               DEFAULT           *****************  OPEN                                           
+REGINA                              DEFAULT           *****************  OPEN                                           
+HELPDESK                            DEFAULT           *****************  OPEN                                           
+ECONSENT                            DEFAULT           *****************  OPEN                                           
+OPER                                DEFAULT           *****************  OPEN                                           
+JMSANTOS                            DEFAULT           *****************  OPEN                                           
+NPEREZ                              DEFAULT           *****************  OPEN                                           
+OPS$ORACLE8                         DEFAULT           *****************  OPEN                                           
+MRESENDE1                           DEFAULT           *****************  OPEN                                           
+MESCOLIN                            DEFAULT           *****************  OPEN                                           
+AXB_GERAL                           DEFAULT           *****************  OPEN                                           
+LOTA                                DEFAULT           *****************  OPEN                                           
+NORBERTO                            DEFAULT           *****************  OPEN                                           
+REPADMIN                            DEFAULT           *****************  OPEN                                           
+TANIA                               DEFAULT           *****************  OPEN                                           
+APPMAN                              DEFAULT           *****************  OPEN                                           
+DBSNMP                              DEFAULT           *****************  LOCKED                                         
+OPS$ORACLE7                         DEFAULT           *****************  LOCKED                                         
+OPS$CALRLAB                         DEFAULT           *****************  LOCKED                                         
+GSANTOS                             DEFAULT           *****************  LOCKED                                         
+LIR_MIAMI                           DEFAULT           *****************  LOCKED                                         
+LIR_REPLICA                         DEFAULT           *****************  LOCKED                                         
+LIR_ADCEN                           DEFAULT           *****************  LOCKED                                         
+LIR_CAYMAN                          DEFAULT           *****************  LOCKED                                         
+VICTOR                              DEFAULT           *****************  LOCKED                                         
+RENATOT                             DEFAULT           *****************  LOCKED                                         
+OPS$RENATOT                         DEFAULT           *****************  LOCKED                                         
+OLGA                                DEFAULT           *****************  LOCKED                                         
+CARLAB                              DEFAULT           *****************  LOCKED                                         
+SDIAS                               DEFAULT           *****************  LOCKED                                         
+DMEDEIROS                           DEFAULT           *****************  LOCKED                                         
+LSILVA                              DEFAULT           *****************  LOCKED                                         
+EUROTRADE2                          DEFAULT           *****************  LOCKED                                         
+EUROTRADE                           DEFAULT           *****************  LOCKED                                         
+REPLICA                             DEFAULT           *****************  LOCKED                                         
+RDEGLI                              DEFAULT           *****************  LOCKED                                         
+ELIZAL                              DEFAULT           *****************  LOCKED                                         
+LEITUGA                             DEFAULT           *****************  LOCKED                                         
+CPEREIRA                            DEFAULT           *****************  LOCKED                                         
+SALVIO                              DEFAULT           *****************  LOCKED                                         
+CAMILAC                             DEFAULT           *****************  LOCKED                                         
+VERONICA                            DEFAULT           *****************  LOCKED                                         
+IBOTKAY                             DEFAULT           *****************  LOCKED                                         
+GALBERTO                            DEFAULT           *****************  LOCKED                                         
+ANDREIAD                            DEFAULT           *****************  LOCKED                                         
+JBADIAS                             DEFAULT           *****************  LOCKED                                         
+RECADUSU                            DEFAULT           *****************  LOCKED                                         
+ITTEMP2                             DEFAULT           *****************  LOCKED                                         
+ITTEMP1                             DEFAULT           *****************  LOCKED                                         
+TREINAMENTO2                        DEFAULT           *****************  LOCKED                                         
+TREINAMENTO1                        DEFAULT           *****************  LOCKED                                         
+RBARBOSA                            DEFAULT           *****************  LOCKED                                         
+PBENITEZ                            DEFAULT           *****************  LOCKED                                         
+AFONSECA                            DEFAULT           *****************  LOCKED                                         
+TAMIAZZO                            DEFAULT           *****************  LOCKED                                         
+ESMANHOT                            DEFAULT           *****************  LOCKED                                         
+OPS$ESMANHOT                        DEFAULT           *****************  LOCKED                                         
+OPS$JCUADRA                         DEFAULT           *****************  LOCKED                                         
+OPS$LVARGAS                         DEFAULT           *****************  LOCKED                                         
+OPS$DGUARDIA                        DEFAULT           *****************  LOCKED                                         
+RLOZANO                             DEFAULT           *****************  LOCKED                                         
+JCUADRA                             DEFAULT           *****************  LOCKED                                         
+GSHILL                              DEFAULT           *****************  LOCKED                                         
+DGUARDIA                            DEFAULT           *****************  LOCKED                                         
+SANTOS                              DEFAULT           *****************  LOCKED                                         
+BIANCAR                             DEFAULT           *****************  LOCKED                                         
+POMPEYO                             DEFAULT           *****************  LOCKED                                         
+OPS$JASILVA                         DEFAULT           *****************  LOCKED                                         
+JOLIVEIRA                           DEFAULT           *****************  LOCKED                                         
+RIGHTWAY                            DEFAULT           *****************  LOCKED                                         
+MMACEDO                             DEFAULT           *****************  LOCKED                                         
+DSV_COMERCIAL                       DEFAULT           *****************  LOCKED                                         
+LCHEDID                             DEFAULT           *****************  LOCKED                                         
+FABIANAM                            DEFAULT           *****************  LOCKED                                         
+EFREITAS                            DEFAULT           *****************  LOCKED                                         
+RSALOMAO                            DEFAULT           *****************  LOCKED                                         
+ECOSENT                             DEFAULT           *****************  LOCKED                                         
+OPS$CARDENAS                        DEFAULT           *****************  LOCKED                                         
+FCASTILHO                           DEFAULT           *****************  LOCKED                                         
+CGIESE                              DEFAULT           *****************  LOCKED                                         
+MILUSKA                             DEFAULT           *****************  LOCKED                                         
+ATEND01                             DEFAULT           *****************  LOCKED                                         
+MLADEIRA                            DEFAULT           *****************  LOCKED                                         
+RMARTINS                            DEFAULT           *****************  LOCKED                                         
+APRADO                              DEFAULT           *****************  LOCKED                                         
+JFERRAZ                             DEFAULT           *****************  LOCKED                                         
+HARAKI                              DEFAULT           *****************  LOCKED                                         
+ESMANHO                             DEFAULT           *****************  LOCKED                                         
+CFERREIRA                           DEFAULT           *****************  LOCKED                                         
+REGINAL                             DEFAULT           *****************  LOCKED                                         
+NATALIAF                            DEFAULT           *****************  LOCKED                                         
+DFANTATO                            DEFAULT           *****************  LOCKED                                         
+HYGOR                               DEFAULT           *****************  LOCKED                                         
+VREZENDE                            DEFAULT           *****************  LOCKED                                         
+VERAT                               DEFAULT           *****************  LOCKED                                         
+RSERPA                              DEFAULT           *****************  LOCKED                                         
+OPS$AXBPROD                         DEFAULT           *****************  LOCKED                                         
+OPS$INTQ                            DEFAULT           *****************  LOCKED                                         
+FABIOLAA                            DEFAULT           *****************  LOCKED                                         
+MSANCHEZ                            DEFAULT           *****************  LOCKED                                         
+OPS$SACM                            DEFAULT           *****************  LOCKED                                         
+LBODDEN                             DEFAULT           *****************  LOCKED                                         
+FPIRAGIB                            DEFAULT           *****************  LOCKED                                         
+FQUINTEL                            DEFAULT           *****************  LOCKED                                         
+OPS$CARLAB                          DEFAULT           *****************  LOCKED                                         
+LOLE                                DEFAULT           *****************  LOCKED                                         
+DBARBOSA                            DEFAULT           *****************  LOCKED                                         
+BLACERDA                            DEFAULT           *****************  LOCKED                                         
+BALOGH                              DEFAULT           *****************  LOCKED                                         
+VIVIANNE                            DEFAULT           *****************  LOCKED                                         
+BEATRIZM                            DEFAULT           *****************  LOCKED                                         
+JOSUE                               DEFAULT           *****************  LOCKED                                         
+BKP                                 DEFAULT           *****************  LOCKED                                         
+SWILLIAMS                           DEFAULT           *****************  LOCKED                                         
+CLAUDIOA                            DEFAULT           *****************  LOCKED                                         
+SANDRA                              DEFAULT           *****************  LOCKED                                         
+MARTA                               DEFAULT           *****************  LOCKED                                         
+CTERNEUS                            DEFAULT           *****************  LOCKED                                         
+VLTAVARES                           DEFAULT           *****************  LOCKED                                         
+LEANDROS                            DEFAULT           *****************  LOCKED                                         
+WALTER                              DEFAULT           *****************  LOCKED                                         
+FDAVIES                             DEFAULT           *****************  LOCKED                                         
+PBRAGA                              DEFAULT           *****************  LOCKED                                         
+AURORA$ORB$UNAUTHENTICATED          DEFAULT           *****************  LOCKED                                         
+OSE$HTTP$ADMIN                      DEFAULT           *****************  LOCKED                                         
+AURORA$JIS$UTILITY$                 DEFAULT           *****************  LOCKED                                         
+VOLPATO                             DEFAULT           *****************  LOCKED                                         
+EXPADM                              DEFAULT           *****************  LOCKED                                         
+ALEXANDRA                           DEFAULT           *****************  LOCKED                                         
+REPSYS                              DEFAULT           *****************  LOCKED                                         
+EARRUDA                             DEFAULT           *****************  LOCKED                                         
+ERNESTO                             DEFAULT           *****************  LOCKED                                         
+MJORDAO                             DEFAULT           *****************  LOCKED                                         
+MDINIZ                              DEFAULT           *****************  LOCKED                                         
+ORADBA                              DEFAULT           *****************  LOCKED                                         
+LCOX                                DEFAULT           *****************  LOCKED                                         
+BEATRIZF                            DEFAULT           *****************  LOCKED                                         
+JCFERRAZ                            DEFAULT           *****************  EXPIRED & LOCKED                               
+JTJUNIOR                            DEFAULT           *****************  EXPIRED & LOCKED                               
+VSASAKI                             DEFAULT           *****************  EXPIRED & LOCKED                               
+LFBARRETO                           DEFAULT           *****************  EXPIRED & LOCKED                               
+
+</pre>
+<a HREF=#top><h6>Top</h6></a>
+<hr>
+
+[MIBSUX04.DUFRY.COM.BR / mia0] Collecting externally users...
+
+
+<br>
+
+<b>.Externally Users.</b>
+
+<pre>
+
+USERNAME                            PROFILE           PASSWORD         ACCOUNT_STATUS                                   
+----------------------------------- ----------------- ---------------- ------------------                               
+OPS$AXBGRL                          DEFAULT           *************    OPEN                                             
+OPS$AXBPROD                         DEFAULT           *************    LOCKED                                           
+OPS$AXBPROD                         DEFAULT           EXTERNAL         LOCKED                                           
+OPS$CALRLAB                         DEFAULT           *************    LOCKED                                           
+OPS$CARDENAS                        DEFAULT           *************    LOCKED                                           
+OPS$CARDENAS                        DEFAULT           EXTERNAL         LOCKED                                           
+OPS$CARLAB                          DEFAULT           *************    LOCKED                                           
+OPS$DGUARDIA                        DEFAULT           *************    LOCKED                                           
+OPS$ESMANHOT                        DEFAULT           *************    LOCKED                                           
+OPS$HDESK                           DEFAULT           *************    OPEN                                             
+OPS$INTQ                            DEFAULT           *************    LOCKED                                           
+OPS$INTQ                            DEFAULT           EXTERNAL         LOCKED                                           
+OPS$JASILVA                         DEFAULT           *************    LOCKED                                           
+OPS$JCUADRA                         DEFAULT           *************    LOCKED                                           
+OPS$LIR                             DEFAULT           *************    OPEN                                             
+OPS$LIR                             DEFAULT           EXTERNAL         OPEN                                             
+OPS$LVARGAS                         DEFAULT           *************    LOCKED                                           
+OPS$OPER                            DEFAULT           *************    OPEN                                             
+OPS$OPER                            DEFAULT           EXTERNAL         OPEN                                             
+OPS$ORACLE7                         DEFAULT           *************    LOCKED                                           
+OPS$ORACLE7                         DEFAULT           EXTERNAL         LOCKED                                           
+OPS$ORACLE8                         DEFAULT           *************    OPEN                                             
+OPS$ORACLE8                         DEFAULT           EXTERNAL         OPEN                                             
+OPS$RENATOT                         DEFAULT           *************    LOCKED                                           
+OPS$SACM                            DEFAULT           *************    LOCKED                                           
+OPS$SACM                            DEFAULT           EXTERNAL         LOCKED                                           
+
+</pre>
+<a HREF=#top><h6>Top</h6></a>
+<hr>
+
+[MIBSUX04.DUFRY.COM.BR / mia0] Collecting Roles...
+
+
+<br>
+
+<b>.ROLES.</b>
+
+<pre>
+
+GRANTEE                   GRANTED_ROLE                   ADMIN_ DEFAULT 
+------------------------- ------------------------------ ------ ------- 
+AEROPORTO                 CONSULTA                       NO     YES     
+AEROPORTOGG               CONSULTA                       NO     YES     
+ALEXANDRA                 BREXAMERICA                    NO     YES     
+ALEXANDRA                 BREXAMERICACADASTRO            NO     YES     
+ALEXANDRA                 BREXGROUP                      NO     YES     
+ALEXANDRA                 COMPRAS                        NO     YES     
+ALEXANDRA                 CONSULTA                       NO     YES     
+ALEXANDRA                 FATURAMENTO                    NO     YES     
+ALEXANDRA                 FORMS5                         NO     YES     
+ALEXANDRA                 LIR_GERAL                      NO     YES     
+ALEXANDRA                 LIR_GLOBAL                     NO     YES     
+ALEXANDRA                 MIAMI                          NO     YES     
+ALEXANDRA                 PUB_ADCEN                      NO     YES     
+ALEXANDRA                 PUB_CAYMAN                     NO     YES     
+AMARANTE                  CALC_PEDIDO                    NO     YES     
+AMARANTE                  CONSULTA                       NO     YES     
+AMARANTE                  LIR_GERAL                      NO     YES     
+AMARANTE                  MIAMI                          NO     YES     
+AMARANTE                  ORCAMENTO                      NO     YES     
+AMARANTE                  PED_COMPRA                     NO     YES     
+AMARANTE                  PREV_VENDA                     NO     YES     
+AMARANTE                  TAX_FREE                       NO     YES     
+AMUNIZ                    CALC_PEDIDO                    NO     YES     
+AMUNIZ                    CAYMAN                         NO     YES     
+AMUNIZ                    CONSULTA                       NO     YES     
+AMUNIZ                    FAT_FRETE                      NO     YES     
+AMUNIZ                    FEUR_PRINT                     NO     YES     
+AMUNIZ                    FORMS5                         NO     YES     
+AMUNIZ                    LIR_GERAL                      NO     YES     
+AMUNIZ                    MIAMI                          NO     YES     
+AMUNIZ                    ORCAMENTO                      NO     YES     
+AMUNIZ                    PED_COMPRA                     NO     YES     
+AMUNIZ                    PREV_VENDA                     NO     YES     
+AMUNIZ                    PUBLI_CAYMAN                   NO     YES     
+AMUNIZ                    PUB_CAYMAN                     NO     YES     
+AMUNIZ                    TAX_FREE                       NO     YES     
+AMUNIZ                    TRAFEGO                        NO     YES     
+ANDREIAD                  COMPRAS                        NO     YES     
+ANDREIAD                  CONSULTA                       NO     YES     
+ANDREIAD                  FAT_FRETE                      NO     YES     
+ANDREIAD                  LIR_GERAL                      NO     YES     
+ANDREIAD                  LIR_GLOBAL                     NO     YES     
+ANDREIAD                  MIAMI                          NO     YES     
+ANDREIAD                  PUB_ADCEN                      NO     YES     
+ANDREIAD                  PUB_CAYMAN                     NO     YES     
+ANDREIAD                  TRAFEGO                        NO     YES     
+APRADO                    R_AXB                          NO     YES     
+AURORA$JIS$UTILITY$       RESOURCE                       NO     YES     
+AXB                       AEROPORTO                      NO     YES     
+AXB                       AEROPORTOGG                    NO     YES     
+AXB                       BRASIFLIR                      NO     YES     
+AXB                       CAD_AGENTE                     NO     YES     
+AXB                       CAD_COMPRAS                    NO     YES     
+AXB                       CAD_PROMOCAO                   NO     YES     
+AXB                       CALC_PEDIDO                    NO     YES     
+AXB                       CAYMAN                         NO     YES     
+AXB                       COMPRAS                        NO     YES     
+AXB                       COMPRAS_GERENCIA               NO     YES     
+AXB                       CONNECT                        NO     YES     
+AXB                       CONSULTA                       NO     YES     
+AXB                       DIRETLIR                       NO     YES     
+AXB                       DUTY_FREE                      NO     YES     
+AXB                       DUTY_PAYD                      NO     YES     
+AXB                       ESTATISTICA                    NO     YES     
+AXB                       EUROTLIR                       NO     YES     
+AXB                       FATURAMENTO                    NO     YES     
+AXB                       FORMS5                         NO     YES     
+AXB                       FRETE                          NO     YES     
+AXB                       GERENCIA                       NO     YES     
+AXB                       GER_COMPRAS                    NO     YES     
+AXB                       IMPORTACAO                     NO     YES     
+AXB                       INTERFACE_SIA                  NO     YES     
+AXB                       INTERFACE_VAX                  NO     YES     
+AXB                       LIB_ORCAMENTO                  NO     YES     
+AXB                       LIR_GERAL                      NO     YES     
+AXB                       LIR_GLOBAL                     NO     YES     
+AXB                       MARKETING                      NO     YES     
+AXB                       MIAMI                          NO     YES     
+AXB                       ON_LINE                        NO     YES     
+AXB                       ORCAMENTO                      NO     YES     
+AXB                       PED_COMPRA                     NO     YES     
+AXB                       PREV_VENDA                     NO     YES     
+AXB                       RESOURCE                       NO     YES     
+AXB                       ROLE_COMERCIAL                 NO     YES     
+AXB                       SEL_DIC                        NO     YES     
+AXB                       SIA_GERAL                      NO     YES     
+AXB                       SUG_COMPRA                     NO     YES     
+AXB                       TAX_FREE                       NO     YES     
+AXB                       TRAFEGO                        NO     YES     
+AXB_GERAL                 R_AXB                          NO     YES     
+BEATRIZF                  CALC_PEDIDO                    NO     YES     
+BEATRIZF                  CONSULTA                       NO     YES     
+BEATRIZF                  LIR_GERAL                      NO     YES     
+BEATRIZF                  MIAMI                          NO     YES     
+BEATRIZF                  ORCAMENTO                      NO     YES     
+BEATRIZF                  PED_COMPRA                     NO     YES     
+BEATRIZF                  PREV_VENDA                     NO     YES     
+BEATRIZF                  TAX_FREE                       NO     YES     
+BEATRIZM                  CALC_PEDIDO                    NO     YES     
+BEATRIZM                  CONSULTA                       NO     YES     
+BEATRIZM                  ESTATISTICA                    NO     YES     
+BEATRIZM                  LIR_GERAL                      NO     YES     
+BEATRIZM                  MIAMI                          NO     YES     
+BEATRIZM                  ORCAMENTO                      NO     YES     
+BEATRIZM                  PED_COMPRA                     NO     YES     
+BEATRIZM                  PREV_VENDA                     NO     YES     
+BEATRIZM                  TAX_FREE                       NO     YES     
+BEZERRA                   CAD_COMPRAS                    NO     YES     
+BEZERRA                   CALC_PEDIDO                    NO     YES     
+BEZERRA                   CAYMAN                         NO     YES     
+BEZERRA                   COMPRAS                        NO     YES     
+BEZERRA                   FATURAMENTO                    NO     YES     
+BEZERRA                   FAT_FRETE                      NO     YES     
+BEZERRA                   FORMS5                         NO     YES     
+BEZERRA                   FRETE                          NO     YES     
+BEZERRA                   GER_COMPRAS                    NO     YES     
+BEZERRA                   IMPORTACAO                     NO     YES     
+BEZERRA                   LIR_GERAL                      NO     YES     
+BEZERRA                   LIR_GLOBAL                     NO     YES     
+BEZERRA                   MIAMI                          NO     YES     
+BEZERRA                   SIA_GERAL                      NO     YES     
+BEZERRA                   SUG_COMPRA                     NO     YES     
+BEZERRA                   TRAFEGO                        NO     YES     
+BKP                       EXP_FULL_DATABASE              NO     YES     
+BLACERDA                  CALC_PEDIDO                    NO     YES     
+BLACERDA                  CAYMAN                         NO     YES     
+BLACERDA                  CONSULTA                       NO     YES     
+BLACERDA                  FORMS5                         NO     YES     
+BLACERDA                  LIR_GERAL                      NO     YES     
+BLACERDA                  MIAMI                          NO     YES     
+BLACERDA                  ORCAMENTO                      NO     YES     
+BLACERDA                  PED_COMPRA                     NO     YES     
+BLACERDA                  PREV_VENDA                     NO     YES     
+BLACERDA                  PUBLI_CAYMAN                   NO     YES     
+BLACERDA                  PUB_ADCEN                      NO     YES     
+BLACERDA                  PUB_CAYMAN                     NO     YES     
+BLACERDA                  TAX_FREE                       NO     YES     
+CARLAB                    CALC_PEDIDO                    NO     YES     
+CARLAB                    CONSULTA                       NO     YES     
+CARLAB                    LIR_GERAL                      NO     YES     
+CARLAB                    MIAMI                          NO     YES     
+CARLAB                    ORCAMENTO                      NO     YES     
+CARLAB                    PED_COMPRA                     NO     YES     
+CARLAB                    PREV_VENDA                     NO     YES     
+CARLAB                    TAX_FREE                       NO     YES     
+CAYMAN                    CONSULTA                       NO     YES     
+CFERREIRA                 AEROPORTO                      NO     YES     
+CFERREIRA                 AEROPORTOGG                    NO     YES     
+CFERREIRA                 BREXAMERICA                    NO     YES     
+CFERREIRA                 BREXGROUP                      NO     YES     
+CFERREIRA                 CAD_AGENTE                     NO     YES     
+CFERREIRA                 CAD_COMPRAS                    NO     YES     
+CFERREIRA                 CAD_PROMOCAO                   NO     YES     
+CFERREIRA                 CALC_PEDIDO                    NO     YES     
+CFERREIRA                 CAYMAN                         NO     YES     
+CFERREIRA                 COMPRAS                        NO     YES     
+CFERREIRA                 COMPRAS_GERENCIA               NO     YES     
+CFERREIRA                 CONSULTA                       NO     YES     
+CFERREIRA                 DIRETLIR                       NO     YES     
+CFERREIRA                 DUTY_FREE                      NO     YES     
+CFERREIRA                 ESTATISTICA                    NO     YES     
+CFERREIRA                 FATURAMENTO                    NO     YES     
+CFERREIRA                 FORMS5                         NO     YES     
+CFERREIRA                 FRETE                          NO     YES     
+CFERREIRA                 GERENCIA                       NO     YES     
+CFERREIRA                 GER_COMPRAS                    NO     YES     
+CFERREIRA                 IMPORTACAO                     NO     YES     
+CFERREIRA                 LIB_ORCAMENTO                  NO     YES     
+CFERREIRA                 LIR_GERAL                      NO     YES     
+CFERREIRA                 LIR_GLOBAL                     NO     YES     
+CFERREIRA                 MIAMI                          NO     YES     
+CFERREIRA                 ON_LINE                        NO     YES     
+CFERREIRA                 ORCAMENTO                      NO     YES     
+CFERREIRA                 PED_COMPRA                     NO     YES     
+CFERREIRA                 PREV_VENDA                     NO     YES     
+CFERREIRA                 PUBLI_CAYMAN                   NO     YES     
+CFERREIRA                 R_AXB                          NO     YES     
+CFERREIRA                 R_COMERCIAL_S                  NO     YES     
+CFERREIRA                 SIA_GERAL                      NO     YES     
+CFERREIRA                 SUG_COMPRA                     NO     YES     
+CFERREIRA                 TAX_FREE                       NO     YES     
+CFERREIRA                 TRAFEGO                        NO     YES     
+CGIESE                    CALC_PEDIDO                    NO     YES     
+CGIESE                    CONSULTA                       NO     YES     
+CGIESE                    LIR_GERAL                      NO     YES     
+CGIESE                    MIAMI                          NO     YES     
+CGIESE                    ORCAMENTO                      NO     YES     
+CGIESE                    PED_COMPRA                     NO     YES     
+CGIESE                    PREV_VENDA                     NO     YES     
+CGIESE                    TAX_FREE                       NO     YES     
+CHENELLE                  CALC_PEDIDO                    NO     YES     
+CHENELLE                  CAYMAN                         NO     YES     
+CHENELLE                  CONSULTA                       NO     YES     
+CHENELLE                  FAT_FRETE                      NO     YES     
+CHENELLE                  FEUR_PRINT                     NO     YES     
+CHENELLE                  FORMS5                         NO     YES     
+CHENELLE                  LIR_GERAL                      NO     YES     
+CHENELLE                  MIAMI                          NO     YES     
+CHENELLE                  ORCAMENTO                      NO     YES     
+CHENELLE                  PED_COMPRA                     NO     YES     
+CHENELLE                  PREV_VENDA                     NO     YES     
+CHENELLE                  PUBLI_CAYMAN                   NO     YES     
+CHENELLE                  PUB_CAYMAN                     NO     YES     
+CHENELLE                  TAX_FREE                       NO     YES     
+CHENELLE                  TRAFEGO                        NO     YES     
+CLAUDIOA                  CALC_PEDIDO                    NO     YES     
+CLAUDIOA                  COMPRAS                        NO     YES     
+CLAUDIOA                  CONSULTA                       NO     YES     
+CLAUDIOA                  FATURAMENTO                    NO     YES     
+CLAUDIOA                  LIR_GERAL                      NO     YES     
+CLAUDIOA                  LIR_GLOBAL                     NO     YES     
+CLAUDIOA                  MIAMI                          NO     YES     
+COMERCIAL                 BREXAMERICA                    NO     YES     
+COMERCIAL                 BREXAMERICACADASTRO            NO     YES     
+COMERCIAL                 BREXGROUP                      NO     YES     
+COMERCIAL                 CONSULTA                       NO     YES     
+COMERCIAL                 FEUR_PRINT                     NO     YES     
+COMERCIAL                 LIB_CARG_PLIST                 NO     YES     
+COMERCIAL                 RESOURCE                       NO     YES     
+COMPRAS                   CONSULTA                       NO     YES     
+COMPRAS_GERENCIA          AEROPORTO                      NO     YES     
+COMPRAS_GERENCIA          COMPRAS                        NO     YES     
+COMPRAS_GERENCIA          CONSULTA                       NO     YES     
+CTERNEUS                  COMPRAS                        NO     YES     
+CTERNEUS                  CONSULTA                       NO     YES     
+CTERNEUS                  FATURAMENTO                    NO     YES     
+CTERNEUS                  LIR_GERAL                      NO     YES     
+CTERNEUS                  LIR_GLOBAL                     NO     YES     
+CTERNEUS                  MIAMI                          NO     YES     
+DBARBOSA                  PUB_ADCEN                      NO     YES     
+DBARBOSA                  PUB_CAYMAN                     NO     YES     
+DFANTATO                  R_AXB_S                        NO     YES     
+DFANTATO                  R_COMERCIAL_S                  NO     YES     
+DGUARDIA                  BREXAMERICA                    NO     YES     
+DGUARDIA                  BREXAMERICACADASTRO            NO     YES     
+DGUARDIA                  BREXGROUP                      NO     YES     
+DGUARDIA                  COMPRAS                        NO     YES     
+DGUARDIA                  CONSULTA                       NO     YES     
+DGUARDIA                  FATURAMENTO                    NO     YES     
+DGUARDIA                  FORMS5                         NO     YES     
+DGUARDIA                  LIR_GERAL                      NO     YES     
+DGUARDIA                  LIR_GLOBAL                     NO     YES     
+DGUARDIA                  MIAMI                          NO     YES     
+DGUARDIA                  PUB_ADCEN                      NO     YES     
+DGUARDIA                  PUB_CAYMAN                     NO     YES     
+DMEDEIROS                 BREXAMERICA                    NO     YES     
+DMEDEIROS                 BREXGROUP                      NO     YES     
+DMEDEIROS                 FORMS5                         NO     YES     
+DMEDEIROS                 LIR_GERAL                      NO     YES     
+DMEDEIROS                 LIR_GLOBAL                     NO     YES     
+DSV_COMERCIAL             ROLE_DSV_COMERCIAL             NO     YES     
+DURAN                     CALC_PEDIDO                    NO     YES     
+DURAN                     CAYMAN                         NO     YES     
+DURAN                     CONSULTA                       NO     YES     
+DURAN                     FAT_FRETE                      NO     YES     
+DURAN                     FEUR_PRINT                     NO     YES     
+DURAN                     FORMS5                         NO     YES     
+DURAN                     LIR_GERAL                      NO     YES     
+DURAN                     MIAMI                          NO     YES     
+DURAN                     ORCAMENTO                      NO     YES     
+DURAN                     PED_COMPRA                     NO     YES     
+DURAN                     PREV_VENDA                     NO     YES     
+DURAN                     PUBLI_CAYMAN                   NO     YES     
+DURAN                     PUB_CAYMAN                     NO     YES     
+DURAN                     TAX_FREE                       NO     YES     
+DURAN                     TRAFEGO                        NO     YES     
+ECONSENT                  COMPRAS                        NO     YES     
+ECONSENT                  CONSULTA                       NO     YES     
+ECONSENT                  LIR_GERAL                      NO     YES     
+ECONSENT                  LIR_GLOBAL                     NO     YES     
+ECONSENT                  MIAMI                          NO     YES     
+ECONSENT                  TRAFEGO                        NO     YES     
+ECOSENT                   COMPRAS                        NO     YES     
+ECOSENT                   CONSULTA                       NO     YES     
+ECOSENT                   FATURAMENTO                    NO     YES     
+ECOSENT                   LIR_GERAL                      NO     YES     
+ECOSENT                   LIR_GLOBAL                     NO     YES     
+ECOSENT                   MIAMI                          NO     YES     
+EFREITAS                  BREXAMERICA                    NO     YES     
+EFREITAS                  BREXGROUP                      NO     YES     
+EFREITAS                  FORMS5                         NO     YES     
+EFREITAS                  LIR_GERAL                      NO     YES     
+EFREITAS                  LIR_GLOBAL                     NO     YES     
+EFREITAS                  TRAFEGO                        NO     YES     
+EJORDAN                   CALC_PEDIDO                    NO     YES     
+EJORDAN                   CAYMAN                         NO     YES     
+EJORDAN                   CONSULTA                       NO     YES     
+EJORDAN                   FAT_FRETE                      NO     YES     
+EJORDAN                   FEUR_PRINT                     NO     YES     
+EJORDAN                   FORMS5                         NO     YES     
+EJORDAN                   LIR_GERAL                      NO     YES     
+EJORDAN                   MIAMI                          NO     YES     
+EJORDAN                   ORCAMENTO                      NO     YES     
+EJORDAN                   PED_COMPRA                     NO     YES     
+EJORDAN                   PREV_VENDA                     NO     YES     
+EJORDAN                   PUBLI_CAYMAN                   NO     YES     
+EJORDAN                   PUB_CAYMAN                     NO     YES     
+EJORDAN                   R_PUBLI_A                      NO     YES     
+EJORDAN                   TAX_FREE                       NO     YES     
+EJORDAN                   TRAFEGO                        NO     YES     
+ELISE                     COMPRAS                        NO     YES     
+ELISE                     CONSULTA                       NO     YES     
+ELISE                     LIR_GERAL                      NO     YES     
+ELISE                     LIR_GLOBAL                     NO     YES     
+ELISE                     MIAMI                          NO     YES     
+ELISE                     PUB_ADCEN                      NO     YES     
+ELISE                     PUB_CAYMAN                     NO     YES     
+ELISE                     TRAFEGO                        NO     YES     
+ERNESTO                   COMPRAS                        NO     YES     
+ERNESTO                   CONSULTA                       NO     YES     
+ERNESTO                   FATURAMENTO                    NO     YES     
+ERNESTO                   LIR_GERAL                      NO     YES     
+ERNESTO                   LIR_GLOBAL                     NO     YES     
+ERNESTO                   MIAMI                          NO     YES     
+ESMANHO                   CONNECT                        NO     YES     
+ESMANHO                   CONSULTA                       NO     YES     
+ESMANHO                   FORMS5                         NO     YES     
+ESMANHO                   LIR_GERAL                      NO     YES     
+ESMANHO                   LIR_GLOBAL                     NO     YES     
+ESMANHO                   SIA_GERAL                      NO     YES     
+ESMANHOT                  CALC_PEDIDO                    NO     YES     
+ESMANHOT                  CAYMAN                         NO     YES     
+ESMANHOT                  CONSULTA                       NO     YES     
+ESMANHOT                  LIR_GERAL                      NO     YES     
+ESMANHOT                  LIR_GLOBAL                     NO     YES     
+ESMANHOT                  MIAMI                          NO     YES     
+ESMANHOT                  ORCAMENTO                      NO     YES     
+ESMANHOT                  PED_COMPRA                     NO     YES     
+ESMANHOT                  PREV_VENDA                     NO     YES     
+ESMANHOT                  TAX_FREE                       NO     YES     
+EUROTRADE                 CALC_PEDIDO                    NO     YES     
+EUROTRADE                 CAYMAN                         NO     YES     
+EUROTRADE                 CONSULTA                       NO     YES     
+EUROTRADE                 LIR_GERAL                      NO     YES     
+EUROTRADE                 MIAMI                          NO     YES     
+EUROTRADE                 ORCAMENTO                      NO     YES     
+EUROTRADE                 PED_COMPRA                     NO     YES     
+EUROTRADE                 PREV_VENDA                     NO     YES     
+EUROTRADE                 PUBLI_CAYMAN                   NO     YES     
+EUROTRADE                 PUB_ADCEN                      NO     YES     
+EUROTRADE                 PUB_ADM                        NO     YES     
+EUROTRADE                 PUB_CAYMAN                     NO     YES     
+EUROTRADE                 TAX_FREE                       NO     YES     
+EUROTRADE2                CALC_PEDIDO                    NO     YES     
+EUROTRADE2                CAYMAN                         NO     YES     
+EUROTRADE2                CONSULTA                       NO     YES     
+EUROTRADE2                LIR_GERAL                      NO     YES     
+EUROTRADE2                MIAMI                          NO     YES     
+EUROTRADE2                ORCAMENTO                      NO     YES     
+EUROTRADE2                PED_COMPRA                     NO     YES     
+EUROTRADE2                PREV_VENDA                     NO     YES     
+EUROTRADE2                PUBLI_CAYMAN                   NO     YES     
+EUROTRADE2                PUB_ADCEN                      NO     YES     
+EUROTRADE2                PUB_ADM                        NO     YES     
+EUROTRADE2                PUB_CAYMAN                     NO     YES     
+EUROTRADE2                TAX_FREE                       NO     YES     
+EXPADM                    EXP_FULL_DATABASE              NO     YES     
+EXPADM                    LIR_GERAL                      NO     YES     
+EXPADM                    LIR_GLOBAL                     NO     YES     
+FABIANAM                  CALC_PEDIDO                    NO     YES     
+FABIANAM                  CONSULTA                       NO     YES     
+FABIANAM                  ESTATISTICA                    NO     YES     
+FABIANAM                  LIR_GERAL                      NO     YES     
+FABIANAM                  MIAMI                          NO     YES     
+FABIANAM                  ORCAMENTO                      NO     YES     
+FABIANAM                  PED_COMPRA                     NO     YES     
+FABIANAM                  PREV_VENDA                     NO     YES     
+FABIANAM                  TAX_FREE                       NO     YES     
+FABIOLAA                  COMPRAS                        NO     YES     
+FABIOLAA                  CONSULTA                       NO     YES     
+FABIOLAA                  FORMS5                         NO     YES     
+FABIOLAA                  LIR_GERAL                      NO     YES     
+FABIOLAA                  MIAMI                          NO     YES     
+FABIOLAA                  PUB_ADCEN                      NO     YES     
+FABIOLAA                  PUB_CAYMAN                     NO     YES     
+FABIOLAA                  TRAFEGO                        NO     YES     
+FATURAMENTO               CONSULTA                       NO     YES     
+FCASTILHO                 BREXAMERICA                    NO     YES     
+FCASTILHO                 BREXGROUP                      NO     YES     
+FCASTILHO                 FORMS5                         NO     YES     
+FCASTILHO                 LIR_GERAL                      NO     YES     
+FCASTILHO                 LIR_GLOBAL                     NO     YES     
+FCASTILHO                 TRAFEGO                        NO     YES     
+FDAVIES                   CALC_PEDIDO                    NO     YES     
+FDAVIES                   CONSULTA                       NO     YES     
+FDAVIES                   LIR_GERAL                      NO     YES     
+FDAVIES                   MIAMI                          NO     YES     
+FDAVIES                   ORCAMENTO                      NO     YES     
+FDAVIES                   PED_COMPRA                     NO     YES     
+FDAVIES                   PREV_VENDA                     NO     YES     
+FDAVIES                   TAX_FREE                       NO     YES     
+FQUINTEL                  CALC_PEDIDO                    NO     YES     
+FQUINTEL                  CONSULTA                       NO     YES     
+FQUINTEL                  FATURAMENTO                    NO     YES     
+FQUINTEL                  LIR_GERAL                      NO     YES     
+FQUINTEL                  MIAMI                          NO     YES     
+FQUINTEL                  ORCAMENTO                      NO     YES     
+FQUINTEL                  PED_COMPRA                     NO     YES     
+FQUINTEL                  PREV_VENDA                     NO     YES     
+FQUINTEL                  TAX_FREE                       NO     YES     
+FQUINTEL                  TRAFEGO                        NO     YES     
+GALBERTO                  CALC_PEDIDO                    NO     YES     
+GALBERTO                  COMPRAS                        NO     YES     
+GALBERTO                  CONSULTA                       NO     YES     
+GALBERTO                  FATURAMENTO                    NO     YES     
+GALBERTO                  LIR_GERAL                      NO     YES     
+GALBERTO                  LIR_GLOBAL                     NO     YES     
+GALBERTO                  MIAMI                          NO     YES     
+GERENCIA                  CONSULTA                       NO     YES     
+GSANTOS                   LIR_GERAL                      NO     YES     
+GSANTOS                   LIR_GLOBAL                     NO     YES     
+GSANTOS                   MIAMI                          NO     YES     
+GSHILL                    BREXAMERICA                    NO     YES     
+GSHILL                    BREXAMERICACADASTRO            NO     YES     
+GSHILL                    BREXGROUP                      NO     YES     
+GSHILL                    COMPRAS                        NO     YES     
+GSHILL                    CONSULTA                       NO     YES     
+GSHILL                    FATURAMENTO                    NO     YES     
+GSHILL                    FORMS5                         NO     YES     
+GSHILL                    LIR_GERAL                      NO     YES     
+GSHILL                    LIR_GLOBAL                     NO     YES     
+GSHILL                    MIAMI                          NO     YES     
+GSHILL                    PUB_ADCEN                      NO     YES     
+GSHILL                    PUB_CAYMAN                     NO     YES     
+HARAKI                    R_AXB                          NO     YES     
+IBOTKAY                   CALC_PEDIDO                    NO     YES     
+IBOTKAY                   CONSULTA                       NO     YES     
+IBOTKAY                   LIR_GERAL                      NO     YES     
+IBOTKAY                   MIAMI                          NO     YES     
+IBOTKAY                   ORCAMENTO                      NO     YES     
+IBOTKAY                   PED_COMPRA                     NO     YES     
+IBOTKAY                   PREV_VENDA                     NO     YES     
+IBOTKAY                   TAX_FREE                       NO     YES     
+INTERFACE_SIA             CONSULTA                       NO     YES     
+INTERFACE_VAX             CONSULTA                       NO     YES     
+INTQ                      CALC_PEDIDO                    NO     YES     
+INTQ                      CONSULTA                       NO     YES     
+INTQ                      FATURAMENTO                    NO     YES     
+INTQ                      LIR_GERAL                      NO     YES     
+INTQ                      MIAMI                          NO     YES     
+INTQ                      ORCAMENTO                      NO     YES     
+INTQ                      PED_COMPRA                     NO     YES     
+INTQ                      PREV_VENDA                     NO     YES     
+INTQ                      TAX_FREE                       NO     YES     
+INTQ                      TRAFEGO                        NO     YES     
+ITTEMP1                   BREXAMERICA                    NO     YES     
+ITTEMP1                   BREXAMERICACADASTRO            NO     YES     
+ITTEMP1                   BREXGROUP                      NO     YES     
+ITTEMP1                   CALC_PEDIDO                    NO     YES     
+ITTEMP1                   CAYMAN                         NO     YES     
+ITTEMP1                   CONSULTA                       NO     YES     
+ITTEMP1                   FORMS5                         NO     YES     
+ITTEMP1                   LIR_GERAL                      NO     YES     
+ITTEMP1                   MIAMI                          NO     YES     
+ITTEMP1                   ORCAMENTO                      NO     YES     
+ITTEMP1                   PED_COMPRA                     NO     YES     
+ITTEMP1                   PREV_VENDA                     NO     YES     
+ITTEMP1                   PUBLI_CAYMAN                   NO     YES     
+ITTEMP1                   PUB_CAYMAN                     NO     YES     
+ITTEMP1                   TAX_FREE                       NO     YES     
+ITTEMP2                   CALC_PEDIDO                    NO     YES     
+ITTEMP2                   CAYMAN                         NO     YES     
+ITTEMP2                   CONSULTA                       NO     YES     
+ITTEMP2                   FORMS5                         NO     YES     
+ITTEMP2                   LIR_GERAL                      NO     YES     
+ITTEMP2                   MIAMI                          NO     YES     
+ITTEMP2                   ORCAMENTO                      NO     YES     
+ITTEMP2                   PED_COMPRA                     NO     YES     
+ITTEMP2                   PREV_VENDA                     NO     YES     
+ITTEMP2                   PUBLI_CAYMAN                   NO     YES     
+ITTEMP2                   PUB_CAYMAN                     NO     YES     
+ITTEMP2                   TAX_FREE                       NO     YES     
+JAVASYSPRIV               JAVAUSERPRIV                   NO     YES     
+JBADIAS                   BREXAMERICA                    NO     YES     
+JBADIAS                   BREXAMERICACADASTRO            NO     YES     
+JBADIAS                   BREXGROUP                      NO     YES     
+JBADIAS                   COMPRAS                        NO     YES     
+JBADIAS                   CONSULTA                       NO     YES     
+JBADIAS                   FATURAMENTO                    NO     YES     
+JBADIAS                   FORMS5                         NO     YES     
+JBADIAS                   LIR_GERAL                      NO     YES     
+JBADIAS                   LIR_GLOBAL                     NO     YES     
+JBADIAS                   MIAMI                          NO     YES     
+JBADIAS                   PUB_ADCEN                      NO     YES     
+JBADIAS                   PUB_CAYMAN                     NO     YES     
+JCFERRAZ                  R_AXB_S                        NO     YES     
+JCFERRAZ                  R_COMERCIAL_S                  NO     YES     
+JCUADRA                   CALC_PEDIDO                    NO     YES     
+JCUADRA                   CAYMAN                         NO     YES     
+JCUADRA                   CONSULTA                       NO     YES     
+JCUADRA                   LIR_GERAL                      NO     YES     
+JCUADRA                   LIR_GLOBAL                     NO     YES     
+JCUADRA                   MIAMI                          NO     YES     
+JCUADRA                   ORCAMENTO                      NO     YES     
+JCUADRA                   PED_COMPRA                     NO     YES     
+JCUADRA                   PREV_VENDA                     NO     YES     
+JCUADRA                   TAX_FREE                       NO     YES     
+JFERRAZ                   R_AXB                          NO     YES     
+JOLIVEIRA                 CALC_PEDIDO                    NO     YES     
+JOLIVEIRA                 CAYMAN                         NO     YES     
+JOLIVEIRA                 CONSULTA                       NO     YES     
+JOLIVEIRA                 LIR_GERAL                      NO     YES     
+JOLIVEIRA                 LIR_GLOBAL                     NO     YES     
+JOLIVEIRA                 MIAMI                          NO     YES     
+JOLIVEIRA                 ORCAMENTO                      NO     YES     
+JOLIVEIRA                 PED_COMPRA                     NO     YES     
+JOLIVEIRA                 PREV_VENDA                     NO     YES     
+JOLIVEIRA                 TAX_FREE                       NO     YES     
+JOSUE                     COMPRAS                        NO     YES     
+JOSUE                     CONSULTA                       NO     YES     
+JOSUE                     FATURAMENTO                    NO     YES     
+JOSUE                     LIR_GERAL                      NO     YES     
+JOSUE                     LIR_GLOBAL                     NO     YES     
+JOSUE                     MIAMI                          NO     YES     
+JOSUE                     PUB_ADCEN                      NO     YES     
+JOSUE                     PUB_CAYMAN                     NO     YES     
+JTJUNIOR                  R_AXB_S                        NO     YES     
+JTJUNIOR                  R_COMERCIAL_S                  NO     YES     
+JUROCHA                   COMPRAS                        NO     YES     
+JUROCHA                   CONSULTA                       NO     YES     
+JUROCHA                   LIR_GERAL                      NO     YES     
+JUROCHA                   LIR_GLOBAL                     NO     YES     
+JUROCHA                   MIAMI                          NO     YES     
+JUROCHA                   PUB_ADCEN                      NO     YES     
+JUROCHA                   PUB_CAYMAN                     NO     YES     
+JUROCHA                   TRAFEGO                        NO     YES     
+LBODDEN                   CALC_PEDIDO                    NO     YES     
+LBODDEN                   CAYMAN                         NO     YES     
+LBODDEN                   CONSULTA                       NO     YES     
+LBODDEN                   FEUR_PRINT                     NO     YES     
+LBODDEN                   FORMS5                         NO     YES     
+LBODDEN                   LIR_GERAL                      NO     YES     
+LBODDEN                   MIAMI                          NO     YES     
+LBODDEN                   ORCAMENTO                      NO     YES     
+LBODDEN                   PED_COMPRA                     NO     YES     
+LBODDEN                   PREV_VENDA                     NO     YES     
+LBODDEN                   PUBLI_CAYMAN                   NO     YES     
+LBODDEN                   PUB_CAYMAN                     NO     YES     
+LBODDEN                   TAX_FREE                       NO     YES     
+LBODDEN                   TRAFEGO                        NO     YES     
+LCHEDID                   CALC_PEDIDO                    NO     YES     
+LCHEDID                   CONSULTA                       NO     YES     
+LCHEDID                   ESTATISTICA                    NO     YES     
+LCHEDID                   LIR_GERAL                      NO     YES     
+LCHEDID                   MIAMI                          NO     YES     
+LCHEDID                   ORCAMENTO                      NO     YES     
+LCHEDID                   PED_COMPRA                     NO     YES     
+LCHEDID                   PREV_VENDA                     NO     YES     
+LCHEDID                   TAX_FREE                       NO     YES     
+LCOX                      CALC_PEDIDO                    NO     YES     
+LCOX                      CONSULTA                       NO     YES     
+LCOX                      LIR_GERAL                      NO     YES     
+LCOX                      MIAMI                          NO     YES     
+LCOX                      ORCAMENTO                      NO     YES     
+LCOX                      PED_COMPRA                     NO     YES     
+LCOX                      PREV_VENDA                     NO     YES     
+LCOX                      TAX_FREE                       NO     YES     
+LEANDROS                  CAD_PROMOCAO                   NO     YES     
+LEANDROS                  COMPRAS                        NO     YES     
+LEANDROS                  CONSULTA                       NO     YES     
+LEANDROS                  FORMS5                         NO     YES     
+LEANDROS                  LIR_GERAL                      NO     YES     
+LEANDROS                  LIR_GLOBAL                     NO     YES     
+LEANDROS                  MIAMI                          NO     YES     
+LEANDROS                  SIA_GERAL                      NO     YES     
+LEITUGA                   PUB_ADCEN                      NO     YES     
+LEITUGA                   PUB_CAYMAN                     NO     YES     
+LEKESHA                   CALC_PEDIDO                    NO     YES     
+LEKESHA                   CAYMAN                         NO     YES     
+LEKESHA                   CONSULTA                       NO     YES     
+LEKESHA                   FAT_FRETE                      NO     YES     
+LEKESHA                   FEUR_PRINT                     NO     YES     
+LEKESHA                   FORMS5                         NO     YES     
+LEKESHA                   LIR_GERAL                      NO     YES     
+LEKESHA                   MIAMI                          NO     YES     
+LEKESHA                   ORCAMENTO                      NO     YES     
+LEKESHA                   PED_COMPRA                     NO     YES     
+LEKESHA                   PREV_VENDA                     NO     YES     
+LEKESHA                   PUBLI_CAYMAN                   NO     YES     
+LEKESHA                   PUB_CAYMAN                     NO     YES     
+LEKESHA                   TAX_FREE                       NO     YES     
+LEKESHA                   TRAFEGO                        NO     YES     
+LFBARRETO                 R_AXB_S                        NO     YES     
+LFBARRETO                 R_COMERCIAL_S                  NO     YES     
+LIR_ADCEN                 LIR_GERAL                      NO     YES     
+LIR_ADCEN                 LIR_GLOBAL                     NO     YES     
+LIR_CAYMAN                LIR_GERAL                      NO     YES     
+LIR_CAYMAN                LIR_GLOBAL                     NO     YES     
+LIR_MIAMI                 LIR_GERAL                      NO     YES     
+LIR_MIAMI                 LIR_GLOBAL                     NO     YES     
+LIR_REPLICA               LIR_GERAL                      NO     YES     
+LIR_REPLICA               LIR_GLOBAL                     NO     YES     
+LOLE                      CALC_PEDIDO                    NO     YES     
+LOLE                      CONSULTA                       NO     YES     
+LOLE                      LIR_GERAL                      NO     YES     
+LOLE                      MIAMI                          NO     YES     
+LOLE                      ORCAMENTO                      NO     YES     
+LOLE                      PED_COMPRA                     NO     YES     
+LOLE                      PREV_VENDA                     NO     YES     
+LOLE                      TAX_FREE                       NO     YES     
+LOTA                      R_AXB_S                        NO     YES     
+LOTA                      R_COMERCIAL_S                  NO     YES     
+LSILVA                    PUB_CAYMAN                     NO     YES     
+MANUTENCAO                AEROPORTO                      NO     YES     
+MANUTENCAO                AEROPORTOGG                    NO     YES     
+MANUTENCAO                BRASIFLIR                      NO     YES     
+MANUTENCAO                BREXAMERICA                    NO     YES     
+MANUTENCAO                BREXAMERICACADASTRO            NO     YES     
+MANUTENCAO                BREXGROUP                      NO     YES     
+MANUTENCAO                CAD_AGENTE                     NO     YES     
+MANUTENCAO                CAD_COMPRAS                    NO     YES     
+MANUTENCAO                CAD_PROMOCAO                   NO     YES     
+MANUTENCAO                CALC_PEDIDO                    NO     YES     
+MANUTENCAO                CAYMAN                         NO     YES     
+MANUTENCAO                COMPRAS                        NO     YES     
+MANUTENCAO                COMPRAS_GERENCIA               NO     YES     
+MANUTENCAO                CONSULTA                       NO     YES     
+MANUTENCAO                DIRETLIR                       NO     YES     
+MANUTENCAO                DUTY_FREE                      NO     YES     
+MANUTENCAO                DUTY_PAYD                      NO     YES     
+MANUTENCAO                ESTATISTICA                    NO     YES     
+MANUTENCAO                EUROTLIR                       NO     YES     
+MANUTENCAO                FATURAMENTO                    NO     YES     
+MANUTENCAO                FAT_FRETE                      NO     YES     
+MANUTENCAO                FEUR_PRINT                     NO     YES     
+MANUTENCAO                FORMS5                         NO     YES     
+MANUTENCAO                FRETE                          NO     YES     
+MANUTENCAO                GERENCIA                       NO     YES     
+MANUTENCAO                GER_COMPRAS                    NO     YES     
+MANUTENCAO                IMPORTACAO                     NO     YES     
+MANUTENCAO                INTERFACE_SIA                  NO     YES     
+MANUTENCAO                INTERFACE_VAX                  NO     YES     
+MANUTENCAO                LIB_CARG_PLIST                 NO     YES     
+MANUTENCAO                LIB_ORCAMENTO                  NO     YES     
+MANUTENCAO                LIR_GERAL                      NO     YES     
+MANUTENCAO                LIR_GLOBAL                     NO     YES     
+MANUTENCAO                MARKETING                      NO     YES     
+MANUTENCAO                MIAMI                          NO     YES     
+MANUTENCAO                ON_LINE                        NO     YES     
+MANUTENCAO                ORCAMENTO                      NO     YES     
+MANUTENCAO                PED_COMPRA                     NO     YES     
+MANUTENCAO                PREV_VENDA                     NO     YES     
+MANUTENCAO                PUBLI_CAYMAN                   NO     YES     
+MANUTENCAO                PUB_ADCEN                      NO     YES     
+MANUTENCAO                PUB_ADM                        NO     YES     
+MANUTENCAO                PUB_CAYMAN                     NO     YES     
+MANUTENCAO                RIGHTWAY_CONSULTA              NO     YES     
+MANUTENCAO                ROLE_COMERCIAL                 NO     YES     
+MANUTENCAO                ROLE_DSV_COMERCIAL             NO     YES     
+MANUTENCAO                R_AXB                          NO     YES     
+MANUTENCAO                R_AXB_S                        NO     YES     
+MANUTENCAO                R_COMERCIAL_FINANC             NO     YES     
+MANUTENCAO                R_COMERCIAL_S                  NO     YES     
+MANUTENCAO                R_INTQ_S                       NO     YES     
+MANUTENCAO                R_LIR                          NO     YES     
+MANUTENCAO                R_PLANILHA_COMPRAS             NO     YES     
+MANUTENCAO                R_PUBLI_S                      NO     YES     
+MANUTENCAO                SEL_DIC                        NO     YES     
+MANUTENCAO                SIA_GERAL                      NO     YES     
+MANUTENCAO                SUG_COMPRA                     NO     YES     
+MANUTENCAO                TAX_FREE                       NO     YES     
+MANUTENCAO                TRAFEGO                        NO     YES     
+MARTA                     CALC_PEDIDO                    NO     YES     
+MARTA                     CAYMAN                         NO     YES     
+MARTA                     CONSULTA                       NO     YES     
+MARTA                     LIR_GERAL                      NO     YES     
+MARTA                     LIR_GLOBAL                     NO     YES     
+MARTA                     MIAMI                          NO     YES     
+MARTA                     ORCAMENTO                      NO     YES     
+MARTA                     PED_COMPRA                     NO     YES     
+MARTA                     PREV_VENDA                     NO     YES     
+MARTA                     TAX_FREE                       NO     YES     
+MARTOREL                  R_COMERCIAL_S                  NO     YES     
+MDINIZ                    CALC_PEDIDO                    NO     YES     
+MDINIZ                    CONSULTA                       NO     YES     
+MDINIZ                    LIR_GERAL                      NO     YES     
+MDINIZ                    MIAMI                          NO     YES     
+MDINIZ                    ORCAMENTO                      NO     YES     
+MDINIZ                    PED_COMPRA                     NO     YES     
+MDINIZ                    PREV_VENDA                     NO     YES     
+MDINIZ                    TAX_FREE                       NO     YES     
+MESCOLIN                  CALC_PEDIDO                    NO     YES     
+MESCOLIN                  CONSULTA                       NO     YES     
+MESCOLIN                  LIR_GERAL                      NO     YES     
+MESCOLIN                  MIAMI                          NO     YES     
+MESCOLIN                  ORCAMENTO                      NO     YES     
+MESCOLIN                  PED_COMPRA                     NO     YES     
+MESCOLIN                  PREV_VENDA                     NO     YES     
+MESCOLIN                  TAX_FREE                       NO     YES     
+MGANDARA                  COMPRAS                        NO     YES     
+MGANDARA                  CONSULTA                       NO     YES     
+MGANDARA                  LIR_GERAL                      NO     YES     
+MGANDARA                  LIR_GLOBAL                     NO     YES     
+MGANDARA                  MIAMI                          NO     YES     
+MGANDARA                  PUB_ADCEN                      NO     YES     
+MGANDARA                  PUB_CAYMAN                     NO     YES     
+MGANDARA                  TRAFEGO                        NO     YES     
+MILUSKA                   BREXAMERICACADASTRO            NO     YES     
+MILUSKA                   COMPRAS                        NO     YES     
+MILUSKA                   CONSULTA                       NO     YES     
+MILUSKA                   FATURAMENTO                    NO     YES     
+MILUSKA                   FORMS5                         NO     YES     
+MILUSKA                   LIR_GERAL                      NO     YES     
+MILUSKA                   LIR_GLOBAL                     NO     YES     
+MILUSKA                   MIAMI                          NO     YES     
+MILUSKA                   PUB_ADCEN                      NO     YES     
+MILUSKA                   PUB_CAYMAN                     NO     YES     
+MJORDAO                   CALC_PEDIDO                    NO     YES     
+MJORDAO                   CONSULTA                       NO     YES     
+MJORDAO                   LIR_GERAL                      NO     YES     
+MJORDAO                   MIAMI                          NO     YES     
+MJORDAO                   ORCAMENTO                      NO     YES     
+MJORDAO                   PED_COMPRA                     NO     YES     
+MJORDAO                   PREV_VENDA                     NO     YES     
+MJORDAO                   TAX_FREE                       NO     YES     
+MKAYAT                    CONSULTA                       NO     YES     
+MKAYAT                    FORMS5                         NO     YES     
+MKAYAT                    LIR_GERAL                      NO     YES     
+MKAYAT                    LIR_GLOBAL                     NO     YES     
+MKAYAT                    MIAMI                          NO     YES     
+MLADEIRA                  FORMS5                         NO     YES     
+MLADEIRA                  R_AXB                          NO     YES     
+MLADEIRA                  R_AXB_S                        NO     YES     
+MLADEIRA                  R_COMERCIAL_S                  NO     YES     
+MLADEIRA                  R_INTQ_S                       NO     YES     
+MLEVY                     CALC_PEDIDO                    NO     YES     
+MLEVY                     CAYMAN                         NO     YES     
+MLEVY                     COMPRAS                        NO     YES     
+MLEVY                     CONSULTA                       NO     YES     
+MLEVY                     FAT_FRETE                      NO     YES     
+MLEVY                     FEUR_PRINT                     NO     YES     
+MLEVY                     FORMS5                         NO     YES     
+MLEVY                     LIR_GERAL                      NO     YES     
+MLEVY                     LIR_GLOBAL                     NO     YES     
+MLEVY                     MIAMI                          NO     YES     
+MLEVY                     ORCAMENTO                      NO     YES     
+MLEVY                     PED_COMPRA                     NO     YES     
+MLEVY                     PREV_VENDA                     NO     YES     
+MLEVY                     PUBLI_CAYMAN                   NO     YES     
+MLEVY                     PUB_CAYMAN                     NO     YES     
+MLEVY                     R_PUBLI_A                      NO     YES     
+MLEVY                     TAX_FREE                       NO     YES     
+MLEVY                     TRAFEGO                        NO     YES     
+MMACEDO                   COMPRAS                        NO     YES     
+MMACEDO                   CONSULTA                       NO     YES     
+MMACEDO                   FATURAMENTO                    NO     YES     
+MMACEDO                   LIR_GERAL                      NO     YES     
+MMACEDO                   LIR_GLOBAL                     NO     YES     
+MMACEDO                   MIAMI                          NO     YES     
+MMACEDO                   PUB_ADCEN                      NO     YES     
+MMACEDO                   PUB_CAYMAN                     NO     YES     
+MRESENDE                  CAD_AGENTE                     NO     YES     
+MRESENDE                  CAD_COMPRAS                    NO     YES     
+MRESENDE                  CAD_PROMOCAO                   NO     YES     
+MRESENDE                  CALC_PEDIDO                    NO     YES     
+MRESENDE                  CAYMAN                         NO     YES     
+MRESENDE                  COMPRAS                        NO     YES     
+MRESENDE                  COMPRAS_GERENCIA               NO     YES     
+MRESENDE                  CONSULTA                       NO     YES     
+MRESENDE                  DUTY_PAYD                      NO     YES     
+MRESENDE                  ESTATISTICA                    NO     YES     
+MRESENDE                  FORMS5                         NO     YES     
+MRESENDE                  FRETE                          NO     YES     
+MRESENDE                  GER_COMPRAS                    NO     YES     
+MRESENDE                  IMPORTACAO                     NO     YES     
+MRESENDE                  LIB_ORCAMENTO                  NO     YES     
+MRESENDE                  LIR_GERAL                      NO     YES     
+MRESENDE                  LIR_GLOBAL                     NO     YES     
+MRESENDE                  MIAMI                          NO     YES     
+MRESENDE                  ORCAMENTO                      NO     YES     
+MRESENDE                  PED_COMPRA                     NO     YES     
+MRESENDE                  PREV_VENDA                     NO     YES     
+MRESENDE                  SIA_GERAL                      NO     YES     
+MRESENDE                  SUG_COMPRA                     NO     YES     
+MRESENDE                  TRAFEGO                        NO     YES     
+MRESENDE1                 CAD_AGENTE                     NO     YES     
+MRESENDE1                 CAD_COMPRAS                    NO     YES     
+MRESENDE1                 CAD_PROMOCAO                   NO     YES     
+MRESENDE1                 CALC_PEDIDO                    NO     YES     
+MRESENDE1                 CAYMAN                         NO     YES     
+MRESENDE1                 COMPRAS                        NO     YES     
+MRESENDE1                 COMPRAS_GERENCIA               NO     YES     
+MRESENDE1                 CONSULTA                       NO     YES     
+MRESENDE1                 DUTY_PAYD                      NO     YES     
+MRESENDE1                 ESTATISTICA                    NO     YES     
+MRESENDE1                 FORMS5                         NO     YES     
+MRESENDE1                 FRETE                          NO     YES     
+MRESENDE1                 GER_COMPRAS                    NO     YES     
+MRESENDE1                 IMPORTACAO                     NO     YES     
+MRESENDE1                 LIB_ORCAMENTO                  NO     YES     
+MRESENDE1                 LIR_GERAL                      NO     YES     
+MRESENDE1                 LIR_GLOBAL                     NO     YES     
+MRESENDE1                 MIAMI                          NO     YES     
+MRESENDE1                 ORCAMENTO                      NO     YES     
+MRESENDE1                 PED_COMPRA                     NO     YES     
+MRESENDE1                 PREV_VENDA                     NO     YES     
+MRESENDE1                 SIA_GERAL                      NO     YES     
+MRESENDE1                 SUG_COMPRA                     NO     YES     
+MRESENDE1                 TRAFEGO                        NO     YES     
+MSANCHEZ                  CALC_PEDIDO                    NO     YES     
+MSANCHEZ                  CAYMAN                         NO     YES     
+MSANCHEZ                  CONSULTA                       NO     YES     
+MSANCHEZ                  FEUR_PRINT                     NO     YES     
+MSANCHEZ                  FORMS5                         NO     YES     
+MSANCHEZ                  LIR_GERAL                      NO     YES     
+MSANCHEZ                  MIAMI                          NO     YES     
+MSANCHEZ                  ORCAMENTO                      NO     YES     
+MSANCHEZ                  PED_COMPRA                     NO     YES     
+MSANCHEZ                  PREV_VENDA                     NO     YES     
+MSANCHEZ                  PUBLI_CAYMAN                   NO     YES     
+MSANCHEZ                  PUB_CAYMAN                     NO     YES     
+MSANCHEZ                  TAX_FREE                       NO     YES     
+MSANCHEZ                  TRAFEGO                        NO     YES     
+MSUAREZ                   CALC_PEDIDO                    NO     YES     
+MSUAREZ                   CAYMAN                         NO     YES     
+MSUAREZ                   CONSULTA                       NO     YES     
+MSUAREZ                   FAT_FRETE                      NO     YES     
+MSUAREZ                   FEUR_PRINT                     NO     YES     
+MSUAREZ                   FORMS5                         NO     YES     
+MSUAREZ                   LIR_GERAL                      NO     YES     
+MSUAREZ                   MIAMI                          NO     YES     
+MSUAREZ                   ORCAMENTO                      NO     YES     
+MSUAREZ                   PED_COMPRA                     NO     YES     
+MSUAREZ                   PREV_VENDA                     NO     YES     
+MSUAREZ                   PUBLI_CAYMAN                   NO     YES     
+MSUAREZ                   PUB_CAYMAN                     NO     YES     
+MSUAREZ                   R_PUBLI_A                      NO     YES     
+MSUAREZ                   TAX_FREE                       NO     YES     
+MSUAREZ                   TRAFEGO                        NO     YES     
+NATALIAF                  CALC_PEDIDO                    NO     YES     
+NATALIAF                  CONSULTA                       NO     YES     
+NATALIAF                  LIR_GERAL                      NO     YES     
+NATALIAF                  MIAMI                          NO     YES     
+NATALIAF                  ORCAMENTO                      NO     YES     
+NATALIAF                  PED_COMPRA                     NO     YES     
+NATALIAF                  PREV_VENDA                     NO     YES     
+NATALIAF                  TAX_FREE                       NO     YES     
+NNIXON                    CALC_PEDIDO                    NO     YES     
+NNIXON                    CAYMAN                         NO     YES     
+NNIXON                    CONSULTA                       NO     YES     
+NNIXON                    FAT_FRETE                      NO     YES     
+NNIXON                    FEUR_PRINT                     NO     YES     
+NNIXON                    FORMS5                         NO     YES     
+NNIXON                    LIR_GERAL                      NO     YES     
+NNIXON                    MIAMI                          NO     YES     
+NNIXON                    ORCAMENTO                      NO     YES     
+NNIXON                    PED_COMPRA                     NO     YES     
+NNIXON                    PREV_VENDA                     NO     YES     
+NNIXON                    PUBLI_CAYMAN                   NO     YES     
+NNIXON                    PUB_CAYMAN                     NO     YES     
+NNIXON                    TAX_FREE                       NO     YES     
+NNIXON                    TRAFEGO                        NO     YES     
+NORBERTO                  R_COMERCIAL_S                  NO     YES     
+NPEREZ                    COMPRAS                        NO     YES     
+NPEREZ                    CONSULTA                       NO     YES     
+NPEREZ                    LIR_GERAL                      NO     YES     
+NPEREZ                    LIR_GLOBAL                     NO     YES     
+NPEREZ                    MIAMI                          NO     YES     
+NPEREZ                    TRAFEGO                        NO     YES     
+OLGA                      BREXAMERICA                    NO     YES     
+OLGA                      BREXGROUP                      NO     YES     
+OLGA                      COMPRAS                        NO     YES     
+OLGA                      CONSULTA                       NO     YES     
+OLGA                      FATURAMENTO                    NO     YES     
+OLGA                      LIR_GERAL                      NO     YES     
+OLGA                      LIR_GLOBAL                     NO     YES     
+OLGA                      MIAMI                          NO     YES     
+OPER                      CONNECT                        NO     YES     
+OPERACAO                  CONNECT                        NO     YES     
+OPERACAO                  FORMS5                         NO     YES     
+OPERACAO                  PUB_ADCEN                      NO     YES     
+OPERACAO                  PUB_ADM                        NO     YES     
+OPERACAO                  RESOURCE                       NO     YES     
+OPERACAO                  R_PUBLI_A                      NO     YES     
+OPERACAO                  SIA_GERAL                      NO     YES     
+OPS$AXBGRL                RESOURCE                       NO     YES     
+OPS$AXBGRL                R_AXB                          NO     YES     
+OPS$AXBPROD               CONNECT                        NO     YES     
+OPS$AXBPROD               CONSULTA                       NO     YES     
+OPS$AXBPROD               FORMS5                         NO     YES     
+OPS$AXBPROD               LIR_GERAL                      NO     YES     
+OPS$AXBPROD               LIR_GLOBAL                     NO     YES     
+OPS$AXBPROD               RESOURCE                       NO     YES     
+OPS$AXBPROD               SIA_GERAL                      NO     YES     
+OPS$INTQ                  CALC_PEDIDO                    NO     YES     
+OPS$INTQ                  CONSULTA                       NO     YES     
+OPS$INTQ                  FATURAMENTO                    NO     YES     
+OPS$INTQ                  LIR_GERAL                      NO     YES     
+OPS$INTQ                  MIAMI                          NO     YES     
+OPS$INTQ                  ORCAMENTO                      NO     YES     
+OPS$INTQ                  PED_COMPRA                     NO     YES     
+OPS$INTQ                  PREV_VENDA                     NO     YES     
+OPS$INTQ                  TAX_FREE                       NO     YES     
+OPS$INTQ                  TRAFEGO                        NO     YES     
+OPS$LIR                   CAYMAN                         NO     YES     
+OPS$LIR                   COMPRAS                        NO     YES     
+OPS$LIR                   CONSULTA                       NO     YES     
+OPS$LIR                   FATURAMENTO                    NO     YES     
+OPS$LIR                   LIR_GERAL                      NO     YES     
+OPS$LIR                   LIR_GLOBAL                     NO     YES     
+OPS$LIR                   MIAMI                          NO     YES     
+OPS$ORACLE8               CONNECT                        NO     YES     
+OPS$ORACLE8               RESOURCE                       NO     YES     
+OPS$SACM                  SIA_GERAL                      NO     YES     
+ORADBA                    LIR_GERAL                      NO     YES     
+ORADBA                    LIR_GLOBAL                     NO     YES     
+OSE$HTTP$ADMIN            JAVAUSERPRIV                   NO     YES     
+OSE$HTTP$ADMIN            RESOURCE                       NO     YES     
+PBENITEZ                  COMPRAS                        NO     YES     
+PBENITEZ                  CONSULTA                       NO     YES     
+PBENITEZ                  FATURAMENTO                    NO     YES     
+PBENITEZ                  LIR_GERAL                      NO     YES     
+PBENITEZ                  LIR_GLOBAL                     NO     YES     
+PBENITEZ                  MIAMI                          NO     YES     
+PBENITEZ                  PUB_ADCEN                      NO     YES     
+PBENITEZ                  PUB_CAYMAN                     NO     YES     
+PBRAGA                    CALC_PEDIDO                    NO     YES     
+PBRAGA                    CONSULTA                       NO     YES     
+PBRAGA                    LIR_GERAL                      NO     YES     
+PBRAGA                    MIAMI                          NO     YES     
+PBRAGA                    ORCAMENTO                      NO     YES     
+PBRAGA                    PED_COMPRA                     NO     YES     
+PBRAGA                    PREV_VENDA                     NO     YES     
+PBRAGA                    TAX_FREE                       NO     YES     
+PLANILHA_COMPRAS          R_PLANILHA_COMPRAS             NO     YES     
+POMPEYO                   COMPRAS                        NO     YES     
+POMPEYO                   CONSULTA                       NO     YES     
+POMPEYO                   FATURAMENTO                    NO     YES     
+POMPEYO                   LIR_GERAL                      NO     YES     
+POMPEYO                   LIR_GLOBAL                     NO     YES     
+POMPEYO                   MIAMI                          NO     YES     
+POMPEYO                   PUB_ADCEN                      NO     YES     
+POMPEYO                   PUB_CAYMAN                     NO     YES     
+PUBLI                     CONNECT                        NO     YES     
+PUBLI                     FORMS5                         NO     YES     
+PUBLI                     PUB_ADCEN                      NO     YES     
+PUBLI                     PUB_ADM                        NO     YES     
+PUBLI                     RESOURCE                       NO     YES     
+PUBLI                     SIA_GERAL                      NO     YES     
+RBARBOSA                  CALC_PEDIDO                    NO     YES     
+RBARBOSA                  CONSULTA                       NO     YES     
+RBARBOSA                  LIR_GERAL                      NO     YES     
+RBARBOSA                  MIAMI                          NO     YES     
+RBARBOSA                  ORCAMENTO                      NO     YES     
+RBARBOSA                  PED_COMPRA                     NO     YES     
+RBARBOSA                  PREV_VENDA                     NO     YES     
+RBARBOSA                  TAX_FREE                       NO     YES     
+RBARBOSA                  TRAFEGO                        NO     YES     
+RDEGLI                    CONSULTA                       NO     YES     
+RDEGLI                    FORMS5                         NO     YES     
+RDEGLI                    INTERFACE_SIA                  NO     YES     
+RDEGLI                    LIR_GERAL                      NO     YES     
+RDEGLI                    LIR_GLOBAL                     NO     YES     
+RDEGLI                    PUBLIC                         NO     YES     
+RDEGLI                    PUBLI_CAYMAN                   NO     YES     
+RDEGLI                    PUB_ADCEN                      NO     YES     
+RDEGLI                    PUB_CAYMAN                     NO     YES     
+RDEGLI                    SIA_GERAL                      NO     YES     
+REGINA                    CAD_AGENTE                     NO     YES     
+REGINA                    CAD_COMPRAS                    NO     YES     
+REGINA                    CAD_PROMOCAO                   NO     YES     
+REGINA                    CALC_PEDIDO                    NO     YES     
+REGINA                    CAYMAN                         NO     YES     
+REGINA                    COMPRAS                        NO     YES     
+REGINA                    COMPRAS_GERENCIA               NO     YES     
+REGINA                    CONSULTA                       NO     YES     
+REGINA                    DUTY_PAYD                      NO     YES     
+REGINA                    ESTATISTICA                    NO     YES     
+REGINA                    FORMS5                         NO     YES     
+REGINA                    FRETE                          NO     YES     
+REGINA                    GER_COMPRAS                    NO     YES     
+REGINA                    IMPORTACAO                     NO     YES     
+REGINA                    LIB_ORCAMENTO                  NO     YES     
+REGINA                    LIR_GERAL                      NO     YES     
+REGINA                    LIR_GLOBAL                     NO     YES     
+REGINA                    MIAMI                          NO     YES     
+REGINA                    ORCAMENTO                      NO     YES     
+REGINA                    PED_COMPRA                     NO     YES     
+REGINA                    PREV_VENDA                     NO     YES     
+REGINA                    SIA_GERAL                      NO     YES     
+REGINA                    SUG_COMPRA                     NO     YES     
+REGINA                    TRAFEGO                        NO     YES     
+REGINAL                   CAD_AGENTE                     NO     YES     
+REGINAL                   CAD_COMPRAS                    NO     YES     
+REGINAL                   CAD_PROMOCAO                   NO     YES     
+REGINAL                   CALC_PEDIDO                    NO     YES     
+REGINAL                   CAYMAN                         NO     YES     
+REGINAL                   COMPRAS                        NO     YES     
+REGINAL                   COMPRAS_GERENCIA               NO     YES     
+REGINAL                   CONSULTA                       NO     YES     
+REGINAL                   DUTY_PAYD                      NO     YES     
+REGINAL                   ESTATISTICA                    NO     YES     
+REGINAL                   FORMS5                         NO     YES     
+REGINAL                   FRETE                          NO     YES     
+REGINAL                   GER_COMPRAS                    NO     YES     
+REGINAL                   IMPORTACAO                     NO     YES     
+
+GRANTEE                   GRANTED_ROLE                   ADMIN_ DEFAULT 
+------------------------- ------------------------------ ------ ------- 
+REGINAL                   LIB_ORCAMENTO                  NO     YES     
+REGINAL                   LIR_GERAL                      NO     YES     
+REGINAL                   LIR_GLOBAL                     NO     YES     
+REGINAL                   MIAMI                          NO     YES     
+REGINAL                   ORCAMENTO                      NO     YES     
+REGINAL                   PED_COMPRA                     NO     YES     
+REGINAL                   PREV_VENDA                     NO     YES     
+REGINAL                   SIA_GERAL                      NO     YES     
+REGINAL                   SUG_COMPRA                     NO     YES     
+REGINAL                   TRAFEGO                        NO     YES     
+REPADMIN                  DBA                            NO     YES     
+REPLICA                   CALC_PEDIDO                    NO     YES     
+REPLICA                   CAYMAN                         NO     YES     
+REPLICA                   CONSULTA                       NO     YES     
+REPLICA                   LIR_GERAL                      NO     YES     
+REPLICA                   MIAMI                          NO     YES     
+REPLICA                   ORCAMENTO                      NO     YES     
+REPLICA                   PED_COMPRA                     NO     YES     
+REPLICA                   PREV_VENDA                     NO     YES     
+REPLICA                   PUB_ADCEN                      NO     YES     
+REPLICA                   PUB_CAYMAN                     NO     YES     
+REPLICA                   TAX_FREE                       NO     YES     
+RIGHTWAY                  RIGHTWAY_CONSULTA              NO     YES     
+RLOZANO                   BREXAMERICA                    NO     YES     
+RLOZANO                   BREXAMERICACADASTRO            NO     YES     
+RLOZANO                   BREXGROUP                      NO     YES     
+RLOZANO                   COMPRAS                        NO     YES     
+RLOZANO                   CONSULTA                       NO     YES     
+RLOZANO                   FATURAMENTO                    NO     YES     
+RLOZANO                   FORMS5                         NO     YES     
+RLOZANO                   LIR_GERAL                      NO     YES     
+RLOZANO                   LIR_GLOBAL                     NO     YES     
+RLOZANO                   MIAMI                          NO     YES     
+RLOZANO                   PUB_ADCEN                      NO     YES     
+RLOZANO                   PUB_CAYMAN                     NO     YES     
+RMARTINS                  R_AXB                          NO     YES     
+RSALOMAO                  CALC_PEDIDO                    NO     YES     
+RSALOMAO                  CAYMAN                         NO     YES     
+RSALOMAO                  CONSULTA                       NO     YES     
+RSALOMAO                  FORMS5                         NO     YES     
+RSALOMAO                  LIR_GERAL                      NO     YES     
+RSALOMAO                  MIAMI                          NO     YES     
+RSALOMAO                  ORCAMENTO                      NO     YES     
+RSALOMAO                  PED_COMPRA                     NO     YES     
+RSALOMAO                  PREV_VENDA                     NO     YES     
+RSALOMAO                  PUBLI_CAYMAN                   NO     YES     
+RSALOMAO                  PUB_CAYMAN                     NO     YES     
+RSALOMAO                  TAX_FREE                       NO     YES     
+RSERPA                    BREXAMERICA                    NO     YES     
+RSERPA                    BREXGROUP                      NO     YES     
+RSERPA                    FORMS5                         NO     YES     
+RSERPA                    LIR_GERAL                      NO     YES     
+RSERPA                    LIR_GLOBAL                     NO     YES     
+RZISMAN                   R_COMERCIAL_S                  NO     YES     
+R_LIR                     CALC_PEDIDO                    NO     YES     
+R_LIR                     CONSULTA                       NO     YES     
+R_LIR                     DUTY_PAYD                      NO     YES     
+R_LIR                     FATURAMENTO                    NO     YES     
+R_LIR                     LIR_GERAL                      NO     YES     
+R_LIR                     MIAMI                          NO     YES     
+R_LIR                     ORCAMENTO                      NO     YES     
+R_LIR                     PED_COMPRA                     NO     YES     
+R_LIR                     PREV_VENDA                     NO     YES     
+R_LIR                     ROLE_COMERCIAL                 NO     YES     
+R_LIR                     R_AXB                          NO     YES     
+R_LIR                     TAX_FREE                       NO     YES     
+R_LIR                     TRAFEGO                        NO     YES     
+SALVIO                    R_COMERCIAL_S                  NO     YES     
+SANDRA                    CALC_PEDIDO                    NO     YES     
+SANDRA                    CAYMAN                         NO     YES     
+SANDRA                    CONSULTA                       NO     YES     
+SANDRA                    LIR_GERAL                      NO     YES     
+SANDRA                    LIR_GLOBAL                     NO     YES     
+SANDRA                    MIAMI                          NO     YES     
+SANDRA                    ORCAMENTO                      NO     YES     
+SANDRA                    PED_COMPRA                     NO     YES     
+SANDRA                    PREV_VENDA                     NO     YES     
+SANDRA                    TAX_FREE                       NO     YES     
+SANTOS                    BREXAMERICA                    NO     YES     
+SANTOS                    BREXAMERICACADASTRO            NO     YES     
+SANTOS                    BREXGROUP                      NO     YES     
+SANTOS                    CONSULTA                       NO     YES     
+SANTOS                    RESOURCE                       NO     YES     
+SDIAS                     R_COMERCIAL_FINANC             NO     YES     
+SPEICH                    CALC_PEDIDO                    NO     YES     
+SPEICH                    CAYMAN                         NO     YES     
+SPEICH                    CONSULTA                       NO     YES     
+SPEICH                    FAT_FRETE                      NO     YES     
+SPEICH                    FEUR_PRINT                     NO     YES     
+SPEICH                    FORMS5                         NO     YES     
+SPEICH                    LIR_GERAL                      NO     YES     
+SPEICH                    MIAMI                          NO     YES     
+SPEICH                    ORCAMENTO                      NO     YES     
+SPEICH                    PED_COMPRA                     NO     YES     
+SPEICH                    PREV_VENDA                     NO     YES     
+SPEICH                    PUBLI_CAYMAN                   NO     YES     
+SPEICH                    PUB_CAYMAN                     NO     YES     
+SPEICH                    R_PUBLI_A                      NO     YES     
+SPEICH                    TAX_FREE                       NO     YES     
+SPEICH                    TRAFEGO                        NO     YES     
+SWILLIAMS                 COMPRAS                        NO     YES     
+SWILLIAMS                 CONSULTA                       NO     YES     
+SWILLIAMS                 FATURAMENTO                    NO     YES     
+SWILLIAMS                 LIR_GERAL                      NO     YES     
+SWILLIAMS                 LIR_GLOBAL                     NO     YES     
+SWILLIAMS                 MIAMI                          NO     YES     
+TAMIAZZO                  CALC_PEDIDO                    NO     YES     
+TAMIAZZO                  CAYMAN                         NO     YES     
+TAMIAZZO                  CONSULTA                       NO     YES     
+TAMIAZZO                  LIR_GERAL                      NO     YES     
+TAMIAZZO                  LIR_GLOBAL                     NO     YES     
+TAMIAZZO                  MIAMI                          NO     YES     
+TAMIAZZO                  ORCAMENTO                      NO     YES     
+TAMIAZZO                  PED_COMPRA                     NO     YES     
+TAMIAZZO                  PREV_VENDA                     NO     YES     
+TAMIAZZO                  TAX_FREE                       NO     YES     
+TANIA                     BREXAMERICACADASTRO            NO     YES     
+TANIA                     COMPRAS                        NO     YES     
+TANIA                     CONSULTA                       NO     YES     
+TANIA                     LIR_GERAL                      NO     YES     
+TANIA                     LIR_GLOBAL                     NO     YES     
+TANIA                     MIAMI                          NO     YES     
+TANIA                     PUB_ADCEN                      NO     YES     
+TANIA                     PUB_CAYMAN                     NO     YES     
+TANIA                     TRAFEGO                        NO     YES     
+TMARIA                    AEROPORTO                      NO     YES     
+TMARIA                    AEROPORTOGG                    NO     YES     
+TMARIA                    BREXAMERICA                    NO     YES     
+TMARIA                    BREXGROUP                      NO     YES     
+TMARIA                    CAD_AGENTE                     NO     YES     
+TMARIA                    CAD_COMPRAS                    NO     YES     
+TMARIA                    CAD_PROMOCAO                   NO     YES     
+TMARIA                    CALC_PEDIDO                    NO     YES     
+TMARIA                    CAYMAN                         NO     YES     
+TMARIA                    COMPRAS                        NO     YES     
+TMARIA                    COMPRAS_GERENCIA               NO     YES     
+TMARIA                    CONSULTA                       NO     YES     
+TMARIA                    DIRETLIR                       NO     YES     
+TMARIA                    DUTY_FREE                      NO     YES     
+TMARIA                    ESTATISTICA                    NO     YES     
+TMARIA                    FATURAMENTO                    NO     YES     
+TMARIA                    FORMS5                         NO     YES     
+TMARIA                    FRETE                          NO     YES     
+TMARIA                    GERENCIA                       NO     YES     
+TMARIA                    GER_COMPRAS                    NO     YES     
+TMARIA                    IMPORTACAO                     NO     YES     
+TMARIA                    LIB_ORCAMENTO                  NO     YES     
+TMARIA                    LIR_GERAL                      NO     YES     
+TMARIA                    LIR_GLOBAL                     NO     YES     
+TMARIA                    MIAMI                          NO     YES     
+TMARIA                    ON_LINE                        NO     YES     
+TMARIA                    ORCAMENTO                      NO     YES     
+TMARIA                    PED_COMPRA                     NO     YES     
+TMARIA                    PREV_VENDA                     NO     YES     
+TMARIA                    PUBLI_CAYMAN                   NO     YES     
+TMARIA                    R_AXB                          NO     YES     
+TMARIA                    R_COMERCIAL_S                  NO     YES     
+TMARIA                    SIA_GERAL                      NO     YES     
+TMARIA                    SUG_COMPRA                     NO     YES     
+TMARIA                    TAX_FREE                       NO     YES     
+TMARIA                    TRAFEGO                        NO     YES     
+TRAFEGO                   CONSULTA                       NO     YES     
+TREINAMENTO1              CALC_PEDIDO                    NO     YES     
+TREINAMENTO1              CAYMAN                         NO     YES     
+TREINAMENTO1              CONSULTA                       NO     YES     
+TREINAMENTO1              FORMS5                         NO     YES     
+TREINAMENTO1              LIR_GERAL                      NO     YES     
+TREINAMENTO1              MIAMI                          NO     YES     
+TREINAMENTO1              ORCAMENTO                      NO     YES     
+TREINAMENTO1              PED_COMPRA                     NO     YES     
+TREINAMENTO1              PREV_VENDA                     NO     YES     
+TREINAMENTO1              PUBLI_CAYMAN                   NO     YES     
+TREINAMENTO1              PUB_ADCEN                      NO     YES     
+TREINAMENTO1              PUB_CAYMAN                     NO     YES     
+TREINAMENTO1              TAX_FREE                       NO     YES     
+TREINAMENTO2              CALC_PEDIDO                    NO     YES     
+TREINAMENTO2              CAYMAN                         NO     YES     
+TREINAMENTO2              CONSULTA                       NO     YES     
+TREINAMENTO2              FORMS5                         NO     YES     
+TREINAMENTO2              LIR_GERAL                      NO     YES     
+TREINAMENTO2              MIAMI                          NO     YES     
+TREINAMENTO2              ORCAMENTO                      NO     YES     
+TREINAMENTO2              PED_COMPRA                     NO     YES     
+TREINAMENTO2              PREV_VENDA                     NO     YES     
+TREINAMENTO2              PUBLI_CAYMAN                   NO     YES     
+TREINAMENTO2              PUB_ADCEN                      NO     YES     
+TREINAMENTO2              PUB_CAYMAN                     NO     YES     
+TREINAMENTO2              TAX_FREE                       NO     YES     
+VERAT                     R_AXB                          NO     YES     
+VERONICA                  LIR_GERAL                      NO     YES     
+VERONICA                  LIR_GLOBAL                     NO     YES     
+VERONICA                  MIAMI                          NO     YES     
+VICTOR                    CALC_PEDIDO                    NO     YES     
+VICTOR                    CAYMAN                         NO     YES     
+VICTOR                    CONSULTA                       NO     YES     
+VICTOR                    LIR_GERAL                      NO     YES     
+VICTOR                    LIR_GLOBAL                     NO     YES     
+VICTOR                    MIAMI                          NO     YES     
+VICTOR                    ORCAMENTO                      NO     YES     
+VICTOR                    PED_COMPRA                     NO     YES     
+VICTOR                    PREV_VENDA                     NO     YES     
+VICTOR                    TAX_FREE                       NO     YES     
+VIVIANNE                  CALC_PEDIDO                    NO     YES     
+VIVIANNE                  CAYMAN                         NO     YES     
+VIVIANNE                  CONSULTA                       NO     YES     
+VIVIANNE                  LIR_GERAL                      NO     YES     
+VIVIANNE                  LIR_GLOBAL                     NO     YES     
+VIVIANNE                  MIAMI                          NO     YES     
+VIVIANNE                  ORCAMENTO                      NO     YES     
+VIVIANNE                  PED_COMPRA                     NO     YES     
+VIVIANNE                  PREV_VENDA                     NO     YES     
+VIVIANNE                  TAX_FREE                       NO     YES     
+VLTAVARES                 R_AXB_S                        NO     YES     
+VLTAVARES                 R_COMERCIAL_S                  NO     YES     
+VOLPATO                   COMPRAS                        NO     YES     
+VOLPATO                   FATURAMENTO                    NO     YES     
+VOLPATO                   LIR_GERAL                      NO     YES     
+VOLPATO                   LIR_GLOBAL                     NO     YES     
+VOLPATO                   MIAMI                          NO     YES     
+VSASAKI                   R_AXB_S                        NO     YES     
+VSASAKI                   R_COMERCIAL_S                  NO     YES     
+WAGNER                    CALC_PEDIDO                    NO     YES     
+WAGNER                    CAYMAN                         NO     YES     
+WAGNER                    CONSULTA                       NO     YES     
+WAGNER                    FORMS5                         NO     YES     
+WAGNER                    LIB_CARG_PLIST                 NO     YES     
+WAGNER                    LIR_GERAL                      NO     YES     
+WAGNER                    MIAMI                          NO     YES     
+WAGNER                    ORCAMENTO                      NO     YES     
+WAGNER                    PED_COMPRA                     NO     YES     
+WAGNER                    PREV_VENDA                     NO     YES     
+WAGNER                    PUBLI_CAYMAN                   NO     YES     
+WAGNER                    PUB_CAYMAN                     NO     YES     
+WAGNER                    TAX_FREE                       NO     YES     
+WAGNER                    TRAFEGO                        NO     YES     
+WALTER                    COMPRAS                        NO     YES     
+WALTER                    CONSULTA                       NO     YES     
+WALTER                    FATURAMENTO                    NO     YES     
+WALTER                    LIR_GERAL                      NO     YES     
+WALTER                    LIR_GLOBAL                     NO     YES     
+WALTER                    MIAMI                          NO     YES     
+
+</pre>
+<a HREF=#top><h6>Top</h6></a>
+<hr>
+
+[MIBSUX04.DUFRY.COM.BR / mia0] Collecting CPU...
+
+
+<br>
+
+<b>.CPU.</b>
+
+<pre>
+	select comments, id from sys.registry$history
+	                             *
+ERRO na linha 1:
+ORA-00942: table or view does not exist 
+
+
+
+</pre>
+<a HREF=#top><h6>Top</h6></a>
+<hr>
+
+[MIBSUX04.DUFRY.COM.BR / mia0] Collecting Parameters...
+
+
+<br>
+
+<b>.PARAMETERS.</b>
+
+<pre>
+
+NAME                            VALOR                                                     
+------------------------------- -------------------------------------------------------   
+row_locking                     ALWAYS                                                    
+nls_territory                   AMERICA                                                   
+nls_language                    AMERICAN                                                  
+db_domain                       BRASIFNET.COM.BR                                          
+audit_trail                     DB                                                        
+standby_archive_dest            ?/DBS/ARCH                                                
+serial_reuse                    DISABLE                                                   
+log_archive_dest_state_1        ENABLE                                                    
+log_archive_dest_state_2        ENABLE                                                    
+log_archive_dest_state_3        ENABLE                                                    
+log_archive_dest_state_4        ENABLE                                                    
+log_archive_dest_state_5        ENABLE                                                    
+query_rewrite_integrity         ENFORCED                                                  
+cursor_sharing                  EXACT                                                     
+backup_tape_io_slaves           FALSE                                                     
+blank_trimming                  FALSE                                                     
+db_block_checking               FALSE                                                     
+db_block_checksum               FALSE                                                     
+global_names                    FALSE                                                     
+lock_sga                        FALSE                                                     
+log_checkpoints_to_alert        FALSE                                                     
+mts_multiple_listeners          FALSE                                                     
+oracle_trace_enable             FALSE                                                     
+os_roles                        FALSE                                                     
+parallel_adaptive_multi_user    FALSE                                                     
+parallel_automatic_tuning       FALSE                                                     
+parallel_broadcast_enabled      FALSE                                                     
+parallel_server                 FALSE                                                     
+partition_view_enabled          FALSE                                                     
+plsql_v2_compatibility          FALSE                                                     
+pre_page_sga                    FALSE                                                     
+query_rewrite_enabled           FALSE                                                     
+read_only_open_delayed          FALSE                                                     
+remote_os_roles                 FALSE                                                     
+serializable                    FALSE                                                     
+sql_trace                       FALSE                                                     
+sql92_security                  FALSE                                                     
+star_transformation_enabled     FALSE                                                     
+text_enable                     FALSE                                                     
+timed_statistics                FALSE                                                     
+use_indirect_data_buffers       FALSE                                                     
+fast_start_parallel_rollback    LOW                                                       
+db_name                         MIA0                                                      
+instance_name                   MIA0                                                      
+mts_service                     MIA0                                                      
+service_names                   MIA0.BRASIFNET.COM.BR                                     
+log_archive_format              MIA0_%S.DAT                                               
+sql_version                     NATIVE                                                    
+always_anti_join                NESTED_LOOPS                                              
+remote_login_passwordfile       NONE                                                      
+os_authent_prefix               OPS$                                                      
+oracle_trace_facility_name      ORACLED                                                   
+oracle_trace_collection_path    ?/OTRACE/ADMIN/CDF                                        
+oracle_trace_facility_path      ?/OTRACE/ADMIN/FDF                                        
+background_core_dump            PARTIAL                                                   
+shadow_core_dump                PARTIAL                                                   
+rollback_segments               RB01, RB02, RB03, RB04, RB05, RB06, RB07, RB08, RB09, R   
+                                B10, RB11, RB12, RB13, RB14, RB15                         
+                                                                                          
+audit_file_dest                 ?/RDBMS/AUDIT                                             
+optimizer_mode                  RULE                                                      
+always_semi_join                STANDARD                                                  
+remote_dependencies_mode        TIMESTAMP                                                 
+cursor_space_for_time           TRUE                                                      
+dblink_encrypt_login            TRUE                                                      
+disk_asynch_io                  TRUE                                                      
+hash_join_enabled               TRUE                                                      
+hs_autoregister                 TRUE                                                      
+log_archive_start               TRUE                                                      
+O7_DICTIONARY_ACCESSIBILITY     TRUE                                                      
+remote_os_authent               TRUE                                                      
+replication_dependency_tracking TRUE                                                      
+resource_limit                  TRUE                                                      
+tape_asynch_io                  TRUE                                                      
+transaction_auditing            TRUE                                                      
+control_files                   /U2/ORADATA/MIA0/CTRL1_MIA0.CTL, /U3/ORADATA/MIA0/CTRL2   
+                                _MIA0.CTL, /U2/ORADATA/MIA0/CTRL3_MIA0.CTL                
+                                                                                          
+log_archive_dest                /U4/MIA0/ARCH/ARCH_                                       
+background_dump_dest            /U4/MIA0/BDUMP                                            
+core_dump_dest                  /U4/MIA0/CDUMP                                            
+user_dump_dest                  /U4/MIA0/UDUMP                                            
+utl_file_dir                    /U4/MIA0/UTL_FILE/LOG                                     
+aq_tm_processes                 0                                                         
+dbwr_io_slaves                  0                                                         
+gc_releasable_locks             0                                                         
+hash_multiblock_io_count        0                                                         
+hi_shared_memory_address        0                                                         
+instance_number                 0                                                         
+java_max_sessionspace_size      0                                                         
+java_soft_sessionspace_limit    0                                                         
+large_pool_size                 0                                                         
+license_max_sessions            0                                                         
+license_max_users               0                                                         
+license_sessions_warning        0                                                         
+log_archive_trace               0                                                         
+log_checkpoint_timeout          0                                                         
+mts_circuits                    0                                                         
+mts_servers                     0                                                         
+mts_sessions                    0                                                         
+optimizer_index_caching         0                                                         
+optimizer_percent_parallel      0                                                         
+parallel_min_percent            0                                                         
+parallel_min_servers            0                                                         
+recovery_parallelism            0                                                         
+session_cached_cursors          0                                                         
+shared_memory_address           0                                                         
+sort_area_retained_size         0                                                         
+thread                          0                                                         
+timed_os_statistics             0                                                         
+gc_rollback_locks               0-1024=32!8REACH                                          
+commit_point_strength           1                                                         
+cpu_count                       1                                                         
+db_block_lru_latches            1                                                         
+db_writer_processes             1                                                         
+log_archive_max_processes       1                                                         
+log_archive_min_succeed_dest    1                                                         
+parallel_server_instances       1                                                         
+gc_defer_time                   10                                                        
+object_cache_max_size_percent   10                                                        
+open_links                      10                                                        
+session_max_open_files          10                                                        
+optimizer_index_cost_adj        100                                                       
+log_checkpoint_interval         10000                                                     
+object_cache_optimal_size       102400                                                    
+max_dump_file_size              1024000                                                   
+bitmap_merge_area_size          1048576                                                   
+hash_area_size                  1048576                                                   
+log_buffer                      10485760                                                  
+lm_locks                        12000                                                     
+max_enabled_roles               148                                                       
+processes                       150                                                       
+db_file_multiblock_read_count   16                                                        
+sessions                        170                                                       
+transactions                    187                                                       
+java_pool_size                  18874368                                                  
+parallel_threads_per_cpu        2                                                         
+sort_multiblock_read_count      2                                                         
+mts_max_servers                 20                                                        
+parallel_execution_message_size 2148                                                      
+shared_pool_reserved_size       26843545                                                  
+max_rollback_segments           37                                                        
+job_queue_processes             4                                                         
+open_links_per_instance         4                                                         
+db_files                        40                                                        
+open_cursors                    400                                                       
+distributed_transactions        46                                                        
+mts_max_dispatchers             5                                                         
+parallel_max_servers            5                                                         
+transactions_per_rollback_segme 5                                                         
+nt                                                                                        
+                                                                                          
+dml_locks                       500                                                       
+enqueue_resources               520                                                       
+sort_area_size                  524288                                                    
+oracle_trace_collection_size    5242880                                                   
+shared_pool_size                536870912                                                 
+job_queue_interval              60                                                        
+lm_ress                         6000                                                      
+db_file_direct_io_count         64                                                        
+control_file_record_keep_time   7                                                         
+max_commit_propagation_delay    700                                                       
+optimizer_max_permutations      80000                                                     
+compatible                      8.1.7                                                     
+optimizer_features_enable       8.1.7                                                     
+db_block_size                   8192                                                      
+create_bitmap_area_size         8388608                                                   
+db_block_buffers                98304                                                     
+db_block_max_dirty_target       98304                                                     
+fast_start_io_target            98304                                                     
+active_instance_count                                                                     
+buffer_pool_keep                                                                          
+buffer_pool_recycle                                                                       
+db_file_name_convert                                                                      
+event                                                                                     
+fixed_date                                                                                
+gc_files_to_locks                                                                         
+hpux_sched_noage                                                                          
+ifile                                                                                     
+instance_groups                                                                           
+local_listener                                                                            
+lock_name_space                                                                           
+log_archive_dest_1                                                                        
+log_archive_dest_2                                                                        
+log_archive_dest_3                                                                        
+log_archive_dest_4                                                                        
+log_archive_dest_5                                                                        
+log_archive_duplex_dest                                                                   
+log_file_name_convert                                                                     
+mts_dispatchers                                                                           
+mts_listener_address                                                                      
+nls_calendar                                                                              
+nls_comp                                                                                  
+nls_currency                                                                              
+nls_date_format                                                                           
+nls_date_language                                                                         
+nls_dual_currency                                                                         
+nls_iso_currency                                                                          
+nls_numeric_characters                                                                    
+nls_sort                                                                                  
+nls_time_format                                                                           
+nls_timestamp_format                                                                      
+nls_timestamp_tz_format                                                                   
+nls_time_tz_format                                                                        
+ops_interconnects                                                                         
+oracle_trace_collection_name                                                              
+parallel_instance_group                                                                   
+rdbms_server_dn                                                                           
+resource_manager_plan                                                                     
+tracefile_identifier                                                                      
+
+</pre>
+<a HREF=#top><h6>Top</h6></a>
+<hr>

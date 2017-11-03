@@ -1,0 +1,13 @@
+c:\nsr\res\nsrdb 
+c:\nsr 
+d:\batches_Novo 
+d:\oracle\ora817 
+d:\oracle\admin 
+c:\oracle\Oradata\MIAFIS\Archive 
+d:\oracle\Oradata\MIAFIS\Archive 
+d:\oracle\Backup 
+d:\oracle\export 
+d:\Backup 
+SYSTEM STATE:\ 
+SYSTEM FILES:\ 
+SYSTEM DB:\ 

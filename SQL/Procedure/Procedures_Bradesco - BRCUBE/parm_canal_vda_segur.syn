@@ -1,0 +1,3 @@
+create or replace synonym SGPB_PROC.PARM_CANAL_VDA_SEGUR
+  for SGPB.PARM_CANAL_VDA_SEGUR;
+

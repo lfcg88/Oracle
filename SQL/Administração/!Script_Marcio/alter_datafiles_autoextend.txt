@@ -1,0 +1,29 @@
+SET PAGESIZE 0 ;
+SET LINES 150;
+SET FEEDBACK OFF ;
+SET VERIFY OFF;
+spo alter.out
+select 'alter database datafile ' ||''''||
+       file_name ||''''|| ' '||
+       'autoextend on next '|| (a.bytes/1024)*0.5 || 'K;'
+  from dba_data_files a
+ where a.autoextensible in 'NO';
+SPO OFF ;
+SET PAGESIZE 24 ;
+SET FEEDBACK ON ;
+SET VERIFY ON;
+/
+
+
+
+select tablespace_name, file_name
+  from dba_data_files a
+ where a.autoextensible in 'NO';
+
+
+SELECT 'ALTER DATABASE DATAFILE ' || '''' || FILE_NAME || '''' || ' AUTOEXTEND OFF;' 
+  FROM DBA_DATA_FILES 
+ WHERE TABLESPACE_NAME IN ('SYSTEM', 'SYSAUX', 'UNDOTBS1')
+   AND AUTOEXTENSIBLE = 'YES';
+
+alter database datafile 'C:\ORACLE\ORADATA\ORA10G_3\UNDOTBS01.DBF' autoextend off;

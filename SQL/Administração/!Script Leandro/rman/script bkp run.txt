@@ -1,0 +1,31 @@
+cd $ORACLE_HOME/bin
+./rman target /
+
+
+RUN {
+SQL "ALTER DATABASE BACKUP CONTROLFILE TO TRACE AS ''/u01/dump/rman/control_rm.txt''";
+ALLOCATE CHANNEL ch00 TYPE disk
+FORMAT '/u01/dump/rman/bkp_full_rm_dbf_%s_%p_%t'
+maxpiecesize 2g;
+BACKUP as compressed backupset incremental level 0 FORMAT '/u01/dump/rman/bkp_full_rm_dbf_%s_%p_%t' database;
+sql 'alter system archive log current';
+RELEASE CHANNEL ch00;
+ALLOCATE CHANNEL ch00 TYPE disk;
+BACKUP
+FILESPERSET 10
+FORMAT '/u01/dump/rman/bkp_arch_rm_%s_%p_%t'
+archivelog all delete input;
+RELEASE CHANNEL ch00;
+ALLOCATE CHANNEL ch00 TYPE disk;
+BACKUP
+FORMAT '/u01/dump/rman/bkp_cntrl_rm_%s_%p_%t'
+CURRENT CONTROLFILE;
+RELEASE CHANNEL ch00;
+ALLOCATE CHANNEL ch00 TYPE disk;
+backup
+format '/u01/dump/rman/spfile_rm_%s_%t_%p.dbf'
+spfile;
+RELEASE CHANNEL ch00;
+crosscheck backup;
+delete noprompt expired backup;
+}

@@ -1,0 +1,10 @@
+select grantee from dba_role_privs
+where granted_role = '<role>';
+//verifica quem possui determinada role
+
+CREATE ROLE "role" NOT IDENTIFIED;
+//cira role
+
+select privilege 
+from dba_sys_privs 
+where grantee = 'RESOURCE'

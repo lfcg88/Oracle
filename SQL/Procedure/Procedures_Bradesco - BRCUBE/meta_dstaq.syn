@@ -1,0 +1,3 @@
+create or replace synonym SGPB_PROC.META_DSTAQ
+  for SGPB.META_DSTAQ;
+

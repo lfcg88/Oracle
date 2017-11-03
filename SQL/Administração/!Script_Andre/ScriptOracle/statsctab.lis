@@ -1,0 +1,460 @@
+
+If this script is automatically called from statscre (which is
+the supported method), all STATSPACK segments will be created in
+the PERFSTAT user's default tablespace.
+
+... Creating STATS$SNAPSHOT_ID Sequence
+
+Sequence created.
+
+create public synonym STATS$SNAPSHOT_ID  for STATS$SNAPSHOT_ID
+*
+ERROR at line 1:
+ORA-01031: insufficient privileges 
+
+
+
+Grant succeeded.
+
+... Creating STATS$... tables
+old   8: ) tablespace &&tablespace_name
+new   8: ) tablespace PERFSTAT_DAT_01
+
+Table created.
+
+create public synonym  STATS$DATABASE_INSTANCE  for STATS$DATABASE_INSTANCE
+*
+ERROR at line 1:
+ORA-01031: insufficient privileges 
+
+
+
+Grant succeeded.
+
+old  18: ) tablespace &&tablespace_name
+new  18: ) tablespace PERFSTAT_DAT_01
+
+Table created.
+
+create public synonym  STATS$SNAPSHOT  for STATS$SNAPSHOT
+*
+ERROR at line 1:
+ORA-01031: insufficient privileges 
+
+
+
+Grant succeeded.
+
+old  17:  using index tablespace &&tablespace_name
+new  17:  using index tablespace PERFSTAT_DAT_01
+old  21: ) tablespace &&tablespace_name
+new  21: ) tablespace PERFSTAT_DAT_01
+
+Table created.
+
+create public synonym  STATS$FILESTATXS  for STATS$FILESTATXS
+*
+ERROR at line 1:
+ORA-01031: insufficient privileges 
+
+
+
+Grant succeeded.
+
+old  20:  using index tablespace &&tablespace_name
+new  20:  using index tablespace PERFSTAT_DAT_01
+old  24: ) tablespace &&tablespace_name
+new  24: ) tablespace PERFSTAT_DAT_01
+
+Table created.
+
+create public synonym  STATS$LATCH  for STATS$LATCH
+*
+ERROR at line 1:
+ORA-01031: insufficient privileges 
+
+
+
+Grant succeeded.
+
+old  22: ) tablespace &&tablespace_name
+new  22: ) tablespace PERFSTAT_DAT_01
+
+Table created.
+
+create public synonym  STATS$LATCH_CHILDREN  for STATS$LATCH_CHILDREN
+*
+ERROR at line 1:
+ORA-01031: insufficient privileges 
+
+
+
+Grant succeeded.
+
+old  14: ) tablespace &&tablespace_name
+new  14: ) tablespace PERFSTAT_DAT_01
+
+Table created.
+
+create public synonym  STATS$LATCH_MISSES_SUMMARY  for STATS$LATCH_MISSES_SUMMARY
+*
+ERROR at line 1:
+ORA-01031: insufficient privileges 
+
+
+
+Grant succeeded.
+
+old  22: ) tablespace &&tablespace_name
+new  22: ) tablespace PERFSTAT_DAT_01
+
+Table created.
+
+create public synonym  STATS$LIBRARYCACHE  for STATS$LIBRARYCACHE
+*
+ERROR at line 1:
+ORA-01031: insufficient privileges 
+
+
+
+Grant succeeded.
+
+old  14: ) tablespace &&tablespace_name
+new  14: ) tablespace PERFSTAT_DAT_01
+
+Table created.
+
+create public synonym  STATS$BUFFER_POOL  for STATS$BUFFER_POOL
+*
+ERROR at line 1:
+ORA-01031: insufficient privileges 
+
+
+
+Grant succeeded.
+
+old  29: ) tablespace &&tablespace_name
+new  29: ) tablespace PERFSTAT_DAT_01
+
+Table created.
+
+create public synonym  STATS$BUFFER_POOL_STATISTICS  for STATS$BUFFER_POOL_STATISTICS
+*
+ERROR at line 1:
+ORA-01031: insufficient privileges 
+
+
+
+Grant succeeded.
+
+old  21:  using index tablespace &&tablespace_name
+new  21:  using index tablespace PERFSTAT_DAT_01
+old  25: ) tablespace &&tablespace_name
+new  25: ) tablespace PERFSTAT_DAT_01
+
+Table created.
+
+create public synonym  STATS$ROLLSTAT  for STATS$ROLLSTAT
+*
+ERROR at line 1:
+ORA-01031: insufficient privileges 
+
+
+
+Grant succeeded.
+
+old  20:  using index tablespace &&tablespace_name
+new  20:  using index tablespace PERFSTAT_DAT_01
+old  25: ) tablespace &&tablespace_name
+new  25: ) tablespace PERFSTAT_DAT_01
+
+Table created.
+
+create public synonym  STATS$ROWCACHE_SUMMARY  for STATS$ROWCACHE_SUMMARY
+*
+ERROR at line 1:
+ORA-01031: insufficient privileges 
+
+
+
+Grant succeeded.
+
+old  14: ) tablespace &&tablespace_name
+new  14: ) tablespace PERFSTAT_DAT_01
+
+Table created.
+
+create public synonym  STATS$SGAXS  for STATS$SGAXS
+*
+ERROR at line 1:
+ORA-01031: insufficient privileges 
+
+
+
+Grant succeeded.
+
+old   9:  using index tablespace &&tablespace_name
+new   9:  using index tablespace PERFSTAT_DAT_01
+old  14: ) tablespace &&tablespace_name
+new  14: ) tablespace PERFSTAT_DAT_01
+
+Table created.
+
+create public synonym  STATS$SGASTAT_SUMMARY  for STATS$SGASTAT_SUMMARY
+*
+ERROR at line 1:
+ORA-01031: insufficient privileges 
+
+
+
+Grant succeeded.
+
+old  10:  using index tablespace &&tablespace_name
+new  10:  using index tablespace PERFSTAT_DAT_01
+old  14: ) tablespace &&tablespace_name
+new  14: ) tablespace PERFSTAT_DAT_01
+
+Table created.
+
+create public synonym  STATS$SYSSTAT  for STATS$SYSSTAT
+*
+ERROR at line 1:
+ORA-01031: insufficient privileges 
+
+
+
+Grant succeeded.
+
+old   9:  using index tablespace &&tablespace_name
+new   9:  using index tablespace PERFSTAT_DAT_01
+old  13: ) tablespace &&tablespace_name
+new  13: ) tablespace PERFSTAT_DAT_01
+
+Table created.
+
+create public synonym  STATS$SESSTAT  for STATS$SESSTAT
+*
+ERROR at line 1:
+ORA-01031: insufficient privileges 
+
+
+
+Grant succeeded.
+
+old  11:  using index tablespace &&tablespace_name
+new  11:  using index tablespace PERFSTAT_DAT_01
+old  15: ) tablespace &&tablespace_name
+new  15: ) tablespace PERFSTAT_DAT_01
+
+Table created.
+
+create public synonym  STATS$SYSTEM_EVENT  for STATS$SYSTEM_EVENT
+*
+ERROR at line 1:
+ORA-01031: insufficient privileges 
+
+
+
+Grant succeeded.
+
+old  11:  using index tablespace &&tablespace_name
+new  11:  using index tablespace PERFSTAT_DAT_01
+old  16: ) tablespace &&tablespace_name
+new  16: ) tablespace PERFSTAT_DAT_01
+
+Table created.
+
+create public synonym  STATS$SESSION_EVENT  for STATS$SESSION_EVENT
+*
+ERROR at line 1:
+ORA-01031: insufficient privileges 
+
+
+
+Grant succeeded.
+
+old  11:  using index tablespace &&tablespace_name
+new  11:  using index tablespace PERFSTAT_DAT_01
+old  15: ) tablespace &&tablespace_name
+new  15: ) tablespace PERFSTAT_DAT_01
+
+Table created.
+
+create public synonym  STATS$BG_EVENT_SUMMARY  for STATS$BG_EVENT_SUMMARY
+*
+ERROR at line 1:
+ORA-01031: insufficient privileges 
+
+
+
+Grant succeeded.
+
+old  10:  using index tablespace &&tablespace_name
+new  10:  using index tablespace PERFSTAT_DAT_01
+old  14: )tablespace &&tablespace_name
+new  14: )tablespace PERFSTAT_DAT_01
+
+Table created.
+
+create public synonym  STATS$WAITSTAT  for STATS$WAITSTAT
+*
+ERROR at line 1:
+ORA-01031: insufficient privileges 
+
+
+
+Grant succeeded.
+
+old  12: )tablespace &&tablespace_name
+new  12: )tablespace PERFSTAT_DAT_01
+
+Table created.
+
+create public synonym  STATS$ENQUEUESTAT  for STATS$ENQUEUESTAT
+*
+ERROR at line 1:
+ORA-01031: insufficient privileges 
+
+
+
+Grant succeeded.
+
+old  22:  using index tablespace &&tablespace_name
+new  22:  using index tablespace PERFSTAT_DAT_01
+old  26: )tablespace &&tablespace_name
+new  26: )tablespace PERFSTAT_DAT_01
+
+Table created.
+
+create public synonym  STATS$SQL_SUMMARY  for STATS$SQL_SUMMARY
+*
+ERROR at line 1:
+ORA-01031: insufficient privileges 
+
+
+
+Grant succeeded.
+
+old   5: ) tablespace &&tablespace_name
+new   5: ) tablespace PERFSTAT_DAT_01
+
+Table created.
+
+
+1 row created.
+
+
+1 row created.
+
+
+1 row created.
+
+
+Commit complete.
+
+create public synonym  STATS$LEVEL_DESCRIPTION   for STATS$LEVEL_DESCRIPTION
+*
+ERROR at line 1:
+ORA-01031: insufficient privileges 
+
+
+
+Grant succeeded.
+
+old   4: ) tablespace &&tablespace_name
+new   4: ) tablespace PERFSTAT_DAT_01
+
+Table created.
+
+
+1 row created.
+
+
+1 row created.
+
+
+1 row created.
+
+
+1 row created.
+
+
+1 row created.
+
+
+1 row created.
+
+
+1 row created.
+
+
+1 row created.
+
+
+1 row created.
+
+
+1 row created.
+
+
+1 row created.
+
+
+1 row created.
+
+
+1 row created.
+
+
+1 row created.
+
+
+Commit complete.
+
+create public synonym  STATS$IDLE_EVENT   for STATS$IDLE_EVENT
+*
+ERROR at line 1:
+ORA-01031: insufficient privileges 
+
+
+
+Grant succeeded.
+
+old  13: ) tablespace &&tablespace_name
+new  13: ) tablespace PERFSTAT_DAT_01
+
+Table created.
+
+create public synonym  STATS$PARAMETER  for STATS$PARAMETER
+*
+ERROR at line 1:
+ORA-01031: insufficient privileges 
+
+
+
+Grant succeeded.
+
+old  21: ) tablespace &&tablespace_name
+new  21: ) tablespace PERFSTAT_DAT_01
+
+Table created.
+
+create public synonym  STATS$STATSPACK_PARAMETER  for STATS$STATSPACK_PARAMETER
+*
+ERROR at line 1:
+ORA-01031: insufficient privileges 
+
+
+
+Grant succeeded.
+
+create public synonym STATSPACK  for STATSPACK
+*
+ERROR at line 1:
+ORA-01031: insufficient privileges 
+
+
+
+NOTE:
+STATSCTAB complete. Please check statsctab.lis for any errors.
+

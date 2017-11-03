@@ -1,0 +1,119 @@
+
+Recovery Manager: Release 9.2.0.1.0 - Production
+
+Copyright (c) 1995, 2002, Oracle Corporation.  All rights reserved.
+
+RMAN> connect target /@tst1 
+2> connect rcvcat rman/senha@rman
+3> 
+4> # retira archivelogs deletados do catalogo 
+5> 
+6> change archivelog all crosscheck; 
+7> 
+8> run 
+9> 
+10> { 
+11>   allocate channel ch1 type DISK format 'c:\oracle\Backup\TST1\D0_%d_%s_%p_%T.BAK'; 
+12>   backup incremental 
+13>     level 0 
+14>     cumulative 
+15>     TAG "20031210_214800" 
+16>     (database  setsize 3145728)
+17>     (current controlfile for standby)
+18>     (spfile); 
+19> 
+20>   # arquiva log corrente 
+21>   sql 'alter system archive log current'; 
+22>   release channel ch1; 
+23> 
+24>   allocate channel ch1 type DISK format 'c:\oracle\Backup\TST1\L0_%d_%s_%p_%T.BAK'; 
+25>   backup 
+26>     (archivelog all delete input setsize 3145728 channel ch1 
+27>     ); 
+28>   release channel ch1; 
+29> }
+30> 
+31> 
+conectado ao banco de dados de destino: TST1 (DBID=634890407)
+
+conectado ao banco de dados do catálogo de recuperação
+
+canal alocado: ORA_DISK_1
+canal ORA_DISK_1: sid=16 devtype=DISK
+validação bem-sucedida no log arquivado
+nome do arquivo de log de arquivamento=C:\ORACLE\ORADATA\TST1\ARCHIVE\TST1001001S00004.ARC id reg.=10 marcação=512761460
+Fez a verificação cruzada de 1 objetos
+
+
+canal liberado: ORA_DISK_1
+canal alocado: ch1
+canal ch1: sid=16 devtype=DISK
+
+Iniciando backup em 14/12/03
+canal ch1: iniciando conjunto de backups do arquivo de dados incremental level 0
+canal ch1: especificando arquivo(s) de dados no conjunto de backups
+fno=00001 name=C:\ORACLE\ORADATA\TST1\SYSTEM01.DBF do arquivo de dados de entrada
+fno=00002 name=C:\ORACLE\ORADATA\TST1\UNDOTBS01.DBF do arquivo de dados de entrada
+fno=00004 name=C:\ORACLE\ORADATA\TST1\EXAMPLE01.DBF do arquivo de dados de entrada
+fno=00009 name=C:\ORACLE\ORADATA\TST1\XDB01.DBF do arquivo de dados de entrada
+fno=00005 name=C:\ORACLE\ORADATA\TST1\INDX01.DBF do arquivo de dados de entrada
+fno=00008 name=C:\ORACLE\ORADATA\TST1\USERS01.DBF do arquivo de dados de entrada
+fno=00003 name=C:\ORACLE\ORADATA\TST1\DRSYS01.DBF do arquivo de dados de entrada
+fno=00006 name=C:\ORACLE\ORADATA\TST1\ODM01.DBF do arquivo de dados de entrada
+fno=00007 name=C:\ORACLE\ORADATA\TST1\TOOLS01.DBF do arquivo de dados de entrada
+fno=00010 name=C:\ORACLE\ORADATA\TST1\DF_RMAN_01_01.DBF do arquivo de dados de entrada
+canal ch1: iniciando o componente 1 em 14/12/03
+canal ch1: componente 1 finalizado em 14/12/03
+handle de componente=C:\ORACLE\BACKUP\TST1\D0_TST1_20_1_20031214.BAK comentário=NONE
+canal ch1: conjunto de backups concluído, tempo decorrido: 00:02:07
+canal ch1: iniciando conjunto de backups do arquivo de dados incremental level 0
+canal ch1: especificando arquivo(s) de dados no conjunto de backups
+incluindo arquivo de controle standby no conjunto de backups
+canal ch1: iniciando o componente 1 em 14/12/03
+canal ch1: componente 1 finalizado em 14/12/03
+handle de componente=C:\ORACLE\BACKUP\TST1\D0_TST1_21_1_20031214.BAK comentário=NONE
+canal ch1: conjunto de backups concluído, tempo decorrido: 00:00:08
+canal ch1: iniciando conjunto de backups do arquivo de dados incremental level 0
+canal ch1: especificando arquivo(s) de dados no conjunto de backups
+Incluindo SPFILE atual no conjunto de backup
+canal ch1: iniciando o componente 1 em 14/12/03
+canal ch1: componente 1 finalizado em 14/12/03
+handle de componente=C:\ORACLE\BACKUP\TST1\D0_TST1_22_1_20031214.BAK comentário=NONE
+canal ch1: conjunto de backups concluído, tempo decorrido: 00:00:02
+Finalizado backup em 14/12/03
+
+Iniciando Control File and SPFILE Autobackup em 14/12/03
+handle de componente=C:\ORACLE\ORA92\DATABASE\C-634890407-20031214-06 comentário=NONE
+Finalizado Control File and SPFILE Autobackup em 14/12/03
+
+instrução sql: alter system archive log current
+
+canal liberado: ch1
+
+canal alocado: ch1
+canal ch1: sid=16 devtype=DISK
+
+Iniciando backup em 14/12/03
+log atual arquivado
+canal ch1: iniciando conjunto de backups de log de arquivamento
+canal ch1: especificando log(s) de arquivamento no conjunto de backups
+log de arquivamento thread de entrada=1 seqüência=4 id reg.=10 marcação=512761460
+log de arquivamento thread de entrada=1 seqüência=5 id reg.=11 marcação=512761853
+log de arquivamento thread de entrada=1 seqüência=6 id reg.=12 marcação=512761856
+canal ch1: iniciando o componente 1 em 14/12/03
+canal ch1: componente 1 finalizado em 14/12/03
+handle de componente=C:\ORACLE\BACKUP\TST1\L0_TST1_24_1_20031214.BAK comentário=NONE
+canal ch1: conjunto de backups concluído, tempo decorrido: 00:00:02
+canal ch1: deletando log(s) de arquivamento
+nome do arquivo de log de arquivamento=C:\ORACLE\ORADATA\TST1\ARCHIVE\TST1001001S00004.ARC id reg.=10 marcação=512761460
+nome do arquivo de log de arquivamento=C:\ORACLE\ORADATA\TST1\ARCHIVE\TST1001001S00005.ARC id reg.=11 marcação=512761853
+nome do arquivo de log de arquivamento=C:\ORACLE\ORADATA\TST1\ARCHIVE\TST1001001S00006.ARC id reg.=12 marcação=512761856
+Finalizado backup em 14/12/03
+
+Iniciando Control File and SPFILE Autobackup em 14/12/03
+handle de componente=C:\ORACLE\ORA92\DATABASE\C-634890407-20031214-07 comentário=NONE
+Finalizado Control File and SPFILE Autobackup em 14/12/03
+
+canal liberado: ch1
+
+Recovery Manager completo.

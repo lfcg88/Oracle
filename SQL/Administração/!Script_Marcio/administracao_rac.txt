@@ -1,0 +1,77 @@
+##############################
+Comandos para administrar RAC
+##############################
+
+###Parar todos os Listerners###
+
+[oracle@rac1 ~]$ srvctl stop listener
+
+###Iniciar todos os Listerners###
+
+[oracle@rac1 ~]$ srvctl start listener
+==============================================================================================================
+
+###Parar apenas um Listener (LSN1)###
+
+[oracle@rac1 ~]$ srvctl stop listener -n LSN1
+
+###Iniciar apenas um Listener (LSN1)###
+
+[oracle@rac1 ~]$ srvctl start listener -n LSN1
+==============================================================================================================
+
+###Parar apenas uma Instancia(dbteste2)###
+
+[oracle@rac1 ~]$ srvctl  stop instance -d dbteste -i dbteste2
+
+###Iniciar apenas uma Instancia(dbteste2)###
+
+[oracle@rac1 ~]$ srvctl start  instance -d dbteste -i dbteste2
+==============================================================================================================
+
+###Parar todas as Instancias e Banco de Dados (Banco de Dados RAC)###
+
+[oracle@rac1 ~]$ srvctl stop database -d RAC
+
+###Iniciar todas as Instancias e Banco de Dados###
+
+[oracle@rac1 ~]$ srvctl start database -d RAC
+===============================================================================================================
+
+###Parar apenas uma Instancia ASM (asm1)###
+
+[oracle@rac1 ~]$ srvctl stop asm -n rac1 -i asm1
+
+###Iniciar apenas uma Instancia ASM (asm1)###
+
+[oracle@rac1 ~]$ srvctl start asm -n rac1 -i asm1
+==============================================================================================================
+
+###Parar todas as Instancias ASM###
+
+[oracle@rac1 ~]$ srvctl stop asm -n rac1
+
+###Iniciar todas as Instancias ASM###
+
+[oracle@rac1 ~]$ srvctl start asm -n rac1
+===============================================================================================================
+
+###Verificar o Cluster (detalhe com usuario root)###
+
+Cluster [root@rac1 /]# /u01/app/11.2.0/grid/bin/crsctl check cluster
+
+CRS-4537: Cluster Ready Services is online
+
+CRS-4529: Cluster Synchronization Services is online
+
+CRS-4533: Event Manager is online
+
+=============================================================================================================
+
+###Parar o Cluster (detalhe com usuario root)###
+
+[root@rac1 /]# /u01/app/11.2.0/grid/bin/crsctl stop cluster
+
+###Iniciar o Cluster (detalhe com usuario root)###
+
+[root@rac1 /]# /u01/app/11.2.0/grid/bin/crsctl start cluster

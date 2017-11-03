@@ -1,0 +1,29 @@
+
+
+clear computes
+clear breaks
+set pages 1000
+set lines 132
+set trims on
+col tablespace_name format a25            heading "Tablespace Name"
+col file_name       format a55            heading "File Name"
+
+clear breaks
+
+break on tablespace_name
+
+select /*+ ORDERED */
+       df.tablespace_name
+,      df.file_name
+,      df.bytes/1024                             total_size_KB
+from   (select sum(bytes) bytes
+        ,      file_id
+        from   dba_free_space
+        group by file_id)     fr
+,       dba_data_files        df
+where df.file_id = fr.file_id(+)
+order by 1, df.file_id
+/
+
+clear breaks
+clear computes

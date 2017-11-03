@@ -1,0 +1,1369 @@
+
+
+
+spool C:\EstruturaFisica
+
+set lines 130
+set pages 900
+set numf 99,999,999,999,999
+prompt ==================================
+prompt D A T A B A S E
+prompt ==================================
+select * from v$database;
+prompt
+prompt
+prompt ==================================
+prompt D A T A B A S E - V E R S I O N
+prompt ==================================
+select * from v$version;
+prompt
+prompt
+prompt ==================================
+prompt L I C E N S E
+prompt ==================================
+prompt
+select sessions_max, sessions_current, sessions_highwater, users_max
+from   v$license;
+prompt
+prompt
+prompt ==================================
+prompt I N S T A N C E
+prompt ==================================
+select * from v$instance;
+prompt
+prompt
+prompt ==================================
+prompt V E R S I O N 
+prompt ==================================
+prompt
+prompt
+column banner format a60 wrap
+select banner "VERSION" from v$version;
+prompt
+prompt
+prompt ==================================
+prompt O P T I O N 
+prompt ==================================
+prompt
+prompt
+select 'With '||parameter||' option'  "OPTION"
+from v$option
+where value = 'TRUE';
+prompt
+prompt
+prompt
+prompt ==================================
+prompt L A S T - S T A R T
+prompt ==================================
+prompt
+prompt
+col host_name form a10 heading "Host"
+col instance_name form a8 heading "Instance" newline
+col stime form a40 Heading "Database Started At" newline
+col uptime form a60 heading "Uptime" newline
+set heading off
+
+select 'Hostname      : ' || host_name
+      ,'Instance Name : ' || instance_name
+      ,'Started At    : ' || to_char(startup_time,'DD-MON-YYYY HH24:MI:SS') stime
+      ,'Uptime        : ' || floor(sysdate - startup_time) || ' days(s) ' ||
+       trunc( 24*((sysdate-startup_time) - 
+       trunc(sysdate-startup_time))) || ' hour(s) ' ||
+       mod(trunc(1440*((sysdate-startup_time) - 
+       trunc(sysdate-startup_time))), 60) ||' minute(s) ' ||
+       mod(trunc(86400*((sysdate-startup_time) - 
+       trunc(sysdate-startup_time))), 60) ||' seconds' uptime
+from v$instance
+/
+SET HEADING ON
+prompt
+prompt
+prompt ==================================
+prompt BLOCK SIZE 
+prompt ==================================
+prompt
+prompt
+set head off
+select
+  'bLOCK sIZE ==> '||value
+from
+  sys.v_$parameter
+where
+  name = 'db_block_size'
+/
+set head on 
+prompt
+prompt
+prompt ==================================
+prompt DATABASE SIZE 
+prompt ==================================
+prompt
+prompt
+select (select sum(bytes/1048576) from dba_data_files) "Data Mb", 
+(select NVL(sum(bytes/1048576),0) from dba_temp_files) "Temp Mb",
+(select sum(bytes/1048576)*max(members) from v$log) "Redo Mb",
+(select sum(bytes/1048576) from dba_data_files) +
+(select NVL(sum(bytes/1048576),0) from dba_temp_files) +
+(select sum(bytes/1048576)*max(members) from v$log) "Total Mb"
+from dual;
+prompt
+prompt
+prompt ==================================
+prompt S G A
+prompt ==================================
+SHOW SGA;
+prompt
+prompt
+prompt ==================================
+prompt L A N G U A G E
+prompt ==================================
+prompt
+select name  "Parametro"   , '*' ,
+substr(value$,1,30) "Valor", '*',
+ substr(comment$,1,30) "Comentario"
+ from sys.props$;
+prompt
+prompt
+prompt
+prompt ==================================
+prompt O P T I M I Z A D O R
+prompt ==================================
+prompt
+prompt
+column num format 999 heading 'Nbr'
+column name format a41 heading 'Parameter Name'
+column value format a50 heading 'Parameter Value'
+select num,
+name,
+value
+from v$parameter
+where name like '%opt%'
+order by name
+/
+prompt
+prompt
+prompt ==================================
+prompt ARCHIVE INFORMATION
+prompt ==================================
+set pagesize 200
+set linesize 100
+column parametro format a30 
+column valor     format a40
+ select substr(name,1,35) parametro, substr(value,1,70) valor
+ from v$parameter
+where name like '%arch%';
+prompt
+prompt
+prompt ==================================
+prompt log history
+prompt ==================================
+set serveroutput on size 1000000 feedback off
+col instance new_value V_INSTANCE noprint
+select  lower(replace(t.instance,chr(0),'')) instance
+from    v$thread        t,
+        v$parameter     p
+where   p.name = 'thread'
+and     t.thread# = to_number(decode(p.value,'0','1',p.value));
+
+
+declare
+	--
+	cursor get_log_sizes
+	is
+	select distinct	ltrim(to_char(bytes/1048576,'99,990'))||'M' mb
+	from		sys.v_$log;
+	--
+        cursor get_log_history
+        is
+        select          to_char(first_time, 'MM/DD/YY HH24:MI:SS') time,
+                        to_number(substr(to_char(first_time,'MM/DD/YY HH24:MI:SS'), 1, 2)) month,
+                        to_number(substr(to_char(first_time,'MM/DD/YY HH24:MI:SS'), 4, 2)) day,
+                        1900 + to_number(substr(to_char(first_time,'MM/DD/YY HH24:MI:SS'), 7, 2)) year,
+                        to_number(substr(to_char(first_time,'MM/DD/YY HH24:MI:SS'), 10, 2)) hour,
+                        to_number(substr(to_char(first_time,'MM/DD/YY HH24:MI:SS'), 13, 2)) minute,
+                        to_number(substr(to_char(first_time,'MM/DD/YY HH24:MI:SS'), 16, 2)) second,
+			trunc(first_time - to_date('19700101', 'YYYYMMDD')) days,
+			to_number(to_char(first_time,'D')) day_of_wk,
+                        (to_number(substr(to_char(first_time,'MM/DD/YY HH24:MI:SS'), 1, 2))*2592000) +
+                        (to_number(substr(to_char(first_time,'MM/DD/YY HH24:MI:SS'), 4, 2))*86400) +
+                        (to_number(substr(to_char(first_time,'MM/DD/YY HH24:MI:SS'), 10, 2))*3600) +
+                        (to_number(substr(to_char(first_time,'MM/DD/YY HH24:MI:SS'), 13, 2))*60) +
+                        to_number(substr(to_char(first_time,'MM/DD/YY HH24:MI:SS'), 16, 2)) seconds
+        from            sys.v_$log_history
+        order by        first_time asc;
+        --
+        v_earliest_time varchar2(20) := NULL;
+        v_prev_seconds  number := 0;
+        v_mins          number := 0;
+	v_totlessthan30	number := 0;
+	v_total		number := 0;
+	v_first_day	number := 0;
+	v_last_day	number := 0;
+	j		binary_integer := 0;
+	--
+        type num_tab    is table of integer index by binary_integer;
+        t_days          num_tab;
+        t_days_of_wk    num_tab;
+        t_lessthan1     num_tab;
+        t_lessthan5     num_tab;
+        t_lessthan10    num_tab;
+        t_lessthan20    num_tab;
+        t_lessthan30    num_tab;
+        t_totlessthan30 num_tab;
+        t_load          num_tab;
+        t_cnt           num_tab;
+	v_log_sizes	varchar2(200) := null;
+        --
+        v_errcontext    varchar2(200);
+        v_errmsg        varchar2(200);
+        --
+begin
+--
+for i in 0..23 loop
+	--
+        t_lessthan1(i) := 0;
+        t_lessthan5(i) := 0;
+        t_lessthan10(i) := 0;
+        t_lessthan20(i) := 0;
+        t_lessthan30(i) := 0;
+        t_totlessthan30(i) := 0;
+        t_load(i) := 0;
+        t_cnt(i) := 0;
+        t_days_of_wk(i) := 0;
+	--
+end loop;
+--
+v_errcontext := 'open/fetch get_log_sizes';
+for x in get_log_sizes loop
+	--
+	if get_log_sizes%rowcount = 1 then
+		v_log_sizes := x.mb;
+	else
+		v_log_sizes := ', ' || x.mb;
+	end if;
+	--
+	v_errcontext := 'fetch/close get_log_sizes';
+	--
+end loop;
+--
+v_errcontext := 'open/fetch get_log_history';
+for x in get_log_history loop
+        --
+        if get_log_history%rowcount > 1 then
+                --
+                v_mins := (x.seconds - v_prev_seconds) / 60;
+                --
+                t_cnt(x.hour) := t_cnt(x.hour) + 1;
+                --
+                if v_mins <= 1 then
+                        t_lessthan1(x.hour) := t_lessthan1(x.hour) + 1;
+                elsif v_mins <= 5 then
+                        t_lessthan5(x.hour) := t_lessthan5(x.hour) + 1;
+                elsif v_mins <= 10 then
+                        t_lessthan10(x.hour) := t_lessthan10(x.hour) + 1;
+                elsif v_mins <= 20 then
+                        t_lessthan20(x.hour) := t_lessthan20(x.hour) + 1;
+                elsif v_mins <= 30 then
+                        t_lessthan30(x.hour) := t_lessthan30(x.hour) + 1;
+                end if;
+                --
+		t_days_of_wk(x.day_of_wk) := 
+			t_days_of_wk(x.day_of_wk) + 1;
+                --
+		begin
+			t_days(x.days - v_first_day) := 
+					t_days(x.days - v_first_day) + 1;
+		exception when no_data_found then
+			t_days(x.days - v_first_day) := 1;
+		end;
+		v_last_day := x.days;
+                --
+        else
+                --
+                v_earliest_time := x.time;
+                --
+                t_cnt(x.hour) := t_cnt(x.hour) + 1;
+                --
+		t_days(0) := 1;
+		v_first_day := x.days;
+		v_last_day := x.days;
+                --
+        end if;
+        --
+        v_prev_seconds := x.seconds;
+        --
+        v_errcontext := 'fetch/close get_log_history';
+        --
+end loop;
+--
+for i in 0..23 loop
+	--
+        t_totlessthan30(i) :=
+                t_lessthan1(i) +
+                t_lessthan5(i) +
+                t_lessthan10(i) +
+                t_lessthan20(i) +
+                t_lessthan30(i);
+        t_load(i) :=
+                (t_lessthan1(i) * 10000) +
+                (t_lessthan5(i) * 1000) +
+                (t_lessthan10(i) * 100) +
+                (t_lessthan20(i) * 10) +
+                t_lessthan30(i);
+        if t_lessthan1(i) = 0 and
+           t_lessthan5(i) = 0 and
+           t_lessthan10(i) = 0 and
+           t_lessthan20(i) = 0 and
+           t_lessthan30(i) = 0 then
+                t_lessthan1(i) := null;
+                t_lessthan5(i) := null;
+                t_lessthan10(i) := null;
+                t_lessthan20(i) := null;
+                t_lessthan30(i) := null;
+        elsif t_lessthan1(i) = 0 and
+              t_lessthan5(i) = 0 and
+              t_lessthan10(i) = 0 and
+              t_lessthan20(i) = 0 then
+                t_lessthan1(i) := null;
+                t_lessthan5(i) := null;
+                t_lessthan10(i) := null;
+                t_lessthan20(i) := null;
+        elsif t_lessthan1(i) = 0 and
+              t_lessthan5(i) = 0 and
+              t_lessthan10(i) = 0 then
+                t_lessthan1(i) := null;
+                t_lessthan5(i) := null;
+                t_lessthan10(i) := null;
+        elsif t_lessthan1(i) = 0 and
+              t_lessthan5(i) = 0 then
+                t_lessthan1(i) := null;
+                t_lessthan5(i) := null;
+        elsif t_lessthan1(i) = 0 then
+                t_lessthan1(i) := null;
+        end if;
+	--
+end loop;
+--
+dbms_output.put_line('Log History starts at ' || v_earliest_time);
+dbms_output.put_line('Redo log files are sized at: ' || v_log_sizes);
+dbms_output.put_line('|');
+dbms_output.put_line('|   ====== Total Swtchs ===== Tot  Swt   Redo Load');
+dbms_output.put_line('|Hr   <1   <5  <10  <20  <30  <30  Tot      Factor');
+dbms_output.put_line('|-- ---- ---- ---- ---- ---- ---- ---- -----------');
+for i in 0..23 loop
+        --
+        dbms_output.put_line('|' || ltrim(to_char(i+1,'00')) ||
+             nvl(to_char(t_lessthan1(i),'9990'),'     ') ||
+             nvl(to_char(t_lessthan5(i),'9990'),'     ') ||
+             nvl(to_char(t_lessthan10(i),'9990'),'     ') ||
+             nvl(to_char(t_lessthan20(i),'9990'),'     ') ||
+             nvl(to_char(t_lessthan30(i),'9990'),'     ') ||
+             to_char(t_totlessthan30(i),'9990') ||
+             to_char(t_cnt(i), '9990') ||
+             to_char(t_load(i), '999,999,990'));
+        --
+	v_totlessthan30 := v_totlessthan30 + t_totlessthan30(i);
+	v_total := v_total + t_cnt(i);
+        --
+end loop;
+--
+dbms_output.put_line('|                            ---- ----');
+dbms_output.put_line('|                           ' ||
+		to_char(v_totlessthan30, '9990') ||
+		to_char(v_total, '9990'));
+--
+dbms_output.put_line('|');
+dbms_output.put_line('|                   Nbr of');
+dbms_output.put_line('|Day of Week        Swtchs');
+dbms_output.put_line('|-----------        ------');
+dbms_output.put_line('|Sunday            ' || to_char(t_days_of_wk(1), '9990'));
+dbms_output.put_line('|Monday            ' || to_char(t_days_of_wk(2), '9990'));
+dbms_output.put_line('|Tuesday           ' || to_char(t_days_of_wk(3), '9990'));
+dbms_output.put_line('|Wednesday         ' || to_char(t_days_of_wk(4), '9990'));
+dbms_output.put_line('|Thursday          ' || to_char(t_days_of_wk(5), '9990'));
+dbms_output.put_line('|Friday            ' || to_char(t_days_of_wk(6), '9990'));
+dbms_output.put_line('|Saturday          ' || to_char(t_days_of_wk(7), '9990'));
+--
+dbms_output.put_line('|');
+dbms_output.put_line('|                  Nbr of');
+dbms_output.put_line('|Date              Swtchs');
+dbms_output.put_line('|----              ------');
+for i in 0..(v_last_day - v_first_day) loop
+	--
+	begin
+		j := t_days(i);
+	exception when no_data_found then j := 0;
+	end;
+	dbms_output.put_line('|' ||
+		to_char(to_date('19700101','YYYYMMDD')+v_first_day+i,
+				     'Day MON-DD: ') || to_char(j, '9990'));
+	--
+end loop;
+--
+exception
+        when others then
+                v_errmsg := substr(sqlerrm,1,200);
+                raise_application_error(-20001, v_errcontext || ': ' ||
+                                                v_errmsg);
+end;
+/
+
+prompt ==================================
+prompt TABLESPACE INFORMATION
+prompt ==================================
+
+set linesize 110
+column init/next format a25
+column min/max format a15
+column pct format 999
+column tablespace_name format a25 heading "Tablespace"
+column status format a8
+column Ext_Man format a7
+select a.tablespace_name,a.initial_extent||'/'||a.next_extent "Init/Next",
+a.min_extents||'/'||a.max_extents "Min/Max",a.pct_increase pct,a.status,
+a.CONTENTS,substr(a.EXTENT_MANAGEMENT,1,7) "Ext_Man", ALLOCATION_TYPE     
+from sys.dba_tablespaces a
+/
+
+prompt
+prompt ==================================
+prompt TABLESPACE SPACE
+prompt ==================================
+set linesize 120
+set pagesize 300
+column  "Used %" format 999.9       heading "Perc|Used"
+column  Name    format a20      heading "Tablespace Name"
+column  "Used (M)"    format 999,999,999.99   heading "Used (M)"
+column  "Size (M)" format 999,999,999  heading "Size (M)"
+column "Used %" format a10  heading "Used %"
+column  free    format 999,999,999  heading "Free"
+
+
+SELECT d.status "Status", d.tablespace_name "Name", d.contents "Type",
+  d.extent_management "Extent Management", TO_CHAR(NVL(a.bytes / 1024 / 1024,
+  0),'99,999,990.900') "Size (M)", 
+  NVL(a.bytes - NVL(f.bytes, 0), 0)/1024/1024  "Used (M)",
+--||'/'||NVL(a.bytes/1024/1024, 0) "Used (M)",
+  TO_CHAR(  NVL((a.bytes - NVL(f.bytes, 0)) / a.bytes * 100, 0), '990.00')  "Used %"
+FROM
+ sys.dba_tablespaces d, (select tablespace_name, sum(bytes) bytes from
+  dba_data_files group by tablespace_name) a, (select tablespace_name,
+  sum(bytes) bytes from dba_free_space group by tablespace_name) f WHERE
+  d.tablespace_name = a.tablespace_name(+) AND d.tablespace_name =
+  f.tablespace_name(+) AND NOT (d.extent_management like 'LOCAL' AND
+  d.contents like 'TEMPORARY') UNION ALL SELECT d.status "Status",
+  d.tablespace_name "Name", d.contents "Type", d.extent_management "Extent
+  Management", TO_CHAR(NVL(a.bytes / 1024 / 1024, 0),'99,999,990.900') "Size
+  (M)", 
+  NVL(t.bytes, 0)/1024/1024 "Used (M)",
+--||'/'||NVL(a.bytes/1024/1024, 0) "Used (M)",
+   TO_CHAR(NVL(t.bytes / a.bytes * 100, 0), '990.00') "Used %" FROM
+  sys.dba_tablespaces d, (select tablespace_name, sum(bytes) bytes from
+  dba_temp_files group by tablespace_name) a, (select tablespace_name,
+  sum(bytes_cached) bytes from v$temp_extent_pool group by tablespace_name) t
+  WHERE d.tablespace_name = a.tablespace_name(+) AND d.tablespace_name =
+  t.tablespace_name(+) AND d.extent_management like 'LOCAL' AND d.contents 
+like 'TEMPORARY'  
+/
+prompt
+prompt
+prompt
+
+prompt ==================================
+prompt Tablespace Information
+prompt ==================================
+
+column init/next format a25
+column min/max format a15
+column pct format 999
+column tablespace_name format a25 heading "Tablespace"
+column status format a8
+column Ext_Man format a7
+set linesize 120
+select a.tablespace_name,a.initial_extent||'/'||a.next_extent "Init/Next",
+a.min_extents||'/'||a.max_extents "Min/Max",a.pct_increase pct,a.status,
+a.CONTENTS,substr(a.EXTENT_MANAGEMENT,1,7) "Ext_Man", ALLOCATION_TYPE     
+from sys.dba_tablespaces a
+/
+prompt
+prompt
+prompt
+prompt ==================================
+prompt Tablespace - Segment Type 
+prompt ==================================
+prompt
+prompt
+select tablespace_name,segment_type,count(*)
+from dba_segments
+group by tablespace_name,segment_type
+ /
+prompt
+prompt
+prompt ==================================
+prompt Tablespace Coalesced Extents 
+prompt ==================================
+select   TABLESPACE_NAME,
+         TOTAL_EXTENTS,
+         EXTENTS_COALESCED,
+         PERCENT_EXTENTS_COALESCED,
+         TOTAL_BYTES,
+         BYTES_COALESCED,
+         TOTAL_BLOCKS,
+         BLOCKS_COALESCED,
+         PERCENT_BLOCKS_COALESCED
+from     dba_free_space_coalesced
+order by TABLESPACE_NAME;
+prompt
+prompt
+prompt ==================================
+prompt Tablespace Quotas  
+prompt ==================================
+prompt
+prompt
+
+select   TABLESPACE_NAME,
+         USERNAME,
+         BYTES,
+         MAX_BYTES,
+         BLOCKS,
+         MAX_BLOCKS
+from     dba_ts_quotas
+order by TABLESPACE_NAME, USERNAME; 
+
+
+prompt
+prompt
+prompt
+prompt ======================================
+prompt owner espaço alocado  
+prompt ======================================
+prompt
+prompt
+prompt
+col total format 999,999,999,999,999
+ select owner,tablespace_name, sum(bytes) "Total Bytes"
+ from dba_segments
+ group by owner, tablespace_name;
+ prompt
+prompt
+prompt
+prompt
+prompt
+prompt ======================================
+prompt owner espaço alocado (type)  
+prompt ======================================
+prompt
+prompt
+select   OWNER,
+         SEGMENT_TYPE,
+         sum(BYTES)
+from     dba_segments
+where    OWNER not in ('SYS', 'SYSTEM')
+group by OWNER, SEGMENT_TYPE;
+prompt
+prompt
+prompt
+
+
+prompt ======================================
+prompt USERNAME QUE UTILIZA SYSTEM TABLESPACE
+prompt ======================================
+ select username, default_tablespace,temporary_tablespace
+from dba_users
+where default_tablespace = 'SYSTEM' or
+temporary_tablespace= 'SYSTEM' ;
+prompt
+prompt
+prompt
+prompt ======================================
+prompt Espaco free por datafile
+prompt ======================================
+set pages 1000
+set lines 132
+set trims on
+col tablespace_name format a15            heading "Tabsp Name"
+col file_name       format a55            heading "File Name"
+col total_size      format 999,999.00     heading "Size MB"
+col free_space      format 999,999.00     heading "Free MB"
+col pct_used        format 999.00         heading "%|Used"
+
+clear breaks
+
+select df.tablespace_name
+,      df.file_name
+,      df.bytes/1024/1024                        total_size
+,      nvl(fr.bytes/1024/1024,0)                 free_space
+,      ((df.bytes-nvl(fr.bytes,0))/df.bytes)*100 pct_used
+from   (select sum(bytes) bytes
+        ,      file_id
+        from   dba_free_space
+        group by file_id)     fr
+,       dba_data_files        df
+where df.file_id = fr.file_id(+)
+order by 1, df.file_id
+/
+
+prompt
+prompt ==================================
+prompt ARQUIVO POR DIRETORIO
+prompt ==================================
+
+break on diretorio
+
+set linesize 90
+
+column diretorio format a35
+column arquivo format a40
+
+select *
+from ( 
+	select substr(name,1,instr(name,'/',-1)-1) diretorio ,substr(name, instr(name, '/', -1)+1) arquivo,'DF  '  "tipo"
+	FROM V$DATAFILE 
+	UNION
+	select substr(file_name,1,instr(file_name,'/',-1)-1) diretorio ,substr(file_name, instr(file_name, '/', -1)+1) arquivo,'DF  '  "tipo"
+	FROM DBA_TEMP_FILES 
+	UNION
+	select substr(member,1,instr(member,'/',-1)-1) diretorio ,substr(member, instr(member, '/', -1)+1) arquivo,'LF  '  "tipo"  
+	FROM V$LOGFILE  
+	UNION
+	select substr(name,1,instr(name,'/',-1)-1) diretorio ,substr(name, instr(name, '/', -1)+1) arquivo,'CF  '  "tipo"   
+	FROM V$CONTROLFILE
+)
+order by diretorio;
+prompt
+prompt
+prompt
+prompt ==================================
+prompt ARQUIVO POR MOUNT POINT
+prompt ==================================
+
+break on MounPoint
+
+set linesize 90
+
+column MounPoint format a10
+column arquivo format a40
+
+select *
+from (
+	select substr(name,1,5) MounPoint ,substr(name, instr(name, '/', -1)+1) arquivo,'DF  '  "tipo"
+	FROM V$DATAFILE  
+	UNION
+	select substr(file_name,1,5) MounPoint ,substr(file_name, instr(file_name, '/', -1)+1) arquivo,'DF  '  "tipo"
+	FROM DBA_TEMP_FILES   
+	UNION
+	select substr(member,1,5) MounPoint ,substr(member, instr(member, '/', -1)+1) arquivo,'LF  '  "tipo"  
+	FROM V$LOGFILE  
+	UNION
+	select substr(name,1,5) MounPoint ,substr(name, instr(name, '/', -1)+1) arquivo,'CF  '  "tipo"   
+	FROM V$CONTROLFILE
+)
+order by MounPoint;
+
+prompt
+prompt
+prompt
+prompt ==================================
+prompt Arquivos com auto extent
+prompt ==================================
+prompt
+prompt
+select   FILE_NAME,
+         TABLESPACE_NAME,
+         BYTES,
+         STATUS,
+         MAXBYTES,
+         INCREMENT_BY
+from     dba_data_files
+where    AUTOEXTENSIBLE = 'YES'
+order by TABLESPACE_NAME, FILE_NAME;
+prompt
+prompt
+prompt ==================================
+prompt diretorio no init.ora
+prompt ==================================
+
+set linesize 90
+
+column parametro format a40
+column diretorio format a50
+select NAME parametro,VALUE diretorio from v$parameter
+where name in ('background_dump_dest','user_dump_dest','core_dump_dest','log_archive_dest');
+prompt
+prompt
+prompt ==================================
+prompt Tamanho do Control File
+prompt ==================================
+prompt
+prompt
+column value new_value BlkSz  NOPRINT
+select
+  value
+from
+  sys.v_$parameter
+where
+  name = 'db_block_size'
+/
+set termout on
+set verify off
+
+select
+  &BlkSz * (1 + 2 * sum(ceil(record_size * records_total / (&BlkSz - 24))))  "Tamanho do Control File bytes"
+from
+  sys.v_$controlfile_record_section
+/
+
+undefine BlkSz
+prompt
+prompt
+prompt
+prompt ==================================
+prompt REDOLOG INFORMATION
+prompt ==================================
+select   a.MEMBER,
+         b.GROUP#,
+         b.THREAD#,
+         b.SEQUENCE#,
+         b.BYTES,
+         b.MEMBERS,
+         b.ARCHIVED,
+         b.STATUS,
+         b.FIRST_CHANGE#,
+         b.FIRST_TIME
+from     sys.v_$logfile a, sys.v_$log b
+where    a.GROUP# = b.GROUP#
+order by a.MEMBER;
+prompt
+prompt
+prompt
+prompt ==================================
+prompt REDOLOG switch
+prompt ==================================
+select   substr(to_char(FIRST_TIME,'DY, YYYY/MM/DD'),1,15),
+         decode(sum(decode(substr(to_char(FIRST_TIME,'HH24'),1,2),'00',1,0)),0,'-',sum(decode(substr(to_char(FIRST_TIME,'HH24'),1,2),'00',1,0))),
+         decode(sum(decode(substr(to_char(FIRST_TIME,'HH24'),1,2),'01',1,0)),0,'-',sum(decode(substr(to_char(FIRST_TIME,'HH24'),1,2),'01',1,0))),
+         decode(sum(decode(substr(to_char(FIRST_TIME,'HH24'),1,2),'02',1,0)),0,'-',sum(decode(substr(to_char(FIRST_TIME,'HH24'),1,2),'02',1,0))),
+         decode(sum(decode(substr(to_char(FIRST_TIME,'HH24'),1,2),'03',1,0)),0,'-',sum(decode(substr(to_char(FIRST_TIME,'HH24'),1,2),'03',1,0))),
+         decode(sum(decode(substr(to_char(FIRST_TIME,'HH24'),1,2),'04',1,0)),0,'-',sum(decode(substr(to_char(FIRST_TIME,'HH24'),1,2),'04',1,0))),
+         decode(sum(decode(substr(to_char(FIRST_TIME,'HH24'),1,2),'05',1,0)),0,'-',sum(decode(substr(to_char(FIRST_TIME,'HH24'),1,2),'05',1,0))),
+         decode(sum(decode(substr(to_char(FIRST_TIME,'HH24'),1,2),'06',1,0)),0,'-',sum(decode(substr(to_char(FIRST_TIME,'HH24'),1,2),'06',1,0))),
+         decode(sum(decode(substr(to_char(FIRST_TIME,'HH24'),1,2),'07',1,0)),0,'-',sum(decode(substr(to_char(FIRST_TIME,'HH24'),1,2),'07',1,0))),
+         decode(sum(decode(substr(to_char(FIRST_TIME,'HH24'),1,2),'08',1,0)),0,'-',sum(decode(substr(to_char(FIRST_TIME,'HH24'),1,2),'08',1,0))),
+         decode(sum(decode(substr(to_char(FIRST_TIME,'HH24'),1,2),'09',1,0)),0,'-',sum(decode(substr(to_char(FIRST_TIME,'HH24'),1,2),'09',1,0))),
+         decode(sum(decode(substr(to_char(FIRST_TIME,'HH24'),1,2),'10',1,0)),0,'-',sum(decode(substr(to_char(FIRST_TIME,'HH24'),1,2),'10',1,0))),
+         decode(sum(decode(substr(to_char(FIRST_TIME,'HH24'),1,2),'11',1,0)),0,'-',sum(decode(substr(to_char(FIRST_TIME,'HH24'),1,2),'11',1,0))),
+         decode(sum(decode(substr(to_char(FIRST_TIME,'HH24'),1,2),'12',1,0)),0,'-',sum(decode(substr(to_char(FIRST_TIME,'HH24'),1,2),'12',1,0))),
+         decode(sum(decode(substr(to_char(FIRST_TIME,'HH24'),1,2),'13',1,0)),0,'-',sum(decode(substr(to_char(FIRST_TIME,'HH24'),1,2),'13',1,0))),
+         decode(sum(decode(substr(to_char(FIRST_TIME,'HH24'),1,2),'14',1,0)),0,'-',sum(decode(substr(to_char(FIRST_TIME,'HH24'),1,2),'14',1,0))),
+         decode(sum(decode(substr(to_char(FIRST_TIME,'HH24'),1,2),'15',1,0)),0,'-',sum(decode(substr(to_char(FIRST_TIME,'HH24'),1,2),'15',1,0))),
+         decode(sum(decode(substr(to_char(FIRST_TIME,'HH24'),1,2),'16',1,0)),0,'-',sum(decode(substr(to_char(FIRST_TIME,'HH24'),1,2),'16',1,0))),
+         decode(sum(decode(substr(to_char(FIRST_TIME,'HH24'),1,2),'17',1,0)),0,'-',sum(decode(substr(to_char(FIRST_TIME,'HH24'),1,2),'17',1,0))),
+         decode(sum(decode(substr(to_char(FIRST_TIME,'HH24'),1,2),'18',1,0)),0,'-',sum(decode(substr(to_char(FIRST_TIME,'HH24'),1,2),'18',1,0))),
+         decode(sum(decode(substr(to_char(FIRST_TIME,'HH24'),1,2),'19',1,0)),0,'-',sum(decode(substr(to_char(FIRST_TIME,'HH24'),1,2),'19',1,0))),
+         decode(sum(decode(substr(to_char(FIRST_TIME,'HH24'),1,2),'20',1,0)),0,'-',sum(decode(substr(to_char(FIRST_TIME,'HH24'),1,2),'20',1,0))),
+         decode(sum(decode(substr(to_char(FIRST_TIME,'HH24'),1,2),'21',1,0)),0,'-',sum(decode(substr(to_char(FIRST_TIME,'HH24'),1,2),'21',1,0))),
+         decode(sum(decode(substr(to_char(FIRST_TIME,'HH24'),1,2),'22',1,0)),0,'-',sum(decode(substr(to_char(FIRST_TIME,'HH24'),1,2),'22',1,0))),
+         decode(sum(decode(substr(to_char(FIRST_TIME,'HH24'),1,2),'23',1,0)),0,'-',sum(decode(substr(to_char(FIRST_TIME,'HH24'),1,2),'23',1,0)))
+from     sys.v_$log_history
+group by substr(to_char(FIRST_TIME,'DY, YYYY/MM/DD'),1,15)
+order by substr(to_char(FIRST_TIME,'DY, YYYY/MM/DD'),1,15) desc;
+prompt
+prompt
+prompt
+prompt ==================================
+prompt ROLLBACK SEGMENT INFORMATION
+prompt ==================================
+col segment format a10
+col tablespace format a8 heading TBS
+col owner format a10
+col initial format 99,999,999
+col next format 99,999,999
+col min_ext format 9,999
+col opt format 99,999,999
+col max_ext format 99,999,999
+col status format a15
+set linesize 120
+select segment_name "segment",tablespace_name "tablespace",owner,
+initial_extent "initial", next_extent "next", min_extents "min_ext",
+optsize "optsize",max_extents "max_ext",pct_increase "PCT", 
+d.status
+from dba_rollback_segs d, v$rollname n, v$rollstat s
+  where segment_name = name and
+        n.usn = s.usn
+order by segment_name;
+prompt
+prompt
+prompt
+prompt ==================================
+prompt ROLLBACK SEGMENT INFORMATION
+prompt ==================================
+prompt
+prompt
+select   b.NAME,
+         a.USN,
+         GETS,
+         WAITS,
+         round(((GETS-WAITS)*100)/GETS,2),
+         XACTS,
+         WRITES
+from     sys.v_$rollstat a, sys.v_$rollname b
+where    a.USN = b.USN;
+
+
+prompt ==================================
+prompt ROLLBACK SEGMENT INFORMATION
+prompt ==================================
+prompt
+prompt
+select   NAME,
+         a.USN,
+         RSSIZE,
+         OPTSIZE,
+         HWMSIZE,
+         EXTENDS,
+         WRAPS,
+         SHRINKS,
+         AVESHRINK,
+         AVEACTIVE,
+         STATUS
+from     sys.v_$rollstat a, sys.v_$rollname b
+where    a.USN=b.USN
+order by NAME;
+prompt
+prompt
+
+
+prompt ======================================
+prompt ANALYZE - DATE - REGULAR TABLES
+prompt ======================================
+
+col owner format a20
+prompt
+select owner,'Tables',trunc(LAST_ANALYZED),count(*)
+from dba_tables
+where owner not in ('SYS','SYSTEM')
+group by owner,'Tables',trunc(LAST_ANALYZED)
+/
+prompt
+prompt ======================================
+prompt ANALYZE - DATE - PARTITINED TABLES
+prompt ======================================
+prompt
+select table_owner, 'Partitioned Tables',trunc(last_analyzed), count(*)
+from dba_tab_partitions
+where table_owner not in ('SYS','SYSTEM')
+group by table_owner, 'Partitioned Tables',trunc(last_analyzed)
+/
+prompt
+prompt ======================================
+prompt ANALYZE - DATE - REGULAR INDEXES
+prompt ======================================
+prompt
+select owner, 'Regular Indexes', trunc(last_analyzed), count(*)
+from dba_indexes
+where owner not in ('SYS','SYSTEM')
+group by  owner, 'Regular Indexes', trunc(last_analyzed)
+/
+prompt
+prompt ======================================
+prompt ANALYZE - DATE - PARTITINED INDEXES
+prompt ======================================
+prompt
+select index_owner, 'Partitioned Indexes',trunc(last_analyzed), count(*)
+from dba_ind_partitions
+where index_owner not in ('SYS','SYSTEM')
+group by  index_owner, 'Partitioned Indexes',trunc(last_analyzed)
+/
+prompt
+prompt
+prompt         
+prompt ======================================
+prompt ANALYZE - TYPE
+prompt ======================================
+col owner format a20
+select owner,trunc(LAST_ANALYZED),count(*)    
+from dba_tables                               
+group by owner,trunc(LAST_ANALYZED);   
+prompt
+prompt
+prompt       
+prompt =========================================
+prompt RELAÇÃO DE PROFILE 
+prompt =========================================
+ select * from dba_profiles
+   order by profile;
+prompt
+prompt
+prompt
+prompt =========================================
+prompt QUANTIDADE DE USUÁRIOS POR PROFILE 
+prompt =========================================
+ select profile, count(*) from dba_users
+group by profile;
+prompt
+prompt
+prompt =========================================
+prompt Schemas e Objetos 
+prompt =========================================
+prompt
+prompt
+column name format a13 trunc heading SCHEMA
+column cl format 99999 heading CLSTR
+column ta format 99999 heading TABLE
+column ix format 99999 heading INDEX
+column se format 99999 heading SEQNC
+column tr format 99999 heading TRIGR
+column fn format 99999 heading FUNCT
+column pr format 99999 heading PROCD
+column pa format 99999 heading PACKG
+column vi format 99999 heading VIEWS
+column sy format 99999 heading SYNYM
+column ot format 99999 heading OTHER
+break on report
+compute sum of cl ta ix se tr fn pr pa vi sy ot on report
+
+select
+  u.name,
+  sum(decode(o.type#, 3, objs))  cl,
+  sum(decode(o.type#, 2, objs))  ta,
+  sum(decode(o.type#, 1, objs))  ix,
+  sum(decode(o.type#, 6, objs))  se,
+  sum(decode(o.type#, 12, objs)) tr,
+  sum(decode(o.type#, 8, objs))  fn,
+  sum(decode(o.type#, 7, objs))  pr,
+  sum(decode(o.type#, 9, objs))  pa,
+  sum(decode(o.type#, 4, objs))  vi,
+  sum(decode(o.type#, 5, objs))  sy,
+  sum(decode(o.type#, 1,0, 2,0, 3,0, 4,0, 5,0, 6,0, 7,0, 8,0, 9,0, 12,0, objs))  ot
+from
+(select owner#, type#, count(*) objs from sys.obj$ group by owner#, type#)  o,
+sys.user$  u
+where
+  u.user# = o.owner#
+group by
+  u.name
+order by
+  decode(u.name, 'SYS', 1, 'SYSTEM', 2, 'PUBLIC', 3, 4),
+  u.name
+/
+prompt
+prompt
+prompt ==================================
+prompt DB_LINKS
+prompt ==================================
+prompt
+prompt
+SET LINESIZE 200
+col owner format a10
+col db_link format a30
+col username format a30
+col host format a30
+select owner, db_link, username,host 
+ from dba_db_links
+  order by owner;
+prompt
+prompt
+prompt ==================================
+prompt SYNONYM COM DB_LINKS
+prompt ==================================
+prompt
+prompt
+SET LINESIZE 200
+col owner format a10
+col db_link format a30
+col username format a30
+col host format a30
+select owner, db_link, username,host 
+ from dba_db_links
+  order by owner;
+prompt
+prompt
+prompt
+prompt ==================================
+prompt SNAPSHOTS
+prompt ==================================
+prompt
+prompt
+prompt
+set linesize 99
+set pagesize 999
+column name heading "Snap Name" format a10;
+column owner heading "Snap Owner" format a10;
+column table_name heading "Base Table" format a10;
+column can_use_log heading "Log?" format a3;
+column master_view heading "Mstr View" format a10;
+column master_owner heading "Mstr Owner" format a10;
+column master heading "Mstr Table" format a10;
+column master_link heading "Mstr Link" format a10;
+column update_trig heading "Update Trig" format a11;
+column lf heading "Last Refresh" format a18;
+column sw heading "Start With" format a18;
+column next heading "Next" format a50;
+column type heading "Refresh|Type" format a8;
+SELECT name,owner,table_name,can_use_log,master_view,master_owner,master,master_link,
+       update_trig,TO_CHAR(last_refresh,'dd/mm/yy hh24:mi:ss') lf,TO_CHAR(start_with,'dd/mm/yy hh24:mi:ss') sw,
+       next,type
+FROM dba_snapshots
+ORDER BY 1,2; 
+prompt
+prompt
+prompt
+prompt ==================================
+prompt SNAPSHOTS - mASTER LINK
+prompt ==================================
+col owner format a10
+col master_link format a50
+select owner, master_link, count(*) 
+ from dba_snapshots
+  group by owner,master_link
+  order by master_link;
+prompt
+prompt
+prompt
+prompt ================================
+prompt Materialized views
+prompt ===============================
+prompt
+prompt
+  select owner,MVIEW_NAME,FAST_REFRESHABLE,LAST_REFRESH_TYPE,LAST_REFRESH_DATE from dba_mviews;
+prompt
+prompt
+prompt ================================
+prompt Materialized views - Stale
+prompt ===============================
+column owner heading "Owner" format a10;
+column mview_name heading "View Name" format a30;
+column last_refresh_date heading "Last Refresh|Date";
+column refresh_method heading "Refresh|Method";
+select owner,mview_name,last_refresh_date, refresh_method
+from all_mview_analysis
+where known_stale = 'Y';
+clear columns;
+prompt
+prompt
+prompt ==================================
+prompt SNAPSHOTS - Db Link
+prompt ==================================
+prompt
+prompt
+set linesize 99
+col owner format a20 heading 'Link Owner';
+col db_link format a15 heading 'DB Link Name';
+col username format a20 heading 'User Name';
+col host format a20 heading 'Host';
+col created heading 'Date|Created';
+break on owner;
+select owner, db_link,username,host,created
+from dba_db_links a
+where exists
+       (select * 
+        from dba_snapshots
+        where replace(master_link,'@','') = a.db_link
+          );
+clear columns;
+clear breaks;
+prompt
+prompt
+prompt
+prompt
+prompt ==================================
+prompt DBA_JOBS
+prompt ==================================
+col spid head 'O/S|Process|ID' 
+col sid for 9999 head 'Session|ID' 
+col serial# for 9999999 head 'Session|Serial#' 
+col log_user for a10 
+col job for 999 head 'Job' 
+col broken for a1 head 'B' 
+col failures for 99 head "fail" 
+col what for a30 
+col last_date for a17 head 'Last|Date' 
+col next_date for a17 head 'Next|Date' 
+set linesize 200
+
+select s.spid, 
+s.sid, 
+s.serial#, 
+j.log_user, 
+j.job, 
+j.broken, 
+j.failures, 
+j.what, 
+j.last_date||j.last_sec last_date, 
+j.next_date||j.next_sec next_date 
+from (select djr.SID, 
+dj.JOB, dj.LOG_USER, dj.PRIV_USER, dj.SCHEMA_USER, dj.LAST_DATE, dj.LAST_SEC, dj.THIS_DATE, dj.THIS_SEC, dj.NEXT_DATE, 
+dj.NEXT_SEC, dj.TOTAL_TIME, dj.BROKEN, dj.INTERVAL, dj.FAILURES, dj.WHAT, dj.NLS_ENV, dj.MISC_ENV
+from dba_jobs_running djr, dba_jobs dj 
+where djr.job (+)= dj.job ) j, 
+(select p.spid, s.sid, s.serial# 
+from v$process p, v$session s 
+where p.addr = s.paddr ) s 
+where j.sid = s.sid (+) 
+/ 
+prompt
+prompt
+prompt
+prompt ==================================
+prompt QTDE de JOBS por usuário DBA_JOBS
+prompt ==================================
+ col log_user format a10
+ select log_user,trunc(next_date),count(*) from dba_jobs
+ group by log_user,trunc(next_date);
+prompt
+prompt
+prompt
+prompt ==================================
+prompt ROLES
+prompt ==================================
+prompt
+select * from dba_roles;
+prompt
+prompt ********************************
+prompt   Roles 
+prompt ********************************
+prompt
+prompt
+prompt
+select   rp.GRANTEE,
+         GRANTED_ROLE,
+         rp.ADMIN_OPTION,
+         DEFAULT_ROLE,
+         PRIVILEGE
+from     dba_role_privs rp, dba_sys_privs sp
+where    rp.GRANTEE = sp.GRANTEE
+and      rp.GRANTEE not in ('SYS','SYSTEM','DBA','EXP_FULL_DATABASE','IMP_FULL_DATABASE')
+order by rp.GRANTEE, GRANTED_ROLE, PRIVILEGE;
+prompt
+prompt
+prompt ********************************
+prompt   Roles e Privilegios
+prompt ********************************
+prompt
+prompt
+select   rp.GRANTEE,
+         GRANTED_ROLE,
+         rp.ADMIN_OPTION,
+         DEFAULT_ROLE,
+         PRIVILEGE
+from     dba_role_privs rp, dba_sys_privs sp
+where    rp.GRANTEE = sp.GRANTEE
+and      rp.GRANTEE not in ('SYS','SYSTEM','DBA','EXP_FULL_DATABASE','IMP_FULL_DATABASE')
+order by rp.GRANTEE, GRANTED_ROLE, PRIVILEGE;
+prompt
+prompt
+prompt ==================================
+prompt TaBLESPACE BACKUP ATIVADO
+prompt ==================================
+prompt
+select distinct 'alter tablespace ' || tablespace_name || ' end backup;'
+from v$backup, dba_data_files
+where v$backup.status='ACTIVE'
+and v$backup.file#=file_id;
+prompt
+prompt
+prompt
+prompt=========================================
+prompt STATEMENT AUDITS ENABLED ON THIS DATABASE
+prompt =========================================
+column user_name format a10
+column audit_option format a40 
+select * from dba_stmt_audit_opts
+/
+prompt ==========================================
+prompt PRIVILEGE AUDITS ENABLED ON THIS DATABASE
+prompt =========================================
+select * from dba_priv_audit_opts
+/
+prompt ========================================
+prompt OBJECT AUDITS ENABLED ON THIS DATABASE
+prompt ======================================
+column object_name format a25
+select (owner ||'.'|| object_name) object_name,
+alt, aud, com, del, gra, ind, ins, loc, ren, sel, upd, ref, exe
+from dba_obj_audit_opts
+where alt != '-/-' 
+or aud != '-/-' 
+or com != '-/-' 
+or del != '-/-' 
+or gra != '-/-' 
+or ind != '-/-' 
+or ins != '-/-' 
+or loc != '-/-' 
+or ren != '-/-' 
+or sel != '-/-' 
+or upd != '-/-' 
+or ref != '-/-' 
+or exe != '-/-' 
+/
+prompt =========================================
+prompt DEFAULT AUDITS ENABLED ON THIS DATABASE
+prompt =======================================
+select * from all_def_audit_opts
+/
+prompt
+prompt
+prompt
+prompt ==================================
+prompt PLANO DE RECURSOS
+prompt ==================================
+prompt
+prompt ==================================
+prompt PARAMETER INFORMATION - NO DEFAULT
+prompt ==================================
+prompt
+prompt
+prompt
+column num format 999 heading 'Nbr'
+column name format a41 heading 'Parameter Name'
+column value format a50 heading 'Parameter Value'
+select num,
+name,
+value
+from v$parameter
+WHERE ISDEFAULT='FALSE'
+order by name
+/
+rem
+prompt
+prompt
+prompt
+prompt ==================================
+prompt PARAMETER INFORMATION - ALL
+prompt ==================================
+rem
+ttitle left ' SGA Parameter Values' -
+right 'Page: ' format 999 sql.pno -
+skip 2
+column num format 999 heading 'Nbr'
+column name format a41 heading 'Parameter Name'
+column value format a50 heading 'Parameter Value'
+select num,
+name,
+value
+from v$parameter
+order by name
+/
+rem
+prompt ==================================
+prompt Seguranca Profiles
+prompt ==================================
+prompt
+select profile, resource_name, limit 
+from   dba_profiles
+where  resource_name like '%PASSWORD%' 
+   or  resource_name like '%LOGIN%'
+/
+prompt ==================================
+prompt Seguranca Prametros instance
+prompt ==================================
+prompt
+--tti "Security related initialization parameters:"
+select name || '=' || value "PARAMTER"
+from   sys.v_$parameter 
+where  name in ('remote_login_passwordfile', 'remote_os_authent', 
+                'os_authent_prefix', 'dblink_encrypt_login',
+                'audit_trail', 'transaction_auditing')
+/
+
+--tti "Password file users:"
+select * from sys.v_$pwfile_users
+/
+prompt ==================================
+prompt Seguranca Senhas Default
+prompt ==================================
+prompt
+select '*** User '||USER||' uses default password on database '||
+       GLOBAL_NAME||' ***'
+from   global_name
+-- The next line must be left blank!!!
+
+
+
+
+prompt ==================================
+prompt Session Time 
+prompt ==================================
+prompt
+select   SID,
+         SERIAL#,
+         USERNAME,
+         OSUSER,
+         SERVER,
+         STATUS,
+         TYPE,
+         PROGRAM,
+         LOGON_TIME,
+         lpad(to_char(trunc(LAST_CALL_ET/3600)),2,0)||':'||
+         lpad(to_char(trunc(LAST_CALL_ET/60)-(trunc(LAST_CALL_ET/3600)*60)),2,0)||':'||
+         lpad(to_char(LAST_CALL_ET-(trunc(LAST_CALL_ET/60)*60)),2,0) 
+from     sys.v_$session
+order by USERNAME, OSUSER;
+prompt
+prompt
+
+prompt ==================================
+prompt Table Cache
+prompt ==================================
+prompt
+select   OWNER,
+         TABLE_NAME,
+         CACHE
+from     dba_tables
+where    OWNER not in ('SYS','SYSTEM')
+and      CACHE like '%Y'
+order by OWNER, TABLE_NAME;
+prompt
+prompt
+
+
+
+
+
+
+
+
+
+
+
+conn sys/change_on_install
+/
+conn system/manager
+/
+conn hr/hr
+/
+conn oe/oe
+/
+conn sh/sh
+/
+conn scott/tiger
+/
+conn adams/wood
+/
+conn jones/steel
+/
+conn clark/cloth
+/
+conn blake/paper
+/
+conn outln/outln
+/
+conn ctxsys/ctxsys
+/
+conn tracesvr/trace
+/
+conn dbsnmp/dbsnmp
+/
+conn ordplugins/ordplugins
+/
+conn ordsys/ordsys
+/
+conn mdsys/mdsys
+/
+conn dssys/dssys
+/
+conn perfstat/perfstat
+/
+conn csmig/csmig
+/
+

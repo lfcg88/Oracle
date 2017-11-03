@@ -1,0 +1,61 @@
+oracle@dbprd223:/oracle$ ORACLE_SID=fs89hom
+oracle@dbprd223:/oracle$ sqlplus / as sysdba
+
+SQL*Plus: Release 10.2.0.4.0 - Production on Mon May 18 11:21:30 2009
+
+Copyright (c) 1982, 2007, Oracle.  All Rights Reserved.
+
+
+Connected to:
+Oracle Database 10g Release 10.2.0.4.0 - 64bit Production
+
+
+
+###########
+########### Cria uma cópia do arquivo de parâmetros para segurança.
+########### gera a partir do arquivo $ORACLE_HOME/dbs/spfilefs89hom.ora (que é binário) o arquivo
+###########   $ORACLE_HOME/dbs/initfs89hom.ora (que é texto)
+###########
+SQL> create pfile from spfile;
+
+File created.
+
+###########
+###########  Reduz o valor de máximo de sga. Parâmetro estático, por isso usa scope=spfile.
+###########
+SQL> alter system set sga_max_size=4g scope=spfile;
+
+System altered.
+
+
+##########
+########## Reduz o parâmetro sga_target. Parâmetro é dinâmico, por isso pode usar scope=both
+##########
+SQL> alter system set sga_target=4g scope=both;
+
+System altered.
+
+##########
+########## Neste caso funcionou, basta shutdown e start da instância.
+########## Poderiam ocorrer 2 erros no passo anterior
+##########   -  Não consegue fazer o shrink da memória. Neste caso, foi possível reduzir os valores, mas não conseguiu liberar a memória, apesar de não estar alocada em nenhum
+##########       pool. Nesta situação basta o shutdown e o start.
+##########   - Não consegue reduzir a memória por estar alocada a algum pool. Esta mensagem seria algo semelhante a "tentou reduzir para 4G e precisa de pelo menos 4.5G"
+##########       Precisa reduzir as memórias individuais dos pools. Os principais são os parametros db_cache_size e shared_pool_size. Verifique o valor de cada um, com o comando
+##########       "show parameter db_cache_size" e reduza com o comando "alter system set db_cache_size=<tamanho> scope=both"
+##########
+SQL> shutdown immediate
+Database closed.
+Database dismounted.
+ORACLE instance shut down.
+SQL> startup
+ORACLE instance started.
+
+Total System Global Area 4294967296 bytes
+Fixed Size                  2061680 bytes
+Variable Size            4160752272 bytes
+Database Buffers           16777216 bytes
+Redo Buffers              115376128 bytes
+Database mounted.
+Database opened.
+SQL>

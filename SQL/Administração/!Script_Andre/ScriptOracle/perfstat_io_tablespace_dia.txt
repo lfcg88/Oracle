@@ -1,0 +1,48 @@
+--**************************************************************
+--   rpt_avg_sorts_hr.sql
+--
+--   © 2001 by Donald K. Burleson
+--
+--   No part of this SQL script may be copied. Sold or distributed
+--   without the express consent of Donald K. Burleson
+--**************************************************************
+set pages 9999;
+
+
+accept vDataInicio prompt 'Informe a Data Inicial (dd/mm/yyyy) =>  ';
+accept vDataFim    prompt 'Informe a Data Final   (dd/mm/yyyy) =>  ';
+
+column sorts_memory  format 999,999,999
+column sorts_disk    format 999,999,999
+column ratio         format .99999
+column Dia         format a10
+column Hit           format 999.99
+
+
+-- select SNAP_ID,TSNAME,sum(PHYRDS),sum(PHYWRTS) from perfsgpcas.stats$filestatxs
+-- group by SNAP_ID,TSNAME
+
+select 
+   to_char(snap_time,'dd/mm/yyyy') Dia,
+   newdsk.TSNAME,
+ --  avg(newmem.value-oldmem.value) sorts_memory,
+   avg(newdsk.PHYRDS-olddsk.PHYRDS) reads_disk,
+   avg(newdsk.PHYWRTS-olddsk.PHYWRTS) write_disk,
+   avg((newdsk.PHYWRTS+newdsk.PHYRDS) -( olddsk.PHYWRTS+olddsk.PHYRDS) ) io_disk
+--,
+--   ( 1 - ( avg(newdsk.value-olddsk.value) / avg(newmem.value-oldmem.value))) * 100  Hit
+from
+   --perfsgpcas.stats$filestatxs oldmem,
+   --perfsgpcas.stats$filestatxs newmem,
+   perfsgpcas.stats$filestatxs newdsk,
+   perfsgpcas.stats$filestatxs olddsk,
+   perfsgpcas.stats$snapshot   sn
+where
+   newdsk.snap_id = sn.snap_id
+and
+   olddsk.snap_id = sn.snap_id-1
+and 
+    sn.snap_time >= to_date('18/06/2007','dd/mm/yyyy') and (snap_time - 1)  <= to_date('28/06/2007','dd/mm/yyyy') 
+group by
+   to_char(snap_time,'dd/mm/yyyy'),newdsk.TSNAME
+;

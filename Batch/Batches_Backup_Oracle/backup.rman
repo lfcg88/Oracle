@@ -1,0 +1,22 @@
+connect target /@miafis 
+connect rcvcat rman/senharman@rcvcat 
+# retira archivelogs deletados do catalogo 
+change archivelog all crosscheck; 
+run 
+{ 
+  allocate channel ch1 type DISK format 'e:\oracle\Backup\MIAFIS\D1_%d_%s_%p_20032904_210508.BAK'; 
+  backup incremental 
+    level 1 
+    cumulative 
+    TAG LVL1 
+    (database  setsize 8912896 include current controlfile channel ch1 
+    ); 
+  # arquiva log corrente 
+  sql 'alter system archive log current'; 
+  release channel ch1; 
+  allocate channel ch1 type DISK format 'e:\oracle\Backup\MIAFIS\L1_%d_%s_%p_20032904_210508.BAK'; 
+  backup 
+    (archivelog all setsize 3145728 channel ch1 
+    ); 
+  release channel ch1; 
+} 

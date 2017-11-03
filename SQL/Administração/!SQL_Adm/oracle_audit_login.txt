@@ -1,0 +1,11 @@
+Bruno,
+
+Primeiro ative a auditoria padrão, configurando audit_trail = db e execute:
+AUDIT SESSION BY <username> WHENEVER NOT SUCCESSFUL;
+
+Os registros de auditoria para tentativas mal sucedidas de login podem ser encontradas da seguinte forma:
+select userid, userhost, terminal, clientid from aud$ where returncode=1017;
+
+Atenciosamente
+Uma
+Global Customer Services

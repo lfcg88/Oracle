@@ -1,0 +1,85 @@
+REM ------------------------------------------------------------------------ 
+REM PURPOSE: 
+REM The following script will generate a view DBA_USER_PRIVS which 
+REM may be queried to obtain information about which privileges 
+REM are available to a given user, or which users enjoy a 
+REM particular privilege. 
+REM ------------------------------------------------------------------------ 
+
+set pause off 
+-- set pause Continues... 
+set verify off 
+set pages 50000
+set linesize 132 
+set feedback off
+
+column Privilegio format a25
+column owner format a15
+column grantee  format a22
+column  COLUMN_NAME  format a20
+
+
+
+spool c:\privuser5465.lst
+
+----------------------------------------------
+--     Roles E Privilegios          ----------
+----------------------------------------------
+SELECT DECODE(SA1.GRANTEE#, 1, 'PUBLIC', U1.NAME) "Grantee" , SUBSTR(U2.NAME,1,20) "Role", 
+SUBSTR(SPM.NAME,1,27) "Privilegio"
+FROM SYS.SYSAUTH$ SA1, SYS.SYSAUTH$ SA2, SYS.USER$ U1, 
+SYS.USER$ U2, SYS.SYSTEM_PRIVILEGE_MAP SPM 
+WHERE SA1.GRANTEE# = U1.USER# 
+AND SA1.PRIVILEGE# = U2.USER# 
+AND U2.USER# = SA2.GRANTEE# 
+AND SA2.PRIVILEGE# = SPM.PRIVILEGE 
+AND DECODE(SA1.GRANTEE#, 1, 'PUBLIC', U1.NAME) like upper('%&&grantee%') 
+AND DECODE(SA1.GRANTEE#, 1, 'PUBLIC', U1.NAME) NOT IN ('SYS')
+/
+
+--break on grantee,role,owner
+
+ SELECT B.GRANTEE "Grantee",B.GRANTED_ROLE "Role",a.owner,A.PRIVILEGE "Privilegio",A.TABLE_NAME "Objeto"
+ FROM DBA_TAB_PRIVS A,dba_role_privs B
+ WHERE
+ --A.GRANTEE=B.GRANTEE AND
+ --AND
+ B.GRANTED_ROLE=A.GRANTEE
+ AND B.GRANTEE like upper('%&&grantee%')
+AND B.GRANTEE  NOT IN ('SYS')
+
+/
+
+
+
+
+-------------------------------------------------
+--     Privilegios de Sistema          ----------
+-------------------------------------------------
+
+SELECT U.NAME "Grantee", SUBSTR(SPM.NAME,1,27) "Privilegio Sistema" 
+FROM SYS.SYSTEM_PRIVILEGE_MAP SPM, SYS.SYSAUTH$ SA, SYS.USER$ U 
+WHERE SA.GRANTEE#=U.USER# 
+AND SA.PRIVILEGE#=SPM.PRIVILEGE 
+and u.name like upper('%&grantee%')
+and u.name  NOT IN ('SYS')
+/ 
+
+-------------------------------------------------
+--     Privilegios de Objetos         ----------
+-------------------------------------------------
+
+select grantee,privilege "Privilegio" ,grantable,owner,table_name,column_name
+from (select grantee,c.privilege ,c.grantable,c.owner,c.table_name,c.column_name 
+from dba_col_privs c 
+where grantee like  upper('%&grantee%') AND grantee NOT IN ('SYS')
+union 
+select grantee,t.privilege,t.grantable,t.owner,t.table_name,null 
+from dba_tab_privs t 
+where t.grantee like upper('%&grantee%') AND t.grantee NOT IN ('SYS')
+)
+order by privilege
+/ 
+
+undefine grantee 
+spool off

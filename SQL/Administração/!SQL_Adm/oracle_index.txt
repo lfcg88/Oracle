@@ -1,0 +1,1 @@
+CREATE INDEX "<esquema>"."<nome_índice>" ON "<esquema>"."<nome_tabela>" ("<campos>") TABLESPACE "<nome_tablespace>"

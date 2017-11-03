@@ -1,0 +1,45 @@
+Create or replace
+      	FUNCTION hextodec (hexnum in char) RETURN number IS  
+        x	number;  
+	digits  number; 
+        result 	number := 0;                                            
+  
+ 
+        current_digit char(1);                            
+        current_digit_dec number;                                            
+      	BEGIN                                                    
+        digits := length(upper(hexnum));                                       
+        for x in 1..digits loop                                     
+          current_digit := SUBSTR(hexnum, x, 1);                          
+          if current_digit in ('A','B','C','D','E','F') then           
+             	current_digit_dec := ascii(current_digit) - ascii('A') + 10;    
+          else                  
+             	current_digit_dec := to_number(current_digit); 
+          end if;                                                            
+        	result := (result * 16) + current_digit_dec;                  
+ end loop;                                                      
+        return result;                                                
+     	END; 
+
+=======================================================
+
+declare
+      hexnum varchar2(100);
+	digits  number; 
+      result 	number := 0;                                            
+      current_digit char(1);                            
+      current_digit_dec number;                                            
+BEGIN          
+       -- hexnum := '000066F0';                                          
+        digits := length(upper('&hexnum'));                                       
+        for x in 1..digits loop                                     
+          current_digit := SUBSTR(hexnum, x, 1);                          
+          if current_digit in ('A','B','C','D','E','F') then           
+             	current_digit_dec := ascii(current_digit) - ascii('A') + 10;    
+          else                  
+             	current_digit_dec := to_number(current_digit); 
+          end if;                                                            
+        	result := (result * 16) + current_digit_dec;                  
+        end loop;                                                      
+        dbms_output.put_line('decimal ==> '||result);                                                
+END; 

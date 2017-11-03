@@ -1,0 +1,61 @@
+column status format a10
+set feedback off
+set serveroutput on size 200000
+
+column username format a20
+column sql_text format a80 word_wrapped
+
+spool c:\session_wait_sql.txt
+
+select a.username, a.sid, a.serial#, a.process, a.status ,b.event,to_char(a.logon_time, 'Dy HH24:MI:SS') "Login Time"  ,to_char(a.last_call_et/60, '990.0') || ' min'
+from v$session a, v$session_wait b
+where username is not null and status='ACTIVE' 
+and a.sid = b.sid
+and ( ( b.event like '%file%' ) or ( b.event like '%buf%' ) )
+/
+
+--column username format a20
+--column sql_text format a80 word_wrapped
+
+
+begin
+    for x in 
+    (
+
+--- select username||'('||sid||','||serial#||') ospid = ' ||  process || ' program = ' || program username, 
+--- 	 to_char(LOGON_TIME,' Day HH24:MI') logon_time, 
+--- 	 to_char(sysdate,' Day HH24:MI') current_time, 
+---              sql_address,
+---              sql_hash_value
+---         from v$session
+---        where status = 'ACTIVE'
+ ---         and rawtohex(sql_address) <> '00'
+ ---         and username is not null 
+select a.username, a.sid, a.serial#, a.process, a.status ,b.event,
+      to_char(a.logon_time, 'Dy HH24:MI:SS'), to_char(LOGON_TIME,' Day HH24:MI') logon_time, to_char(sysdate,' Day HH24:MI') current_time,
+      sql_address,  sql_hash_value
+from v$session a, v$session_wait b
+where username is not null and status='ACTIVE' 
+and a.sid = b.sid
+and rawtohex(sql_address) <> '00'
+and rawtohex(sql_address) <> '00'
+and ( ( b.event like '%file%' ) or ( b.event like '%buf%' ) )
+) loop
+
+--
+         dbms_output.put_line( '--------------------' );
+         dbms_output.put_line( ' username ==> '||x.username ||' sid/serial ==> '||x.sid||'/'|| x.serial#);
+--
+--         dbms_output.put_line( x.logon_time || ' ' || x.current_time||' username ==> '||x.username ||' sid/serial ==> '||x.sid||'/'|| x.serial#);
+--         dbms_output.put_line( x.logon_time || ' ' || x.current_time);
+--
+        for c1 in ( select * from sys.v_$sqltext
+              where HASH_VALUE = x.sql_hash_value order by piece) loop
+          dbms_output.put_line(chr(9)||c1.sql_text);
+        end loop;
+    end loop;
+end;
+/
+
+spool off
+

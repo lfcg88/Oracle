@@ -1,0 +1,2 @@
+connect target / 
+connect catalog rman/rman

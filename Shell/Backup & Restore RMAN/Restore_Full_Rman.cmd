@@ -1,0 +1,1 @@
+rman cmdfile=restore.rman log=restore.log

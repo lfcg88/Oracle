@@ -1,0 +1,153 @@
+declare 
+v_lname  varchar2 (15);
+BEGIN
+	SELECT LAST_NAME INTO v_lname
+        FROM  EMPLOYEES
+        WHERE FIRST_NAME='John';
+       DBMS_OUTPUT.PUT_LINE ('John''S last name is : '||v_lname);
+end;
+ 
+set serveroutput on;
+declare 
+BEGIN
+       DBMS_OUTPUT.PUT_LINE ('Minha primeira procedure');
+end;
+/
+
+create or replace procedure pr_Fantoni is
+
+BEGIN
+	
+       DBMS_OUTPUT.PUT_LINE ('Minha primeira procedure');
+end;
+/
+
+
+Passando parametro
+pnome in varchar2
+create or replace procedure pr_Fantoni (pnome in varchar2) is
+BEGIN
+     DBMS_OUTPUT.PUT_LINE ('Minha primeira procedure');
+	
+end;
+/
+
+PARAMETRO DE ENTRADA IN
+PARAMETRO DE SAIDA ON 
+create or replace procedure pr_Fantoni (PNOME in varchar2) is
+BEGIN
+       DBMS_OUTPUT.PUT_LINE ('Minha primeira procedure '|| PNOME);
+	
+end;
+/
+
+
+
+
+create or replace procedure pr_Fantoni (PNOME in varchar2, PSAIDA OUT VARCHAR2)
+is
+BEGIN
+       DBMS_OUTPUT.PUT_LINE ('Minha primeira procedure '|| PNOME);E A PROCEDURE RETORNA POR PARAMETRO.
+       PSAIDA := TO_CHAR(SYSDATE, 'DD/MM/YYYY HH24:MI'); 
+end;
+/
+
+
+set serveroutput on;
+declare
+vmensagem varchar2 (40);
+
+begin
+pr_fantoni ('EDSON', vmensagem);
+dbms_output.put_line (vmensagem);
+end;
+/
+
+----------------
+
+FUNÇÃO
+
+
+create or replace FUNCTION FN_Fantoni (PNOME in varchar2)
+RETURN varchar2 is
+vsaida varchar2(40);
+
+BEGIN
+       DBMS_OUTPUT.PUT_LINE ('Minha primeira Função '|| PNOME);
+       vSAIDA := TO_CHAR(SYSDATE, 'DD/MM/YYYY HH24:MI'); 
+       return vsaida;
+end;
+/
+
+
+select FN_Fantoni('LEANDRO') FROM DUAL; 
+
+fUNÇÃO RETORNA PARA UMA VARIAVEL
+E A PROCEDURE RETORNA POR PARAMETRO.
+
+set serveroutput on;
+declare
+vmensagem varchar2 (40);
+
+begin
+VMENSAGEM:= FN_fantoni ('LEANDRO'); -----fUNÇÃO RETORNA PARA UMA VARIAVEL
+dbms_output.put_line (vmensagem);
+end;
+/
+
+ ATIVIDADE 09
+
+01- CRIE UMA FUNÇÃO DE SORTEIO QUE UTILIZE OS 
+CONCEITOS ABAIXO
+
+-ARRAY
+-EXCEPTION
+-FUNCTION
+
+APLIQUE A SUA LOGICA PARA CRIAR 
+UMA FUNÇÃO DE SORTEIO
+
+PODE SER UTLIZADO todo conhecimento aplicado na apostila
+de sql pl sql ministrado.
+
+
+
+create or replace FUNCTION FN_Fantoni (PNUMERO  in NUMBER2)
+RETURN varchar2 is
+
+
+
+vsaida varchar2(40);
+
+BEGIN
+CURSOR C_SORT IS (SELECT NOME  FROM PESSOA ) 
+
+
+       DBMS_OUTPUT.PUT_LINE ('Minha primeira Função '|| PNOME);
+       vSAIDA := TO_CHAR(SYSDATE, 'DD/MM/YYYY HH24:MI'); 
+       return vsaida;
+end;
+/
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+	

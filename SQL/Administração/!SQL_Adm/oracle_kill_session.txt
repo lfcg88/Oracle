@@ -1,0 +1,16 @@
+select 'alter system kill session '''||sid||','||serial#||''';'
+from v$session
+where username ='FRONTEND';
+
+
+SELECT 'alter system kill session '''||SID||','||SERIAL#||''' immediate; '
+from gv$session
+where username = 'M9000020'
+
+
+select SID, SERIAL#, USERNAME, OSUSER, TERMINAL, status,PROGRAM, STATE, SERVICE_NAME, LOGON_TIME FROM V$SESSION 
+where USERNAME = 'M9000020'
+ORDER BY LOGON_TIME
+
+
+ALTER SYSTEM KILL SESSION '140,62084' IMMEDIATE;

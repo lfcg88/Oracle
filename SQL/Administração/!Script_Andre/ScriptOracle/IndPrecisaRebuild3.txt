@@ -1,0 +1,90 @@
+/*
+    ANALYZE INDEX &&index_name VALIDATE STRUCTURE;
+
+    col name         heading 'Index Name'          format a30
+    col del_lf_rows  heading 'Deleted|Leaf Rows'   format 99999999
+    col lf_rows_used heading 'Used|Leaf Rows'      format 99999999
+    col ibadness     heading '% Deleted|Leaf Rows' format 999.99999
+
+ 	Browning is calculated by using the calculation:
+	(del_lf_rows_len/decode((lf_rows_len+del_lf_rows_len),0,1,lf_rows_len+del_lf_rows_len))*100
+	The values for the above calculation are taken from a temporary table built by analyzing all indexes using
+	the VALIDATE STRUCURE clause of the ANALYZE INDEX command. The statistics gathered are then
+	moved from the INDEX_STATS table (a one row table that contains the statistics for only the most
+	recently analyzed index) into the temporary table.
+								
+NAME 				Deleted 	 Filled  	ibadness
+------------------------------ ------------- ------------ 	-------
+I_ARHIST_3 			15,091,329 	361,274,732 	4.01
+I_AR_TURN_DEALER 		394,488 	823,958 	32.38
+I_BUNDLE_BO_2 				19 		95 	16.67
+I_BUNDLE_RESERVE_BUND 		9,705 		52,203 		15.68
+I_BUNDLE_RESERVE_CATVER 	17,736 		67,179 		20.89
+I_CHECKPNT_1 				19 		19 	50.00
+
+Any indices, with a major number of rows, showing a browning percent of greater than 20-30 percent are a
+candidate for rebuild. In Figure 8, the I_BUNDLE_RESERVE_CATVER index is a candidate while the
+I_CHECKPOINT_1 index is not.
+*/
+
+
+---------------------------------------------------------------------------
+--
+--
+---------------------------------------------------------------------------
+set serveroutput on size 1000000
+
+spool c:\analise_indice4536526352.lst
+
+Declare
+   Cursor c_index Is
+     Select owner,index_name
+     From dba_indexes
+     Where OWNER not in ('SYS','SYSTEM') and index_name not like '%REPORT%';
+   Cursor c_index_anal Is
+      Select name, 
+             del_lf_rows Deleted,
+             lf_rows - del_lf_rows Filled,
+            (del_lf_rows_len/decode((lf_rows_len+del_lf_rows_len),0,1,lf_rows_len+del_lf_rows_len))*100 ibadness 
+      From index_stats;
+   vsql varchar2(4000);
+   l_cursor    int ;
+--default dbms_sql.open_cursor;
+   l_status    int;
+   Deleted  Number;
+   Filled   Number;
+   Ibadness Number;
+--   
+Begin
+     For r_index in c_index Loop
+      l_cursor := dbms_sql.open_cursor;
+      vsql := 'analyze index '||r_index.owner||'.'||r_index.index_name||' validate structure';
+      dbms_sql.parse( l_cursor,vsql,dbms_sql.native );
+      l_status := dbms_sql.execute( l_cursor );
+      select del_lf_rows Deleted,
+             lf_rows - del_lf_rows Filled,
+             (del_lf_rows_len/decode((lf_rows_len+del_lf_rows_len),0,1,lf_rows_len+del_lf_rows_len))*100    
+             Into  Deleted,Filled,Ibadness
+      from index_stats;
+      Dbms_Output.Put_Line(rpad(r_index.owner||'.'||r_index.index_name,35,' ')||' '||to_char(Deleted,'9999999')||' '||to_char(Filled,'9999999')||' '||to_char(Ibadness,'999,99'));
+--
+      dbms_sql.close_cursor( l_cursor );
+   End Loop;
+--
+/*   select name, 
+           del_lf_rows Deleted,
+           lf_rows - del_lf_rows Filled,
+           (del_lf_rows_len/decode((lf_rows_len+del_lf_rows_len),0,1,lf_rows_len+del_lf_rows_len))*100 ibadness       
+    from index_stats
+    where owner = c_reg.owner and index_name=c_reg.index_name;
+*/
+end;
+/
+
+ed c:\analise_indice4536526352.lst
+
+
+
+
+
+

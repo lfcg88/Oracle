@@ -1,0 +1,50 @@
+imp sys@hrdes file=/backup/hrdes/hrprod.dmp log=/backup/hrdes/hrdes.log full=y ignore=y
+
+
+
+
+CREATE USER "SYSADM"  PROFILE "DEFAULT" 
+    IDENTIFIED BY "oracle" DEFAULT TABLESPACE "PSDEFAULT" 
+    TEMPORARY TABLESPACE "PSTEMP" 
+    ACCOUNT UNLOCK;
+GRANT UNLIMITED TABLESPACE TO "SYSADM"
+GRANT SELECT ON  "PS"."PSDBOWNER" TO "SYSADM"
+GRANT "PSADMIN" TO "SYSADM";
+
+
+
+sqlplus /nolog
+
+set instance fs89hom
+
+imp sys@fs89hom file=/backup/fs89hom/fdmprod.dmp log=/backup/fs89hom/fs89hom.log fromuser=sysadm touser=sysadm ignore=y
+
+imp sysadm/sysadm@fs89hom file=fdmprod.dmp log=fdmprod2.log tables=PS_GC_AP_SINISTRO_HOST,PS_GC_AP_RECI_ANT,PS_GC_AP_RECIBAO01_SAV ignore=y
+
+
+
+
+
+
+
+export ORACLE_SID=oraprod
+imp sys file=/backup/oraprod/oraprod_20090228.dmp log=/backup/oraprod/impforponto_20090306.log fromuser=forponto touser=forponto ignore=y
+
+CREATE USER "FORPONTO"  PROFILE "DEFAULT" 
+    IDENTIFIED BY "forponto" DEFAULT TABLESPACE "USERS" 
+    TEMPORARY TABLESPACE "TEMP" 
+    QUOTA UNLIMITED 
+    ON "FORPONTO" 
+    QUOTA UNLIMITED 
+    ON "INDX" 
+    QUOTA UNLIMITED 
+    ON "TS_CTB_DAT_01" 
+    ACCOUNT UNLOCK;
+GRANT CREATE VIEW TO "FORPONTO";
+GRANT UNLIMITED TABLESPACE TO "FORPONTO";
+GRANT "RESOURCE" TO "FORPONTO";
+GRANT "RL_USER" TO "FORPONTO";
+GRANT "RL_USUARIO_ACESSO" TO "FORPONTO";
+
+
+

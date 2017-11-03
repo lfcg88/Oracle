@@ -1,0 +1,535 @@
+
+<html><head><title>ASH Report - From 31-Mar-11 07:47:21 To 31-Mar-11 10:47:39</title>
+<style type="text/css">
+body.awr {font:bold 10pt Arial,Helvetica,Geneva,sans-serif;color:black; background:White;}
+pre.awr  {font:8pt Courier;color:black; background:White;}
+h1.awr   {font:bold 20pt Arial,Helvetica,Geneva,sans-serif;color:#336699;background-color:White;border-bottom:1px solid #cccc99;margin-top:0pt; margin-bottom:0pt;padding:0px 0px 0px 0px;}
+h2.awr   {font:bold 18pt Arial,Helvetica,Geneva,sans-serif;color:#336699;background-color:White;margin-top:4pt; margin-bottom:0pt;}
+h3.awr {font:bold 16pt Arial,Helvetica,Geneva,sans-serif;color:#336699;background-color:White;margin-top:4pt; margin-bottom:0pt;}
+li.awr {font: 8pt Arial,Helvetica,Geneva,sans-serif; color:black; background:White;}
+th.awrnobg {font:bold 8pt Arial,Helvetica,Geneva,sans-serif; color:black; background:White;padding-left:4px; padding-right:4px;padding-bottom:2px}
+th.awrbg {font:bold 8pt Arial,Helvetica,Geneva,sans-serif; color:White; background:#0066CC;padding-left:4px; padding-right:4px;padding-bottom:2px}
+td.awrnc {font:8pt Arial,Helvetica,Geneva,sans-serif;color:black;background:White;vertical-align:top;}
+td.awrc    {font:8pt Arial,Helvetica,Geneva,sans-serif;color:black;background:#FFFFCC; vertical-align:top;}
+td.awrnclb {font:8pt Arial,Helvetica,Geneva,sans-serif;color:black;background:White;vertical-align:top;border-left: thin solid black;}
+td.awrncbb {font:8pt Arial,Helvetica,Geneva,sans-serif;color:black;background:White;vertical-align:top;border-left: thin solid black;border-right: thin solid black;}
+td.awrncrb {font:8pt Arial,Helvetica,Geneva,sans-serif;color:black;background:White;vertical-align:top;border-right: thin solid black;}
+td.awrcrb    {font:8pt Arial,Helvetica,Geneva,sans-serif;color:black;background:#FFFFCC; vertical-align:top;border-right: thin solid black;}
+td.awrclb    {font:8pt Arial,Helvetica,Geneva,sans-serif;color:black;background:#FFFFCC; vertical-align:top;border-left: thin solid black;}
+td.awrcbb    {font:8pt Arial,Helvetica,Geneva,sans-serif;color:black;background:#FFFFCC; vertical-align:top;border-left: thin solid black;border-right: thin solid black;}
+a.awr {font:bold 8pt Arial,Helvetica,sans-serif;color:#663300; vertical-align:top;margin-top:0pt; margin-bottom:0pt;}
+td.awrnct {font:8pt Arial,Helvetica,Geneva,sans-serif;border-top: thin solid black;color:black;background:White;vertical-align:top;}
+td.awrct   {font:8pt Arial,Helvetica,Geneva,sans-serif;border-top: thin solid black;color:black;background:#FFFFCC; vertical-align:top;}
+td.awrnclbt  {font:8pt Arial,Helvetica,Geneva,sans-serif;color:black;background:White;vertical-align:top;border-top: thin solid black;border-left: thin solid black;}
+td.awrncbbt  {font:8pt Arial,Helvetica,Geneva,sans-serif;color:black;background:White;vertical-align:top;border-left: thin solid black;border-right: thin solid black;border-top: thin solid black;}
+td.awrncrbt {font:8pt Arial,Helvetica,Geneva,sans-serif;color:black;background:White;vertical-align:top;border-top: thin solid black;border-right: thin solid black;}
+td.awrcrbt     {font:8pt Arial,Helvetica,Geneva,sans-serif;color:black;background:#FFFFCC; vertical-align:top;border-top: thin solid black;border-right: thin solid black;}
+td.awrclbt     {font:8pt Arial,Helvetica,Geneva,sans-serif;color:black;background:#FFFFCC; vertical-align:top;border-top: thin solid black;border-left: thin solid black;}
+td.awrcbbt   {font:8pt Arial,Helvetica,Geneva,sans-serif;color:black;background:#FFFFCC; vertical-align:top;border-top: thin solid black;border-left: thin solid black;border-right: thin solid black;}
+table.tdiff {  border_collapse: collapse; }
+</style></head><body class="awr">
+<h1 class="awr">
+ASH Report For PCORP2/PCORP2
+
+</h1>
+<p />
+<table border="1" width="500">
+<tr><th class="awrbg">DB Name</th><th class="awrbg">DB Id</th><th class="awrbg">Instance</th><th class="awrbg">Inst num</th><th class="awrbg">Release</th><th class="awrbg">RAC</th><th class="awrbg">Host</th></tr>
+<tr><td class='awrnc'>PCORP2</td><td align="right" class='awrnc'>4057681452</td><td class='awrnc'>PCORP2</td><td align="right" class='awrnc'>1</td><td class='awrnc'>11.2.0.2.0</td><td class='awrnc'>NO</td><td class='awrnc'>dc8003.fgv.br</td></tr>
+</table>
+<p />
+<p />
+<table border="1" width="500">
+<tr><th class="awrbg">CPUs</th><th class="awrbg">SGA Size</th><th class="awrbg">Buffer Cache</th><th class="awrbg">Shared Pool</th><th class="awrbg">ASH Buffer Size</th></tr>
+<tr><td align="right" class='awrnc'>16</td><td align="right" class='awrnc'>5,034M (100%)</td><td align="right" class='awrnc'>3,328M (66.1%)</td><td align="right" class='awrnc'>679M (13.5%)</td><td align="right" class='awrnc'>17.6M (0.3%)</td></tr>
+</table>
+<p />
+<p />
+<table border="1" width="500">
+<tr><th class="awrnobg"></th><th class="awrbg">Sample Time</th><th class="awrbg">Data Source</th></tr>
+<tr><td class='awrc'>Analysis Begin Time:</td><td align="right" class='awrc'>31-Mar-11 07:47:21</td><td align="center" class='awrc'>DBA_HIST_ACTIVE_SESS_HISTORY<br />in AWR snapshot 6556</td></tr>
+<tr><td class='awrnc'>Analysis End Time:</td><td align="right" class='awrnc'>31-Mar-11 10:47:39</td><td align="center" class='awrnc'>DBA_HIST_ACTIVE_SESS_HISTORY<br />in AWR snapshot 6561<br /> + V$ACTIVE_SESSION_HISTORY</td></tr>
+<tr><td class='awrc'>Elapsed Time:</td><td align="right" class='awrc'>     180.3 (mins) </td><td align="center" class='awrc'>&#160;</td></tr>
+<tr><td class='awrnc'>Sample Count:</td><td align="right" class='awrnc'>     25,911</td><td class='awrnc'>&#160;</td></tr>
+<tr><td class='awrc'>Average Active Sessions:</td><td align="right" class='awrc'>      23.95</td><td class='awrc'>&#160;</td></tr>
+<tr><td class='awrnc'>Avg. Active Session per CPU:</td><td align="right" class='awrnc'>       1.50</td><td class='awrnc'>&#160;</td></tr>
+<tr><td class='awrnc'>Report Target:</td><td align="right" class='awrnc'>None specified</td><td align="center" class='awrnc'>&#160;</td></tr>
+</table>
+<p />
+<a class="awr" name="top"></a>
+<h2 class="awr">
+ASH Report
+</h2>
+<ul>
+<li class="awr"><a class="awr" href="#101">Top Events</a></li>
+<li class="awr"><a class="awr" href="#102">Load Profile</a></li>
+<li class="awr"><a class="awr" href="#104">Top SQL</a></li>
+<li class="awr"><a class="awr" href="#10380">Top PL/SQL</a></li>
+<li class="awr"><a class="awr" href="#10390">Top Java</a></li>
+<li class="awr"><a class="awr" href="#10391">Top Call Types</a></li>
+<li class="awr"><a class="awr" href="#105">Top Sessions</a></li>
+<li class="awr"><a class="awr" href="#106">Top Objects/Files/Latches</a></li>
+<li class="awr"><a class="awr" href="#10200">Activity Over Time</a></li>
+</ul>
+<br /><a class="awr" href="#top">Back to Top</a><hr /><p />
+<a class="awr" name="101"></a>
+<h2 class="awr">
+Top Events
+</h2>
+<ul>
+<li class="awr"><a class="awr" href="#10010">Top User Events</a></li>
+<li class="awr"><a class="awr" href="#10020">Top Background Events</a></li>
+<li class="awr"><a class="awr" href="#10030">Top Event P1/P2/P3 Values</a></li>
+</ul>
+<a class="awr" href="#top">Back to Top</a><p />
+<a class="awr" name="10010"></a>
+<h3 class="awr">Top User Events</h3>
+<ul>
+</ul>
+<table border="1"><tr><th class="awrbg">Event</th><th class="awrbg">Event Class</th><th class="awrbg">% Event</th><th class="awrbg">Avg Active Sessions</th></tr>
+<tr><td class='awrc'>CPU + Wait for CPU</td><td class='awrc'>CPU</td><td align="right" class='awrc'>62.78</td><td align="right" class='awrc'>15.04</td></tr>
+<tr><td class='awrnc'>virtual circuit wait</td><td class='awrnc'>Network</td><td align="right" class='awrnc'>15.99</td><td align="right" class='awrnc'>3.83</td></tr>
+<tr><td class='awrc'>read by other session</td><td class='awrc'>User I/O</td><td align="right" class='awrc'>5.50</td><td align="right" class='awrc'>1.32</td></tr>
+<tr><td class='awrnc'>db file sequential read</td><td class='awrnc'>User I/O</td><td align="right" class='awrnc'>4.14</td><td align="right" class='awrnc'>0.99</td></tr>
+<tr><td class='awrc'>latch: cache buffers chains</td><td class='awrc'>Concurrency</td><td align="right" class='awrc'>2.42</td><td align="right" class='awrc'>0.58</td></tr>
+</table><p />
+<a class="awr" href="#101">Back to Top Events</a>
+<br /><a class="awr" href="#top">Back to Top</a><p />
+<a class="awr" name="10020"></a>
+<h3 class="awr">Top Background Events</h3>
+
+<p />
+                  No data exists for this section of the report.
+<p />
+<a class="awr" href="#101">Back to Top Events</a>
+<br /><a class="awr" href="#top">Back to Top</a><p />
+<a class="awr" name="10030"></a>
+<h3 class="awr">Top Event P1/P2/P3 Values</h3>
+<ul>
+</ul>
+<table border="1"><tr><th class="awrbg">Event</th><th class="awrbg">% Event</th><th class="awrbg">P1 Value, P2 Value, P3 Value</th><th class="awrbg">% Activity</th><th class="awrbg">Parameter 1</th><th class="awrbg">Parameter 2</th><th class="awrbg">Parameter 3</th></tr>
+<tr><td class='awrc'>virtual circuit wait</td><td align="right" class='awrc'>15.97</td><td align="right" class='awrc'>&quot;10&quot;,&quot;2&quot;,&quot;0&quot;</td><td align="right" class='awrc'>2.78</td>
+<td class='awrc'>circuit#</td><td class='awrc'>type</td><td class='awrc'>NOT DEFINED</td></tr>
+<tr><td class='awrnc'>&#160;</td><td align="right" class='awrnc'>&#160;</td><td align="right" class='awrnc'>&quot;207&quot;,&quot;2&quot;,&quot;0&quot;</td><td align="right" class='awrnc'>2.52</td>
+<td class='awrnc'>&#160;</td><td class='awrnc'>&#160;</td><td class='awrnc'>&#160;</td></tr>
+<tr><td class='awrc'>&#160;</td><td align="right" class='awrc'>&#160;</td><td align="right" class='awrc'>&quot;34&quot;,&quot;2&quot;,&quot;0&quot;</td><td align="right" class='awrc'>2.31</td>
+<td class='awrc'>&#160;</td><td class='awrc'>&#160;</td><td class='awrc'>&#160;</td></tr>
+<tr><td class='awrnc'>read by other session</td><td align="right" class='awrnc'>5.48</td><td align="right" class='awrnc'>&quot;2&quot;,&quot;2713825&quot;,&quot;1&quot;</td><td align="right" class='awrnc'>0.05</td>
+<td class='awrnc'>file#</td><td class='awrnc'>block#</td><td class='awrnc'>class#</td></tr>
+<tr><td class='awrc'>db file sequential read</td><td align="right" class='awrc'>4.19</td><td align="right" class='awrc'>&quot;1&quot;,&quot;5513&quot;,&quot;1&quot;</td><td align="right" class='awrc'>0.00</td>
+<td class='awrc'>file#</td><td class='awrc'>block#</td><td class='awrc'>blocks</td></tr>
+<tr><td class='awrnc'>latch: cache buffers chains</td><td align="right" class='awrnc'>2.42</td><td align="right" class='awrnc'>&quot;6850515640&quot;,&quot;155&quot;,&quot;0&quot;</td><td align="right" class='awrnc'>0.05</td>
+<td class='awrnc'>address</td><td class='awrnc'>number</td><td class='awrnc'>tries</td></tr>
+<tr><td class='awrc'>db file scattered read</td><td align="right" class='awrc'>2.25</td><td align="right" class='awrc'>&quot;2&quot;,&quot;783665&quot;,&quot;79&quot;</td><td align="right" class='awrc'>0.01</td>
+<td class='awrc'>file#</td><td class='awrc'>block#</td><td class='awrc'>blocks</td></tr>
+</table><p />
+<a class="awr" href="#101">Back to Top Events</a>
+<br /><a class="awr" href="#top">Back to Top</a><p />
+<p />
+<a class="awr" name="102"></a>
+<h2 class="awr">
+Load Profile
+</h2>
+<ul>
+<li class="awr"><a class="awr" href="#10100">Top Service/Module</a></li>
+<li class="awr"><a class="awr" href="#10110">Top Client IDs</a></li>
+<li class="awr"><a class="awr" href="#10120">Top SQL Command Types</a></li>
+<li class="awr"><a class="awr" href="#10130">Top Phases of Execution</a></li>
+</ul>
+<a class="awr" href="#top">Back to Top</a><p />
+<a class="awr" name="10100"></a>
+<h3 class="awr">Top Service/Module</h3>
+<ul>
+</ul>
+<table border="1"><tr><th class="awrbg">Service</th><th class="awrbg">Module</th><th class="awrbg">% Activity</th><th class="awrbg">Action</th><th class="awrbg">% Action</th></tr>
+<tr><td class='awrc'>PCORP2</td><td class='awrc'>w3wp.exe</td><td align="right" class='awrc'>74.14</td><td class='awrc'>UNNAMED</td><td align="right" class='awrc'>74.14</td></tr>
+<tr><td class='awrnc'>&#160;</td><td class='awrnc'>UNNAMED</td><td align="right" class='awrnc'>15.57</td><td class='awrnc'>UNNAMED</td><td align="right" class='awrnc'>15.57</td></tr>
+<tr><td class='awrc'>&#160;</td><td class='awrc'>SQL*Plus</td><td align="right" class='awrc'>3.33</td><td class='awrc'>UNNAMED</td><td align="right" class='awrc'>3.33</td></tr>
+</table><p />
+<a class="awr" href="#102">Back to Load Profile</a>
+<br /><a class="awr" href="#top">Back to Top</a><p />
+<a class="awr" name="10110"></a>
+<h3 class="awr">Top Client IDs</h3>
+
+<p />
+                  No data exists for this section of the report.
+<p />
+<a class="awr" href="#102">Back to Load Profile</a>
+<br /><a class="awr" href="#top">Back to Top</a><p />
+<a class="awr" name="10120"></a>
+<h3 class="awr">Top SQL Command Types</h3>
+<ul>
+<li class="awr"> 'Distinct SQLIDs' is the count of the distinct number of SQLIDs       with the given SQL Command Type found over all the ASH samples       in the analysis period</li>
+</ul>
+<table border="1"><tr><th class="awrbg">SQL Command Type</th><th class="awrbg">Distinct SQLIDs</th><th class="awrbg">% Activity</th><th class="awrbg">Avg Active Sessions</th></tr>
+<tr><td class='awrc'>SELECT</td><td align="right" class='awrc'>13,174</td><td align="right" class='awrc'>78.06</td><td align="right" class='awrc'>18.70</td></tr>
+<tr><td class='awrnc'>INSERT</td><td align="right" class='awrnc'>75</td><td align="right" class='awrnc'>4.06</td><td align="right" class='awrnc'>0.97</td></tr>
+<tr><td class='awrc'>UPDATE</td><td align="right" class='awrc'>150</td><td align="right" class='awrc'>1.13</td><td align="right" class='awrc'>0.27</td></tr>
+</table><p />
+<a class="awr" href="#102">Back to Load Profile</a>
+<br /><a class="awr" href="#top">Back to Top</a><p />
+<a class="awr" name="10130"></a>
+<h3 class="awr">Top Phases of Execution</h3>
+<ul>
+</ul>
+<table border="1"><tr><th class="awrbg">Phase of Execution</th><th class="awrbg">% Activity</th><th class="awrbg">Avg Active Sessions</th></tr>
+<tr><td class='awrc'>SQL Execution</td><td align="right" class='awrc'>77.84</td><td align="right" class='awrc'>18.64</td></tr>
+<tr><td class='awrnc'>Parse</td><td align="right" class='awrnc'>4.77</td><td align="right" class='awrnc'>1.14</td></tr>
+<tr><td class='awrc'>Hard Parse</td><td align="right" class='awrc'>4.52</td><td align="right" class='awrc'>1.08</td></tr>
+<tr><td class='awrnc'>PLSQL RPC</td><td align="right" class='awrnc'>3.18</td><td align="right" class='awrnc'>0.76</td></tr>
+</table><p />
+<a class="awr" href="#102">Back to Load Profile</a>
+<br /><a class="awr" href="#top">Back to Top</a><p />
+<p />
+<a class="awr" name="104"></a>
+<h2 class="awr">
+Top SQL
+</h2>
+<ul>
+<li class="awr"><a class="awr" href="#10300">Top SQL with Top Events</a></li>
+<li class="awr"><a class="awr" href="#10305">Top SQL with Top Row Sources</a></li>
+<li class="awr"><a class="awr" href="#10370">Top SQL using literals</a></li>
+<li class="awr"><a class="awr" href="#10375">Top Parsing Module/Action</a></li>
+<li class="awr"><a class="awr" href="#99997">Complete List of SQL Text</a></li>
+</ul>
+<a class="awr" href="#top">Back to Top</a><p />
+<a class="awr" name="10300"></a>
+<h3 class="awr">Top SQL with Top Events</h3>
+<ul>
+</ul>
+<table border="1"><tr><th class="awrbg">SQL ID</th><th class="awrbg">Planhash</th><th class="awrbg">Sampled # of Executions</th><th class="awrbg">% Activity</th><th class="awrbg">Event</th><th class="awrbg">% Event</th><th class="awrbg">Top Row Source</th><th class="awrbg">% RwSrc</th><th class="awrbg">SQL Text</th></tr>
+<tr><td align="right" class='awrc'><a class="awr" href="#ff00yh6v0tj8y">ff00yh6v0tj8y</a></td><td align="right" class='awrc'>2940668252</td><td align="right" class='awrc'>1</td><td align="right" class='awrc'>1.49</td>
+<td class='awrc'>CPU + Wait for CPU</td><td align="right" class='awrc'>0.83</td><td class='awrc'>** Row Source Not Available **</td><td align="right" class='awrc'>0.38</td>
+<td class='awrc'>insert into temp_excel select ...</td></tr>
+</table><p />
+<a class="awr" href="#104">Back to Top SQL</a>
+<br /><a class="awr" href="#top">Back to Top</a><p />
+<a class="awr" name="10305"></a>
+<h3 class="awr">Top SQL with Top Row Sources</h3>
+<ul>
+</ul>
+<table border="1"><tr><th class="awrbg">SQL ID</th><th class="awrbg">PlanHash</th><th class="awrbg">Sampled # of Executions</th><th class="awrbg">% Activity</th><th class="awrbg">Row Source</th><th class="awrbg">% RwSrc</th><th class="awrbg">Top Event</th><th class="awrbg">% Event</th><th class="awrbg">SQL Text</th></tr>
+<tr><td align="right" class='awrc'><a class="awr" href="#ff00yh6v0tj8y">ff00yh6v0tj8y</a></td><td align="right" class='awrc'>2940668252</td><td align="right" class='awrc'>1</td><td align="right" class='awrc'>1.47</td>
+<td class='awrc'>** Row Source Not Available **</td><td align="right" class='awrc'>0.47</td><td class='awrc'>CPU + Wait for CPU</td><td align="right" class='awrc'>0.38</td>
+<td class='awrc'>insert into temp_excel select ...</td></tr>
+</table><p />
+<a class="awr" href="#104">Back to Top SQL</a>
+<br /><a class="awr" href="#top">Back to Top</a><p />
+<a class="awr" name="10370"></a>
+<h3 class="awr">Top SQL using literals</h3>
+<ul>
+<li class="awr"> FORCE_MATCHING_SIGNATURE is used to identify SQL statements that are        identical except for their use of literals. </li>
+<li class="awr"> Please refer to the Oracle Database Reference to understand how        the FORCE_MATCHING_SIGNATURE is derived.</li>
+</ul>
+<table border="1"><tr><th class="awrbg">FORCE_MATCHING_SIGNATURE</th><th class="awrbg">% Activity</th><th class="awrbg"># of Sampled SQL Versions</th><th class="awrbg">Example SQL 1</th><th class="awrbg">Example SQL TEXT 1</th><th class="awrbg">Example SQL 2</th><th class="awrbg">Example SQL TEXT 2</th></tr>
+<tr><td align="right" class='awrc'>15769640186127480968</td><td align="right" class='awrc'>1.64</td><td align="right" class='awrc'>303</td>
+<td class='awrc'>&#160;</td>
+<td class='awrc'>&#160;</td>
+<td class='awrc'>&#160;</td>
+<td class='awrc'>&#160;</td></tr>
+<tr><td align="right" class='awrnc'>3375665691393297206</td><td align="right" class='awrnc'>1.52</td><td align="right" class='awrnc'>296</td>
+<td class='awrnc'><a class="awr" href="#08uvunbu6thm5">08uvunbu6thm5</a></td>
+<td class='awrnc'>SELECT matr.MATR_CD, matr.ANO_...</td>
+<td class='awrnc'><a class="awr" href="#gts3t842ptfsx">gts3t842ptfsx</a></td>
+<td class='awrnc'>SELECT matr.MATR_CD, matr.ANO_...</td></tr>
+<tr><td align="right" class='awrc'>17756867453653763407</td><td align="right" class='awrc'>1.51</td><td align="right" class='awrc'>295</td>
+<td class='awrc'><a class="awr" href="#05mgumdyd6vtb">05mgumdyd6vtb</a></td>
+<td class='awrc'>SELECT MC.MATR_CD, MC.ANO_NR F...</td>
+<td class='awrc'><a class="awr" href="#gzg3hpwycxn0w">gzg3hpwycxn0w</a></td>
+<td class='awrc'>SELECT MC.MATR_CD, MC.ANO_NR F...</td></tr>
+<tr><td align="right" class='awrnc'>13279932780644973333</td><td align="right" class='awrnc'>1.50</td><td align="right" class='awrnc'>56</td>
+<td class='awrnc'><a class="awr" href="#011vnavshq39m">011vnavshq39m</a></td>
+<td class='awrnc'>SELECT EO.PROD_CD, EO.SUB_PROD...</td>
+<td class='awrnc'><a class="awr" href="#gyhn16r064shw">gyhn16r064shw</a></td>
+<td class='awrnc'>SELECT EO.PROD_CD, EO.SUB_PROD...</td></tr>
+</table><p />
+<a class="awr" href="#104">Back to Top SQL</a>
+<br /><a class="awr" href="#top">Back to Top</a><p />
+<a class="awr" name="10375"></a>
+<h3 class="awr">Top Parsing Module/Action</h3>
+<ul>
+</ul>
+<table border="1"><tr><th class="awrbg">Module</th><th class="awrbg">Action</th><th class="awrbg">% Activity</th><th class="awrbg">Event</th><th class="awrbg">% Event</th></tr>
+<tr><td class='awrc'>w3wp.exe</td><td class='awrc'>&#160;</td><td align="right" class='awrc'>4.61</td><td class='awrc'>CPU + Wait for CPU</td><td align="right" class='awrc'>3.70</td></tr>
+</table><p />
+<a class="awr" href="#104">Back to Top SQL</a>
+<br /><a class="awr" href="#top">Back to Top</a><p />
+<a class="awr" name="99997"></a>
+<p />
+<h3 class="awr">Complete List of SQL Text</h3><p />
+<table border="1">
+<tr><th class="awrbg">SQL Id</th><th class="awrbg">SQL Text</th></tr>
+<tr><td class='awrc'><a class="awr" name="011vnavshq39m"></a>011vnavshq39m</td><td class='awrc'>
+SELECT EO.PROD_CD,  EO.SUB_PROD_CD,  EO.CURSO_PROD_EAD_CD, EO.CURSO_PROD_EAD_DATA_SQ,  TO_CHAR(EV.DATA_INIC, 'DD/MM/YYYY') DATA_OCORR, PC.PROD_CARGA_HORARIA_NR FROM EADOCORR EO, EADCURSO EC,  PRODCARAC PC,  (SELECT EO1.PROD_CD,  EO1.SUB_PROD_CD,  EO1.CURSO_PROD_EAD_CD,          MIN(EO1.PROD_EAD_INIC_OCORR_DT) DATA_INIC  FROM EADOCORR EO1,  EADPLANCURSO EP1  WHERE EO1.PROD_CD=EP1.PROD_CD     AND EO1.SUB_PROD_CD=EP1.SUB_PROD_CD    AND EO1.CURSO_PROD_EAD_CD=EP1.CURSO_PROD_EAD_CD    AND EO1.CURSO_PR
+OD_EAD_DATA_SQ=EP1.CURSO_PROD_EAD_DATA_SQ    AND EO1.SIT_PROD_CURSO_OCORR_CD='EOLIB'    AND EO1.CURSO_OCORR_EAD_TIPO_CD='LIVRE'    AND (EO1.PROD_CD, EO1.SUB_PROD_CD, EO1.CURSO_PROD_EAD_CD, EP1.PLANO_EAD_CD)        NOT IN (SELECT PROD_CD, SUB_PROD_CD, CURSO_PROD_EAD_CD, PLANO_EAD_CD     FROM EMPLANCURSO PC     WHERE PC.PROD_CD = 'GCREAD' AND PC.SUB_PROD_CD = '00' AND PC.CURSO_PROD_EAD_CD = EO1.CURSO_PROD_EAD_CD  AND PC.CURSO_PROD_EAD_DATA_SQ = EO1.CURSO_PROD_EAD_DATA_SQ)  GROUP BY EO1.PROD_CD, EO
+1.SUB_PROD_CD, EO1.CURSO_PROD_EAD_CD) EV WHERE EV.PROD_CD=EO.PROD_CD AND PC.PROD_CD=EO.PROD_CD AND PC.SUB_PROD_CD=EO.SUB_PROD_CD AND EV.SUB_PROD_CD=EO.SUB_PROD_CD AND EV.CURSO_PROD_EAD_CD=EO.CURSO_PROD_EAD_CD AND TRUNC(EV.DATA_INIC)=TRUNC(EO.PROD_EAD_INIC_OCORR_DT) AND EO.PROD_CD=EC.PROD_CD AND EO.SUB_PROD_CD=EC.SUB_PROD_CD AND EO.CURSO_PROD_EAD_CD=EC.CURSO_PROD_EAD_CD AND EO.CURSO_OCORR_EAD_TIPO_CD='LIVRE' AND TRUNC(CARACT_CURSO_EAD_DT)=(SELECT TRUNC(MAX(CARACT_CURSO_EAD_DT))            FROM EA
+
+DCURSO            WHERE PROD_CD=EO.PROD_CD AND                  SUB_PROD_CD=EO.SUB_PROD_CD AND                  SIT_PROD_CURSO_CD='ECLIB' AND                 (PROD_CD, SUB_PROD_CD, CURSO_PROD_EAD_CD, CURSO_PROD_EAD_DATA_SQ) IN (SELECT PROD_CD, SUB_PROD_CD, CURSO_PROD_EAD_CD, CURSO_PROD_EAD_DATA_SQ                                                                                     FROM EADOCORR                                                                                     WHERE CURSO_OCORR_E
+AD_TIPO_CD='LIVRE' )  ) AND EO.PROD_CD = 'GCREAD'AND EO.SUB_PROD_CD = '00'</td></tr>
+
+<tr><td class='awrnc'><a class="awr" name="05mgumdyd6vtb"></a>05mgumdyd6vtb</td><td class='awrnc'>SELECT MC.MATR_CD,  MC.ANO_NR  FROM EADOCORR EO,   EADPREMATR EP,   MATCURSOEAD MC,   HISTMATEAD H,   EMPEADOCORR EM,   EADPROSPCURSO EC  WHERE EC.PROD_CD=EO.PROD_CD  AND EC.SUB_PROD_CD=EO.SUB_PROD_CD  AND EC.PESSOA_CD=EM.PESSOA_CD  AND EC.SITUACAO_CD='LIBER'  AND EP.EAD_INSCR_SQ = MC.EAD_INSCR_SQ  AND MC.MATR_CD = H.MATR_CD  AND MC.ANO_NR = H.ANO_NR  AND MC.PROD_CD = H.PROD_CD  AND MC.SUB_PROD_CD =
+ H.SUB_PROD_CD  AND MC.CURSO_PROD_EAD_CD = H.CURSO_PROD_EAD_CD  AND MC.CURSO_PROD_EAD_DATA_SQ = H.CURSO_PROD_EAD_DATA_SQ  AND EO.PROD_CD = MC.PROD_CD  AND EO.SUB_PROD_CD = MC.SUB_PROD_CD  AND EO.CURSO_PROD_EAD_CD = MC.CURSO_PROD_EAD_CD  AND EO.CURSO_PROD_EAD_DATA_SQ = MC.CURSO_PROD_EAD_DATA_SQ  AND EO.PROD_CD = EM.PROD_CD  AND EO.SUB_PROD_CD = EM.SUB_PROD_CD  AND EO.CURSO_PROD_EAD_CD = EM.CURSO_PROD_EAD_CD  AND EO.CURSO_PROD_EAD_DATA_SQ = EM.CURSO_PROD_EAD_DATA_SQ  AND EM.PESSOA_CD='140430' AND
+ H.TURMA_DISC_CD='AVFINEAD_T0049_0311' AND  UPPER(EP.EAD_USERID_DS)=UPPER('FauziJorge')</td></tr>
+
+<tr><td class='awrc'><a class="awr" name="08uvunbu6thm5"></a>08uvunbu6thm5</td><td class='awrc'>SELECT matr.MATR_CD,  matr.ANO_NR,  matr.PROD_CD,  matr.SUB_PROD_CD,  matr.CURSO_PROD_EAD_CD,  matr.CURSO_PROD_EAD_DATA_SQ,  prod.PROD_DS,  matr.NOTA_CURSO_VL,  matr.SIT_ACAD_CD,  matr.SIT_CERTIF_CD,  requ.REQUER_EAD_SAIDA_DT,  requ.REQUER_EAD_CD FROM  BASE_SIGA.MATRICULA_CURSO_EAD_SIGA matr,  BASE_SIGA.produto prod, 		  (SELECT * FROM BASE_SIGA.REQUERIMENTO_EAD_SIGA		  		  WHERE REQUER_EAD_CD     = '
+CERT') requ where matr.prod_cd           = prod.prod_cd and   matr.MATR_CD           = requ.MATR_CD(+) and   matr.ANO_NR            = requ.ANO_NR(+) and   matr.PROD_CD           = requ.PROD_CD(+) and   matr.SUB_PROD_CD       = requ.SUB_PROD_CD(+) and   matr.CURSO_PROD_EAD_CD = requ.CURSO_PROD_EAD_CD(+) and   sit_acad_dt = (select max(sit_acad_dt) from matcursoead mc where mc.matr_cd=matr.matr_cd and mc.ano_nr=matr.ano_nr) and matr.ANO_NR = '2009' and matr.PROD_CD = 'PDEEAD' and matr.SUB_PROD_CD
+= '00' and matr.CURSO_PROD_EAD_CD = '01/2006' and matr.CURSO_PROD_EAD_DATA_SQ = '4' and matr.MATR_CD = '13862'  AND matr.ANO_NR = 2009</td></tr>
+
+<tr><td class='awrnc'><a class="awr" name="ff00yh6v0tj8y"></a>ff00yh6v0tj8y</td><td class='awrnc'>
+insert into temp_excel select 'C1', V.CD_SERVICO||chr(9)||d.DS_DOCCOBR||chr(9)||' '||to_char(V.CD_CCFGV)||chr(9)||replace(e.nm_cli_endcobr, chr(09), null )||chr(9)||
+                      decode(length(e.cd_cgc_cpf_endcobr), 11, substr(e.cd_cgc_cpf_endcobr, 1, 3)||'.'||substr(e.cd_cgc_cpf_endcobr, 4, 3)||'.'||substr(e.cd_cgc_cpf_endcobr, 7, 3)||'-'||substr(e.cd_cgc_cpf_endcobr, 10, 2),
+                                                          14, substr(e.cd_cgc_cpf_endcobr, 1, 2)||'.'||substr(e.cd_cgc_cpf_endcobr, 3, 3)||'.'||substr(e.cd_cgc_cpf_endcobr, 6, 3)||'/'||substr(e.cd_cgc_cpf_endcobr, 9, 4)||'-'||substr(e.cd_cgc_cpf_endcobr, 13, 2))||chr(9)||
+                      ' '||to_char(V.NR_FATURA)||'/'||to_char(V.NR_ANO_FATURA)||chr(9)||
+                      to_char(V.DT_EMIS_FATURA, 'dd/mm/yyyy')||chr(9)||
+                      F_SQL_SITFAT_AGRUP_HIST(V.CD_SITCOBR, V.CD_OCOR_BANC_FATURA, V.DT_OCOR_FATURA, V.DT_OCOR_MAN_FATURA, V.DT_VENC_FATURA, V.DT_EMIS_FATURA, '31-MAR-11')||chr(9)||
+                      F_STATUS_COBRANCA (V.CD_SERVICO, V.NR_FATURA,  V.NR_ANO_FATURA, V.CD_DOCCOBR)||chr(09)||
+                      replace(to_char(V.VL_VIG_FATURA, '999999990.00'), '.', ', ')||chr(9)||
+                      replace(to_char(nvl(V.VL_vig_FATURA*(100-cc.perc_it)/100, 0), '999999990.00'), '.', ', ')||chr(9)||
+                      replace(to_char(nvl(V.VL_vig_FATURA*(cc.perc_it)/100, 0), '999999990.00'), '.', ', ')||chr(9)||
+                      replace(cc.perc_it, '.', ',
+
+')||'%'||chr(9)||
+                      to_char(V.DT_VENC_FATURA, 'dd/mm/yyyy')||chr(9)||
+                      decode(F_SQL_SITFAT_AGRUP_HIST(V.CD_SITCOBR, V.CD_OCOR_BANC_FATURA, V.DT_OCOR_FATURA, V.DT_OCOR_MAN_FATURA, V.DT_VENC_FATURA, V.DT_EMIS_FATURA, '31-MAR-11'), 'QUITADAS', decode(V.cd_ocor_banc_fatura, 6, to_char(V.DT_OCOR_FATURA, 'dd/mm/yyyy'), to_char(V.DT_OCOR_MAN_FATURA, 'dd/mm/yyyy')), 'CANCELADAS', to_char(V.DT_OCOR_MAN_FATURA, 'dd/mm/yyyy'), ' ')||chr(9)||
+                      to_char(V.dt_pago_cli_fatura, 'dd/mm/yyyy')||chr(9)||
+                      ' '||replace(to_char(V.VL_PAGO_FATURA, '999999990.00'), '.', ', ')||chr(9)||
+                      replace(to_char(V.vl_vig_fatura, '999999990.00'), '.', ', ') ||chr(9)||
+                      replace(to_char(V.vl_uni_fatura, '999999990.00'), '.', ', ') ||chr(9)||
+                      replace(to_char(ROUND(NVL(FD.VL_CORR_CONFDIV, FD.VL_TOT_CONFDIV )/6, 2), '999999990.00'), '.', ', ') ||chr(9)||
+                      f_contato(v.cd_servico, v.cd_ext_servcli)||chr(9)||
+                      n.nr_nfe ||chr(9)||
+                      to_char(n.dt_emis_nfe, 'dd/mm/yyyy') ||chr(9)||
+                      n.cd_verif_nfe ||chr(9)||
+                      n.ds_insc_munic campo1
+                 from fatura V ,  endcobr e,  doccobr d, ccfgv cc,  fb_confissao_divida fd,  fb_parcelas_confissao_divida fp,
+                      nfefat n
+                where V.cd_servico = e.cd_servico
+
+
+and V.nr_fatura      = e.nr_fatura
+                  and V.nr_ano_fatura  = e.nr_ano_fatura
+                  and V.cd_doccobr     = e.cd_doccobr
+                  and V.cd_doccobr     = d.cd_doccobr
+                  and v.cd_servico     = fp.CD_SERVICO(+)
+                  and v.nr_fatura      = fp.NR_FATURA(+)
+                  and v.nr_ano_fatura  = fp.NR_ANO_FATURA(+)
+                  and v.cd_doccobr     = fp.CD_DOCCOBR(+)
+                  and v.cd_servico     = n.CD_SERVICO(+)
+                  and v.nr_fatura      = n.NR_FATURA(+)
+                  and v.nr_ano_fatura  = n.NR_ANO_FATURA(+)
+                  and v.cd_doccobr     = n.CD_DOCCOBR(+)
+                  and fd.cd_confdiv(+) = fp.CD_CONFDIV
+                  and cc.cd_ccfgv_erp  = V.CD_CCFGV AND  V.CD_DOCCOBR = '01' AND  trunc(V.DT_VENC_FATURA) &gt;= '30-MAR-11' AND  trunc(V.DT_VENC_FATURA) &lt;= '30-APR-11' AND V.NR_ANO_FATURA &gt;= 2000 AND V.NR_ANO_FATURA &lt;= 2011 AND V.CD_SERVICO = 'FA' AND (F_SQL_SITFAT_AGRUP_HIST(V.CD_SITCOBR, V.CD_OCOR_BANC_FATURA, V.DT_OCOR_FATURA, V.DT_OCOR_MAN_FATURA, V.DT_VENC_FATURA, V.DT_EMIS_FATURA, '31-MAR-11')) IN ('PENDENTES', 'QUITADAS', 'INADIMPLENTES') AND V.CD_CCFGV &gt;= 1400000000000 AND V.
+CD_CCFGV &lt;= 1499999999999 AND F_CENTRO_CUSTO (V.CD_CCFGV,  V.NR_ANO_FATURA, 'ERIKAF')='S'
+
+</td></tr>
+<tr><td class='awrc'><a class="awr" name="gts3t842ptfsx"></a>gts3t842ptfsx</td><td class='awrc'>SELECT matr.MATR_CD,  matr.ANO_NR,  matr.PROD_CD,  matr.SUB_PROD_CD,  matr.CURSO_PROD_EAD_CD,  matr.CURSO_PROD_EAD_DATA_SQ,  prod.PROD_DS,  matr.NOTA_CURSO_VL,  matr.SIT_ACAD_CD,  matr.SIT_CERTIF_CD,  requ.REQUER_EAD_SAIDA_DT,  requ.REQUER_EAD_CD FROM  BASE_SIGA.MATRICULA_CURSO_EAD_SIGA matr,  BASE_SIGA.produto prod, 		  (SELECT * FROM BASE_SIGA.REQUERIMENTO_EAD_SIGA		  		  WHERE REQUER_EAD_CD     = '
+CERT') requ where matr.prod_cd           = prod.prod_cd and   matr.MATR_CD           = requ.MATR_CD(+) and   matr.ANO_NR            = requ.ANO_NR(+) and   matr.PROD_CD           = requ.PROD_CD(+) and   matr.SUB_PROD_CD       = requ.SUB_PROD_CD(+) and   matr.CURSO_PROD_EAD_CD = requ.CURSO_PROD_EAD_CD(+) and   sit_acad_dt = (select max(sit_acad_dt) from matcursoead mc where mc.matr_cd=matr.matr_cd and mc.ano_nr=matr.ano_nr) and matr.ANO_NR = '2009' and matr.PROD_CD = 'BBF1EAD' and matr.SUB_PROD_CD
+ = '00' and matr.CURSO_PROD_EAD_CD = '01/2006' and matr.CURSO_PROD_EAD_DATA_SQ = '5' and matr.MATR_CD = '58188'  AND matr.ANO_NR = 2009</td></tr>
+
+<tr><td class='awrnc'><a class="awr" name="gyhn16r064shw"></a>gyhn16r064shw</td><td class='awrnc'>
+SELECT EO.PROD_CD,  EO.SUB_PROD_CD,  EO.CURSO_PROD_EAD_CD, EO.CURSO_PROD_EAD_DATA_SQ,  TO_CHAR(EV.DATA_INIC, 'DD/MM/YYYY') DATA_OCORR, PC.PROD_CARGA_HORARIA_NR FROM EADOCORR EO, EADCURSO EC,  PRODCARAC PC,  (SELECT EO1.PROD_CD,  EO1.SUB_PROD_CD,  EO1.CURSO_PROD_EAD_CD,          MIN(EO1.PROD_EAD_INIC_OCORR_DT) DATA_INIC  FROM EADOCORR EO1,  EADPLANCURSO EP1  WHERE EO1.PROD_CD=EP1.PROD_CD     AND EO1.SUB_PROD_CD=EP1.SUB_PROD_CD    AND EO1.CURSO_PROD_EAD_CD=EP1.CURSO_PROD_EAD_CD    AND EO1.CURSO_PR
+OD_EAD_DATA_SQ=EP1.CURSO_PROD_EAD_DATA_SQ    AND EO1.SIT_PROD_CURSO_OCORR_CD='EOLIB'    AND EO1.CURSO_OCORR_EAD_TIPO_CD='LIVRE'    AND (EO1.PROD_CD, EO1.SUB_PROD_CD, EO1.CURSO_PROD_EAD_CD, EP1.PLANO_EAD_CD)        NOT IN (SELECT PROD_CD, SUB_PROD_CD, CURSO_PROD_EAD_CD, PLANO_EAD_CD     FROM EMPLANCURSO PC     WHERE PC.PROD_CD = 'SEMAMEAD' AND PC.SUB_PROD_CD = '00' AND PC.CURSO_PROD_EAD_CD = EO1.CURSO_PROD_EAD_CD  AND PC.CURSO_PROD_EAD_DATA_SQ = EO1.CURSO_PROD_EAD_DATA_SQ)  GROUP BY EO1.PROD_CD,
+EO1.SUB_PROD_CD, EO1.CURSO_PROD_EAD_CD) EV WHERE EV.PROD_CD=EO.PROD_CD AND PC.PROD_CD=EO.PROD_CD AND PC.SUB_PROD_CD=EO.SUB_PROD_CD AND EV.SUB_PROD_CD=EO.SUB_PROD_CD AND EV.CURSO_PROD_EAD_CD=EO.CURSO_PROD_EAD_CD AND TRUNC(EV.DATA_INIC)=TRUNC(EO.PROD_EAD_INIC_OCORR_DT) AND EO.PROD_CD=EC.PROD_CD AND EO.SUB_PROD_CD=EC.SUB_PROD_CD AND EO.CURSO_PROD_EAD_CD=EC.CURSO_PROD_EAD_CD AND EO.CURSO_OCORR_EAD_TIPO_CD='LIVRE' AND TRUNC(CARACT_CURSO_EAD_DT)=(SELECT TRUNC(MAX(CARACT_CURSO_EAD_DT))            FROM
+
+EADCURSO            WHERE PROD_CD=EO.PROD_CD AND                  SUB_PROD_CD=EO.SUB_PROD_CD AND                  SIT_PROD_CURSO_CD='ECLIB' AND                 (PROD_CD, SUB_PROD_CD, CURSO_PROD_EAD_CD, CURSO_PROD_EAD_DATA_SQ) IN (SELECT PROD_CD, SUB_PROD_CD, CURSO_PROD_EAD_CD, CURSO_PROD_EAD_DATA_SQ                                                                                     FROM EADOCORR                                                                                     WHERE CURSO_OCORR
+_EAD_TIPO_CD='LIVRE' )  ) AND EO.PROD_CD = 'SEMAMEAD'AND EO.SUB_PROD_CD = '00'</td></tr>
+
+<tr><td class='awrc'><a class="awr" name="gzg3hpwycxn0w"></a>gzg3hpwycxn0w</td><td class='awrc'>SELECT MC.MATR_CD,  MC.ANO_NR  FROM EADOCORR EO,   EADPREMATR EP,   MATCURSOEAD MC,   HISTMATEAD H,   EMPEADOCORR EM,   EADPROSPCURSO EC  WHERE EC.PROD_CD=EO.PROD_CD  AND EC.SUB_PROD_CD=EO.SUB_PROD_CD  AND EC.PESSOA_CD=EM.PESSOA_CD  AND EC.SITUACAO_CD='LIBER'  AND EP.EAD_INSCR_SQ = MC.EAD_INSCR_SQ  AND MC.MATR_CD = H.MATR_CD  AND MC.ANO_NR = H.ANO_NR  AND MC.PROD_CD = H.PROD_CD  AND MC.SUB_PROD_CD = H
+.SUB_PROD_CD  AND MC.CURSO_PROD_EAD_CD = H.CURSO_PROD_EAD_CD  AND MC.CURSO_PROD_EAD_DATA_SQ = H.CURSO_PROD_EAD_DATA_SQ  AND EO.PROD_CD = MC.PROD_CD  AND EO.SUB_PROD_CD = MC.SUB_PROD_CD  AND EO.CURSO_PROD_EAD_CD = MC.CURSO_PROD_EAD_CD  AND EO.CURSO_PROD_EAD_DATA_SQ = MC.CURSO_PROD_EAD_DATA_SQ  AND EO.PROD_CD = EM.PROD_CD  AND EO.SUB_PROD_CD = EM.SUB_PROD_CD  AND EO.CURSO_PROD_EAD_CD = EM.CURSO_PROD_EAD_CD  AND EO.CURSO_PROD_EAD_DATA_SQ = EM.CURSO_PROD_EAD_DATA_SQ  AND EM.PESSOA_CD='140430' AND  H
+.TURMA_DISC_CD='TUTEAD_T0056_1210' AND  UPPER(EP.EAD_USERID_DS)=UPPER('RobinsonNascimento')</td></tr>
+
+</table>
+<p />
+<a class="awr" href="#104">Back to Top SQL</a>
+<br /><a class="awr" href="#top">Back to Top</a><p />
+<p />
+<a class="awr" name="10380"></a>
+<h3 class="awr">Top PL/SQL Procedures</h3>
+<ul>
+<li class="awr"> 'PL/SQL entry subprogram' represents the application's top-level        entry-point(procedure, function, trigger, package initialization       or RPC call) into PL/SQL. </li>
+<li class="awr"> 'PL/SQL current subprogram' is the pl/sql subprogram being executed        at the point of sampling . If the value is 'SQL', it represents        the percentage of time spent executing SQL for the particular        plsql entry subprogram</li>
+</ul>
+<table border="1"><tr><th class="awrbg">PLSQL Entry Subprogram</th><th class="awrbg">% Activity</th><th class="awrbg">PLSQL Current Subprogram</th><th class="awrbg">% Current</th></tr>
+<tr><td class='awrc'>SYS.DBMS_SQL.EXECUTE</td><td align="right" class='awrc'>2.57</td>
+<td class='awrc'>SQL</td><td align="right" class='awrc'>2.03</td></tr>
+<tr><td class='awrnc'>BASE_SIGA.F_MEDIANA_PROF_DISC</td><td align="right" class='awrnc'>1.47</td>
+<td class='awrnc'>SQL</td><td align="right" class='awrnc'>1.47</td></tr>
+<tr><td class='awrc'>BASE_CLIENTE.F_CENTRO_CUSTO</td><td align="right" class='awrc'>1.07</td>
+<td class='awrc'>SQL</td><td align="right" class='awrc'>0.81</td></tr>
+</table><p />
+<br /><a class="awr" href="#top">Back to Top</a><p />
+<p />
+<a class="awr" name="10390"></a>
+<h3 class="awr">Top Java Workload</h3>
+
+<p />
+                  No data exists for this section of the report.
+<p />
+<br /><a class="awr" href="#top">Back to Top</a><p />
+<p />
+<a class="awr" name="10391"></a>
+<h3 class="awr">Top Call Types</h3>
+<ul>
+</ul>
+<table border="1"><tr><th class="awrbg">Call Type</th><th class="awrbg">Count</th><th class="awrbg">% Activity</th><th class="awrbg">Avg Active Sessions</th></tr>
+<tr><td class='awrc'>EXECUTE</td><td align="right" class='awrc'>12,940</td><td align="right" class='awrc'>49.94</td><td align="right" class='awrc'>11.96</td></tr>
+<tr><td class='awrnc'>V8 Bundled Exec</td><td align="right" class='awrnc'>5,570</td><td align="right" class='awrnc'>21.50</td><td align="right" class='awrnc'>5.15</td></tr>
+<tr><td class='awrc'>FAST UPI</td><td align="right" class='awrc'>1,370</td><td align="right" class='awrc'>5.29</td><td align="right" class='awrc'>1.27</td></tr>
+<tr><td class='awrnc'>DR Server CNX Process</td><td align="right" class='awrnc'>1,061</td><td align="right" class='awrnc'>4.09</td><td align="right" class='awrnc'>0.98</td></tr>
+<tr><td class='awrc'>CLOSE</td><td align="right" class='awrc'>885</td><td align="right" class='awrc'>3.42</td><td align="right" class='awrc'>0.82</td></tr>
+</table><p />
+<br /><a class="awr" href="#top">Back to Top</a><p />
+<p />
+<a class="awr" name="105"></a>
+<h2 class="awr">
+Top Sessions
+</h2>
+<ul>
+<li class="awr"><a class="awr" href="#10310">Top Sessions</a></li>
+<li class="awr"><a class="awr" href="#10320">Top Blocking Sessions</a></li>
+<li class="awr"><a class="awr" href="#10330">Top Sessions running PQs</a></li>
+</ul>
+<a class="awr" href="#top">Back to Top</a><p />
+<a class="awr" name="10310"></a>
+<h3 class="awr">Top Sessions</h3>
+<ul>
+<li class="awr"> '# Samples Active' shows the number of ASH samples in which the session        was found waiting for that particular event. The percentage shown       in this column is calculated with respect to wall clock time       and not total database activity. </li>
+<li class="awr"> 'XIDs' shows the number of distinct transaction IDs sampled in ASH        when the session was waiting for that particular event </li>
+<li class="awr"> For sessions running Parallel Queries, this section will NOT aggregate        the PQ slave activity into the session issuing the PQ. Refer to        the 'Top Sessions running PQs' section for such statistics.</li>
+</ul>
+<table border="1"><tr><th class="awrbg">Sid, Serial#</th><th class="awrbg">% Activity</th><th class="awrbg">Event</th><th class="awrbg">% Event</th><th class="awrbg">User</th><th class="awrbg">Program</th><th class="awrbg"># Samples Active</th><th class="awrbg">XIDs</th></tr>
+<tr><td align="right" class='awrc'>254,   33</td><td align="right" class='awrc'>2.78</td><td class='awrc'>virtual circuit wait</td><td align="right" class='awrc'>2.78</td>
+<td class='awrc'>SYS</td><td class='awrc'>sqlplus@e04686 (TNS V1-V3)</td><td align="right" class='awrc'>720/1,082 [ 67%]</td><td align="right" class='awrc'>0</td></tr>
+<tr><td align="right" class='awrnc'>523,52277</td><td align="right" class='awrnc'>2.52</td><td class='awrnc'>virtual circuit wait</td><td align="right" class='awrnc'>2.52</td>
+<td class='awrnc'>UserID: 1</td><td class='awrnc'>oracle@dc8004....r (TNS V1-V3)</td><td align="right" class='awrnc'>653/1,082 [ 60%]</td><td align="right" class='awrnc'>0</td></tr>
+<tr><td align="right" class='awrc'>368,54619</td><td align="right" class='awrc'>2.42</td><td class='awrc'>virtual circuit wait</td><td align="right" class='awrc'>2.27</td>
+<td class='awrc'>LUIS.SOUZA</td><td class='awrc'>&#160;</td><td align="right" class='awrc'>589/1,082 [ 54%]</td><td align="right" class='awrc'>6</td></tr>
+<tr><td align="right" class='awrnc'>284,27376</td><td align="right" class='awrnc'>2.16</td><td class='awrnc'>virtual circuit wait</td><td align="right" class='awrnc'>2.16</td>
+<td class='awrnc'>LUIS.SOUZA</td><td class='awrnc'>&#160;</td><td align="right" class='awrnc'>559/1,082 [ 52%]</td><td align="right" class='awrnc'>0</td></tr>
+<tr><td align="right" class='awrc'>605,25839</td><td align="right" class='awrc'>1.47</td><td class='awrc'>CPU + Wait for CPU</td><td align="right" class='awrc'>0.83</td>
+<td class='awrc'>ERIKAF</td><td class='awrc'>&#160;</td><td align="right" class='awrc'>215/1,082 [ 20%]</td><td align="right" class='awrc'>2</td></tr>
+</table><p />
+<a class="awr" href="#105">Back to Top Sessions</a>
+<br /><a class="awr" href="#top">Back to Top</a><p />
+<a class="awr" name="10320"></a>
+<h3 class="awr">Top Blocking Sessions</h3>
+<ul>
+<li class="awr"> Blocking session activity percentages are calculated with respect to        waits on enqueues, latches and &quot;buffer busy&quot; only  </li>
+<li class="awr"> '% Activity' represents the load on the database caused by        a particular blocking session </li>
+<li class="awr"> '# Samples Active' shows the number of ASH samples in which the        blocking session was found active. </li>
+<li class="awr"> 'XIDs' shows the number of distinct transaction IDs sampled in ASH        when the blocking session was found active.</li>
+</ul>
+<table border="1"><tr><th class="awrbg">Blocking Sid (Inst)</th><th class="awrbg">% Activity</th><th class="awrbg">Event Caused</th><th class="awrbg">% Event</th><th class="awrbg">User</th><th class="awrbg">Program</th><th class="awrbg"># Samples Active</th><th class="awrbg">XIDs</th></tr>
+<tr><td align="right" class='awrc'>48, 7609(     1)</td><td align="right" class='awrc'>1.40</td><td class='awrc'>enq: TM - contention</td><td align="right" class='awrc'>1.40</td>
+<td class='awrc'>W_SIGA</td><td class='awrc'>w3wp.exe</td><td align="right" class='awrc'>117/1,082 [ 11%]</td><td align="right" class='awrc'>1</td></tr>
+</table><p />
+<a class="awr" href="#105">Back to Top Sessions</a>
+<br /><a class="awr" href="#top">Back to Top</a><p />
+<a class="awr" name="10330"></a>
+<h3 class="awr">Top Sessions running PQs</h3>
+
+<p />
+                  No data exists for this section of the report.
+<p />
+<a class="awr" href="#105">Back to Top Sessions</a>
+<br /><a class="awr" href="#top">Back to Top</a><p />
+<p />
+<a class="awr" name="106"></a>
+<h2 class="awr">
+Top Objects/Files/Latches
+</h2>
+<ul>
+<li class="awr"><a class="awr" href="#10340">Top DB Objects</a></li>
+<li class="awr"><a class="awr" href="#10350">Top DB Files</a></li>
+<li class="awr"><a class="awr" href="#10360">Top Latches</a></li>
+</ul>
+<a class="awr" href="#top">Back to Top</a><p />
+<a class="awr" name="10340"></a>
+<h3 class="awr">Top DB Objects</h3>
+<ul>
+<li class="awr"> With respect to Application, Cluster, User I/O and buffer busy waits only.</li>
+</ul>
+<table border="1"><tr><th class="awrbg">Object ID</th><th class="awrbg">% Activity</th><th class="awrbg">Event</th><th class="awrbg">% Event</th><th class="awrbg">Object Name (Type)</th><th class="awrbg">Tablespace</th></tr>
+<tr><td align="right" class='awrc'>213</td><td align="right" class='awrc'>7.14</td><td class='awrc'>read by other session</td><td align="right" class='awrc'>5.40</td>
+<td class='awrc'>SYS.SQLOBJ$AUXDATA (TABLE)</td><td class='awrc'>SYSAUX</td></tr>
+<tr><td align="right" class='awrnc'>&#160;</td><td align="right" class='awrnc'>&#160;</td><td class='awrnc'>db file scattered read</td><td align="right" class='awrnc'>1.70</td>
+<td class='awrnc'>&#160;</td><td class='awrnc'>&#160;</td></tr>
+<tr><td align="right" class='awrc'>211732</td><td align="right" class='awrc'>1.56</td><td class='awrc'>db file sequential read</td><td align="right" class='awrc'>0.90</td>
+<td class='awrc'>BASE_CLIENTE.FATURA (TABLE)</td><td class='awrc'>FATD04_LARGE_128M</td></tr>
+<tr><td align="right" class='awrnc'>214176</td><td align="right" class='awrnc'>1.27</td><td class='awrnc'>enq: TM - contention</td><td align="right" class='awrnc'>1.25</td>
+<td class='awrnc'>BASE_SIGA.TURMA_MATRICULA_SIGA (TABLE)</td><td class='awrnc'>SIGD03</td></tr>
+</table><p />
+<a class="awr" href="#106">Back to Top Objects/Files/Latches</a>
+<br /><a class="awr" href="#top">Back to Top</a><p />
+<a class="awr" name="10350"></a>
+<h3 class="awr">Top DB Files</h3>
+<ul>
+<li class="awr"> With respect to Cluster and User I/O events only.</li>
+</ul>
+<table border="1"><tr><th class="awrbg">File ID</th><th class="awrbg">% Activity</th><th class="awrbg">Event</th><th class="awrbg">% Event</th><th class="awrbg">File Name</th><th class="awrbg">Tablespace</th></tr>
+<tr><td align="right" class='awrc'>2</td><td align="right" class='awrc'>7.68</td><td class='awrc'>read by other session</td><td align="right" class='awrc'>5.41</td>
+<td class='awrc'>/u04/oradata/PCORP2/sysaux01.dbf</td><td class='awrc'>SYSAUX</td></tr>
+<tr><td align="right" class='awrnc'>&#160;</td><td align="right" class='awrnc'>&#160;</td><td class='awrnc'>db file scattered read</td><td align="right" class='awrnc'>1.70</td>
+<td class='awrnc'>&#160;</td><td class='awrnc'>&#160;</td></tr>
+<tr><td align="right" class='awrc'>275</td><td align="right" class='awrc'>1.56</td><td class='awrc'>db file sequential read</td><td align="right" class='awrc'>0.90</td>
+<td class='awrc'>/u01/oradata/PCORP2/FATD04_LARGE_128M_01.dbf</td><td class='awrc'>FATD04_LARGE_128M</td></tr>
+</table><p />
+<a class="awr" href="#106">Back to Top Objects/Files/Latches</a>
+<br /><a class="awr" href="#top">Back to Top</a><p />
+<a class="awr" name="10360"></a>
+<h3 class="awr">Top Latches</h3>
+<ul>
+</ul>
+<table border="1"><tr><th class="awrbg">Latch</th><th class="awrbg">% Latch</th><th class="awrbg">Blocking Sid(Inst)</th><th class="awrbg">% Activity</th><th class="awrbg">Max Sampled Wait secs</th><th class="awrbg"># Waits Sampled</th><th class="awrbg"># Sampled Wts  &lt; 10ms</th><th class="awrbg"># Sampled Wts  10ms - 100ms</th><th class="awrbg"># Sampled Wts  100ms - 1s</th><th class="awrbg"># Sampled Wts  &gt; 1s </th></tr>
+<tr><td class='awrc'>latch: cache buffers chains</td><td align="right" class='awrc'>2.37</td><td align="right" class='awrc'>Held Shared</td><td align="right" class='awrc'>1.30</td><td align="right" class='awrc'>2.10</td>
+<td align="right" class='awrc'>321</td><td align="right" class='awrc'>24</td><td align="right" class='awrc'>42</td><td align="right" class='awrc'>231</td><td align="right" class='awrc'>24</td></tr>
+</table><p />
+<a class="awr" href="#106">Back to Top Objects/Files/Latches</a>
+<br /><a class="awr" href="#top">Back to Top</a><p />
+<p />
+<a class="awr" name="10200"></a>
+<h3 class="awr">Activity Over Time</h3>
+<ul>
+<li class="awr"> Analysis period is divided into smaller time slots </li>
+<li class="awr"> Top 3 events are reported in each of those slots </li>
+<li class="awr"> 'Slot Count' shows the number of ASH samples in that slot </li>
+<li class="awr"> 'Event Count' shows the number of ASH samples waiting for    that event in that slot </li>
+<li class="awr"> '% Event' is 'Event Count' over all ASH samples in the analysis period</li>
+</ul>
+<table border="1"><tr><th class="awrbg">Slot Time (Duration)</th><th class="awrbg">Slot Count</th><th class="awrbg">Event</th><th class="awrbg">Event Count</th><th class="awrbg">% Event</th></tr>
+<tr><td align="right" class='awrc'>07:47:21  (12.7 min)</td><td align="right" class='awrc'>700</td><td class='awrc'>CPU + Wait for CPU</td><td align="right" class='awrc'>452</td><td align="right" class='awrc'>1.74</td></tr>
+<tr><td align="right" class='awrnc'>&#160;</td><td align="right" class='awrnc'>&#160;</td><td class='awrnc'>virtual circuit wait</td><td align="right" class='awrnc'>152</td><td align="right" class='awrnc'>0.59</td></tr>
+<tr><td align="right" class='awrc'>&#160;</td><td align="right" class='awrc'>&#160;</td><td class='awrc'>read by other session</td><td align="right" class='awrc'>47</td><td align="right" class='awrc'>0.18</td></tr>
+<tr><td align="right" class='awrnc'>08:00:00  (20.0 min)</td><td align="right" class='awrnc'>1,509</td><td class='awrnc'>CPU + Wait for CPU</td><td align="right" class='awrnc'>973</td><td align="right" class='awrnc'>3.76</td></tr>
+<tr><td align="right" class='awrc'>&#160;</td><td align="right" class='awrc'>&#160;</td><td class='awrc'>virtual circuit wait</td><td align="right" class='awrc'>246</td><td align="right" class='awrc'>0.95</td></tr>
+<tr><td align="right" class='awrnc'>&#160;</td><td align="right" class='awrnc'>&#160;</td><td class='awrnc'>read by other session</td><td align="right" class='awrnc'>117</td><td align="right" class='awrnc'>0.45</td></tr>
+<tr><td align="right" class='awrc'>08:20:00  (20.0 min)</td><td align="right" class='awrc'>1,777</td><td class='awrc'>CPU + Wait for CPU</td><td align="right" class='awrc'>1,277</td><td align="right" class='awrc'>4.93</td></tr>
+<tr><td align="right" class='awrnc'>&#160;</td><td align="right" class='awrnc'>&#160;</td><td class='awrnc'>virtual circuit wait</td><td align="right" class='awrnc'>254</td><td align="right" class='awrnc'>0.98</td></tr>
+<tr><td align="right" class='awrc'>&#160;</td><td align="right" class='awrc'>&#160;</td><td class='awrc'>read by other session</td><td align="right" class='awrc'>157</td><td align="right" class='awrc'>0.61</td></tr>
+<tr><td align="right" class='awrnc'>08:40:00  (20.0 min)</td><td align="right" class='awrnc'>2,576</td><td class='awrnc'>CPU + Wait for CPU</td><td align="right" class='awrnc'>1,392</td><td align="right" class='awrnc'>5.37</td></tr>
+<tr><td align="right" class='awrc'>&#160;</td><td align="right" class='awrc'>&#160;</td><td class='awrc'>enq: TM - contention</td><td align="right" class='awrc'>506</td><td align="right" class='awrc'>1.95</td></tr>
+<tr><td align="right" class='awrnc'>&#160;</td><td align="right" class='awrnc'>&#160;</td><td class='awrnc'>virtual circuit wait</td><td align="right" class='awrnc'>442</td><td align="right" class='awrnc'>1.71</td></tr>
+<tr><td align="right" class='awrc'>09:00:00  (20.0 min)</td><td align="right" class='awrc'>2,584</td><td class='awrc'>CPU + Wait for CPU</td><td align="right" class='awrc'>1,659</td><td align="right" class='awrc'>6.40</td></tr>
+<tr><td align="right" class='awrnc'>&#160;</td><td align="right" class='awrnc'>&#160;</td><td class='awrnc'>virtual circuit wait</td><td align="right" class='awrnc'>588</td><td align="right" class='awrnc'>2.27</td></tr>
+<tr><td align="right" class='awrc'>&#160;</td><td align="right" class='awrc'>&#160;</td><td class='awrc'>read by other session</td><td align="right" class='awrc'>147</td><td align="right" class='awrc'>0.57</td></tr>
+<tr><td align="right" class='awrnc'>09:20:00  (20.0 min)</td><td align="right" class='awrnc'>4,141</td><td class='awrnc'>CPU + Wait for CPU</td><td align="right" class='awrnc'>2,572</td><td align="right" class='awrnc'>9.93</td></tr>
+<tr><td align="right" class='awrc'>&#160;</td><td align="right" class='awrc'>&#160;</td><td class='awrc'>virtual circuit wait</td><td align="right" class='awrc'>691</td><td align="right" class='awrc'>2.67</td></tr>
+<tr><td align="right" class='awrnc'>&#160;</td><td align="right" class='awrnc'>&#160;</td><td class='awrnc'>db file sequential read</td><td align="right" class='awrnc'>213</td><td align="right" class='awrnc'>0.82</td></tr>
+<tr><td align="right" class='awrc'>09:40:00  (20.0 min)</td><td align="right" class='awrc'>2,717</td><td class='awrc'>CPU + Wait for CPU</td><td align="right" class='awrc'>1,599</td><td align="right" class='awrc'>6.17</td></tr>
+<tr><td align="right" class='awrnc'>&#160;</td><td align="right" class='awrnc'>&#160;</td><td class='awrnc'>virtual circuit wait</td><td align="right" class='awrnc'>432</td><td align="right" class='awrnc'>1.67</td></tr>
+<tr><td align="right" class='awrc'>&#160;</td><td align="right" class='awrc'>&#160;</td><td class='awrc'>db file sequential read</td><td align="right" class='awrc'>286</td><td align="right" class='awrc'>1.10</td></tr>
+<tr><td align="right" class='awrnc'>10:00:00  (20.0 min)</td><td align="right" class='awrnc'>2,254</td><td class='awrnc'>CPU + Wait for CPU</td><td align="right" class='awrnc'>1,377</td><td align="right" class='awrnc'>5.31</td></tr>
+<tr><td align="right" class='awrc'>&#160;</td><td align="right" class='awrc'>&#160;</td><td class='awrc'>virtual circuit wait</td><td align="right" class='awrc'>558</td><td align="right" class='awrc'>2.15</td></tr>
+<tr><td align="right" class='awrnc'>&#160;</td><td align="right" class='awrnc'>&#160;</td><td class='awrnc'>read by other session</td><td align="right" class='awrnc'>119</td><td align="right" class='awrnc'>0.46</td></tr>
+<tr><td align="right" class='awrc'>10:20:00  (20.0 min)</td><td align="right" class='awrc'>4,898</td><td class='awrc'>CPU + Wait for CPU</td><td align="right" class='awrc'>3,287</td><td align="right" class='awrc'>12.69</td></tr>
+<tr><td align="right" class='awrnc'>&#160;</td><td align="right" class='awrnc'>&#160;</td><td class='awrnc'>virtual circuit wait</td><td align="right" class='awrnc'>456</td><td align="right" class='awrnc'>1.76</td></tr>
+<tr><td align="right" class='awrc'>&#160;</td><td align="right" class='awrc'>&#160;</td><td class='awrc'>latch: cache buffers chains</td><td align="right" class='awrc'>254</td><td align="right" class='awrc'>0.98</td></tr>
+<tr><td align="right" class='awrnc'>10:40:00   (7.7 min)</td><td align="right" class='awrnc'>2,308</td><td class='awrnc'>CPU + Wait for CPU</td><td align="right" class='awrnc'>1,468</td><td align="right" class='awrnc'>5.67</td></tr>
+<tr><td align="right" class='awrc'>&#160;</td><td align="right" class='awrc'>&#160;</td><td class='awrc'>virtual circuit wait</td><td align="right" class='awrc'>259</td><td align="right" class='awrc'>1.00</td></tr>
+<tr><td align="right" class='awrnc'>&#160;</td><td align="right" class='awrnc'>&#160;</td><td class='awrnc'>latch: cache buffers chains</td><td align="right" class='awrnc'>155</td><td align="right" class='awrnc'>0.60</td></tr>
+</table><p />
+<br /><a class="awr" href="#top">Back to Top</a><p />
+<p />
+End of Report
+</body></html>

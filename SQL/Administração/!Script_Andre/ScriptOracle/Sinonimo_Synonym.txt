@@ -1,0 +1,155 @@
+ select 'create  synonym RECUPUSR.'||object_name||' for '||OWNER||'.'||object_name||';'
+ from dba_objects
+ where owner='OWNRECUP' and
+ object_type in ('SEQUENCE','PACKAGE','PROCEDURE','FUNCTION','VIEW','TABLE')
+ and object_name not in (select synonym_name     
+                         from dba_synonyms
+                         where TABLE_OWNER='OWNRECUP2');
+
+
+
+select 'create public synonym '||object_name||' for '||OWNER||'.'||object_name||';'
+ from dba_objects
+ where owner='OWNINVT' and TRUNC(CREATED)=TRUNC(SYSDATE) AND
+ object_type in ('SEQUENCE','PACKAGE','PROCEDURE','FUNCTION','VIEW','TABLE')
+
+===================
+
+ select 'create  synonym RECUPUSR.'||object_name||' for '||OWNER||'.'||object_name||';'
+ from dba_objects
+ where owner='OWNRECUP' and
+ object_type in ('SEQUENCE','PACKAGE','PROCEDURE','FUNCTION','VIEW','TABLE')
+ AND TRUNC(CREATED) = TRUNC(SYSDATE) 
+
+
+
+select 'create  synonym RECUPCON.'||object_name||' for '||OWNER||'.'||object_name||';'
+ from dba_objects
+ where owner='OWNRECUP' and
+ object_type in ('VIEW','TABLE')
+ AND TRUNC(CREATED) = TRUNC(SYSDATE) 
+
+
+select 'create  synonym RECORUSR.'||object_name||' for '||OWNER||'.'||object_name||';'
+ from dba_objects
+ where owner='OWNRECUP' and
+ object_type in ('VIEW','TABLE')
+ AND TRUNC(CREATED) = TRUNC(SYSDATE) 
+
+======================== BMP ======================
+
+select 'create  PUBLIC synonym '||object_name||' for '||OWNER||'.'||object_name||';'
+ from dba_objects
+ where owner='OWNBMP' and
+ object_type in ('SEQUENCE','PACKAGE','PROCEDURE','FUNCTION','VIEW','TABLE')
+ AND TRUNC(CREATED) = TRUNC(SYSDATE) 
+
+
+=========================== TESTE INTENROS HMG =============
+
+
+
+RECUPCON2       
+RECUPUSR2       
+
+
+
+
+select 'create  synonym INETPRDUSR.'||object_name||' for '||OWNER||'.'||object_name||';'
+ from dba_objects
+ where owner='INETPRD' and
+ object_type in ('SEQUENCE','PACKAGE','PROCEDURE','FUNCTION','VIEW','TABLE')
+ AND TRUNC(CREATED) = TRUNC(SYSDATE) 
+
+
+
+select 'create  synonym RECUPCON2.'||object_name||' for '||OWNER||'.'||object_name||';'
+ from dba_objects
+ where owner='OWNRECUP2' and
+ object_type in ('VIEW','TABLE')
+ AND TRUNC(CREATED) = TRUNC(SYSDATE) 
+
+
+
+
+
+
+
+AND object_name not in (select synonym_name     
+                         from dba_synonyms
+                         where TABLE_OWNER='OWNINVT');
+
+
+
+
+
+ 
+
+select 'CREATE SYNONYM OWNRECUP5.'||SYNONYM_NAME||'  FOR '||DECODE(TABLE_OWNER,NULL,' ',TABLE_OWNER||'.')||''||TABLE_NAME||'@'||DB_LINK||';'
+from dba_synonyms
+where  DB_LINK IS NOT NULL AND OWNER NOT LIKE 'EXT%'
+
+
+
+
+select 'drop SYNONYM OWNRECUP5.'||SYNONYM_NAME||' ;'
+from user_synonyms
+where  DB_LINK='SGAPRD.WORLD';
+
+
+
+select 'CREATE SYNONYM OWNRECUP5.'||SYNONYM_NAME||'  FOR '||synonym_name||'@sgabolhaprd.world'||';'
+from user_synonyms
+where  DB_LINK='SGAPRD.WORLD';
+
+
+select OWNER,SYNONYM_NAME,TABLE_OWNER from dba_SYNONYMS
+ where owner='OWNRECUP5' AND DB_LINK='SGAPRD.WORLD'
+
+
+
+ select 'create public synonym '||object_name||' for '||OWNER||'.'||object_name||';'
+ from dba_objects
+ where owner='OWNINVT' and TRUNC(CREATED)=TRUNC(SYSDATE) AND
+ object_type in ('SEQUENCE','PACKAGE','PROCEDURE','FUNCTION','VIEW','TABLE')
+ and object_name not in (select synonym_name     
+                         from dba_synonyms
+                         where TABLE_OWNER='OWNINVT' );
+
+
+
+SELECT DB_LINK,COUNT(*)
+FROM USER_SYNONYMS
+GROUP BY DB_LINK
+
+===================
+
+
+select 'create public synonym '||object_name||' for '||OWNER||'.'||object_name||';'
+ from dba_objects
+ where owner='OWNINVT' and
+ object_type in ('SEQUENCE','PACKAGE','PROCEDURE','FUNCTION','VIEW','TABLE')
+ and object_name not in (select synonym_name     
+                         from dba_synonyms
+                         where TABLE_OWNER='OWNINVT');
+
+
+select 'create public synonym '||object_name||' for '||OWNER||'.'||object_name||';'
+ from dba_objects
+ where owner='OWNRECUP' and
+ object_type in ('SEQUENCE','PACKAGE','PROCEDURE','FUNCTION','VIEW','TABLE')
+ and object_name not in (select synonym_name     
+                         from dba_synonyms
+                         where TABLE_OWNER='OWNRECUP');
+
+
+
+
+select 'create public synonym '||object_name||' for '||OWNER||'.'||object_name||';'
+ from dba_objects
+ where owner='OWNADFAC' and
+ object_type in ('SEQUENCE','PACKAGE','PROCEDURE','FUNCTION','VIEW','TABLE')
+ and object_name not in (select synonym_name     
+                         from dba_synonyms
+                         where TABLE_OWNER='OWNADFAC');
+

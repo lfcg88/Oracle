@@ -1,0 +1,4 @@
+
+-- First session
+CREATE SMALLFILE UNDO TABLESPACE "UT2"
+DATAFILE 'ut2.dbf' SIZE 1M;

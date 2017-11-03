@@ -1,0 +1,94 @@
+-- Description:    When executed this store procedure lists the unused spots on a given data file. 
+-- The procedure receives as parameters the file_id and the minimum size in db blocks of the unused 
+--  spots to be reported.
+-- 
+-- The additional script executes the stored procedure for all data files in the database and with 
+-- unused spots larger than 100 database blocks.
+-- 
+-- The owner of the stored procedure should have select privelege on the dba_extents and 
+-- dba_data_files granted explicitely not through the DBA role. 
+-- 
+-- 
+
+
+create or replace procedure RamosFreeSpace(fileno in number,blocks in number) is
+v_block_id1 number;
+v_block_id2 number;
+v_blocks1 number;
+v_blocks2 number;
+
+v_file_name varchar2(100);
+v_ts_name varchar2(50);
+v_blocks_total number;
+
+cnt number;
+
+cursor cExtents is
+select block_id,blocks from dba_extents
+where file_id=fileno
+order by file_id,block_id;
+
+
+begin
+begin
+select file_name,tablespace_name,blocks into v_file_name,v_ts_name,v_blocks_total 
+from dba_data_files
+where file_id=fileno;
+exception
+when no_data_found then
+dbms_output.put_line('There is no such file.');
+return;
+end;
+dbms_output.put_line(' ');
+dbms_output.put_line(v_file_name||' '||to_char(v_blocks_total)||' blocks, '||to_char(v_blocks_total*8/1024)||' MB tablespace: '||v_ts_name);
+open cExtents;
+fetch cExtents into v_block_id1,v_blocks1;
+loop
+exit when cExtents%NOTFOUND;
+fetch cExtents into v_block_id2,v_blocks2;
+if cExtents%FOUND then
+cnt:=v_block_id2 - v_block_id1 - v_blocks1;
+if cnt>blocks then
+dbms_output.put_line(' from '||to_char(v_block_id1 + v_blocks1)||' '||to_char(cnt)||' blocks, '||to_char(cnt*8/1024)||' M');
+end if;
+v_block_id1:=v_block_id2;
+v_blocks1:=v_blocks2;
+else
+cnt:=v_blocks_total - v_block_id1 - v_blocks1;
+if cnt>blocks then
+dbms_output.put_line(' from '||to_char(v_block_id1 + v_blocks1)||' '||to_char(cnt)||' blocks, '||to_char(cnt*8/1024)||' M');
+end if;
+end if;
+end loop;
+close cExtents;
+end;
+/
+
+
+
+
+set serveroutput on size 1000000;
+declare
+fileno number;
+
+cursor cFiles is
+select file_id from dba_data_files
+order by file_id;
+begin
+open cFiles;
+fetch cFiles into fileno;
+loop
+exit when cFiles%NOTFOUND;
+  Ramosfreespace(fileno,100);
+fetch cFiles into fileno;
+end loop;
+close cFiles;
+end;
+/
+
+
+drop procedure RamosFreeSpace
+/
+
+
+

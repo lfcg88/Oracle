@@ -1,0 +1,5 @@
+exp system/admkx@rjd10_prod FULL=y FILE=rjd10prod_full.dmp LOG=rjd10prod_full.log FEEDBACK=100000 BUFFER=5242880 COMPRESS=N ROWS=N
+
+imp system/manager@rjd10dsv FULL=y FILE=rjd10prod_full.dmp IGNORE=y COMMIT=y LOG=rjd10dsv_full.log FEEDBACK=100000 BUFFER=5242880
+
+

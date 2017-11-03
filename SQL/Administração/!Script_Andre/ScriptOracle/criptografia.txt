@@ -1,0 +1,135 @@
+PROCEDURE        converte_acesso
+------------------------------------------------------------------------------------------
+-- PROJETO: Recuperação
+-- DESENVOLVEDOR: Renato Reis  Integris     DATA: 20/12/2001
+-- DESCRICAO:
+--
+-- ALTERADO POR      DATA        MOTIVO ALTERACAO
+-- ----------------  ----------  ---------------------------------------------------------
+-- xxxxxxxxxxxx      dd/mm/yyyy
+------------------------------------------------------------------------------------------
+(
+  p_acesso                         IN  usuario.senha_usr%TYPE,
+  p_acesso_novo                    OUT  usuario.senha_usr%TYPE,
+  p_erro_cod                       OUT VARCHAR2,
+  p_erro_msg                       OUT VARCHAR2
+)
+IS
+    VASC     varchar2(100) ;
+    VNASC    NUMBER;
+    VCRIPTA  VARCHAR(50);
+    n        number;
+
+BEGIN
+   n:= LENGTH(RTRIM(p_acesso));
+   FOR I IN 1..n  LOOP
+
+       VASC:= SUBSTR(p_acesso,I,1);
+       vNASC:= ascii(vasc) ;
+       vNASC:= ROUND(( (vnasc* 32)/30),0)    ;
+       vcripta:= vcripta || chr(vNASC);
+    END LOOP;
+    p_acesso_novo := vcripta;
+
+EXCEPTION
+   WHEN OTHERS THEN
+       p_erro_cod := SQLCODE;
+       p_erro_msg := SUBSTR(SQLERRM, 1, 200);
+END;
+
+======================================================
+
+
+PROCEDURE        volta_acesso
+------------------------------------------------------------------------------------------
+-- PROJETO: Recuperação
+-- DESENVOLVEDOR: Renato Reis  Integris     DATA: 20/12/2001
+-- DESCRICAO:
+--
+-- ALTERADO POR      DATA        MOTIVO ALTERACAO
+-- ----------------  ----------  ---------------------------------------------------------
+-- xxxxxxxxxxxx      dd/mm/yyyy
+------------------------------------------------------------------------------------------
+(
+  p_acesso                         IN  usuario.senha_usr%TYPE,
+  p_acesso_novo                    OUT  usuario.senha_usr%TYPE,
+  p_erro_cod                       OUT VARCHAR2,
+  p_erro_msg                       OUT VARCHAR2
+)
+IS
+    VASC     varchar2(100) ;
+    VNASC    NUMBER;
+    VOLTA    VARCHAR(50);
+    VV       NUMBER;
+    n        number;
+
+BEGIN
+   n:= LENGTH(RTRIM(p_acesso));
+   FOR I IN 1..n  LOOP
+       VASC:= SUBSTR(p_acesso,I,1);
+       vNASC:= ascii(vasc);
+       VV:= ROUND( ((VNASC * 30) /32),0);
+       VOLTA:= VOLTA || chr(VV);
+    END LOOP;
+    p_acesso_novo := VOLTA;
+
+EXCEPTION
+   WHEN OTHERS THEN
+       p_erro_cod := SQLCODE;
+       p_erro_msg := SUBSTR(SQLERRM, 1, 200);
+END;
+
+
+==========================================
+em perl para criar 
+=========================================
+
+criptografa:
+
+declare
+  VASC varchar2(30);
+   vNASC varchar2(30);
+    vcripta varchar2(30);
+     p_acesso_novo varchar2(30);
+      p_acesso varchar2(30);
+  n number(10);
+BEGIN
+      p_acesso  := 'ramos';
+   n:= LENGTH(RTRIM(p_acesso));
+   FOR I IN 1..n  LOOP
+
+       VASC:= SUBSTR(p_acesso,I,1);
+       vNASC:= ascii(vasc) ;
+       vNASC:= ROUND(( (vnasc* 32)/30),0)    ;
+       vcripta:= vcripta || chr(vNASC);
+    END LOOP;
+    p_acesso_novo := vcripta;
+    dbms_output.put_line('senha: '||p_acesso_novo);
+End;
+
+
+
+
+descript
+
+declare
+  VASC varchar2(30);
+  vNASC varchar2(30);
+    vcripta varchar2(30);
+     p_acesso_novo varchar2(30);
+      p_acesso varchar2(30);
+      volta varchar2(30);
+  n number(10);
+  vv number(10);
+BEGIN
+p_acesso  := 'zgtv{';
+n:= LENGTH(RTRIM(p_acesso));
+   FOR I IN 1..n  LOOP
+       VASC:= SUBSTR(p_acesso,I,1);
+       vNASC:= ascii(vasc);
+       VV:= ROUND( ((VNASC * 30) /32),0);
+       VOLTA:= VOLTA || chr(VV);
+    END LOOP;
+    p_acesso_novo := VOLTA;
+ dbms_output.put_line('senha: '||p_acesso_novo);
+End;

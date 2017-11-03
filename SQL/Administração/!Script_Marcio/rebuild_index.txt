@@ -1,0 +1,1 @@
+Alter index index_name rebuild tablespace tablespace_name online;

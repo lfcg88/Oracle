@@ -1,0 +1,36 @@
+Gerar relatórios
+
+ADDM - Relatório Geral do Servidor.
+$ORACLE_HOME/rdbms/admin/addmrpt.sql
+
+Conteudo
+
+CPU load
+Memory usage
+I/O usage
+Resource intensive SQL
+Resource intensive PL/SQL and Java
+RAC issues
+Application issues
+Database configuration issues
+Concurrency issues
+Object contention
+
+
+
+AWR - Relatório do Banco de Dados
+$ORACLE_HOME/rdbms/admin/awrrpt.sql
+
+Conteudo
+
+Wait events used to identify performance problems.
+Time model statistics indicating the amount of DB time associated with a process from the V$SESS_TIME_MODEL and V$SYS_TIME_MODEL views.
+Active Session History (ASH) statistics from the V$ACTIVE_SESSION_HISTORY view.
+Some system and session statistics from the V$SYSSTAT and V$SESSTAT views.
+Object usage statistics.
+Resource intensive SQL statements.
+
+
+
+ASH -  conseguem filtrar o que é que as sessões activas andaram a fazer no passado
+$ORACLE_HOME/rdbms/admin/ashrpt.sql

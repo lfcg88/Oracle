@@ -1,0 +1,4 @@
+CREATE PFILE='/oracle/ora10/product/10.2.0/db_1/dbs‘ FROM SPFILE=’C:\WHERE_IT_IS\SPFILE[SID].ORA’
+
+CREATE SPFILE='/oracle/ora10/product/10.2.0/db_1/dbs/spfileorahom.ora' FROM PFILE='/oracle/ora10/product/10.2.0/db_1/dbs/initorahom.ora';
+

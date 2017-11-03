@@ -1,0 +1,38 @@
+ALTER TABLESPACE "FPWTEMP" ADD DATAFILE '/backup/orahom/teste.dbf' SIZE 5M;
+
+ALTER DATABASE DATAFILE '/backup/orahom/fpwtemp01.dbf' OFFLINE;
+
+DROP TABLESPACE FPWTEMP INCLUDING CONTENTS AND DATAFILES;
+
+alter database datafile '/backup/orahom/fpwtemp01.dbf' offline drop;
+
+
+
+
+ALTER DATABASE DATAFILE '/oracle/oradata/fs89prd/ind03/psindex01.ora' OFFLINE;
+ALTER DATABASE DATAFILE '/oracle/oradata/fs89prd/ind03/psindex02.ora' OFFLINE;
+ALTER DATABASE DATAFILE '/oracle/oradata/fs89prd/ind03/psindex03.ora' OFFLINE;
+ALTER DATABASE DATAFILE '/oracle/oradata/fs89prd/ind03/psindex04.ora' OFFLINE;
+ALTER DATABASE DATAFILE '/oracle/oradata/fs89prd/ind03/psindex05.ora' OFFLINE;
+ALTER DATABASE DATAFILE '/oracle/oradata/fs89prd/ind03/psindex06.ora' OFFLINE;
+ALTER DATABASE DATAFILE '/oracle/oradata/fs89prd/ind03/psindex07.ora' OFFLINE;
+ALTER DATABASE DATAFILE '/oracle/oradata/fs89prd/ind02/psindex08.ora' OFFLINE;
+ALTER DATABASE DATAFILE '/oracle/oradata/fs89prd/ind02/psindex09.ora' OFFLINE;
+
+
+alter database datafile '/oracle/oradata/fs89prd/ind03/psindex01.ora' offline drop;
+alter database datafile '/oracle/oradata/fs89prd/ind03/psindex02.ora' offline drop;
+alter database datafile '/oracle/oradata/fs89prd/ind03/psindex03.ora' offline drop;
+alter database datafile '/oracle/oradata/fs89prd/ind03/psindex04.ora' offline drop;
+alter database datafile '/oracle/oradata/fs89prd/ind03/psindex05.ora' offline drop;
+alter database datafile '/oracle/oradata/fs89prd/ind03/psindex06.ora' offline drop;
+alter database datafile '/oracle/oradata/fs89prd/ind03/psindex07.ora' offline drop;
+alter database datafile '/oracle/oradata/fs89prd/ind02/psindex08.ora' offline drop;
+alter database datafile '/oracle/oradata/fs89prd/ind02/psindex09.ora' offline drop;
+
+
+alter tablespace psindex drop datafile '/oracle/oradata/fs89prd/ind03/psindex01.ora';
+
+
+ALTER DATABASE DATAFILE '/oracle/oradata/fs89prd/temp01/PSTEMP01.dbf' OFFLINE DROP;
+ALTER DATABASE DATAFILE '/oracle/oradata/fs89prd/temp02/PSTEMP02.dbf' OFFLINE;

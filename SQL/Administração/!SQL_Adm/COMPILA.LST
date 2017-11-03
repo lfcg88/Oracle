@@ -1,0 +1,1 @@
+ALTER FUNCTION FND_VERIFICATABELAEMUSO COMPILE ;                                

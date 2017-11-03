@@ -1,0 +1,367 @@
+
+If this script is automatically called from spcreate (which is
+the supported method), all STATSPACK segments will be created in
+the PERFSTAT user's default tablespace.
+
+Using TBS_DATA_PERFSTAT tablespace to store Statspack objects
+
+... Creating STATS$SNAPSHOT_ID Sequence
+
+Sequence created.
+
+
+Synonym created.
+
+... Creating STATS$... tables
+
+Table created.
+
+
+Synonym created.
+
+
+Table created.
+
+
+1 row created.
+
+
+1 row created.
+
+
+1 row created.
+
+
+1 row created.
+
+
+1 row created.
+
+
+Commit complete.
+
+
+Synonym created.
+
+
+Table created.
+
+
+Synonym created.
+
+
+Table created.
+
+
+Synonym created.
+
+
+Table created.
+
+
+Synonym created.
+
+
+Table created.
+
+
+Synonym created.
+
+
+Table created.
+
+
+Synonym created.
+
+
+Table created.
+
+
+Synonym created.
+
+
+Table created.
+
+
+Synonym created.
+
+
+Table created.
+
+
+Synonym created.
+
+
+Table created.
+
+
+Synonym created.
+
+
+Table created.
+
+
+Synonym created.
+
+
+Table created.
+
+
+Synonym created.
+
+
+Table created.
+
+
+Synonym created.
+
+
+Table created.
+
+
+Synonym created.
+
+
+Table created.
+
+
+Synonym created.
+
+
+Table created.
+
+
+Synonym created.
+
+
+Table created.
+
+
+Synonym created.
+
+
+Table created.
+
+
+Synonym created.
+
+
+Table created.
+
+
+Synonym created.
+
+
+Table created.
+
+
+Synonym created.
+
+
+Table created.
+
+
+Synonym created.
+
+
+Table created.
+
+
+Synonym created.
+
+
+Table created.
+
+
+Synonym created.
+
+
+Table created.
+
+
+Synonym created.
+
+
+Table created.
+
+
+Synonym created.
+
+
+Table created.
+
+
+Synonym created.
+
+
+Table created.
+
+
+Synonym created.
+
+
+Table created.
+
+
+Synonym created.
+
+
+Table created.
+
+
+Index created.
+
+
+Synonym created.
+
+
+Table created.
+
+
+Synonym created.
+
+
+Table created.
+
+
+Synonym created.
+
+
+Table created.
+
+
+Synonym created.
+
+
+Table created.
+
+
+Synonym created.
+
+
+Table created.
+
+
+1 row created.
+
+
+1 row created.
+
+
+1 row created.
+
+
+1 row created.
+
+
+1 row created.
+
+
+1 row created.
+
+
+1 row created.
+
+
+1 row created.
+
+
+1 row created.
+
+
+1 row created.
+
+
+1 row created.
+
+
+1 row created.
+
+
+1 row created.
+
+
+1 row created.
+
+
+1 row created.
+
+
+1 row created.
+
+
+1 row created.
+
+
+1 row created.
+
+
+1 row created.
+
+
+1 row created.
+
+
+1 row created.
+
+
+1 row created.
+
+
+1 row created.
+
+
+1 row created.
+
+
+1 row created.
+
+
+Commit complete.
+
+
+Synonym created.
+
+
+Table created.
+
+
+Synonym created.
+
+
+Table created.
+
+
+Synonym created.
+
+
+Table created.
+
+
+Synonym created.
+
+
+Table created.
+
+
+Synonym created.
+
+
+Table created.
+
+
+Synonym created.
+
+
+Table created.
+
+
+Synonym created.
+
+
+Synonym created.
+
+
+NOTE:
+SPCTAB complete. Please check spctab.lis for any errors.
+

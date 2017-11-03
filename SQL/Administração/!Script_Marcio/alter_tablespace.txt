@@ -1,0 +1,30 @@
+ALTER TABLESPACE 
+   users 
+ADD DATAFILE 
+   ‘/ora01/oracle/oradata/booktst_users_02.dbf’ 
+size 100m
+
+
+alter database datafile 
+   '/u01/oracle/oradata/OTCDB01/datafile/rm_dados.dbf' 
+autoextend on;
+
+ALTER TABLESPACE temp ADD TEMPFILE '/opt/ora10g/oradata/ora10g/temp05.dbf' SIZE 200M;
+
+ALTER DATABASE TEMPFILE '/opt/ora10g/oradata/ora10g/temp05.dbf' RESIZE 200M;
+
+
+
+ALTER TABLESPACE temp ADD TEMPFILE '/u02/oradata/TESTDB/temp01.dbf' SIZE 512m
+  AUTOEXTEND ON NEXT 250m MAXSIZE UNLIMITED;
+
+
+
+
+ ALTER DATABASE TEMPFILE '/opt/ora10g/oradata/ora10g/temp05.dbf' DROP INCLUDING DATAFILES;
+
+
+ALTER TABLESPACE temp ADD TEMPFILE '/opt/ora10g/oradata/ora10g/temp05.dbf' SIZE 512m
+ AUTOEXTEND ON NEXT 250m MAXSIZE 2000m;
+
+ALTER TABLESPACE users RENAME TO usersts;

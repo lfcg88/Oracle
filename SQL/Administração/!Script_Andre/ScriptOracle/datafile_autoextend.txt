@@ -1,0 +1,20 @@
+SQL> select distinct AUTOEXTENSIBLE from dba_data_files;
+
+
+                                       *** DATAFILE AUTOEXTEND BY MOUNT POINT ***
+AUT
+---
+NO
+YES
+SQL> select file_name from dba_data_files where AUTOEXTENSIBLE='YES';
+
+
+                                       *** DATAFILE AUTOEXTEND BY MOUNT POINT ***
+Data File Name
+----------------------------------------
+/app1/oradata/stobilp1/tbs/system01.dbf
+SQL> 
+SQL> 
+SQL> alter database datafile '/app1/oradata/stobilp1/tbs/system01.dbf' AUTOEXTEND off;
+SQL> 
+SQL>  select distinct AUTOEXTENSIBLE from dba_data_files;

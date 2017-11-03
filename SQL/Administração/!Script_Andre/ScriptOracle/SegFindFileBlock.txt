@@ -1,0 +1,5 @@
+SELECT  owner , segment_name , segment_type 
+    FROM  dba_extents
+   WHERE  file_id = &File
+     AND  &Block BETWEEN block_id AND block_id + blocks -1
+  ;

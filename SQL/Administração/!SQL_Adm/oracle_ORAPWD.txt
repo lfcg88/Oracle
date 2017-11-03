@@ -1,0 +1,17 @@
+- Create a new password file: 
+
+orapwd file=orapwSID password=oracle entries=5
+
+- If the password file already exists: 
+
+orapwd file=orapwSID password=oracle entries=5 FORCE=Y
+
+
+
+
+
+NO HP-UX:
+
+orapwd file='/oracle/ora10/product/10.2.0/db_1/dbs/orapworahom' password=gc#orahom07 entries=5;
+orapwd file='/oracle/ora10/product/10.2.0/db_1/dbs/orapwfs89hom' password=gc#fs89hom07 entries=5;
+orapwd file='/oracle/ora10/product/10.2.0/db_1/dbs/orapwhcm9hom' password=gc#hcm9hom07 entries=5;

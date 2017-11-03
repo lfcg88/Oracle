@@ -1,0 +1,11 @@
+select /*+ rule */ decode(sum(decode(s.serial#,l.serial#,1,0)),0,'No','Yes') " ",
+          s.sid "Session ID",s.status "Status",
+          s.username "Username", RTRIM(s.osuser) "OS User",
+          b.spid "OS Process ID",s.machine "Machine Name",
+          s.program  "Program"
+--,c.sql_text "SQL text"
+   from v$session s, v$session_longops l,v$process b,
+        (select address,sql_text from v$sqltext where piece=0) c
+ where (s.sid = l.sid(+)) and s.paddr=b.addr and s.sql_address = c.address
+ group by s.sid,s.status,s.username,s.osuser,s.machine,
+          s.program,b.spid, b.pid, c.sql_text order by s.sid

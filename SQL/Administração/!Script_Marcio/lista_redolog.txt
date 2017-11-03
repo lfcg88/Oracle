@@ -1,0 +1,8 @@
+-- Grupos e membros
+SELECT a.GROUP#, a.status, b.member 
+  FROM V$LOG a, V$LOGFILE b
+ where a.GROUP# = b.GROUP#
+ order by a.GROUP#;
+
+-- Membros
+SELECT GROUP#, status, member FROM V$LOGFILE;

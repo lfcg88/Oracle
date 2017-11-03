@@ -1,0 +1,3 @@
+create or replace synonym SGPB_PROC.RAMO_BK
+  for SGPB_BK.RAMO;
+

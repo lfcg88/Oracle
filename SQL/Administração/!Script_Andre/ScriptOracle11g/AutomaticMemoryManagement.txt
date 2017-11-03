@@ -1,0 +1,49 @@
+
+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+The following example shows how to set up automatic memory management and
+monitor how the database allocates memory to the various components of Oracle’s
+memory allocation.
+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+1. Set up automatic memory management by issuing the following statements
+
+SQL> alter system set pga_aggregate_target = 0 scope=spfile
+SQL> alter system set sga_target = 0 scope=spfile
+SQL> alter system set memory_target = 280M scope=spfile
+SQL> alter system set memory_max_target = 900M scope=spfile
+
+2. Restart the database:
+SQL> shutdown immediate;
+SQL> startup
+
+3. Confirm that the database is now using automatic memory management:
+SQL> show parameter target
+If the memory_target parameter shows a positive value, it means that the
+instance is set up for automatic memory management.
+
+4. Check the current allocation of memory to the various components by
+issuing this query:
+SQL> select component, current_size, user_specified_size from v$memory_dynamic_components where current_size!=0;
+
+
+Make a note of the current allocations to the SGA, PGA, and the Large Pool components.
+
+
+5. Execute a few SQL statements that use a lot of SGA memory, such as an
+expensive parallel query, for example, or an expensive PL/SQL code block
+that consumes a lot of PGA memory. Issue the following command:
+
+SQL> select component, current_size, user_specified_size from v$memory_dynamic_components where current_size!=0;
+
+
+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+Use the V$MEMORY_DYNAMIC_COMPONENTS view to monitor the current
+sizes of all dynamically tuned memory components, as shown here:
+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+
+SQL> select component, current_size, user_specified_size
+2 from v$memory_dynamic_components
+3* where current_size!=0;
+
+

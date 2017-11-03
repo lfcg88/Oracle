@@ -1,0 +1,32 @@
+-- ************************************************************
+-- *** Feel free to use this SQL-code, but please           ***
+-- *** do not remove these copyright lines.                 ***
+-- *** (C) Roger Felix - Lund - Sweden                      ***
+-- *** [roger_felix@hotmail.com, web_master@work.utfors.se] ***
+-- *** URL: http://hem.fyristorg.com/publish/index.html     ***
+-- ************************************************************
+set linesize 500
+set heading off;
+set trimspool on;
+set arraysize 1;
+ select max(to_char(x.line)||decode(x.line,y.line,'  --->','      ') || 
+     x.text ||decode(x.line, y.line,chr(10)||
+      lpad (' ',y.POSITION + 5 + length(to_char(x.line)),' ')||
+            '^ Error occured here in '||
+     x.type||' '||x.name||'.'||chr(10)||
+      lpad (' ',y.POSITION + 5 + length(to_char(x.line)),' ')||
+            '  Error description: '||
+     y.text,'')) 
+    from user_source x ,   user_errors y 
+       where (x.line = y.line - 3 or
+              x.line = y.line - 2 or
+              x.line = y.line - 1 or 
+              x.line = y.line or
+              x.line = y.line + 1 or
+              x.line = y.line + 2 or 
+              x.line = y.line + 3) and
+           y.name = x.name
+   group by x.name, x.line
+   order by 1;
+
+set heading on;

@@ -1,0 +1,4 @@
+col comp_name format a35;
+select comp_name, version, status from dba_registry;
+
+select * from v$version;

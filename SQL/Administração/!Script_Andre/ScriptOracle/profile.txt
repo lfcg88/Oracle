@@ -1,0 +1,18 @@
+
+set linesize 90
+
+column PROFILE   format a20     
+
+column RESOURCE_NAME   format a30 
+
+column RESOURCE_TYPE   format a8
+
+column LIMIT          format a20   
+
+set pagesize 100
+
+break on profile
+
+select * from dba_profiles
+order by profile;
+

@@ -1,0 +1,7 @@
+Informe o valor para usr: 
+and        e.status = 'ACTIVE'
+           *
+ERRO na linha 32:
+ORA-00904: "E"."STATUS": identificador inválido
+
+

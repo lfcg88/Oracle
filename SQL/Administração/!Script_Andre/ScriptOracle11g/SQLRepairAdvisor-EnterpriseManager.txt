@@ -1,0 +1,19 @@
+Here are the steps to invoke the SQL Repair Advisor from the Support Workbench
+home page:
+1. From the Support Workbench home page, go to the Problem Details page by
+clicking on the ID of the problem you’re investigating.
+2. Click the specific problem message resulting from the failed SQL statement.
+3. Click SQL Repair Advisor in the Investigate and Resolve section on the Self
+Service tab.
+4. Enter the appropriate options to run the advisor immediately or at a scheduled
+time later.
+5. Click Submit.
+6. On the SQL Repair Results page, click View to examine the Report
+Recommendations page.
+7. Click Implement to carry out the SQL Repair Advisor’s recommendations.
+8. The implementation is completed when the SQL Repair Results page shows
+you a confirmation message.
+You can disable or remove the patches installed through the SQL Repair Advisor
+by going to the Database Control home page and navigating to Server | SQL Plan
+Control | SQL Patch | Disable (or Drop). You may want to do this when you
+migrate to a new version of the database.

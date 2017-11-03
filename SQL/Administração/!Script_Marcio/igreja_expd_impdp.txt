@@ -1,0 +1,20 @@
+expdp '"/ as sysdba"' schemas=VETORH directory=EXPDPFULL flashback_time=systimestamp dumpfile=expdpVETORH.dmp log=EXPDPLOG:expdpVETORH.log
+
+
+expdp '"/ as sysdba"' schemas=VETORH directory=EXPDPFULL flashback_time=systimestamp dumpfile=expdp_VETORH_08102014.dmp log=EXPDPLOG:expdp_VETORH_08102014.log
+
+
+impdp '"/ as sysdba"' directory=EXPDPFULL dumpfile=expdpfull_dbprod_06102014_22H.dmp logfile=EXPDPLOG:impdp-SAP_HOMOLOG-07102014.log schemas=SAP_HOMOLOG_COM
+
+
+impdp '"/ as sysdba"' directory=EXPDPFULL dumpfile=expdpfull_dbprod_07102014_22H.dmp logfile=EXPDPLOG:impdp-VETORH_HOMOLOG-08102014.log schemas=VETORH
+
+
+alter session set current_schema=vetorh;
+purge recyclebin;
+
+
+
+expdp '"/ as sysdba"' schemas=VETORH_HOMOLOG directory=EXPDPFULL flashback_time=systimestamp dumpfile=expdpVETORH.dmp log=EXPDPLOG:expdpVETORH.log
+
+expdp '"/ as sysdba"' directory=EXPDPFULL flashback_time=systimestamp dumpfile=SAP_PROD_COM_NFE_PROD_COM.dmp schemas='SAP_PROD_COM', 'NFE_PROD_COM' log=EXPDPLOG:SAP_PROD_COM_NFE_PROD_COM.log

@@ -1,0 +1,3 @@
+connect target /@miafis 
+connect rcvcat rman/senharman@rcvcat 
+resync catalog;

@@ -1,0 +1,45 @@
+DECLARE
+v_tab   varchar2(30):= 'AGENTE';
+v_schema varchar2(100):= 'RECEPCAO_DSV';
+v_arq		utl_file.file_type;
+cursor c1 is
+ select ' '||column_name || decode(data_type,'DATE',' DATE "yyyy-mm-dd hh24:mi:ss"') ||
+decode(lead(owner) over (partition by owner order by column_id),null,'',',') tabdesc 
+         from dba_tab_columns t
+         where owner=v_schema
+         AND TABLE_NAME=v_tab
+         order by column_id;
+BEGIN
+   v_arq := utl_file.fopen('/home/oracle/migracao/ctl', v_tab||'.ctl', 'w'); --abri o arquivo para escrita
+   utl_file.put(v_arq,'load data');--escreve no arquivo sem pular linha 
+	  -- pula uma linha no arquivo
+   utl_file.put(v_arq,'CHARACTERSET WE8MSWIN1252');   
+   utl_file.new_line(v_arq,2);
+   utl_file.put(v_arq,'infile '||'''/home/oracle/migracao/unl/'||v_tab ||'.unl''');
+   utl_file.new_line(v_arq,2);
+   utl_file.put(v_arq,'badfile '||'''/home/oracle/migracao/logs_loader/'||v_tab ||'_bad.unl''');
+   utl_file.new_line(v_arq,2);
+   utl_file.put(v_arq,'insert');
+   utl_file.new_line(v_arq,2);
+   utl_file.put(v_arq,'continueif last preserve != ''|''');
+   utl_file.new_line(v_arq,2);
+   utl_file.put(v_arq,'into table '||v_schema||'.'||v_tab);
+   utl_file.new_line(v_arq,2);
+   utl_file.put(v_arq,'fields TERMINATED BY "|" trailing nullcols ');
+   utl_file.new_line(v_arq,2);
+   utl_file.put(v_arq,'(');
+   utl_file.new_line(v_arq,2);
+   for reg in c1 loop
+      if v_tab = 'AGENTE' and reg.tabdesc = ' OBS' then
+        utl_file.put(v_arq,reg.tabdesc|| ' VARCHAR2(3000) TERMINATED BY ''|''');
+        utl_file.new_line(v_arq,2);
+      else
+        utl_file.put(v_arq,reg.tabdesc);
+        utl_file.new_line(v_arq,2);                                   
+      end if;
+   end loop;
+   utl_file.put(v_arq,')');
+   utl_file.fflush(v_arq); --salva tudo o que foi escrito no arquivo
+   utl_file.fclose(v_arq); -- fecha o arquivo
+end;
+/

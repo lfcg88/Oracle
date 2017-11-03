@@ -1,0 +1,6 @@
+Verificar edição do ORACLE
+
+vi $ORACLE_HOME/inventory/globalvariables/oracle.server/globalvariables.xml
+procurar por "InstallType" se for:
+SE => Standard Edition
+EE => Enterprise Edition

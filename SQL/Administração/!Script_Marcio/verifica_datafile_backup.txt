@@ -1,0 +1,3 @@
+Os data files que aparecerem com o status 'ACTIVE' estão em modo de backup;
+
+select * from v$backup;

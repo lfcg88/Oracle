@@ -1,0 +1,573 @@
+SET ECHO off 
+REM NAME:  GENUSERDEF.SQL 
+REM USAGE:"@path/genuserdef" 
+REM ------------------------------------------------------------------------ 
+REM REQUIREMENTS: 
+REM		I have set the UTL_FILE_DIR ini the init.ora file to /tmp (on UNIX that is)
+REM		This is done because all UNIX systems have this directory present and it
+REM		is writable by all.
+REM		IF you are going to run this on any other platform, set it to you own
+REM		favourite directory and make sure that the init.ora files reflect it and
+REM		that your instance is restarted with this parameter, else you will receive
+REM		error messages from this script.
+REM
+REM WARNING -- WARNING -- WARNING -- WARNING
+REM This script will currently only work on 8i versions, i.e. 8.1.x or higher
+REM ------------------------------------------------------------------------ 
+REM AUTHOR:  
+REM    Svein Erik Brostigen, Oracle Support Services - Orlando, Fl USA
+REM    Copyright 2000, Oracle Corporation      
+REM ------------------------------------------------------------------------ 
+REM PURPOSE: 
+REM     Script to create a sql-script that will recreate the schema objects for all
+REM     users except SYS and SYSTEM in the database.
+REM
+REM     I decided to write this script because we often have customers that have 
+REM     no way of recreating their database objects or even know if anyone 
+REM     have a script that will recreate the objects.
+REM
+REM
+REM     These first version does not include partitions or some of the more esoteric 
+REM     features of 8i. I hope to include these in later versions.
+REM
+REM     Any errors that you may find in this script, please mail me any relevant
+REM     information such as: init.ora file, alert log, your environment, complete
+REM     error message and any trace files.
+REM     E-mail to : ebrostig@us.oracle.com
+REM
+REM     History:
+REM             0.1     -       09/27/99        ebrostig.us
+REM                     Initial version
+REM
+REM             0.2 -   10/09/99        ebrostig.us
+REM                     Added clusters, views, triggers
+REM
+REM             0.3     -       10/20/99        ebrostig.us
+REM                     Added sequnces
+REM
+REM             0.4     -       11/25/99        ebrostig.us
+REM                     Added creation of users
+REM ------------------------------------------------------------------------ 
+REM DISCLAIMER: 
+REM    This script is provided for educational purposes only. It is NOT  
+REM    supported by Oracle World Wide Technical Support. 
+REM    The script has been tested and appears to work as intended. 
+REM    You should always run new scripts on a test instance initially. 
+REM ------------------------------------------------------------------------ 
+REM Main text of script follows: 
+
+
+declare
+        first number;
+        chunk_size number :=254;
+        chunk_size_returned number;
+        cur_pos number:=0;
+        data_chunk varchar2(254);
+        stmt varchar2(1024);
+        dir varchar2(1024) := '/tmp';
+        file_name varchar2(1024) := 'create-schema.sql';
+        
+        -- Information on all users
+        v_username sys.all_users.username%TYPE;
+
+        -- Information on user accounts from dba_users
+        v_user_username sys.dba_users.username%TYPE;
+        v_user_password sys.dba_users.password%TYPE;
+        v_user_default_tablespace sys.dba_users.default_tablespace%TYPE;
+        v_user_temporary_tablespace sys.dba_users.temporary_tablespace%TYPE;
+        v_user_profile sys.dba_users.profile%TYPE;
+        
+        -- Information on all sequences
+        v_seq_sequence_name sys.all_sequences.sequence_name%TYPE;
+        v_seq_min_value sys.all_sequences.min_value%TYPE;
+        v_seq_max_value sys.all_sequences.max_value%TYPE;
+        v_seq_increment_by sys.all_sequences.increment_by%TYPE; 
+        v_seq_cycle_flag sys.all_sequences.cycle_flag%TYPE;
+        v_seq_order_flag sys.all_sequences.order_flag%TYPE;
+        v_seq_cache_size sys.all_sequences.cache_size%TYPE;
+        v_seq_last_number sys.all_sequences.last_number%TYPE;
+        
+        -- Information on all clusters
+        v_clus_cluster_name sys.all_clusters.cluster_name%TYPE;
+        v_clus_ts sys.all_clusters.tablespace_name%TYPE;
+        v_clus_pct_free sys.all_clusters.pct_free%TYPE;
+        v_clus_pct_used sys.all_clusters.pct_used%TYPE;
+        v_clus_key_size sys.all_clusters.key_size%TYPE;
+        v_clus_ini_trans sys.all_clusters.ini_trans%TYPE;
+        v_clus_max_trans sys.all_clusters.max_trans%TYPE;
+        v_clus_initial_extent sys.all_clusters.initial_extent%TYPE;
+        v_clus_next_extent sys.all_clusters.next_extent%TYPE;
+        v_clus_min_extents sys.all_clusters.min_extents%TYPE;
+        v_clus_max_extents sys.all_clusters.max_extents%TYPE;
+        v_clus_pct_increase sys.all_clusters.pct_increase%TYPE;
+        v_clus_freelists sys.all_clusters.freelists%TYPE;
+        v_clus_freelist_groups sys.all_clusters.freelist_groups%TYPE;
+        v_clus_cluster_type sys.all_clusters.cluster_type%TYPE;
+        v_clus_function sys.all_clusters.function%TYPE;
+        v_clus_hashkeys sys.all_clusters.hashkeys%TYPE;
+        v_clus_degree sys.all_clusters.degree%TYPE;
+        v_clus_cache sys.all_clusters.cache%TYPE;
+        v_clus_single_table sys.all_clusters.single_table%TYPE;
+        
+        -- Information on all cluster hash expressions
+        v_clh_hash_expression sys.all_cluster_hash_expressions.hash_expression%TYPE;
+        
+        
+        -- Information on all tables
+        v_owner sys.all_tables.owner%TYPE;
+        v_table_name sys.all_tables.table_name%TYPE;
+        v_tablespace_name sys.all_tables.tablespace_name%TYPE;
+        v_initial_extent sys.all_tables.initial_extent%TYPE;
+        v_next_extent sys.all_tables.next_extent%TYPE;
+        v_pct_increase sys.all_tables.pct_increase%TYPE;
+        v_cluster_name sys.all_tables.cluster_name%TYPE;
+        v_degree sys.all_tables.degree%TYPE;
+        v_min_extents sys.all_tables.min_extents%TYPE;
+        v_max_extents sys.all_tables.max_extents%TYPE;
+        v_freelists sys.all_tables.freelists%TYPE;
+        v_freelist_groups sys.all_tables.freelist_groups%TYPE;
+        v_ini_trans sys.all_tables.ini_trans%TYPE;
+        v_max_trans sys.all_tables.max_trans%TYPE;
+        
+        
+        -- Information on columns
+        v_column_name sys.all_tab_columns.column_name%TYPE;
+        v_data_type sys.all_tab_columns.data_type%TYPE;
+        v_data_length sys.all_tab_columns.data_length%TYPE;
+        v_nullable sys.all_tab_columns.nullable%TYPE;
+        v_data_precision sys.all_tab_columns.data_precision%TYPE;
+        
+        -- Information triggers
+        v_trigger_name sys.all_triggers.trigger_name%TYPE;
+        v_trigger_type sys.all_triggers.trigger_type%TYPE;
+        v_triggering_event sys.all_triggers.triggering_event%TYPE;
+        v_table_owner sys.all_triggers.table_owner%TYPE;
+        v_trigtab_name sys.all_triggers.table_name%TYPE;
+        v_when_clause sys.all_triggers.when_clause%TYPE;
+        v_status sys.all_triggers.status%TYPE;
+        v_description sys.all_triggers.description%TYPE;
+        v_trigger_body sys.all_triggers.trigger_body%TYPE;
+        
+        -- Information on constraints
+        v_constraint_name sys.all_constraints.constraint_name%TYPE;
+        v_constraint_type sys.all_constraints.constraint_type%TYPE;
+        v_cons_status sys.all_constraints.status%TYPE;
+        
+        -- Information on constraint columns
+        v_cons_column sys.all_cons_columns.column_name%TYPE;
+        
+        -- Information on views
+        v_view_name sys.all_views.view_name%TYPE;
+        v_text sys.all_views.text%TYPE;
+        
+        
+        
+
+        outfile utl_file.file_type;
+        
+        cursor c_dba_users is
+        select username, password, default_tablespace, temporary_tablespace, profile
+from sys.dba_users where username=v_username;
+        
+        cursor c_user is
+        select username from all_users where username != 'SYS' and username != 'SYSTEM';
+
+        cursor c_sequence is
+        select sequence_name, min_value, max_value, increment_by, cycle_flag, order_flag, cache_size, last_number
+        from sys.all_sequences where sequence_owner=v_username;
+        
+        cursor c_cluster is
+        select cluster_name, tablespace_name, pct_free, pct_used, key_size, ini_trans, max_trans, initial_extent,
+        next_extent, min_extents, max_extents, pct_increase, freelists, freelist_groups, cluster_type, function,
+        hashkeys, degree, cache, single_table from sys.all_clusters where owner=v_username;
+        
+        cursor c_tables is
+        select owner, table_name, tablespace_name, initial_extent, next_extent, pct_increase, degree  from sys.all_tables
+        where owner=v_username;
+
+        cursor c_columns is
+        select column_name, data_type, data_length, nullable, data_precision from
+sys.all_tab_columns where table_name=v_table_name and owner = v_owner;
+        
+        cursor c_triggers is
+        select trigger_name, trigger_type, triggering_event, table_owner, table_name, when_clause, status,
+        description, trigger_body from all_triggers where table_name=v_table_name and owner = v_owner;
+        
+        cursor c_constraints is
+        select constraint_name, constraint_type, status from sys.all_constraints where table_name = v_table_name and owner
+        = v_owner;
+        
+        cursor c_cons_columns is
+        select column_name from sys.all_cons_columns where constraint_name = v_constraint_name and owner =
+        v_owner order by position;
+        
+        cursor c_views is
+        select view_name, text from sys.all_views where owner = v_owner order by view_name;
+        
+        
+ PROCEDURE dump_body(trigger_name IN VARCHAR2, stmt IN varchar2)
+  IS
+    data_chunk          VARCHAR2(254);  -- these can go higher
+    chunk_size          NUMBER:=254;    -- up to 32k
+    chunk_size_returned NUMBER;
+    mycursor            INTEGER; 
+    cur_pos             NUMBER:=0;
+    rows                NUMBER;
+    dummy               NUMBER;
+        status              VARCHAR2(50);
+        tmpfile                         utl_file.file_type;
+  BEGIN
+
+     tmpfile := utl_file.fopen(dir, file_name, 'a', 32767);
+     mycursor:=dbms_sql.open_cursor;
+     dbms_sql.parse(mycursor, stmt, dbms_sql.v7);
+     dbms_sql.bind_variable(mycursor, ':trigger_name', trigger_name);
+
+     dbms_sql.define_column_long(mycursor,1);
+     dummy:=dbms_sql.execute(mycursor);
+     rows:=dbms_sql.fetch_rows(mycursor);
+     loop
+         -- fetch 'chunks' of the long until we have got the lot
+         dbms_sql.column_value_long(mycursor,
+                                  1,
+                                  chunk_size,
+                                  cur_pos,
+                                  data_chunk,
+                                  chunk_size_returned);
+         utl_file.put(tmpfile, data_chunk); -- use PUT to preserve data
+         cur_pos:=cur_pos + chunk_size;
+         exit when chunk_size_returned = 0; 
+     end loop;
+     dbms_sql.close_cursor(mycursor);
+         utl_file.fflush(tmpfile);
+         utl_file.fclose(tmpfile);
+  EXCEPTION
+        when utl_file.invalid_path then
+                raise_application_error(-20100, 'Invalid path in dump_body');
+        when utl_file.invalid_mode then
+                raise_application_error(-20101, 'Invalid mode in dump_body');
+        when utl_file.invalid_operation then
+                raise_application_error(-20102, 'Invalid operation in dump_body');
+        when utl_file.invalid_filehandle then
+                raise_application_error(-20103, 'Invalid filehandle in dump_body');
+        when utl_file.write_error then
+                raise_application_error(-20104, 'Write error in dump_body');
+        when utl_file.read_error then
+                raise_application_error(-20105, 'Read error in dump_body');
+        when utl_file.internal_error then
+                raise_application_error(-20106, 'Internal error in dump_body');
+    WHEN OTHERS THEN
+                raise_application_error(-20107, 'Other Error in dump_body');
+  END dump_body;
+        
+
+-- Begin the main loop...
+begin
+        outfile := utl_file.fopen(dir, file_name, 'w');
+        utl_file.putf(outfile, '-- Create schema objects script\n--\n-- Version 0.4
+11/25/1999\n-- Copyright (c) 1999 Oracle Corp., USA\n-- Written by: ebrostig@us.oracle.com\n\n');
+        utl_file.putf(outfile, 'Created on %s\n', sysdate);
+        utl_file.putf(outfile, '\n-- Create all the non system users first...\n');
+        open c_user;
+        loop
+                fetch c_user into v_username;
+                exit when c_user%NOTFOUND;
+        
+                open c_dba_users;
+                loop
+                        fetch c_dba_users into v_user_username, v_user_password,
+v_user_default_tablespace, v_user_temporary_tablespace, v_user_profile;
+                        exit when c_dba_users%NOTFOUND;
+
+                        utl_file.putf(outfile, 'CREATE USER %s IDENTIFIED BY VALUES ''%s'' ',v_user_username, v_user_password);
+                        utl_file.putf(outfile, 'DEFAULT TABLESPACE %s TEMPORARY TABLESPACE
+%s ', v_user_default_tablespace, v_user_temporary_tablespace);
+                        utl_file.putf(outfile, 'PROFILE %s;\n', v_user_profile);
+                end loop;
+                close c_dba_users;
+        end loop;
+        close c_user;
+        utl_file.putf(outfile, '\n-- Finished creating all non-system users...\n');
+
+        open c_user;
+        loop
+                fetch c_user into v_username;
+                exit when c_user%NOTFOUND;
+
+                -- Lets create the sequences, drop them first and creat them afterwards.
+                -- ?? Should last_number be set as a min_value when the sequences is recreated? Option?
+                
+                open c_sequence;
+                loop
+                        fetch c_sequence into v_seq_sequence_name, v_seq_min_value, v_seq_max_value, v_seq_increment_by,
+                        v_seq_cycle_flag, v_seq_order_flag, v_seq_cache_size, v_seq_last_number;
+                        exit when c_sequence%NOTFOUND;
+                        
+                        utl_file.putf(outfile, '\n-- Drop sequence first...\n');
+                        utl_file.putf(outfile, 'DROP SEQUENCE %s.%s;\n', v_username, v_seq_sequence_name);
+                        utl_file.putf(outfile, '\n-- Create statement for sequence %s.%s\n\n', v_username,
+                        v_seq_sequence_name);
+                        utl_file.putf(outfile, 'CREATE SEQUENCE %s.%s\n', v_username, v_seq_sequence_name);
+                        utl_file.putf(outfile, 'INCREMENT BY %s\n', v_seq_increment_by);
+                        utl_file.putf(outfile, 'MINVALUE %s\n', v_seq_min_value);
+                        utl_file.putf(outfile, 'MAXVALUE %s\n', v_seq_max_value);
+                        if v_seq_cycle_flag = 'Y' then
+                                utl_file.putf(outfile, 'CYCLE\n');
+                        else
+                                utl_file.putf(outfile, 'NOCYCLE\n');
+                        end if;
+                        if v_seq_order_flag = 'Y' then
+                                utl_file.putf(outfile, 'ORDER\n');
+                        else
+                                utl_file.putf(outfile, 'NOORDER\n');
+                        end if;
+                        if v_seq_cache_size = 0 then
+                                utl_file.putf(outfile, 'NOCACHE;\n');
+                        else
+                                utl_file.putf(outfile, 'CACHE %s;\n', v_seq_cache_size);
+                        end if;
+                end loop;
+                close c_sequence;
+                
+                -- Drop and recreate the clusters. Needs to be done before any tables are created.
+                
+                open c_cluster;
+                loop
+                        fetch c_cluster into v_clus_cluster_name, v_clus_ts, v_clus_pct_free, v_clus_pct_used,
+                        v_clus_key_size, v_clus_ini_trans, v_clus_max_trans, v_clus_initial_extent, v_clus_next_extent,
+                        v_clus_min_extents, v_clus_max_extents, v_clus_pct_increase, v_clus_freelists,
+                        v_clus_freelist_groups, v_clus_cluster_type, v_clus_function, v_clus_hashkeys, v_clus_degree,
+                        v_clus_cache, v_clus_single_table;
+                        exit when c_cluster%NOTFOUND;
+                        utl_file.putf(outfile, '\n-- Drop cluster cascade first...\n');
+                        utl_file.putf(outfile, 'DROP CLUSTER %s.%s CASCADE CONSTRAINTS;\n', v_owner, v_clus_cluster_name);
+                        utl_file.putf(outfile, '\n-- Create statement for cluster %s.%s\n\n', v_owner, v_clus_cluster_name); 
+                        utl_file.putf(outfile, 'CREATE CLUSTER %s.%s (', v_owner, v_clus_cluster_name);
+                        open c_columns;
+                        first := 1;
+                        loop
+                                fetch c_columns into v_column_name, v_data_type, v_data_length, v_nullable, v_data_precision;
+                                exit when c_columns%NOTFOUND;   
+                                if first = 1 then
+                                        if v_data_type = 'CHAR' or v_data_type =
+'VARCHAR2'  or v_data_type = 'NCHAR' or v_data_type = 'NVARCHAR2' or v_data_type = 'RAW' or v_data_type = 'UROWID' then
+                                                utl_file.putf(outfile, '\n%s %s(%s)',
+v_column_name, v_data_type,v_data_length);
+                                        elsif v_data_type = 'NUMBER' then
+                                                if v_data_precision != '' then
+                                                        utl_file.putf(outfile, '\n%s
+%s(%s,%s)', v_column_name, v_data_type,v_data_length,v_data_precision);
+                                                else
+                                                        utl_file.putf(outfile, '\n%s
+%s(%s)', v_column_name, v_data_type,v_data_length);
+                                                end if;
+
+                                        else
+                                                utl_file.putf(outfile, '\n%s %s', v_column_name, v_data_type);
+                                        end if;
+                                        first := 0;
+                                else 
+                                        if v_data_type = 'CHAR' or v_data_type =
+'VARCHAR2'  or v_data_type = 'NCHAR' or v_data_type = 'NVARCHAR2' or v_data_type = 'RAW' or v_data_type = 'UROWID' then
+                                                utl_file.putf(outfile, ',\n%s %s(%s)',
+v_column_name, v_data_type,v_data_length);
+                                        elsif v_data_type = 'NUMBER' then
+                                                if v_data_precision != '' then
+                                                        utl_file.putf(outfile, ',\n%s
+%s(%s,%s)', v_column_name, v_data_type,v_data_length,v_data_precision);
+                                                else
+                                                        utl_file.putf(outfile, ',\n%s
+%s(%s)', v_column_name, v_data_type,v_data_length);
+                                                end if;
+                                        else
+                                                utl_file.putf(outfile, ',\n%s %s', v_column_name, v_data_type);
+                                        end if;
+                                end if;
+                                if v_nullable = 'N' then
+                                        utl_file.putf(outfile, ' NOT NULL');
+                                end if;
+                        end loop;
+                        close c_columns;
+                        utl_file.putf(outfile, ')\n');
+                        if v_clus_key_size > 0 then
+                                utl_file.putf(outfile, 'SIZE %s ', v_clus_key_size);
+                        end if;
+                        if v_clus_hashkeys > 0 and v_clus_single_table = 'Y'  then
+                                utl_file.putf(outfile, 'SINGLE TABLE HASHKEYS %s ', v_clus_hashkeys);
+                        elsif v_clus_hashkeys > 0 and v_clus_single_table = 'N' then
+                                utl_file.putf(outfile, 'HASHKEYS %s ', v_clus_hashkeys);
+                                if v_clus_function != 'NULL' then
+                                        utl_file.putf(outfile, 'HASH IS %s\n', v_clus_function);
+                                end if;
+                        end if;
+                        utl_file.putf(outfile, 'STORAGE (INITIAL %s ', v_clus_initial_extent);
+                        utl_file.putf(outfile, ' NEXT %s PCT_INCREASE %s', v_clus_next_extent,v_clus_pct_increase);
+                        utl_file.put(outfile, ') TABLESPACE ');
+                        utl_file.put(outfile, v_clus_ts);
+                        if LTRIM(RTRIM(v_clus_degree)) != '1' and LTRIM(RTRIM(v_clus_degree)) != 'DEFAULT' then
+                                utl_file.putf(outfile, ' PARALLEL %s', LTRIM(RTRIM(v_clus_degree)));
+                        end if;
+                end loop;
+                close c_cluster;
+                         
+                
+                open c_tables;
+                loop
+                        fetch c_tables into  v_owner, v_table_name, v_tablespace_name, v_initial_extent,
+                        v_next_extent,v_pct_increase, v_degree;
+        
+                        exit when c_tables%NOTFOUND;
+                        utl_file.putf(outfile, '\n-- Drop table cascade first...\n');
+                        utl_file.putf(outfile, 'DROP TABLE %s.%s CASCADE CONSTRAINTS;\n', v_owner, v_table_name);
+                        utl_file.putf(outfile,'\n-- Create statement for table %s.%s\n\n', v_owner, v_table_name);
+                        utl_file.put(outfile, 'CREATE TABLE ');
+                        utl_file.put(outfile, v_owner);
+                        utl_file.put(outfile, '.');
+                        utl_file.put(outfile, v_table_name);
+                        utl_file.put(outfile, ' ( ');
+                        open c_columns;
+                        first := 1;
+                        loop
+                                fetch c_columns into v_column_name, v_data_type, v_data_length, v_nullable, v_data_precision;
+                                exit when c_columns%NOTFOUND;   
+                                if first = 1 then
+                                        if v_data_type = 'CHAR' or v_data_type =
+'VARCHAR2'  or v_data_type = 'NCHAR' or v_data_type = 'NVARCHAR2' or v_data_type = 'RAW' or v_data_type = 'UROWID' then
+                                                utl_file.putf(outfile, '\n%s %s(%s)',
+v_column_name, v_data_type,v_data_length);
+                                        elsif v_data_type = 'NUMBER' then
+                                                if v_data_precision != '' then
+                                                        utl_file.putf(outfile, '\n%s
+%s(%s,%s)', v_column_name, v_data_type,v_data_length,v_data_precision);
+                                                else
+                                                        utl_file.putf(outfile, '\n%s
+%s(%s)', v_column_name, v_data_type,v_data_length);
+                                                end if;
+
+                                        else
+                                                utl_file.putf(outfile, '\n%s %s', v_column_name, v_data_type);
+                                        end if;
+                                        first := 0;
+                                else 
+                                        if v_data_type = 'CHAR' or v_data_type =
+'VARCHAR2'  or v_data_type = 'NCHAR' or v_data_type = 'NVARCHAR2' or v_data_type = 'RAW' or v_data_type = 'UROWID' then
+                                                utl_file.putf(outfile, ',\n%s %s(%s)',
+v_column_name, v_data_type,v_data_length);
+                                        elsif v_data_type = 'NUMBER' then
+                                                if v_data_precision != '' then
+                                                        utl_file.putf(outfile, ',\n%s
+%s(%s,%s)', v_column_name, v_data_type,v_data_length,v_data_precision);
+                                                else
+                                                        utl_file.putf(outfile, ',\n%s
+%s(%s)', v_column_name, v_data_type,v_data_length);
+                                                end if;
+                                        else
+                                                utl_file.putf(outfile, ',\n%s %s', v_column_name, v_data_type);
+                                        end if;
+                                end if;
+                                if v_nullable = 'N' then
+                                        utl_file.putf(outfile, ' NOT NULL');
+                                end if;
+                        end loop;
+                        close c_columns;
+                        utl_file.putf(outfile, ')\n STORAGE (INITIAL %s ', v_initial_extent);
+                        utl_file.putf(outfile, ' NEXT %s PCT_INCREASE %s', v_next_extent,v_pct_increase);
+                        utl_file.put(outfile, ') TABLESPACE ');
+                        utl_file.put(outfile, v_tablespace_name);
+                        if LTRIM(RTRIM(v_degree)) != '1' and LTRIM(RTRIM(v_degree)) != 'DEFAULT' then
+                                utl_file.putf(outfile, ' PARALLEL %s', LTRIM(RTRIM(v_degree)));
+                        end if;
+                        utl_file.put(outfile, ';');
+                        utl_file.new_line(outfile);
+                        utl_file.fflush(outfile);
+        
+-- Now create triggers for the table...
+                        utl_file.putf(outfile,'\n-- Creating triggers for table %s.%s\n\n', v_owner, v_table_name);
+                        stmt:='SELECT TRIGGER_BODY FROM SYS.ALL_TRIGGERS WHERE TRIGGER_NAME = :trigger_name';
+                        open c_triggers;
+                        loop
+                                fetch c_triggers into v_trigger_name, v_trigger_type, v_triggering_event, v_table_owner,
+                                v_trigtab_name, v_when_clause, v_status, v_description, v_trigger_body;
+                                exit when c_triggers%NOTFOUND;
+                                utl_file.putf(outfile,'CREATE OR REPLACE TRIGGER %s.%s %s ', v_table_owner, v_trigger_name,
+                                v_trigger_type);
+                                utl_file.putf(outfile, '%s ON %s.%s\n', v_triggering_event, v_table_owner, v_trigtab_name);
+                                utl_file.putf(outfile, 'WHEN %s\n', v_when_clause);
+                                utl_file.fclose(outfile);
+                                dump_body(v_trigger_name, stmt);
+                                outfile := utl_file.fopen(dir, file_name,'a');
+                                utl_file.putf(outfile, '\nEND;\n');                     
+                                utl_file.fflush(outfile);
+                        end loop;               
+                        close c_triggers;
+                
+-- Now create primary keys and indexes...
+                        utl_file.putf(outfile,'\n-- Creating constraints for table %s.%s\n\n', v_owner, v_table_name);
+                        open c_constraints;
+                        loop
+                                fetch c_constraints into v_constraint_name, v_constraint_type, v_cons_status;
+                                exit when c_constraints%NOTFOUND;
+-- Primary Key Constraint
+                                if v_constraint_type = 'P' then  
+                                        utl_file.putf(outfile, 'ALTER TABLE %s ADD PRIMARY KEY (', v_table_name);
+                                        first := 1;
+                                        open c_cons_columns;
+                                        loop
+                                                fetch c_cons_columns into v_cons_column;
+                                                exit when c_cons_columns%NOTFOUND;
+                                                if first = 1 then
+                                                        utl_file.putf(outfile, '%s', v_cons_column);
+                                                        first := 0;
+                                                else
+                                                        utl_file.putf(outfile, ',%s', v_cons_column);
+                                                end if;
+                                        end loop;
+                                        close c_cons_columns;
+                                        utl_file.putf(outfile, ') %s;\n\n', v_cons_status);
+                                elsif v_constraint_type = 'U' then  -- Unique Key Constraint
+                                        utl_file.putf(outfile, 'ALTER TABLE %s ADD
+CONSTRAINT %s\nUNIQUE (', v_table_name, v_constraint_name);
+                                        first := 1;
+                                        open c_cons_columns;
+                                        loop
+                                                fetch c_cons_columns into v_cons_column;
+                                                exit when c_cons_columns%NOTFOUND;
+                                                if first = 1 then
+                                                        utl_file.putf(outfile, '%s', v_cons_column);
+                                                        first := 0;
+                                                else
+                                                        utl_file.putf(outfile, ',%s', v_cons_column);
+                                                end if;
+                                        end loop;
+                                        close c_cons_columns;
+                                        utl_file.putf(outfile, ');\n\n');
+                                end if;
+                        
+                        end loop;
+                        close c_constraints;                    
+                end loop;
+                close c_tables;
+
+-- Create views
+                utl_file.putf(outfile,'\n-- Creating views for user %s\n\n', v_owner);
+                stmt := 'SELECT TEXT FROM SYS.ALL_VIEWS WHERE VIEW_NAME =:trigger_name';
+                open c_views;
+                loop
+                        fetch c_views into v_view_name, v_text;
+                        exit when c_views%NOTFOUND;
+                        utl_file.putf(outfile, 'CREATE OR REPLACE VIEW %s\nAS ', v_view_name);
+                        utl_file.fflush(outfile);
+                        utl_file.fclose(outfile);
+                        dump_body(v_view_name, stmt);
+                        outfile := utl_file.fopen(dir, file_name,'a');
+                        utl_file.putf(outfile, ';\n\n');
+                end loop;
+                close c_views;          
+                
+        end loop;
+        utl_file.fclose(outfile);
+        
+end;
+ 
+/
+

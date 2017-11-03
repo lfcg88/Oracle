@@ -1,0 +1,250 @@
+--
+--Extrai sql , esta funcionado porem nao obedece o parametro de sort
+--
+
+set serveroutput on size 1000000
+
+accept vDataInicio prompt 'Informe a Data Inicial (dd/mm/yyyy  HH:MI)        =>  ';
+accept vDataFim    prompt 'Informe a Data Final   (dd/mm/yyyy  HH:MI)        =>  ';
+accept vOrdenacao  prompt 'Ordenacao (1-SORT 2-EXEC 3-DISK 4-GETS 5-ROWS )   =>  ';
+accept vArquivo    prompt 'Informe Nome Arquivo de Spool                     =>  ';
+--
+-- accept vIntervalo NUMBER FORMAT '99' DEFAULT '0' prompt 'Intervalo em Horas             (HH) =>  ';
+set echo off
+spool &vArquivo
+DECLARE
+-- teste number;
+ vData varchar2(10);
+ vphyrds number;
+-- vHoras number;
+ vphywrts number;
+-- vdata_inicio date;
+-- vdata_fim date;
+-- 
+ bsnap_id number;
+ bsnap_time date;
+ fsnap_id number;
+ fsnap_time date;
+ vasnap_id number;
+ vasnap_time date;
+--
+--
+Cursor c_periodo_hn (pdata varchar2) IS
+  SELECT snap_id,snap_time
+  FROM 
+     stats$snapshot   
+  WHERE 
+     trunc(snap_time,'MI') = to_date(pdata,'dd/mm/yyyy HH24:MI');
+-- 
+--
+ Cursor c_sql (i_snap_id number) is
+      select  sql_text,sorts, executions, disk_reads, buffer_gets, rows_processed,hash_value               
+      from STATS$SQL_SUMMARY
+      where snap_id         = i_snap_id ;
+--               and dbid            = p_dbid
+--
+--
+--
+--
+
+
+Procedure Imprime_Sql_Inteiro(phash_value number) 
+Is 
+    vsql             varchar(2000);
+  Cursor c_sql_inteiro (phash_value number) IS
+    select SQL_TEXT 
+    from STATS$SQLTEXT 
+    where HASH_VALUE   = phash_value
+    order by ADDRESS,HASH_VALUE,PIECE;
+
+--
+ Begin
+--
+--
+    For r_sql_inteiro in c_sql_inteiro(phash_value)  Loop
+       Dbms_Output.Put_Line(r_sql_inteiro.SQL_TEXT);
+    End Loop;
+--
+--         
+End; 
+--
+--
+Procedure Colhe_Estatistica (psnap_id number,psql_text varchar2,psorts out number,pexecutions out number,
+                             pdisk_reads out  number,pbuffer_gets out  number,prows_processed out  number)
+Is
+teste number;
+  cursor LCD (i_snap_id number) is
+     select sorts, executions, disk_reads,buffer_gets,rows_processed               
+     from  STATS$SQL_SUMMARY
+     where snap_id    = i_snap_id And
+        sql_text = psql_text;
+Begin
+ -- Dbms_Output.Put_Line('erro2');
+ if not LCD%ISOPEN then open LCD (psnap_id); end if;
+ Fetch LCD into  psorts, pexecutions, pdisk_reads, pbuffer_gets,prows_processed;
+ If LCD%NOTFOUND then
+   pexecutions     := 0;
+   psorts          := 0;
+   pdisk_reads     := 0;
+   pbuffer_gets    := 0;
+   prows_processed := 0;
+  End if; 
+  Close LCD;
+End;
+-- affafaf := 0;
+--
+Procedure Imprime_Statisticas(pinicio_snap_time date,pfim_snap_time date,pinicio_snap_id number ,
+                              pfim_snap_id number,psql varchar2,psorts number,pexecutions number,
+                              pdisk_reads number,pbuffer_gets number,prows_processed number,phash_value number) 
+Is 
+--  vparameter        varchar2(60);
+--  vgets             number(10);
+--  vgetmisses        number(10);
+--  vhit_lib_cache      number(10);
+--  vDivisor              number(10);
+--  vfim_pins              number(10);
+--  vfim_pinhits         number(10);
+    vsql             varchar(2000);
+    vsorts           number(10);
+    vexecutions      number(10);
+    vdisk_reads      number(10);
+    vbuffer_gets     number(10);
+    vrows_processed  number(10);
+--
+Begin
+--
+--
+   Colhe_Estatistica (pinicio_snap_id,psql,vsorts,vexecutions,vdisk_reads,vbuffer_gets,vrows_processed);  
+--
+   If pexecutions > vexecutions Then
+         Dbms_Output.Put_Line('================================================================================');
+         Imprime_Sql_Inteiro(phash_value);
+         Dbms_Output.Put_Line('-------------------------------------------------------------------------------');
+         Dbms_Output.Put_Line('SORTS           => '||to_char(psorts          - vsorts));
+         Dbms_Output.Put_Line('EXECUTIONS      => '||to_char(pexecutions     - vexecutions));
+         Dbms_Output.Put_Line('DISK_READS      => '||to_char(pdisk_reads     - vdisk_reads));
+         Dbms_Output.Put_Line('BUFFER GETS     => '||to_char(pbuffer_gets    - vbuffer_gets));
+         Dbms_Output.Put_Line('ROWS_PROCESSES  => '||to_char(prows_processed - vrows_processed));
+    End If;
+End; 
+--
+--
+Procedure Imprime_Ord_Rows(pinicio_snap_time date,pfim_snap_time date,pinicio_snap_id number ,
+                           pfim_snap_id number) 
+Is 
+--
+      cursor c_sql_rows (i_snap_id number) is
+      select  sql_text,sorts, executions, disk_reads, buffer_gets, rows_processed,hash_value               
+      from STATS$SQL_SUMMARY
+      where snap_id         = i_snap_id 
+      order by rows_processed  Desc;
+
+Begin
+--
+--
+   For r_sql_rows in c_sql(pfim_snap_id)  Loop
+     Imprime_Statisticas(pinicio_snap_time,pfim_snap_time,pinicio_snap_id,pfim_snap_id,
+                         r_sql_rows.sql_text,r_sql_rows.sorts, r_sql_rows.executions, 
+                         r_sql_rows.disk_reads,r_sql_rows.buffer_gets, r_sql_rows.rows_processed,r_sql_rows.hash_value);
+--
+--  
+ End Loop;
+End; 
+--
+Procedure Imprime_Ord_Exec(pinicio_snap_time date,pfim_snap_time date,pinicio_snap_id number ,pfim_snap_id number,pordenacao varchar2) 
+Is 
+--
+      cursor c_sql_rows (i_snap_id number) is
+      select  sql_text,sorts, executions, disk_reads, buffer_gets, rows_processed,hash_value               
+      from STATS$SQL_SUMMARY
+      where snap_id         = i_snap_id 
+      order by rows_processed ;
+
+Begin
+--
+--
+   For r_sql_rows in c_sql(pfim_snap_id)  Loop
+     Imprime_Statisticas(pinicio_snap_time ,pfim_snap_time,pinicio_snap_id,pfim_snap_id,                                                                            r_sql_rows.sql_text,r_sql_rows.sorts, r_sql_rows.executions, 
+                         r_sql_rows.disk_reads, r_sql_rows.buffer_gets, r_sql_rows.rows_processed,r_sql_rows.hash_value); 
+ End Loop;
+End; 
+--
+--
+--
+--
+Procedure Determina_Statisticas(pinicio_snap_time date,pfim_snap_time date,pinicio_snap_id number,
+                                pfim_snap_id number,pordenacao varchar2) 
+Is 
+--
+Begin
+ --   1234
+   Dbms_Output.Put_Line('-------------------------------------------------------------------------------');
+   Dbms_Output.Put_Line(To_char(pfim_snap_time,'dd/mm/yyyy hh24:mi')||' ---- '||To_char(pinicio_snap_time,'dd/mm/yyyy -- hh24:mi')); 
+    IF pordenacao ='1' THEN
+      Imprime_Ord_Rows(pinicio_snap_time ,pfim_snap_time ,pinicio_snap_id  ,pfim_snap_id );
+     ELSIF pordenacao = '2' THEN
+       Imprime_Ord_Rows(pinicio_snap_time ,pfim_snap_time ,pinicio_snap_id  ,pfim_snap_id );
+     ELSIF pordenacao = '3' THEN
+       Imprime_Ord_Rows(pinicio_snap_time ,pfim_snap_time ,pinicio_snap_id  ,pfim_snap_id );
+     ELSIF pordenacao = '4' THEN
+       Imprime_Ord_Rows(pinicio_snap_time ,pfim_snap_time ,pinicio_snap_id  ,pfim_snap_id );
+     ELSIF pordenacao = '5' THEN
+       Imprime_Ord_Rows(pinicio_snap_time ,pfim_snap_time ,pinicio_snap_id  ,pfim_snap_id );
+    END IF;
+End; 
+--
+--
+-- vData varchar2(10);
+-- vphyrds number;
+-- vphywrts number;
+--
+ --  vData := 
+Begin
+--
+--
+ SELECT snap_id,snap_time INTO bsnap_id,bsnap_time
+ FROM   stats$snapshot   
+ WHERE   trunc(snap_time,'MI') = to_date('&vDataInicio','dd/mm/yyyy HH24:MI');
+ If SQL%NOTFOUND then
+   Dbms_Output.Put_Line('Não existe registros na Data Inicial');
+   Return;
+ End if; 
+--
+--
+--
+ SELECT snap_id,snap_time INTO fsnap_id,fsnap_time
+ FROM   stats$snapshot   
+ WHERE   trunc(snap_time,'MI') = to_date('&vDataFim','dd/mm/yyyy HH24:MI');
+ If SQL%NOTFOUND then
+   Dbms_Output.Put_Line('Não existe registros na Data Final');
+   Return;
+ End if; 
+--
+--
+--while true Loop
+--  Fetch c_periodo_hn Into vsnap_id, vsnap_time;
+--  If c_periodo_hn%NOTFOUND then
+--     close c_periodo_hn;
+--     exit;
+--  End if;
+--  If to_char(vsnap_time,'dd/mm/yyyy:hh24mi') <= to_char(bsnap_time+(12/24),'dd/mm/yyyy:hh24mi') Then
+--    If to_char(vsnap_time,'dd/mm/yyyy:hh24mi') >= to_char(bsnap_time+(&vIntervalo/24),'dd/mm/yyyy:hh24mi') --Then
+     -- vasnap_id   := vsnap_id;
+     -- vasnap_time := vsnap_time;
+     --  Else
+     Determina_Statisticas(bsnap_time,fsnap_time,bsnap_id,fsnap_id,'&vOrdenacao');
+--    Imprime_Statisticas(bsnap_time,vasnap_time,bsnap_id,vasnap_id);
+--    bsnap_time := vsnap_time;
+--    bsnap_id   := vsnap_id;
+--  End If;
+-- End Loop;
+--    
+-- End If;
+End ;
+/
+spool off
+
+
+
+
+

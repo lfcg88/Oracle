@@ -1,0 +1,59 @@
++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+The following example shows how to create and execute a database ADDM task for an Oracle RAC configuration:
++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+SQL> begin
+2 :tname := 'Test ADDM Run1';
+3 dbms_addm.analyze_db(:tname,1664,1665);
+4* end;
+SQL> /
+
+
+The numbers 1664 and 1665 are specified as values for the begin_snapshot and end_snapshot parameters for the ADDM analysis
+
+
+
++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+To get the ADDM report, use the DBMS_ADDM.GET_REPORT function, as  shown here:
++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+SET LONG 100000
+SET PAGESIZE 50000
+1* select dbms_addm.get_report(:tname) from dual;
+
++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+The classification of ADDM findings enables you to query the DBA_ADVISOR_FINDINGS view to find which findings occur most
+frequently in the database.
++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+SQL> select * from DBA_ADVISOR_FINDINGS;
+
+
+SQL> select finding_name from dba_advisor_finding_names;
+FINDING_NAME
+------------------------------
+normal, successful completion
+"Administrative" Wait Class
+"Application" Wait Class
+"Cluster" Wait Class
+"Concurrency" Wait Class
+"
+...80 rows selected.
+
+
+
++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+create an ADDM task by inserting a finding directive to limit or filter the findings.
++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+SQL> var tname varch2(60);
+SQL> begin
+dbms_addm.insert_finding_directive(NULL,
+'SGA Directive',
+Undersized SGA',
+2,
+10);
+:tname := 'Test ADDM Task';
+dbms_addm.analyze_inst(:tname,1634,1635);
+end;
+/

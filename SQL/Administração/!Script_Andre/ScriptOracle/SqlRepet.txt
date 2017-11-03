@@ -1,0 +1,55 @@
+/**********************************************************************
+ * File:	sqldups.sql
+ * Type:	SQL*Plus script
+ * Author:	Tim Gorman (Evergreen Database Technologies, Inc.)
+ * Date:	20-Sep-98
+ *
+ * Description:
+ *	Query to display those SQL statementss which are identical in
+ *	text for the first 60 characters.  If there are more than 50
+ *	such cases, then it is almost certain that "bind varibles" are
+ *	not being used, which will result in "flushing" of the Shared
+ *	SQL Area (also look for low GETHITRATIO and PINHITRATIO in the
+ *	"SQLAREA" namespace of V$LIBRARYCACHE) of the Shared Pool and
+ *	also high amounts of contention for the latches "shared pool"
+ *	and "library cache".
+ *
+ *	Every single dynamic SQL programming interfaces to Oracle (OCI,
+ *	DBMS_SQL and NDS (PL/SQL), Perl, JDBC) provides the opportunity
+ *	to developer to ruin their application performance by allowing
+ *	them to embed "bind-data values" into the text of the SQL
+ *	statement.
+ *
+ *	Each of these programming interfaces also provides a mechanism
+ *	to use "bind variables" also.
+ *
+ * Modifications:
+ **********************************************************************/
+set pages 100 lines 500 trimspool on
+col text format a60 truncate
+col dups format 999,990
+col total_size_of_sqlarea format 999,990
+
+break on report
+compute sum of dups on report
+
+col instance new_value V_INSTANCE noprint
+select	lower(replace(t.instance,chr(0),'')) instance
+from	v$thread	t,
+	v$parameter	p
+where	p.name = 'thread'
+and	t.thread# = to_number(decode(p.value,'0','1',p.value));
+
+spool sqldups_&&V_INSTANCE
+
+select   substr(sql_text, 1, 60) text,
+         count(*) dups
+from     v$sqlarea
+group by substr(sql_text, 1, 60)
+having   count(*) > 50
+order by 2 desc;
+
+select   count(*) total_size_of_sqlarea
+from     v$sqlarea;
+
+spool off

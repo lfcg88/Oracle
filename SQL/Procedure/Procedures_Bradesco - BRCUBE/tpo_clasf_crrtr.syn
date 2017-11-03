@@ -1,0 +1,3 @@
+create or replace synonym SGPB_PROC.TPO_CLASF_CRRTR
+  for CPVO.TPO_CLASF_CRRTR;
+

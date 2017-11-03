@@ -1,0 +1,43 @@
+Identifying the Corrupt Blocks 
+
+Block media recovery helps you repair physical or media corruption, which occurs when a database fails to recognize the corrupted data blocks. You can use one of the following commands to discover block corruption:
+
+¦ analyze table and analyze index
+¦ list failure
+¦ validate
+¦ backup . . . validate
+¦ export to dev/null?
+
+
+Each time one of the preceding commands reveals a database corruption, the database logs the information in the V$DATABASE_BLOCK_CORRUPTION view.You can also use the dbverify utility to reveal block corruption.
+
+
+Using the Recover…Block Command ( pag 425 )
+
+You can fix each corrupted block separately by issuing the recover . . . block command for a data block or set of data blocks, or fix all corrupted blocks with a single execution of the command. 
+
+To recover a specific database block or a set of data blocks, specify the datafile number and the corrupted data blocks in the recover . . . block command:
+
+RMAN> recover datafile 2 block 24
+datafile 4 block 10;
+
+
+You can specify the exact backup from which you want RMAN to recover the corrupt data blocks by specifying the backup tag with the recover . . . block command, as shown here:
+
+RMAN> recover datafile 2 block 24
+datafile 4 block 10
+from tag=sundaynight;
+
+
+Instead of fixing each corrupted data block one data block at a time, you can choose to fix all corrupted data blocks in one step. To do this, first execute the validate database command so the database populates the V$DATABASE_BLOCK_ CORRUPTION view with all corrupt data block information.
+
+RMAN> validate database;
+
+
+Issue the recover corruption list command to recover all corrupted data blocks, as shown here:
+
+RMAN> recover corruption list;
+
+
+After the database recovers the corrupt blocks, it will delete the information about them from the V$DATABASE_BLOCK_CORRUPTION view.
+

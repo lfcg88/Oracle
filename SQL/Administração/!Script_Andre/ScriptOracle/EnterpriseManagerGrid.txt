@@ -1,0 +1,48 @@
+When a session is waiting on read by other session, an entry will be seen in the v$session_wait system view giving more information on the blocks being waited for:
+
+Code:
+SELECT p1 "file#", p2 "block#", p3 "class#"
+FROM v$session_wait
+WHERE event = 'read by other session';
+
+
+
+If information collected from the above query repeatedly shows that the same block (or range of blocks) is experiencing waits and the class of the block is of type “data block” (which usually is), this indicates a “hot” block or object.
+
+The following query will give the name and type of the object:
+
+Code:
+SELECT relative_fno, owner, segment_name, segment_type
+FROM dba_extents
+WHERE file_id = &file
+AND &block BETWEEN block_id AND block_id + blocks - 1
+
+
+
+
+SELECT a.relative_fno, a.owner, a.segment_name, a.segment_type
+FROM dba_extents a
+WHERE a.file_id = &file
+AND &block BETWEEN a.block_id AND a.block_id + a.blocks - 1
+
+SQL> SELECT p1 "file#", p2 "block#", p3 "class#"
+  2  FROM v$session_wait
+  3  WHERE event = 'read by other session';
+
+     file#     block#     class#
+---------- ---------- ----------
+         9    2621306          1
+         9    2621306          1
+
+SELECT a.relative_fno, a.owner, a.segment_name, a.segment_type
+FROM dba_extents a
+WHERE a.file_id = 9
+AND  2621306 BETWEEN a.block_id AND a.block_id + a.blocks - 1
+
+
+cd /u01/app_oracle/Middleware/oms/bin
+
+
+./emctl stop oms -all
+
+./emctl start oms

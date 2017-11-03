@@ -1,0 +1,3 @@
+create or replace synonym SGPB_PROC.PR_CONTROLE_FIM_FLUXO
+  for SCHD_PROC.PR_CONTROLE_FIM_FLUXO;
+

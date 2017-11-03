@@ -1,0 +1,227 @@
+-- drop constraint repetidas, somente o ultimo script funciona
+
+========================================
+declare
+ function search_cond( p_cons_name in varchar2 ) return varchar2
+  as
+   l_search_condition varchar2(4000);
+  begin
+   select SEARCH_CONDITION into l_search_condition
+     from user_constraints
+    where constraint_name = p_cons_name;
+
+   return l_search_condition;
+  end;
+Begin
+
+
+ select 'alter table '||table_name||' drop constraint '||constraint_name||';', search_cond_vc 
+ from (
+         select search_cond( constraint_name ) search_cond_vc,constraint_name,table_name
+         from user_constraints
+         where constraint_name like 'SYS%'
+     )
+ group by search_cond_vc,table_name,
+ having count(*) > 1;
+
+
+
+select *
+         from user_constraints
+         where constraint_name like 'SYS%' and search_cond( constraint_name )='1'
+
+End;
+/
+
+
+-- funciona
+
+  select *
+  from user_constraints
+  where constraint_name like 'SYS%' and table_name = 'SERVICO' and 
+  search_cond( constraint_name )='"I_SERVICO" IS NOT NULL';
+
+
+
+
+======================================================
+
+
+
+
+
+
+   
+    
+    
+create or replace function search_cond( p_cons_name in varchar2 ) return varchar2
+as
+   l_search_condition varchar2(4000);
+begin
+   select SEARCH_CONDITION into l_search_condition
+     from USER_constraints
+    where constraint_name = p_cons_name ;
+
+   return l_search_condition;
+end;
+/
+
+and then
+
+
+Cursor c_tabelas  IS
+  SELECT table_name
+  FROM 
+     perfstat.stats$snapshot   
+  WHERE 
+     snap_time >= to_date(pinicio,'dd/mm/yyyy') and  snap_time < (to_date(pfim,'dd/mm/yyyy')+1/12)
+
+
+
+
+
+
+
+
+select table_name, search_cond_vc, count(*) 
+from (
+select search_cond( constraint_name ) search_cond_vc,table_name 
+  from USER_constraints
+ where constraint_name like 'SYS%' 
+     )
+group by table_name,search_cond_vc
+having count(*) > 1;
+
+ 
+ 
+============================
+
+****  nao funcion porque nao tem jeito de dar order by no long ( o de cima )
+
+=====================================================================
+
+--
+set serveroutput on size 1000000
+--
+Declare
+--
+v_i_contraint_name   varchar2(4000);
+v_i_search_condition varchar2(4000);
+v_i_table_name       varchar2(4000);
+v_f_contraint_name   varchar2(4000);
+v_f_search_condition varchar2(4000);
+v_f_table_name       varchar2(4000);
+--
+--
+--
+  Cursor c_constraint Is
+    select table_name, constraint_name,SEARCH_CONDITION 
+    from USER_constraints
+    where constraint_name like 'SYS%' 
+    order by table_name,constraint_name;
+--
+--
+--  Function search_cond( p_cons_name in varchar2 ) return varchar2
+--   as
+--   l_search_condition varchar2(2000);
+--  begin
+--     select SEARCH_CONDITION into l_search_condition
+--     from USER_constraints
+--     where constraint_name = p_cons_name ;
+--   return l_search_condition;
+--  end;
+--
+--
+Begin
+--
+    if not c_constraint%ISOPEN then open c_constraint; end if;
+        fetch c_constraint into v_i_table_name,v_i_contraint_name,v_i_search_condition;
+        while true Loop
+--             dbms_Output.Put_Line(v_i_table_name||' '||v_i_search_condition);
+             Fetch c_constraint into v_f_table_name,v_f_contraint_name,v_f_search_condition;
+--             dbms_Output.Put_Line(v_f_table_name||' '||v_f_search_condition||'--'||v_i_table_name||' '||v_i_search_condition);
+             If c_constraint%NOTFOUND then
+                  close c_constraint;
+                  exit;
+             End If;
+             If v_i_table_name = v_f_table_name And v_i_search_condition = v_f_search_condition Then
+                 Dbms_Output.Put_Line('alter table '||v_i_table_name||' drop constraint '||v_i_contraint_name||';');
+             End If;
+             v_i_table_name       := v_f_table_name;
+             v_i_contraint_name   := v_f_contraint_name;
+             v_i_search_condition := v_f_search_condition;
+         End Loop;
+--
+End;
+
+
+============================
+ESTE ESTA FUNCIONADO ( o de cima )
+============================
+
+--
+set serveroutput on size 1000000
+--
+Declare
+--
+v_i_contraint_name   varchar2(4000);
+v_i_search_condition varchar2(4000);
+v_i_table_name       varchar2(4000);
+v_f_contraint_name   varchar2(4000);
+v_f_search_condition varchar2(4000);
+v_f_table_name       varchar2(4000);
+--
+--
+--
+ Cursor c_basico_const Is
+    select  distinct table_name,search_cond( constraint_name ) SEARCH_CONDITION
+    from USER_constraints
+    where constraint_name like 'SYS%' and constraint_type='C';
+--
+  Cursor c_constraint(p_table_name in varchar2,p_SEARCH_CONDITION in varchar2) Is
+    select  constraint_name 
+    from USER_constraints
+    where constraint_name like 'SYS%' and table_name=p_table_name 
+    and search_cond( constraint_name )=p_SEARCH_CONDITION ;
+--    order by table_name,constraint_name;
+--
+--
+  Function search_cond( p_cons_name in varchar2 ) return varchar2
+   as
+   l_search_condition varchar2(2000);
+  begin
+     select SEARCH_CONDITION into l_search_condition
+     from USER_constraints
+     where constraint_name = p_cons_name ;
+   return l_search_condition;
+  end;
+--
+--
+Begin
+--
+     For r_basico_const in c_basico_const  Loop
+--
+     if not c_constraint%ISOPEN then 
+       open c_constraint(r_basico_const.table_name,r_basico_const.SEARCH_CONDITION); 
+     end if;
+         fetch c_constraint into v_i_contraint_name;
+        while true Loop
+--             dbms_Output.Put_Line(v_i_table_name||' '||v_i_search_condition);
+             Fetch c_constraint into v_f_contraint_name;
+             If c_constraint%NOTFOUND then
+                  close c_constraint;
+                  exit;
+             End If;
+           --  If v_i_table_name = v_f_table_name And v_i_search_condition = v_f_search_condition Then
+                 Dbms_Output.Put_Line('alter table '||r_basico_const.table_name||' drop constraint '||v_i_contraint_name||';');
+           --  End If;
+           --  v_i_table_name       := v_f_table_name;
+             v_i_contraint_name   := v_f_contraint_name;
+           --  v_i_search_condition := v_f_search_condition;
+         End Loop;
+--
+    End Loop;
+End;
+
+
+

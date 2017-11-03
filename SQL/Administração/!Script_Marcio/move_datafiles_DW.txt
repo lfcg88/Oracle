@@ -1,0 +1,66 @@
+-- comando a ser executado.
+
+ALTER DATABASE RENAME FILE '/oracle/oradata/DWDES/data2/DWSINISTRO2.ORA' TO '/teste/DWSINISTRO2.ORA';
+
+
+--- idendificar caminho dos datafiles
+
+select tablespace_name as TABLESPACE, substr(file_name,1,70) as CAMINHO 
+from dba_data_files
+order by tablespace_name;
+
+
+------
+mudar o caminho dos datafiles fisicamente
+
+select 'cp '|| substr(file_name,1,70) || ' /u01/app/teste'|| substr(file_name,30,70) as CAMINHO
+from dba_data_files
+order by tablespace_name;
+
+
+------
+mudar o caminho do dos datafiles logicamente
+
+select  'ALTER DATABASE RENAME FILE '''||substr(file_name,1,70)||''' TO ''/u01/app/teste/'||substr(file_name,31,70)||''';'
+from dba_data_files;
+
+select  'ALTER DATABASE RENAME FILE '''||substr(file_name,1,70)||''' TO ''/u01/app/teste/'||substr(file_name,31,70)||''';'
+from dba_temp_files;
+
+
+
+-- PASSO A PASSO
+
+1) shutdown na instancia
+
+2) copiar arquivos para area nova
+
+cp /u01/app/oracle/oradata/DB11G/aplicacao.dbf /u01/app/teste/aplicacao.dbf
+cp /u01/app/oracle/oradata/DB11G/example01.dbf /u01/app/teste/example01.dbf
+cp /u01/app/oracle/oradata/DB11G/sysaux01.dbf /u01/app/teste/sysaux01.dbf
+cp /u01/app/oracle/oradata/DB11G/system01.dbf /u01/app/teste/system01.dbf
+cp /u01/app/oracle/oradata/DB11G/undotbs01.dbf /u01/app/teste/undotbs01.dbf
+cp /u01/app/oracle/oradata/DB11G/users01.dbf /u01/app/teste/users01.dbf
+
+3) iniciar a instancia
+
+startup mount
+
+4) alterar caminho dos datafiles
+
+ALTER DATABASE RENAME FILE '/u01/app/oracle/oradata/DB11G/users01.dbf' TO '/u01/app/teste/users01.dbf';
+ALTER DATABASE RENAME FILE '/u01/app/oracle/oradata/DB11G/undotbs01.dbf' TO '/u01/app/teste/undotbs01.dbf';
+ALTER DATABASE RENAME FILE '/u01/app/oracle/oradata/DB11G/sysaux01.dbf' TO '/u01/app/teste/sysaux01.dbf';
+ALTER DATABASE RENAME FILE '/u01/app/oracle/oradata/DB11G/system01.dbf' TO '/u01/app/teste/system01.dbf';
+ALTER DATABASE RENAME FILE '/u01/app/oracle/oradata/DB11G/example01.dbf' TO '/u01/app/teste/example01.dbf';
+ALTER DATABASE RENAME FILE '/u01/app/oracle/oradata/DB11G/aplicacao.dbf' TO '/u01/app/teste/aplicacao.dbf';
+
+5) abrir a instancia
+
+alter database open;
+
+6) testar conectividade e verificar o novo caminho dos datafiles
+
+select tablespace_name as TABLESPACE, substr(file_name,1,70) as CAMINHO 
+from dba_data_files
+order by tablespace_name;

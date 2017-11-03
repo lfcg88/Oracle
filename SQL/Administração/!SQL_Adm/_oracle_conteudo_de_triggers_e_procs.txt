@@ -1,0 +1,3 @@
+tabela dba_source mostra o conteúdo das triggers ou procedures, a coluna text é onde fica esse conteúdo.
+
+select * from dba_source

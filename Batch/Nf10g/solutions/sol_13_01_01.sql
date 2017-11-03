@@ -1,0 +1,8 @@
+
+drop tablespace tbsfd including contents and datafiles;
+
+CREATE SMALLFILE TABLESPACE tbsfd
+DATAFILE 'fd1.dbf' SIZE 500k
+LOGGING
+EXTENT MANAGEMENT LOCAL
+SEGMENT SPACE MANAGEMENT AUTO;

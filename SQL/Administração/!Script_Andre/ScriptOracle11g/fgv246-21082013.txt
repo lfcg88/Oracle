@@ -1,0 +1,230 @@
+
+
+
+HER01@fgv246.fgv.br:/home/oracle> dbshut
+ORACLE_HOME_LISTNER is not SET, unable to auto-stop Oracle Net Listener
+Usage: /u01/app/oracle/product/11.2.0.3/db_1/bin/dbshut ORACLE_HOME
+Processing Database instance "DER11": log file /u01/app/oracle/product/11.2.0/db_1/shutdown.log
+Processing Database instance "HSYNC02": log file /u01/app/oracle/product/10.2.0/db_1/shutdown.log
+Processing Database instance "DSYNC03": log file /u01/app/oracle/product/10.2.0/db_1/shutdown.log
+Processing Database instance "HER01": log file /u01/app/oracle/product/11.2.0.3/db_1/shutdown.log
+HER01@fgv246.fgv.br:/home/oracle>
+HER01@fgv246.fgv.br:/home/oracle>
+HER01@fgv246.fgv.br:/home/oracle>
+HER01@fgv246.fgv.br:/home/oracle>
+HER01@fgv246.fgv.br:/home/oracle> ps -ef | grep -i pmon
+oracle    9815  8122  0 23:06 pts/0    00:00:00 grep -i pmon
+oracle   15330     1  0 Aug18 ?        00:00:04 ora_pmon_HER01
+oracle   23901     1  0 May22 ?        00:02:55 ora_pmon_DPMO1
+HER01@fgv246.fgv.br:/home/oracle>
+HER01@fgv246.fgv.br:/home/oracle>
+HER01@fgv246.fgv.br:/home/oracle> ps -ef | grep -i
+
+
+
+HER01@fgv246.fgv.br:/home/oracle> ps -ef | grep -i tnslsnr
+oracle    3188     1  0 May03 ?        02:46:54 /u01/app/oracle/product/10.2.0/db_1/bin/tnslsnr LISTENER -inherit
+oracle    3232     1  0 May03 ?        00:09:25 /u01/app/oracle/product/10.2.0/db_1/bin/tnslsnr DSYNC03 -inherit
+oracle    8379     1  0 May29 ?        00:01:30 /u01/app/oracle/product/11.2.0/db_1/bin/tnslsnr DER01 -inherit
+oracle    8778     1  0 Jun11 ?        00:07:23 /u01/app/oracle/product/10.2.0/db_1/bin/tnslsnr LISTENER_STB -inherit
+oracle    9953  8122  0 23:08 pts/0    00:00:00 grep -i tnslsnr
+HER01@fgv246.fgv.br:/home/oracle>
+
+
+HER01@fgv246.fgv.br:/home/oracle> . oraenv
+ORACLE_SID = [HER01] ? DPMO1
+The Oracle base remains unchanged with value /u01/app/oracle
+DPMO1@fgv246.fgv.br:/home/oracle> sqlplus /nolog
+
+SQL*Plus: Release 11.2.0.3.0 Production on Wed Aug 21 23:10:31 2013
+
+Copyright (c) 1982, 2011, Oracle.  All rights reserved.
+
+SQL> connect / as sysdba
+Connected.
+SQL>
+SQL> select * from global_name;
+
+GLOBAL_NAME
+--------------------------------------------------------------------------------
+DPMO1.FGV.BR
+
+SQL> shutdown immediate
+Database closed.
+Database dismounted.
+ORACLE instance shut down.
+
+
+
+
+
+HER01@fgv246.fgv.br:/u01/app/oracle/product/10.2.0/db_1/dbs> ls
+alert_DER01.log    hc_HSYNC02.dat            initHER01.ora             lkDER01       orapwHER01          snapcf_HSYNC02.f
+alert_DSYNC03.log  hc_PER01.dat              initHSYNC02.ora           lkDSYNC03     orapwHSYNC02        snapcf_PER01.f
+alert_HSYNC02.log  hc_PSYNC02.dat            initHSYNC02.ora.08062012  lkHER01       orapwPER01          snapcf_PSYNC02.f
+alert_PSYNC02.log  initDER01.ora             init.ora                  lkHSYNC02     orapwPSYNC02        spfileDER01.ora
+hc_DER01.dat       initDSYNC03.ora           initPER01.ora             lkPER01       snapcf_DER01.f      spfileHER01.ora
+hc_DSYNC03.dat     initDSYNC03.ora.08022012  initPSYNC02.ora           lkPSYNC02     snapcf_DSYNC03.f    spfileHSYNC02.ora.10022012
+hc_HCORPSTB1.dat   initDSYNC03.ora.17042012  initPSYNC02.ora~          orapwDER01    snapcf_HCORPSTB1.f  spfileHSYNC02.ora.27072011
+hc_HER01.dat       initdw.ora                initPSYNC02.ora.000       orapwDSYNC03  snapcf_HER01.f      sqlnet.log
+
+
+
+HER01@fgv246.fgv.br:/u01/app/oracle/product/10.2.0/db_1/dbs> more /etc/oratab
+DER11:/u01/app/oracle/product/11.2.0/db_1:Y
+PER01:/u01/app/oracle/product/10.2.0/db_1:N
+PSYNC02:/u01/app/oracle/product/10.2.0/db_1:N
+HSYNC02:/u01/app/oracle/product/10.2.0/db_1:Y
+DSYNC03:/u01/app/oracle/product/10.2.0/db_1:Y
+#DER01:/u01/app/oracle/product/11.2.0/db_1:Y
+D1123:/u01/app/oracle/product/11.2.0.3/db_1:N
+DPMO1:/u01/app/oracle/product/11.2.0.3/db_1:N
+DER01:/u01/app/oracle/product/11.2.0.3/db_1:N
+HER01:/u01/app/oracle/product/11.2.0.3/db_1:Y
+HER01@fgv246.fgv.br:/u01/app/oracle/product/10.2.0/db_1/dbs> ps -ef | grep -i pmon
+oracle   10708  8122  0 23:16 pts/0    00:00:00 grep -i pmon
+oracle   15330     1  0 Aug18 ?        00:00:04 ora_pmon_HER01
+
+
+
+HER01@fgv246.fgv.br:/u01/app/oracle/product/10.2.0/db_1/dbs> echo $ORACLE_SID
+HER01
+HER01@fgv246.fgv.br:/u01/app/oracle/product/10.2.0/db_1/dbs> echo $ORACLE_HOME
+/u01/app/oracle/product/11.2.0.3/db_1
+
+
+
+HER01@fgv246.fgv.br:/u01/app/oracle/product/11.2.0.3/db_1/bin> dbshut
+ORACLE_HOME_LISTNER is not SET, unable to auto-stop Oracle Net Listener
+Usage: /u01/app/oracle/product/11.2.0.3/db_1/bin/dbshut ORACLE_HOME
+Processing Database instance "DER11": log file /u01/app/oracle/product/11.2.0/db_1/shutdown.log
+Processing Database instance "HSYNC02": log file /u01/app/oracle/product/10.2.0/db_1/shutdown.log
+Processing Database instance "DSYNC03": log file /u01/app/oracle/product/10.2.0/db_1/shutdown.log
+Processing Database instance "HER01": log file /u01/app/oracle/product/11.2.0.3/db_1/shutdown.log
+HER01@fgv246.fgv.br:/u01/app/oracle/product/11.2.0.3/db_1/bin>
+HER01@fgv246.fgv.br:/u01/app/oracle/product/11.2.0.3/db_1/bin> ps -ef | grep -i pmon
+oracle   11190  8122  0 23:19 pts/0    00:00:00 grep -i pmon
+oracle   15330     1  0 Aug18 ?        00:00:04 ora_pmon_HER01
+
+
+---> LOG DO DBSHUT
+
+SQL*Plus: Release 11.2.0.3.0 Production on Wed Aug 21 23:05:50 2013
+
+Copyright (c) 1982, 2011, Oracle.  All rights reserved.
+
+SQL> Connected.
+SQL> Database closed.
+Database dismounted.
+ORACLE instance shut down.
+SQL> Disconnected from Oracle Database 11g Enterprise Edition Release 11.2.0.3.0 - 64bit Production
+With the Partitioning, OLAP, Data Mining and Real Application Testing options
+Database instance "HER01" shut down.
+
+SQL*Plus: Release 11.2.0.3.0 Production on Wed Aug 21 23:19:10 2013
+
+Copyright (c) 1982, 2011, Oracle.  All rights reserved.
+
+SQL> Connected to an idle instance.
+SQL> ORA-01034: ORACLE not available
+ORA-27101: shared memory realm does not exist
+Linux-x86_64 Error: 2: No such file or directory
+SQL> Disconnected
+Database instance "HER01" shut down.
+
+
+
+---> PARANDO LISTENER
+
+
+DSYNC03@fgv246.fgv.br:/u01/app/oracle/product/11.2.0.3/db_1> echo $ORACLE_HOME
+/u01/app/oracle/product/10.2.0/db_1
+
+DSYNC03@fgv246.fgv.br:/u01/app/oracle/product/11.2.0.3/db_1> lsnrctl stop LISTENER
+
+LSNRCTL for Linux: Version 10.2.0.5.0 - Production on 21-AUG-2013 23:24:38
+
+Copyright (c) 1991, 2010, Oracle.  All rights reserved.
+
+Connecting to (DESCRIPTION=(ADDRESS=(PROTOCOL=TCP)(HOST=fgv246.fgv.br)(PORT=16675)))
+The command completed successfully
+DSYNC03@fgv246.fgv.br:/u01/app/oracle/product/11.2.0.3/db_1>
+DSYNC03@fgv246.fgv.br:/u01/app/oracle/product/11.2.0.3/db_1> lsnrctl stop DSYNC03
+
+LSNRCTL for Linux: Version 10.2.0.5.0 - Production on 21-AUG-2013 23:24:55
+
+Copyright (c) 1991, 2010, Oracle.  All rights reserved.
+
+Connecting to (DESCRIPTION=(ADDRESS=(PROTOCOL=TCP)(HOST=fgv246.fgv.br)(PORT=9054)))
+The command completed successfully
+DSYNC03@fgv246.fgv.br:/u01/app/oracle/product/11.2.0.3/db_1>
+DSYNC03@fgv246.fgv.br:/u01/app/oracle/product/11.2.0.3/db_1> lsnrctl stop LISTENER_STB
+
+LSNRCTL for Linux: Version 10.2.0.5.0 - Production on 21-AUG-2013 23:25:13
+
+Copyright (c) 1991, 2010, Oracle.  All rights reserved.
+
+Connecting to (DESCRIPTION=(ADDRESS=(PROTOCOL=TCP)(HOST=fgv246.fgv.br)(PORT=1555)))
+The command completed successfully
+DSYNC03@fgv246.fgv.br:/u01/app/oracle/product/11.2.0.3/db_1>
+DSYNC03@fgv246.fgv.br:/u01/app/oracle/product/11.2.0.3/db_1>
+DSYNC03@fgv246.fgv.br:/u01/app/oracle/product/11.2.0.3/db_1>  ps -ef | grep -i tnslsnr
+oracle   11834  8122  0 23:25 pts/0    00:00:00 grep -i tnslsnr
+DSYNC03@fgv246.fgv.br:/u01/app/oracle/product/11.2.0.3/db_1>
+DSYNC03@fgv246.fgv.br:/u01/app/oracle/product/11.2.0.3/db_1> echo $ORACLE_HOME
+/u01/app/oracle/product/10.2.0/db_1
+
+
+
+----> parando HER01
+
+
+DSYNC03@fgv246.fgv.br:/u01/app/oracle/product/11.2.0.3/db_1> echo $ORACLE_HOME
+/u01/app/oracle/product/10.2.0/db_1
+DSYNC03@fgv246.fgv.br:/u01/app/oracle/product/11.2.0.3/db_1> export ORACLE_SID=HER01
+HER01@fgv246.fgv.br:/u01/app/oracle/product/11.2.0.3/db_1>
+HER01@fgv246.fgv.br:/u01/app/oracle/product/11.2.0.3/db_1> sqlplus /nolog
+
+SQL*Plus: Release 10.2.0.5.0 - Production on Wed Aug 21 23:27:10 2013
+
+Copyright (c) 1982, 2010, Oracle.  All Rights Reserved.
+
+SQL> connect / as sysdba
+Connected.
+SQL> select * from global_name;
+select * from global_name
+              *
+ERROR at line 1:
+ORA-01219: database not open: queries allowed on fixed tables/views only
+
+
+SQL> shutdown immediate
+ORA-01507: database not mounted
+
+
+ORACLE instance shut down.
+
+
+
+----> verificnado se dtudo esta parado
+
+
+HER01@fgv246.fgv.br:/u01/app/oracle/product/11.2.0.3/db_1> ps -ef | grep -i pmon
+oracle   11866  8122  0 23:28 pts/0    00:00:00 grep -i pmon
+HER01@fgv246.fgv.br:/u01/app/oracle/product/11.2.0.3/db_1>
+HER01@fgv246.fgv.br:/u01/app/oracle/product/11.2.0.3/db_1>
+
+
+
+HER01@fgv246.fgv.br:/u01/app/oracle/product/11.2.0.3/db_1> ps -ef | grep -i tnslsnr
+oracle   11869  8122  0 23:29 pts/0    00:00:00 grep -i tnslsnr
+HER01@fgv246.fgv.br:/u01/app/oracle/product/11.2.0.3/db_1>
+HER01@fgv246.fgv.br:/u01/app/oracle/product/11.2.0.3/db_1>
+
+
+
+
+
+
+
+

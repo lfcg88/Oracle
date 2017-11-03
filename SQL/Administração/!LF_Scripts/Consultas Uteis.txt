@@ -1,0 +1,3 @@
+select parallel from v$instance; -- Verifica se é uma instancia unica no caso de NO
+
+select protection_level from v$database; -- Nivel de proteção UNPROTECTED

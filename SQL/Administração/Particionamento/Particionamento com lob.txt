@@ -1,0 +1,43 @@
+Partitioned Table with LOB Columns Example
+This statement creates a partitioned table pt with two partitions p1 and p2, and three LOB columns, b, c, and d: 
+
+
+CREATE TABLE print_media
+    ( product_id        NUMBER(6)
+    , ad_id             NUMBER(6)
+    , ad_composite      BLOB
+    , ad_sourcetext     CLOB
+    , ad_finaltext      CLOB
+    , ad_fltextn        NCLOB
+    , ad_textdocs_ntab  textdoc_tab
+    , ad_photo          BLOB
+    , ad_graphic        BFILE
+    , ad_header         adheader_typ
+    , press_release     LONG
+    ) NESTED TABLE ad_textdocs_ntab STORE AS textdocs_nestedtab
+    LOB (ad_composite, ad_photo, ad_finaltext) 
+       STORE AS(STORAGE (NEXT 20M))
+    PARTITION BY RANGE (product_id) 
+      (PARTITION P1 VALUES LESS THAN (3000) TABLESPACE ts1
+         LOB (ad_composite, ad_photo) 
+            STORE AS (TABLESPACE tsa STORAGE (INITIAL 20M)),
+       PARTITION P2 VALUES LESS THAN (MAXVALUE) 
+         LOB (ad_composite, ad_finaltext) 
+            STORE AS (TABLESPACE tsb)
+       TABLESPACE tsx;
+
+
+CREATE TABLE PT (A NUMBER, B BLOB, C CLOB, D CLOB)
+   LOB (B,C,D) STORE AS (STORAGE (NEXT 20M))
+   PARTITION BY RANGE (A) 
+    (PARTITION P1 VALUES LESS THAN (10) TABLESPACE TS1
+       LOB (B,D) STORE AS (TABLESPACE TSA STORAGE (INITIAL 20M)),
+     PARTITION P2 VALUES LESS THAN (20)
+       LOB (B,C) STORE AS (TABLESPACE TSB)
+     TABLESPACE TSX;
+
+
+Partition p1 will be in tablespace ts1. The LOB data partitions for ad_composite and ad_photo will be in tablespace tsa. The LOB data partition for ad_finaltext will be in tablespace ts1. The storage attribute INITIAL is specified for LOB columns ad_composite and ad_photo. Other attributes will be inherited from the default table-level specification. The default LOB storage attributes not specified at the table level will be inherited from the tablespace tsa for columns ad_composite and ad_photo and tablespace ts1 for column ad_finaltext. LOB index partitions will be in the same tablespaces as the corresponding LOB data partitions. Other storage attributes will be based on values of the corresponding attributes of the LOB data partitions and default attributes of the tablespace where the index partitions reside. 
+
+Partition p2 will be in the default tablespace tsx. The LOB data for ad_composite and ad_finaltext will be in tablespace tsb. The LOB data for ad_photo will be in tablespace tsx. The LOB index for columns ad_composite and ad_finaltext will be in tablespace tsb. The LOB index for column ad_photo will be in tablespace tsx. 
+

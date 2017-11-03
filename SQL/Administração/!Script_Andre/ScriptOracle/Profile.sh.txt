@@ -1,0 +1,130 @@
+
+
+#******************************************************************
+# UNIX prompt
+#******************************************************************
+
+PS1="`hostname`*\${ORACLE_SID}-\${PWD}>"
+
+#******************************************************************
+# Editor
+#******************************************************************
+
+stty erase ^?
+set -o vi
+
+export EDITOR=vi
+
+#******************************************************************
+# Unix aliases for Seguranca
+#******************************************************************
+
+alias rm='rm -i'
+
+#******************************************************************
+# Unix aliases for ORACLE
+#******************************************************************
+
+alias alert='tail -100 $DBA/ORACLE_SID/bdump/alert_$ORACLE_SID.log|more'
+alias errors='tail -100 $DBA/ORACLE_SID/bdump/alert_$ORACLE_SID.log|more'
+alias arch='cd $DBA/$ORACLE_SID/arch'
+alias bdump='cd $DBA/$ORACLE_SID/bdump'
+alias cdump='cd $DBA/$ORACLE_SID/cdump'
+alias pfile='cd $DBA/$ORACLE_SID/pfile'
+alias sid='env|grep ORACLE_SID'
+
+
+#******************************************************************
+# Unix aliases show RAM Memory Segments
+#******************************************************************
+
+# ipcrm -m <ID>   -- usado para liberar memoria
+
+alias smem="ipcs -pmb"
+
+#******************************************************************
+# Unix aliases show semaphores
+#******************************************************************
+# ipcrm -s   -- usado para liberar semaphores
+
+alias sema="ipcs -sa"
+
+#*****************************************************************************
+# Unix aliases show  volume group  
+#*****************************************************************************
+
+alias  vgroup='lsvg -o |  xargs lsvg -l'
+
+#******************************************************************
+# Unix export script ORACLE
+#******************************************************************
+
+export DBA=$ORACLE_HOME/admin;
+export SCRIPT_HOME=$DBA/scripts;
+export PATH=$PATH:$SCRIPT_HOME
+
+
+#******************************************************************
+# Unix Configure Environment for ORACLE
+#******************************************************************
+
+# não funcionou 
+
+for REG in `cat /var/opt/oracle/oratab | grep -v \# | grep -v \* | cut -d":" -f1`
+do 
+   DB= `echo $REG | cut -d":" -f1`
+   ORA_HOME=`echo $REG | cut -d":" -f2`
+  alias db$DB='export ORAENV_ASK=NO; export ORACLE_SID=$DB; export ORACLE_HOME=$ORA_HOME;
+                   export ORACLE_BASE=`echo $ORACLE_HOME | sed -e 's:/product/.*::g' `;
+                   export DBA=$ORACLE_BASE/admin;
+                   export SCRIPT_HOME=$DBA/scripts;
+                   export PATH=$PATH:$SCRIPT_HOME;
+                   export LIB_PATH=$ORACLE_HOME/lib:/usr/lib;'
+done
+                   
+#******************************************************************
+# Set-up the dialect changes for HP-UX and AIX (df -k) vc (bdf)
+#******************************************************************
+
+#     df      	=> consumo de espaço no file system
+#   ncpu	=> numero de cpu
+#   ccpu   	=> consumo de cpu por processos
+#   qram	=> quantidade de memoria RAM
+# soerro 	=> mensagem de erro no log do sistema
+
+OS=`uname -a|awk '{ print $1 }' `
+if [ $OS = "OSF1" ]
+then
+    alias df="df -k"
+fi
+if [ $OS = "AIX" ]
+then
+    alias df="df -k"
+    alias ncpu='lsdev -C | grep Process | wc -l'
+    alias qram='lsdev -C | grep mem'
+    alias soerro='errpt -a | more'
+fi
+if [ $OS = "IRIX64" ]
+then
+    alias df="df -k"
+fi
+if [ $OS = "HP-UX" ]
+then
+    alias df="bdf"
+    alias ncpu='ioscan -C processor | grep processor | wc -l'
+    alias qram='swapinfo -tm'
+    alias soerro='grep -i error /var/adm/syslog/syslog.log | more'
+fi
+if [ $OS = "SunOS" ]
+then
+    alias df="df -k"
+    alias ncpu='psrinfo -v | grep "Status of processor" | wc -l'
+    alias qram='prtconf | grep -i mem'
+    alias ccpu='ps -ef -o pcpu -o pmem -o pid -o comm | sort -rn | more'
+fi
+if [ $OS = "Linux" ]
+then
+    alias df="df -k"
+    alias ncpu='cat /proc/cpuinfo | grep processor | wc-l'
+    alias qram='free'
+fi

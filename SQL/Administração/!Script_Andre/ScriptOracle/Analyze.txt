@@ -1,0 +1,81 @@
+
+EXEC DBMS_STATS.delete_schema_stats('CLONEX');
+
+=====================================
+CREATE OR REPLACE 
+PROCEDURE gather_schema_stats (pcERRO_COD OUT VARCHAR2 ,pcERRO_MSG OUT VARCHAR2) IS
+    CURSOR c_users IS
+       SELECT  owner,table_name
+       FROM dba_tables
+       WHERE owner not in ('SYS','SYSTEM') and TEMPORARY='N';
+BEGIN
+    pcERRO_COD     := '00000';
+    pcERRO_MSG     := 'Operação realizada com sucesso';
+    FOR r_users IN c_users LOOP
+     IF r_users.table_name <> 'RECUPERACAO' Then
+       DBMS_STATS.GATHER_TABLE_STATS (ownname => r_users.owner, tabname => r_users.table_name ,cascade => TRUE );
+     ELSE
+      DBMS_STATS.GATHER_TABLE_STATS (ownname => r_users.owner, tabname => r_users.table_name ,METHOD_OPT => 'FOR COLUMNS SIZE 10 INDIC_STATUS_RECUP',cascade => TRUE );
+     END IF;
+    END LOOP;
+EXCEPTION
+    WHEN OTHERS THEN
+    pcERRO_COD := SQLCODE;
+    pcERRO_MSG := SUBSTR(SQLERRM, 1, 200);
+END;
+
+
+-------------------------------------------------------
+
+declare
+    CURSOR c_users IS
+       SELECT  owner,table_name
+       FROM dba_tables
+       WHERE owner = 'OWNRECUP5' and TEMPORARY='N';
+BEGIN
+  --  pcERRO_COD     := '00000';
+  --  pcERRO_MSG     := 'Operação realizada com sucesso';
+    FOR r_users IN c_users LOOP
+     IF r_users.table_name <> 'RECUPERACAO' Then
+       DBMS_STATS.GATHER_TABLE_STATS (ownname => r_users.owner, tabname => r_users.table_name ,cascade => TRUE );
+     ELSE
+      DBMS_STATS.GATHER_TABLE_STATS (ownname => r_users.owner, tabname => r_users.table_name ,METHOD_OPT => 'FOR COLUMNS SIZE 10 INDIC_STATUS_RECUP',cascade => TRUE );
+     END IF;
+    END LOOP;
+--EXCEPTION
+ --   WHEN OTHERS THEN
+   -- pcERRO_COD := SQLCODE;
+   -- pcERRO_MSG := SUBSTR(SQLERRM, 1, 200);
+END;
+-----------------------------------------------------------
+
+
+
+select 'execute DBMS_STATS.GATHER_TABLE_STATS ('||'ownname=> '||''''||owner||''''||','||'tabname=> '||''''||table_name||''''||',cascade => TRUE );'
+from dba_tables
+where owner <> 'SYS' and
+LAST_ANALYZED < TRUNC(SYSDATE-5) and owner='OWNBMP'
+
+
+select 'execute DBMS_STATS.GATHER_TABLE_STATS ('||'ownname=> '||''''||owner||''''||','||'tabname=> '||''''||table_name||''''||',cascade => TRUE );'
+from dba_tables
+where owner <> 'SYS' and
+ owner='OWNRECUP5' AND TABLE_NAME <> 'RECUPERACAO'
+
+
+ EXEC SYS.DBMS_STATS.GATHER_TABLE_STATS (ownname => 'OWNRECUP5', tabname => 'RECUPERACAO' ,METHOD_OPT => 'FOR COLUMNS SIZE 10 INDIC_STATUS_RECUP',cascade => TRUE );
+
+
+NULL a IS NULL TRUE
+NULL a IS NOT NULL FALSE
+10 a = NULL UNKNOWN
+downloadwest.oracle.com/docs/cd/B10501_01/appdev.920/a96590/adg10pck.htm#3
+6041
+46 consistent gets
+46 physical reads
+-----------------------------------------------------------
+
+
+
+execute DBMS_STATS.GATHER_TABLE_STATS (ownname => 'OWNBMP',tabname => 'EBT_SAIDA',cascade => TRUE );
+execute DBMS_STATS.GATHER_TABLE_STATS ('OWNBMP','EBT_TTOPFILE',cascade => TRUE );

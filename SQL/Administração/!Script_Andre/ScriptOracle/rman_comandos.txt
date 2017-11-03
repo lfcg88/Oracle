@@ -1,0 +1,10 @@
+ list backup of datafile 2141 summary;
+
+ list backup of database summary;
+
+ restore database from tag=TAG20060221T174604;
+
+
+
+
+

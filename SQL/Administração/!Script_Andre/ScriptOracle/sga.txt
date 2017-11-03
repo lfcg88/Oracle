@@ -1,0 +1,298 @@
+REM
+REM DBAToolZ NOTE:
+REM	This script was obtained from DBAToolZ.com
+REM	It's configured to work with SQL Directory (SQLDIR).
+REM	SQLDIR is a utility that allows easy organization and
+REM	execution of SQL*Plus scripts using user-friendly menu.
+REM	Visit DBAToolZ.com for more details and free SQL scripts.
+REM
+REM 
+REM File:
+REM 	s_sga_lib_cache2.sql
+REM
+REM <SQLDIR_GRP>SGA</SQLDIR_GRP>
+REM 
+REM Author:
+REM 	Craig A. Shallahamer, Oracle US
+REM 
+REM Purpose:
+REM	<SQLDIR_TXT>
+REM	This report provides information critical to aid in tuning the 
+REM	shared pool's library cache.  The shared pool resides 
+REM	within the system global area (SGA).  The shared pool 
+REM	contains both the library cache and the data dictionary cache.  
+REM	</SQLDIR_TXT>
+REM	
+REM Usage:
+REM	s_sga_lib_cache2.sql
+REM 
+REM Example:
+REM	s_sga_lib_cache2.sql
+REM
+REM
+REM History:
+REM	see below ...
+REM
+REM
+
+SET ECHO off
+REM NAME:    TFSLCTUN.SQL
+REM USAGE:"@path/tfslctun"
+REM ------------------------------------------------------------------------
+REM REQUIREMENTS:
+REM    SELECT on V$ Tables
+REM ------------------------------------------------------------------------
+REM AUTHOR: 
+REM    Craig A. Shallahamer, Oracle US     
+REM    (c)1994 Oracle Corporation
+REM ------------------------------------------------------------------------
+REM PURPOSE:
+REM    This report provides information critical to aid in tuning the 
+REM    shared pool's library cache.  The shared pool resides resides 
+REM    within the system global area (SGA).  The shared pool 
+REM    contains both the library cache and the data dictionary cache.  
+REM
+REM    OS memory monitoring tools should always be used in conjunction 
+REM    with memory related reports.
+REM
+REM    Output definitions:
+REM    
+REM    Size - The value of the instance paramter shared_pool_size
+REM    Used sharable - Total memory used which contains memory structures 
+REM      that can be shared between users, such as a SQL statement parse 
+REM      tree.
+REM    Used persistent - Total memory used which contains memory 
+REM      structures that will remain regardless of who runs the statement 
+REM      or how many times the statement is run.
+REM    Used runtime - Total memory used which contains memory structures 
+REM      that each user owns and no one else can access, such as the 
+REM      current rowid (when running MTS).
+REM    Available - Total Size minus Total Used.
+REM      Number of SQL statements - The number of SQL statements currently 
+REM      loaded in the shared pool's library cache.
+REM    Number of programatic constructs - The number of SQL programatic
+REM      constructs (procedures, functions, etc.) currently loaded into 
+REM      the shared pool's library cache.  
+REM    Kept programatic construct chunks - The number of programatic 
+REM      constructs that have been pinned by someone into the library 
+REM      cache.  Programatic constructs can be manually pinned in the 
+REM      library cache.  In the "code" this is referred to as a "keep."  
+REM    Kept programatic construct chunks size - The total size (bytes) 
+REM      of kept programatic constructs in the library cache.
+REM    Pinned statements - The number of SQL statements currently pinned 
+REM      in the library cache.  These "pinnings" are implicit and are 
+REM      different than a "kept" construct.
+REM    Pinned statement size - The total size (bytes) of pinned SQL 
+REM      statements residing in the library cache.
+REM ------------------------------------------------------------------------
+REM EXAMPLE:
+REM           Shared Pool`s Library Cache Information
+REM
+REM
+REM    Size                                         : 3500000
+REM    Used (total)                                 : 3172791
+REM         sharable                                : 2149391
+REM         persistent                              : 174708
+REM         runtime                                 : 878892 
+REM    Available                                    : 327209
+REM    Number of SQL statements                     : 229
+REM    Number of programatic constructs             : 179
+REM    Kept programatic construct chunks            : 0
+REM    Kept programatic construct chunks size       : 0 
+REM    Pinned statements                            : 14
+REM  Pinned statements size                         : 847200
+REM 
+REM ------------------------------------------------------------------------
+REM DISCLAIMER:
+REM This script is provided for educational purposes only. It is NOT 
+REM    supported by Oracle World Wide Technical Support.
+REM    The script has been tested and appears to work as intended.
+REM    You should always run new scripts on a test instance initially.
+REM ------------------------------------------------------------------------
+REM Main text of script follows:
+
+
+REM ****************************************************
+REM                   SGA TUNING
+REM The sga is comprised of data block buffers, redo log
+REM buffers, library cache, data dictionary. All of these
+REM members must be proporly tuned.
+REM ****************************************************
+REM prompt DATA BLOCK BUFFERS
+ttitle -
+  center  'DATA BLOCK BUFFERS'  skip 2
+
+prompt Tuning data block buffer is to increase the value of
+prompt data_block_buffers in init.ora. Following oracle7
+prompt dba guide to select a optimum value since too large 
+prompt a value is a waste of memory.
+prompt
+prompt Hit ratio should be >= 90%
+rem
+select (1-a.value/(b.value+c.value))*100 hitratio
+from   v$sysstat a, v$sysstat b, v$sysstat c
+where  a.name = 'physical reads'
+and    b.name = 'db block gets'
+and    c.name = 'consistent gets'
+/
+prompt Miss ratio should be <= 0.5%
+rem
+select (a.count/(b.value+c.value))*100 missratio
+from v$waitstat a, v$sysstat b, v$sysstat c
+where a.class = 'data block'
+and b.name = 'db block gets'
+and c.name = 'consistent gets'
+/
+REM prompt REDO LOG BUFFERS
+ttitle -
+  center  'REDO LOG BUFFERS'  skip 2
+
+prompt Tuning redo log buffer is to increase the log_buffer parameter
+prompt in init.ora.
+prompt
+prompt Value of redo log space requests should be 0(or near 0 as possible)
+rem
+select value
+from   v$sysstat
+where  name = 'redo log space requests'
+/
+REM prompt LIBRARY CACHE
+ttitle -
+  center  'LIBRARY CACHE'  skip 2
+
+prompt All parsed shared sql and pl/sql statements are stored in this 
+prompt cache. The size of the buffer should be set big enough so that 
+prompt freguently used statements won't need to be reparsed. Tuning
+prompt of this buffer id to increate shared_pool_size parameter in 
+prompt init.ora. Review open_cursor parameter to allow the user
+prompt processed to take advantage of the increase in memory.
+prompt
+prompt Miss ratio <= 1% and reloads = 0(or near 0 as possible)
+rem
+select (sum(reloads)/sum(pins))*100 missratio, sum(reloads) reloads
+from   v$librarycache
+/
+REM prompt DATA DICTIONARY CACHE
+ttitle -
+  center  'DATA DICTIONARY CACHE'  skip 2
+
+prompt Date dictionary cache is part of shared pool size. Tuning is
+prompt done by adjusting shared_pool_size parameter in in init.ora.
+prompt You may want try increasing it by the difference of getmisses
+prompt to count or usage to count whichever is greater.
+prompt 
+prompt count >= getmisses and count >= usage and getratio >= 90%
+rem
+select sum(count) "COUNT", sum(gets) gets, sum(getmisses) getmisses,
+       sum(usage) usage, (1-(sum(getmisses)/sum(gets)))*100 getratio
+from v$rowcache
+/
+
+
+rem set echo on feedback on
+
+set pagesize 80 
+set verify off
+set heading off
+set feedback off
+set termout off
+
+col sp_size     format          999,999,999 justify right
+col x_sp_used   format          999,999,999 justify right
+col sp_used_shr format          999,999,999 justify right
+col sp_used_per format          999,999,999 justify right
+col sp_used_run format          999,999,999 justify right
+col sp_avail    format          999,999,999 justify right
+col sp_sz_pins format           999,999,999 justify right
+col sp_no_pins format           999,999 justify right
+col sp_no_obj format            999,999 justify right
+col sp_no_stmts format          999,999 justify right
+col sp_sz_kept_chks format      999,999,999 justify right
+col sp_no_kept_chks format      999,999 justify right
+
+col val2 new_val x_sp_size noprint
+select value val2
+from   v$parameter
+where  name='shared_pool_size'
+/
+col val2 new_val x_sp_used noprint
+select sum(sharable_mem+persistent_mem+runtime_mem) val2
+from   v$sqlarea
+/
+col val2 new_val x_sp_used_shr noprint
+col val3 new_val x_sp_used_per noprint
+col val4 new_val x_sp_used_run noprint
+col val5 new_val x_sp_no_stmts noprint
+select sum(sharable_mem) val2,
+       sum(persistent_mem) val3,
+       sum(runtime_mem) val4,
+       count(*) val5
+from   v$sqlarea
+/
+col val2 new_val x_sp_no_obj noprint
+select count(*) val2 from v$db_object_cache 
+/
+col val2 new_val x_sp_avail noprint
+select &x_sp_size-&x_sp_used val2
+from   dual
+/
+col val2 new_val x_sp_no_kept_chks noprint
+col val3 new_val x_sp_sz_kept_chks noprint
+select decode(count(*),'',0,count(*)) val2,
+       decode(sum(sharable_mem),'',0,sum(sharable_mem)) val3
+from   v$db_object_cache
+where  kept='YES'
+/
+col val2 new_val x_sp_no_pins noprint
+select count(*) val2
+from v$session a, v$sqltext b
+where a.sql_address||a.sql_hash_value = b.address||b.hash_value
+/
+col val2 new_val x_sp_sz_pins noprint
+select sum(sharable_mem+persistent_mem+runtime_mem) val2
+from   v$session a,
+       v$sqltext b,
+       v$sqlarea c
+where  a.sql_address||a.sql_hash_value = b.address||b.hash_value and
+       b.address||b.hash_value = c.address||c.hash_value
+/
+
+set termout on
+set heading off
+ 
+
+ttitle -
+  center  'Shared Pool`s Library Cache Information'  skip 2
+
+
+
+select  'Size                                         : '
+                ||&x_sp_size sp_size,
+      'Used (total)                                 : '
+                ||&x_sp_used,
+'     sharable                                : '
+                ||&x_sp_used_shr sp_used_shr,
+        '     persistent                              : '
+                ||&x_sp_used_per sp_used_per,
+        '     runtime                                 : '
+                ||&x_sp_used_run sp_used_run,
+        'Available                                    : '
+                ||&x_sp_avail sp_avail,
+        'Number of SQL statements                     : '
+                ||&x_sp_no_stmts sp_no_stmts,
+        'Number of programatic constructs             : '
+                ||&x_sp_no_obj sp_no_obj,
+        'Kept programatic construct chunks            : '
+                ||&x_sp_no_kept_chks sp_no_kept_chks,
+        'Kept programatic construct chunks size       : '
+                ||&x_sp_sz_kept_chks sp_sz_kept_chks,
+      'Pinned statements                            : '
+                ||&x_sp_no_pins sp_no_pins,
+        'Pinned statements size                       : '
+                ||&x_sp_sz_pins sp_sz_pins
+from    dual
+/
+
+ttitle off
+set heading on 
+set feedback on

@@ -1,0 +1,16 @@
+SET PAGESIZE 0 ;
+SET FEEDBACK OFF ;
+SET VERIFY OFF;
+SPOOL	compila_obj.lst
+SELECT 'ALTER '||OBJECT_TYPE ||' '||  
+		owner || '.' || object_name || ' COMPILE;'
+  FROM all_objects
+ WHERE status = 'INVALID'
+   AND owner = 'POUSADA'
+   AND object_type IN ('PROCEDURE','FUNCTION', 'VIEW', 'PACKAGE')
+ ORDER BY 1;
+SPOOL OFF ;
+SET PAGESIZE 24 ;
+SET FEEDBACK ON ;
+SET VERIFY ON;
+/

@@ -1,0 +1,191 @@
+Symptom
+The password of the Oracle database user SYSMAN and/or DBSNMP should or has to be changed.
+
+Both users are related to Oracle Enterprise Manager (OEM).
+The Oracle user SYSMAN is the schema of the standalone repository of the Enterprise Manager DB Control.
+
+If just one of the following statements is executed, the OEM will not function properly afterwards:
+Example:
+sqlplus / as sysdba
+alter user SYSMAN identified by <new password>;
+alter user DBSNMP identified by <new password>;
+
+
+Other terms
+DB console, DB control, OracleDBConsole,10.2.0.4, 10.2.0.5, 11.2.0.1 11.2.0.2
+
+Reason and Prerequisites
+To change the passwords for the users SYSMAN and DBSNMP follow the procedures below.
+
+Solution
+
+
+
+The following procedures are valid for:
+databases monitored by OEM DB Control
+and
+    releases 10.2.0.4 and newer
+      or
+    releases 11.2.0.1 and newer.
+
+For sure you may combine if necessary both procedures to change the passwords for both users in parallel.
+
+1) How to change the password of the database user SYSMAN
+
+To ensure that you change the SYSMAN password in the right database, you must check that the environment variable ORACLE_SID is set.
+
+Remark:
+For the DB Control Release 11.2 and higher, you need to set the environment variable ORACLE_UNQNAME to the value of the DB_UNIQUE_NAME database parameter.
+
+You must also check that the environment variable ORACLE_HOME is set and that the path includes the correct $ORACLE_HOME/bin.
+
+To change the password of the user sysman you must strictly follow the steps below, otherwise your DB Control used to manage your database will not function properly.
+
+1.Stop the DB Control
+
+On Unix
+$ emctl stop dbconsole
+
+On Windows
+Stop the Windows Service OracleDBConsole
+Or
+Open a Command Window and type
+C> emctl stop dbconsole
+
+2.Check that the DB Control is stopped
+
+On Unix
+$ emctl status dbconsole
+
+On Windows
+Check the status of the Windows Service OracleDBConsole
+Or
+Open a DOS Command Window and type
+C> emctl status dbconsole
+
+3.Connect to the database as a user with DBA privilege with SQL*Plus and execute:
+
+SQL> alter user sysman identified by <password> ;
+
+4.Check the new password
+
+SQL> connect sysman/[@database_alias]
+
+5.From the database directory $ORACLE_HOME/bin, execute:
+
+On Unix
+$ emctl setpasswd dbconsole
+Provide the new SYSMAN password
+
+On Windows
+C>: emctl setpasswd dbconsole
+Provide the new SYSMAN password
+
+6.Restart the DB Control
+
+On Unix
+$ emctl start dbconsole
+
+On Windows
+Start the Windows Service OracleDBConsole
+Or
+Open a DOS Command Window and type
+C>: emctl start dbconsole
+
+
+2) How to change the password of the database user DBSNMP
+
+1.Stop the standalone dbconsole
+
+On Unix - DB Control Release 10.2.0.4 and 10.2.0.5
+$ export ORACLE_SID=<database_sid>
+$ emctl stop dbconsole
+
+On Unix - DB Control Release 11.2.x and higher
+$ export ORACLE_SID=<database_sid>
+$ export ORACLE_UNQNAME=<value of the DB_UNIQUE_NAME database parameter>
+$ emctl stop dbconsole
+
+On Windows - DB Control Release 10.2.0.4 and 10.2.0.5
+Stop the Windows Service OracleDBConsole<database_sid>
+Or
+Open a DOS Command Window and type
+C> set ORACLE_SID=<database_sid>
+C> set ORACLE_HOME=<oracle_home_name>
+C> cd %ORACLE_HOME%/bin
+C> emctl stop dbconsole
+
+On Windows - DB Control Release 11.2.x and higher
+Stop the Windows Service OracleDBConsole<database_sid>
+Or
+Open a DOS Command Window and type
+C> set ORACLE_SID=<database_sid>
+C> set ORACLE_UNQNAME=<value of the DB_UNIQUE_NAME database parameter>
+C> set ORACLE_HOME=<oracle_home_name>
+C> cd %ORACLE_HOME%/bin
+C> emctl stop dbconsole
+
+2.Check that the DB Control is stopped
+
+On Unix
+$ emctl status dbconsole
+
+On Windows
+Check the status of the Windows Service OracleDBConsole
+Or
+Open a DOS Command Window, cd to the database $ORACLE_HOME\bin and type
+C> emctl status dbconsole
+
+3.Connect to the database as a user with DBA privilege with SQL*Plus and execute
+
+
+SQL> alter user dbsnmp identified by <new dbsnmp password> ;
+
+4.Check the new password
+
+
+SQL> connect dbsnmp/[@database_alias]
+
+5.Go to $ORACLE_HOME/host_sid/sysman/emd
+a) Save the file targets.xml to targets.xml.orig
+b) Edit the file targets.xml with your favorite text editor
+   b1) Search for the line:
+     <property name="password" value="<encrypted_string>"
+     encrypted="TRUE">
+   b2) Replace the encrypted value by the new password value
+   b3) Replace TRUE by FALSE
+c) Restart the standalone dbconsole
+
+On Unix - DB Control Release 10.2.0.4 and 10.2.0.5
+$ export ORACLE_SID=<database_sid>
+$ emctl start dbconsole
+
+On Unix - DB Control Release 11.2.x and higher
+$ export ORACLE_SID=<database_sid>
+$ export ORACLE_UNQNAME=<value of the DB_UNIQUE_NAME database parameter>
+$ emctl start dbconsole
+
+On Windows - DB Control Release up 10.2.0.4 and 10.2.0.5
+Start the Windows Service OracleDBConsole<database_sid>
+Or
+Open a DOS Command Window and type
+C> set ORACLE_SID=<database_sid>
+C> set ORACLE_HOME=<oracle_home_name>
+C> cd %ORACLE_HOME%/bin
+C> emctl start dbconsole
+
+On Windows - DB Control Release 11.2.x and higher
+Start the Windows Service OracleDBConsole<database_sid>
+Or
+Open a DOS Command Window and type
+C> set ORACLE_SID=<database_sid>
+C> set ORACLE_UNQNAME=<value of the DB_UNIQUE_NAME database parameter>
+C> set ORACLE_HOME=<oracle_home_name>
+C> cd %ORACLE_HOME%/bin
+C> emctl start dbconsole
+
+d) Check that the password has been encrypted
+Edit the file targets.xml
+Search for the line: <property name="password" value="<encrypted_string>" encrypted="TRUE">
+Check that the password VALUE is encrypted
+Check that the value of ENCRYPTED is TRUE

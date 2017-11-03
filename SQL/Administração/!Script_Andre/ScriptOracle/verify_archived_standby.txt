@@ -1,0 +1,3 @@
+On the standby database, query the V$ARCHIVED_LOG view to verify the archived redo log was applied.
+SELECT SEQUENCE#,APPLIED FROM V$ARCHIVED_LOG
+ORDER BY SEQUENCE#; 

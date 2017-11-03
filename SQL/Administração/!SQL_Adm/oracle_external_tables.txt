@@ -1,0 +1,54 @@
+Pessoal,
+
+Para criar tabelas externas no Oracle (acessar arquivos texto)
+
+
+###### Criar, no servidor um diretório, como usuário oracle, para copiar os arquivos;
+
+
+###### via sqlplus, criar um diretório oracle, que é um direcionamento para este diretório no Unix:
+
+create directory ext_tables as '/oracle/oradata/oraprod/ext_tables'
+
+###### Criar a tabela com o comando abaixo. Esta tabela acessa o arquivo completo_mat.txt no diretório criado acima (LOCATION  ( "EXT_TABLES":'completo_mat.txt' ) ) . 
+###### Este arquivo tem os campos separados por ';' ( FIELDS TERMINATED BY ';')
+###### Gera um log no mesmo diretório com o nome completo_mat.log (LOGFILE 'completo_mat.log'). Neste log são registrados os acessos ao arquivo (data e hora) e os erros, como
+###### por exemplo um registro inválido.
+###### Gera um arquivo com os registros ruins com o nome completo_mat.bad (BADFILE 'completo_mat.bad'
+
+  CREATE TABLE sysadm.ET_func_email 
+   (    "COD_MATRICULA" VARCHAR(8), 
+        "DSC_EMAIL" VARCHAR(150)
+   ) 
+   ORGANIZATION EXTERNAL 
+    ( TYPE ORACLE_LOADER
+      DEFAULT DIRECTORY "EXT_TABLES"
+      ACCESS PARAMETERS
+      ( RECORDS DELIMITED BY NEWLINE
+                                             CHARACTERSET WE8MSWIN1252
+                                             STRING SIZES ARE IN BYTES
+                                             BADFILE 'completo_mat.bad'
+                                             NODISCARDFILE
+                                             LOGFILE 'completo_mat.log'
+                                             FIELDS
+                                               TERMINATED BY ';'
+                                                 )
+      LOCATION
+       ( "EXT_TABLES":'completo_mat.txt'
+       )
+    )
+   REJECT LIMIT UNLIMITED
+ 
+
+select * from sysadm.ET_func_email
+
+select * from all_directories;
+
+/oracle/oradata/orades/ext_tables
+/oracle/oradata/oraprod/ext_tables
+
+GRANT write ON DIRECTORY GRD TO GOLDENCROSS;
+GRANT read ON DIRECTORY GRD TO GOLDENCROSS;
+
+GRANT write ON DIRECTORY EXT_TABLES TO TEMP;
+GRANT read ON DIRECTORY EXT_TABLES TO TEMP;

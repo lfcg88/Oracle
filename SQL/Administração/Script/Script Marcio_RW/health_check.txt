@@ -1,0 +1,43 @@
+BEGIN
+    DBMS_HM.RUN_CHECK('Dictionary Integrity Check', 'my_run5');
+END;
+/
+
+BEGIN
+    DBMS_HM.RUN_CHECK('Data Block Integrity Check', 'my_run3');
+END;
+/
+
+
+
+BEGIN
+DBMS_HM.RUN_CHECK (
+   check_name   => 'Data Block Integrity Check',
+   run_name     => 'datablock3',
+   BLC_DF_NUM => 2);
+END;
+/
+
+
+
+DB Structure Integrity Check
+CF Block Integrity Check
+Data Block Integrity Check
+Redo Integrity Check
+Transaction Integrity Check
+Undo Segment Integrity Check
+Dictionary Integrity Check
+ASM Allocation Check
+
+
+SELECT run_id, name, check_name, run_mode, src_incident FROM v$hm_run;
+
+SELECT type, description FROM v$hm_finding WHERE run_id =
+
+
+
+SET LONG 100000
+SET LONGCHUNKSIZE 1000
+SET PAGESIZE 1000
+SET LINESIZE 512
+SELECT dbms_hm.get_run_report('my_run5','TEXT', 'DETAIL') FROM dual;

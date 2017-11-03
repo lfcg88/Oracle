@@ -1,0 +1,54 @@
+-- This is a utility script that computes the average rowsize of an existing Oracle 
+-- table. It can help you determine how many rows can fit into a block size, so you 
+-- can properly plan the space requirements for a table. It should be run in SQL*PLUS. 
+-- Anyone can use this script so long as the SELECT privilege is selected on the ALL_TAB_COLUMNS 
+-- table and the table being computed. You must supply the table name to be computed for the rowsize. 
+
+  
+     set serverout ON size 1000000
+     set ver off
+     ACCEPT tbnm PROMPT 'Enter name of table to be computed: '
+     ACCEPT tbown PROMPT 'Enter table owner: '
+     DEF dot = "."
+
+     spool &tbnm.lst
+
+     DECLARE
+
+       V_SIZE  NUMBER;
+       V_TOT_SIZE NUMBER(5,2) := 0;
+       V_COLUMN VARCHAR2(255);
+       V_INIT_SIZE NUMBER;
+       
+       CURSOR SLC_TAB_COL_CURSOR IS
+         SELECT column_name
+         FROM all_tab_columns
+         WHERE table_name=upper('&tbnm')
+         AND   owner = upper('&tbown');
+
+         SLC_TAB_COL_REC SLC_TAB_COL_CURSOR%ROWTYPE;
+
+       CURSOR AVG_ROW_SIZE_CURSOR IS
+         SELECT avg(vsize(V_COLUMN))
+         FROM &tbown&dot&tbnm;
+
+     BEGIN
+
+        dbms_output.put_line(chr(10));
+        FOR SLC_TAB_COL_REC IN SLC_TAB_COL_CURSOR LOOP
+
+            V_COLUMN := SLC_TAB_COL_REC.COLUMN_NAME;
+            
+            OPEN AVG_ROW_SIZE_CURSOR;
+            FETCH AVG_ROW_SIZE_CURSOR INTO V_SIZE;
+            V_TOT_SIZE := V_TOT_SIZE + V_SIZE;
+            CLOSE AVG_ROW_SIZE_CURSOR;
+            dbms_output.put_line('Col. Name: '||V_COLUMN||'  '||' Avg. Size: '||V_SIZE);
+
+       END LOOP;
+
+       dbms_output.put_line(chr(10)||'Average Table Rowsize is : '||V_TOT_SIZE||' bytes');
+
+     END;
+/
+

@@ -1,0 +1,25 @@
+ocorre um erro quando se faz backup frio e para acertar seguir o passo a passo abaixo
+
+no oraclehome admim existe um script para recriar o catálogo de objetos chamado catuprd.sql
+tem bug nesse script para corrigir bug abra-o
+
+01 - procurar e alterar a seguinte linha.
+de:
+@@&utlip_file
+para: 
+@utlip.sql
+
+salvar e sair
+
+agora para executar e acertar o banco
+02 - shutdown no banco
+
+03 - startup upgrade
+executar o catuprd.sql
+
+
+após o término.
+04 - shutdown
+05 - startup
+
+

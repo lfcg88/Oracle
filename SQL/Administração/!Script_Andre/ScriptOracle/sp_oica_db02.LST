@@ -1,0 +1,12 @@
+			time_waited_micro/total_waits avg_wait_micro
+			*
+ERRO na linha 26:
+ORA-00904: "TIME_WAITED_MICRO": identificador inválido
+
+
+			time_waited_micro/total_waits avg_wait_micro
+			*
+ERRO na linha 27:
+ORA-00904: "TIME_WAITED_MICRO": identificador inválido
+
+

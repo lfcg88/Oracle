@@ -1,0 +1,3 @@
+create or replace synonym SGPB_PROC.FUNC
+  for CPVO.FUNC;
+

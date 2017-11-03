@@ -1,0 +1,684 @@
+
+Recovery Manager: Release 8.1.7.4.1 - Production
+
+RMAN> connect target /@miafisnb	
+2> connect catalog rmann/senharman@rcvcat
+3> 
+4> 
+5> startup force nomount PFILE=C:\ORACLE\admin\miafisnb\pfile\initmiafisnb.ora;
+6> 
+7> 
+8> run 
+9> { 
+10>   SET UNTIL logseq 719 THREAD 1;
+11>   allocate channel ch1 type DISK;
+12>   restore controlfile;
+13> set newname for datafile 1 TO 'C:\ORACLE\ORADATA\MIAFISNB\DATAFILE\SYSTEM01.DBF';
+14> set newname for datafile 2 TO 'C:\ORACLE\ORADATA\MIAFISNB\DATAFILE\DF_RBS_R_01_01.DBF';
+15> set newname for datafile 3 TO 'C:\ORACLE\ORADATA\MIAFISNB\DATAFILE\USERS01.DBF';
+16> set newname for datafile 4 TO 'C:\ORACLE\ORADATA\MIAFISNB\DATAFILE\TEMP01.DBF';
+17> set newname for datafile 5 TO 'C:\ORACLE\ORADATA\MIAFISNB\DATAFILE\DF_GBK_D_01_01.DBF';
+18> set newname for datafile 6 TO 'C:\ORACLE\ORADATA\MIAFISNB\DATAFILE\DF_GBK_I_01_01.DBF';
+19> set newname for datafile 7 TO 'C:\ORACLE\ORADATA\MIAFISNB\DATAFILE\DF_BDI_D_01_01.DBF';
+20> set newname for datafile 8 TO 'C:\ORACLE\ORADATA\MIAFISNB\DATAFILE\DF_BDI_I_01_01.DBF';
+21> set newname for datafile 9 TO 'C:\ORACLE\ORADATA\MIAFISNB\DATAFILE\DF_BDI_B_01_01.DBF';
+22> set newname for datafile 10 TO 'C:\ORACLE\ORADATA\MIAFISNB\DATAFILE\DF_CRP_D_01_01.DBF';
+23> set newname for datafile 11 TO 'C:\ORACLE\ORADATA\MIAFISNB\DATAFILE\DF_CRP_I_01_01.DBF';
+24> set newname for datafile 12 TO 'C:\ORACLE\ORADATA\MIAFISNB\DATAFILE\DF_DGT_D_01_01.DBF';
+25> set newname for datafile 13 TO 'C:\ORACLE\ORADATA\MIAFISNB\DATAFILE\DF_DGT_I_01_01.DBF';
+26> set newname for datafile 14 TO 'C:\ORACLE\ORADATA\MIAFISNB\DATAFILE\DF_GBK_B_01_01.DBF';
+27> set newname for datafile 15 TO 'C:\ORACLE\ORADATA\MIAFISNB\DATAFILE\DF_AFISMAIN_D_03_01.DBF';
+28> set newname for datafile 16 TO 'C:\ORACLE\ORADATA\MIAFISNB\DATAFILE\DF_AFISMAIN_I_02_01.DBF';
+29> set newname for datafile 17 TO 'C:\ORACLE\ORADATA\MIAFISNB\DATAFILE\DF_BDI_D_02_01.DBF';
+30> set newname for datafile 18 TO 'C:\ORACLE\ORADATA\MIAFISNB\DATAFILE\TS_CRM_D_01_01.DBF';
+31> set newname for datafile 19 TO 'C:\ORACLE\ORADATA\MIAFISNB\DATAFILE\TS_CRM_I_01_01.DBF';
+32> set newname for datafile 20 TO 'C:\ORACLE\ORADATA\MIAFISNB\DATAFILE\DF_BDI_I_02_01.DBF';
+33> set newname for datafile 21 TO 'C:\ORACLE\ORADATA\MIAFISNB\DATAFILE\DF_CIV_D_02_01.DBF';
+34> set newname for datafile 22 TO 'C:\ORACLE\ORADATA\MIAFISNB\DATAFILE\DF_CIV_I_02_01.DBF';
+35> set newname for datafile 23 TO 'C:\ORACLE\ORADATA\MIAFISNB\DATAFILE\DF_CFB_D_01_01.DBF';
+36> set newname for datafile 24 TO 'C:\ORACLE\ORADATA\MIAFISNB\DATAFILE\DF_CFB_I_01_01.DBF';
+37> set newname for datafile 25 TO 'C:\ORACLE\ORADATA\MIAFISNB\DATAFILE\DF_AFISMAN_D_01_01.DBF';
+38> set newname for datafile 26 TO 'C:\ORACLE\ORADATA\MIAFISNB\DATAFILE\DF_AFISMAN_I_01_01.DBF';
+39> set newname for datafile 27 TO 'C:\ORACLE\ORADATA\MIAFISNB\DATAFILE\DF_AFISTEMP_D_01_01.DBF';
+40> set newname for datafile 28 TO 'C:\ORACLE\ORADATA\MIAFISNB\DATAFILE\DF_AFISTEMP_I_01_01.DBF';
+41> set newname for datafile 29 TO 'C:\ORACLE\ORADATA\MIAFISNB\DATAFILE\DF_AFISMAN_B_01_01.DBF';
+42> set newname for datafile 30 TO 'C:\ORACLE\ORADATA\MIAFISNB\DATAFILE\DF_CRM_D_02_01.DBF';
+43> set newname for datafile 31 TO 'C:\ORACLE\ORADATA\MIAFISNB\DATAFILE\DF_WFL_D_01_01.DBF';
+44> set newname for datafile 32 TO 'C:\ORACLE\ORADATA\MIAFISNB\DATAFILE\DF_WFL_I_01_01.DBF';
+45> set newname for datafile 33 TO 'C:\ORACLE\ORADATA\MIAFISNB\DATAFILE\DF_IDT_D_01_01.DBF';
+46> set newname for datafile 34 TO 'C:\ORACLE\ORADATA\MIAFISNB\DATAFILE\DF_IDT_I_01_01.DBF';
+47> set newname for datafile 35 TO 'C:\ORACLE\ORADATA\MIAFISNB\DATAFILE\DF_SQLNAV_D_01_01.DBF';
+48> set newname for datafile 36 TO 'C:\ORACLE\ORADATA\MIAFISNB\DATAFILE\DF_CRM_I_02_01.DBF';
+49> set newname for datafile 37 TO 'C:\ORACLE\ORADATA\MIAFISNB\DATAFILE\DF_CIV_D_01_01.DBF';
+50> set newname for datafile 38 TO 'C:\ORACLE\ORADATA\MIAFISNB\DATAFILE\DF_CIV_I_01_01.DBF';
+51> set newname for datafile 39 TO 'C:\ORACLE\ORADATA\MIAFISNB\DATAFILE\DF_MIG_D_01_01.DBF';
+52> set newname for datafile 40 TO 'C:\ORACLE\ORADATA\MIAFISNB\DATAFILE\DF_MIG_I_01_01.DBF';
+53> set newname for datafile 41 TO 'C:\ORACLE\ORADATA\MIAFISNB\DATAFILE\DF_IDCIVIL_DATA_01.DBF';
+54> set newname for datafile 42 TO 'C:\ORACLE\ORADATA\MIAFISNB\DATAFILE\DF_IDCIVIL_INDX_01.DBF';
+55> set newname for datafile 43 TO 'C:\ORACLE\ORADATA\MIAFISNB\DATAFILE\DF_CRP_D_02_01.DBF';
+56> set newname for datafile 44 TO 'C:\ORACLE\ORADATA\MIAFISNB\DATAFILE\DF_CRP_I_02_01.DBF';
+57> set newname for datafile 45 TO 'C:\ORACLE\ORADATA\MIAFISNB\DATAFILE\DF_DGT_D_02_01.DBF';
+58> set newname for datafile 46 TO 'C:\ORACLE\ORADATA\MIAFISNB\DATAFILE\DF_DGT_I_02_01.DBF';
+59> set newname for datafile 47 TO 'C:\ORACLE\ORADATA\MIAFISNB\DATAFILE\DF_IDT_D_02_01.DBF';
+60> set newname for datafile 48 TO 'C:\ORACLE\ORADATA\MIAFISNB\DATAFILE\DF_IDT_I_02_01.DBF';
+61> set newname for datafile 49 TO 'C:\ORACLE\ORADATA\MIAFISNB\DATAFILE\DF_MIG_D_02_01.DBF';
+62> set newname for datafile 50 TO 'C:\ORACLE\ORADATA\MIAFISNB\DATAFILE\DF_MIG_I_02_01.DBF';
+63> set newname for datafile 51 TO 'C:\ORACLE\ORADATA\MIAFISNB\DATAFILE\DF_WFL_D_02_01.DBF';
+64> set newname for datafile 52 TO 'C:\ORACLE\ORADATA\MIAFISNB\DATAFILE\DF_BDI_B_0002_01.DBF';
+65> set newname for datafile 53 TO 'C:\ORACLE\ORADATA\MIAFISNB\DATAFILE\DF_BDI_B_0003_01.DBF';
+66> set newname for datafile 54 TO 'C:\ORACLE\ORADATA\MIAFISNB\DATAFILE\DF_WFL_I_02_01.DBF';
+67> set newname for datafile 55 TO 'C:\ORACLE\ORADATA\MIAFISNB\DATAFILE\DF_AFISMAIN_D_02_01.DBF';
+68> set newname for datafile 56 TO 'C:\ORACLE\ORADATA\MIAFISNB\DATAFILE\DF_AFISMAIN_D_02_02.DBF';
+69> set newname for datafile 57 TO 'C:\ORACLE\ORADATA\MIAFISNB\DATAFILE\DF_IMG_D_01_01.DBF';
+70> set newname for datafile 58 TO 'C:\ORACLE\ORADATA\MIAFISNB\DATAFILE\DF_IMG_I_01_01.DBF';
+71> set newname for datafile 59 TO 'C:\ORACLE\ORADATA\MIAFISNB\DATAFILE\DF_LAT_D_01_01.DBF';
+72> set newname for datafile 60 TO 'C:\ORACLE\ORADATA\MIAFISNB\DATAFILE\DF_LAT_D_02_01.DBF';
+73> set newname for datafile 61 TO 'C:\ORACLE\ORADATA\MIAFISNB\DATAFILE\DF_LAT_I_01_01.DBF';
+74> set newname for datafile 62 TO 'C:\ORACLE\ORADATA\MIAFISNB\DATAFILE\DF_LAT_I_02_01.DBF';
+75> set newname for datafile 63 TO 'C:\ORACLE\ORADATA\MIAFISNB\DATAFILE\DF_IDT_L_01_01.DBF';
+76> set newname for datafile 64 TO 'C:\ORACLE\ORADATA\MIAFISNB\DATAFILE\DF_IDT_D_03_01.DBF';
+77> set newname for datafile 65 TO 'C:\ORACLE\ORADATA\MIAFISNB\DATAFILE\DF_IDT_I_03_01.DBF';
+78> set newname for datafile 66 TO 'C:\ORACLE\ORADATA\MIAFISNB\DATAFILE\DF_CIV_L_01_01.DBF';
+79> set newname for datafile 67 TO 'C:\ORACLE\ORADATA\MIAFISNB\DATAFILE\DF_CRM_L_01_01.DBF';
+80> set newname for datafile 68 TO 'C:\ORACLE\ORADATA\MIAFISNB\DATAFILE\DF_MCR_D_01_01.DBF';
+81> set newname for datafile 69 TO 'C:\ORACLE\ORADATA\MIAFISNB\DATAFILE\DF_MCR_I_01_01.DBF';
+82> set newname for datafile 70 TO 'C:\ORACLE\ORADATA\MIAFISNB\DATAFILE\DF_IPE_D_01_01.DBF';
+83> set newname for datafile 71 TO 'C:\ORACLE\ORADATA\MIAFISNB\DATAFILE\DF_IPE_I_01_01.DBF';
+84> set newname for datafile 72 TO 'C:\ORACLE\ORADATA\MIAFISNB\DATAFILE\DF_OBT_D_01_01.DBF';
+85> set newname for datafile 73 TO 'C:\ORACLE\ORADATA\MIAFISNB\DATAFILE\DF_OBT_I_01_01.DBF';
+86> set newname for datafile 74 TO 'C:\ORACLE\ORADATA\MIAFISNB\DATAFILE\DF_JPA_D_01_01.DBF';
+87> 
+88>   restore database;
+89>   alter database  mount;
+90>   recover database;
+91>   sql "alter database rename file ''d:\oracle\oradata\miafis\redo\redo01.log'' to ''C:\oracle\oradata\miafisnb\redo\REDO01.log''
+ ";
+92>   sql "alter database rename file ''d:\oracle\oradata\miafis\redo\redo02.log'' to ''C:\oracle\oradata\miafisnb\redo\REDO02.log''
+ ";
+93>   sql "alter database rename file ''d:\oracle\oradata\miafis\redo\redo03.log'' to ''C:\oracle\oradata\miafisnb\redo\REDO03.log''
+ ";
+94>   alter database open resetlogs;
+95>   release channel ch1;
+96> }
+97> 
+98> SQL "ALTER TABLESPACE TEMP ADD TEMPFILE ''C:\ORACLE\ORADATA\MIAFISNB\DATAFILE\TEMP01.DBF'' size 100m REUSE";
+99> 
+RMAN-06005: connected to target database: MIAFIS (DBID=226736723)
+
+RMAN-06008: connected to recovery catalog database
+
+RMAN-06196: Oracle instance started
+
+Total System Global Area     185124892 bytes
+
+Fixed Size                       75804 bytes
+Variable Size                 50298880 bytes
+Database Buffers             134217728 bytes
+Redo Buffers                    532480 bytes
+
+RMAN-03022: compiling command: set
+
+RMAN-03022: compiling command: allocate
+RMAN-03023: executing command: allocate
+RMAN-08030: allocated channel: ch1
+RMAN-08500: channel ch1: sid=11 devtype=DISK
+
+RMAN-03022: compiling command: restore
+
+RMAN-03022: compiling command: IRESTORE
+RMAN-03023: executing command: IRESTORE
+RMAN-08016: channel ch1: starting datafile backupset restore
+RMAN-08502: set_count=1411 set_stamp=521584229 creation_time=23-MAR-04
+RMAN-08021: channel ch1: restoring controlfile
+RMAN-08505: output filename=C:\ORACLE\ORADATA\MIAFISNB\CF\CONTROL01.CTL
+RMAN-08023: channel ch1: restored backup piece 1
+RMAN-08511: piece handle=C:\ORACLE\BACKUP\MIAFIS\D1_MIAFIS_1411_1_20040323_203004.BAK tag=20040323_203004 params=NULL
+RMAN-08024: channel ch1: restore complete
+RMAN-08058: replicating controlfile
+RMAN-08506: input filename=C:\ORACLE\ORADATA\MIAFISNB\CF\CONTROL01.CTL
+RMAN-08505: output filename=C:\ORACLE\ORADATA\MIAFISNB\CF\CONTROL02.CTL
+RMAN-08505: output filename=C:\ORACLE\ORADATA\MIAFISNB\CF\CONTROL03.CTL
+
+RMAN-03022: compiling command: set
+
+RMAN-03022: compiling command: set
+
+RMAN-03022: compiling command: set
+
+RMAN-03022: compiling command: set
+
+RMAN-03022: compiling command: set
+
+RMAN-03022: compiling command: set
+
+RMAN-03022: compiling command: set
+
+RMAN-03022: compiling command: set
+
+RMAN-03022: compiling command: set
+
+RMAN-03022: compiling command: set
+
+RMAN-03022: compiling command: set
+
+RMAN-03022: compiling command: set
+
+RMAN-03022: compiling command: set
+
+RMAN-03022: compiling command: set
+
+RMAN-03022: compiling command: set
+
+RMAN-03022: compiling command: set
+
+RMAN-03022: compiling command: set
+
+RMAN-03022: compiling command: set
+
+RMAN-03022: compiling command: set
+
+RMAN-03022: compiling command: set
+
+RMAN-03022: compiling command: set
+
+RMAN-03022: compiling command: set
+
+RMAN-03022: compiling command: set
+
+RMAN-03022: compiling command: set
+
+RMAN-03022: compiling command: set
+
+RMAN-03022: compiling command: set
+
+RMAN-03022: compiling command: set
+
+RMAN-03022: compiling command: set
+
+RMAN-03022: compiling command: set
+
+RMAN-03022: compiling command: set
+
+RMAN-03022: compiling command: set
+
+RMAN-03022: compiling command: set
+
+RMAN-03022: compiling command: set
+
+RMAN-03022: compiling command: set
+
+RMAN-03022: compiling command: set
+
+RMAN-03022: compiling command: set
+
+RMAN-03022: compiling command: set
+
+RMAN-03022: compiling command: set
+
+RMAN-03022: compiling command: set
+
+RMAN-03022: compiling command: set
+
+RMAN-03022: compiling command: set
+
+RMAN-03022: compiling command: set
+
+RMAN-03022: compiling command: set
+
+RMAN-03022: compiling command: set
+
+RMAN-03022: compiling command: set
+
+RMAN-03022: compiling command: set
+
+RMAN-03022: compiling command: set
+
+RMAN-03022: compiling command: set
+
+RMAN-03022: compiling command: set
+
+RMAN-03022: compiling command: set
+
+RMAN-03022: compiling command: set
+
+RMAN-03022: compiling command: set
+
+RMAN-03022: compiling command: set
+
+RMAN-03022: compiling command: set
+
+RMAN-03022: compiling command: set
+
+RMAN-03022: compiling command: set
+
+RMAN-03022: compiling command: set
+
+RMAN-03022: compiling command: set
+
+RMAN-03022: compiling command: set
+
+RMAN-03022: compiling command: set
+
+RMAN-03022: compiling command: set
+
+RMAN-03022: compiling command: set
+
+RMAN-03022: compiling command: set
+
+RMAN-03022: compiling command: set
+
+RMAN-03022: compiling command: set
+
+RMAN-03022: compiling command: set
+
+RMAN-03022: compiling command: set
+
+RMAN-03022: compiling command: set
+
+RMAN-03022: compiling command: set
+
+RMAN-03022: compiling command: set
+
+RMAN-03022: compiling command: set
+
+RMAN-03022: compiling command: set
+
+RMAN-03022: compiling command: set
+
+RMAN-03022: compiling command: set
+
+RMAN-03022: compiling command: restore
+
+RMAN-03022: compiling command: IRESTORE
+RMAN-03023: executing command: IRESTORE
+RMAN-08016: channel ch1: starting datafile backupset restore
+RMAN-08502: set_count=1405 set_stamp=521238675 creation_time=19-MAR-04
+RMAN-08089: channel ch1: specifying datafile(s) to restore from backup set
+RMAN-08523: restoring datafile 00001 to C:\ORACLE\ORADATA\MIAFISNB\DATAFILE\SYSTEM01.DBF
+RMAN-08523: restoring datafile 00003 to C:\ORACLE\ORADATA\MIAFISNB\DATAFILE\USERS01.DBF
+RMAN-08523: restoring datafile 00004 to C:\ORACLE\ORADATA\MIAFISNB\DATAFILE\TEMP01.DBF
+RMAN-08523: restoring datafile 00006 to C:\ORACLE\ORADATA\MIAFISNB\DATAFILE\DF_GBK_I_01_01.DBF
+RMAN-08523: restoring datafile 00008 to C:\ORACLE\ORADATA\MIAFISNB\DATAFILE\DF_BDI_I_01_01.DBF
+RMAN-08523: restoring datafile 00013 to C:\ORACLE\ORADATA\MIAFISNB\DATAFILE\DF_DGT_I_01_01.DBF
+RMAN-08523: restoring datafile 00016 to C:\ORACLE\ORADATA\MIAFISNB\DATAFILE\DF_AFISMAIN_I_02_01.DBF
+RMAN-08523: restoring datafile 00017 to C:\ORACLE\ORADATA\MIAFISNB\DATAFILE\DF_BDI_D_02_01.DBF
+RMAN-08523: restoring datafile 00019 to C:\ORACLE\ORADATA\MIAFISNB\DATAFILE\TS_CRM_I_01_01.DBF
+RMAN-08523: restoring datafile 00021 to C:\ORACLE\ORADATA\MIAFISNB\DATAFILE\DF_CIV_D_02_01.DBF
+RMAN-08523: restoring datafile 00022 to C:\ORACLE\ORADATA\MIAFISNB\DATAFILE\DF_CIV_I_02_01.DBF
+RMAN-08523: restoring datafile 00023 to C:\ORACLE\ORADATA\MIAFISNB\DATAFILE\DF_CFB_D_01_01.DBF
+RMAN-08523: restoring datafile 00028 to C:\ORACLE\ORADATA\MIAFISNB\DATAFILE\DF_AFISTEMP_I_01_01.DBF
+RMAN-08523: restoring datafile 00031 to C:\ORACLE\ORADATA\MIAFISNB\DATAFILE\DF_WFL_D_01_01.DBF
+RMAN-08523: restoring datafile 00033 to C:\ORACLE\ORADATA\MIAFISNB\DATAFILE\DF_IDT_D_01_01.DBF
+RMAN-08523: restoring datafile 00034 to C:\ORACLE\ORADATA\MIAFISNB\DATAFILE\DF_IDT_I_01_01.DBF
+RMAN-08523: restoring datafile 00035 to C:\ORACLE\ORADATA\MIAFISNB\DATAFILE\DF_SQLNAV_D_01_01.DBF
+RMAN-08523: restoring datafile 00036 to C:\ORACLE\ORADATA\MIAFISNB\DATAFILE\DF_CRM_I_02_01.DBF
+RMAN-08523: restoring datafile 00038 to C:\ORACLE\ORADATA\MIAFISNB\DATAFILE\DF_CIV_I_01_01.DBF
+RMAN-08523: restoring datafile 00040 to C:\ORACLE\ORADATA\MIAFISNB\DATAFILE\DF_MIG_I_01_01.DBF
+RMAN-08523: restoring datafile 00041 to C:\ORACLE\ORADATA\MIAFISNB\DATAFILE\DF_IDCIVIL_DATA_01.DBF
+RMAN-08523: restoring datafile 00043 to C:\ORACLE\ORADATA\MIAFISNB\DATAFILE\DF_CRP_D_02_01.DBF
+RMAN-08523: restoring datafile 00045 to C:\ORACLE\ORADATA\MIAFISNB\DATAFILE\DF_DGT_D_02_01.DBF
+RMAN-08523: restoring datafile 00049 to C:\ORACLE\ORADATA\MIAFISNB\DATAFILE\DF_MIG_D_02_01.DBF
+RMAN-08523: restoring datafile 00050 to C:\ORACLE\ORADATA\MIAFISNB\DATAFILE\DF_MIG_I_02_01.DBF
+RMAN-08523: restoring datafile 00052 to C:\ORACLE\ORADATA\MIAFISNB\DATAFILE\DF_BDI_B_0002_01.DBF
+RMAN-08523: restoring datafile 00053 to C:\ORACLE\ORADATA\MIAFISNB\DATAFILE\DF_BDI_B_0003_01.DBF
+RMAN-08523: restoring datafile 00054 to C:\ORACLE\ORADATA\MIAFISNB\DATAFILE\DF_WFL_I_02_01.DBF
+RMAN-08523: restoring datafile 00055 to C:\ORACLE\ORADATA\MIAFISNB\DATAFILE\DF_AFISMAIN_D_02_01.DBF
+RMAN-08523: restoring datafile 00058 to C:\ORACLE\ORADATA\MIAFISNB\DATAFILE\DF_IMG_I_01_01.DBF
+RMAN-08523: restoring datafile 00060 to C:\ORACLE\ORADATA\MIAFISNB\DATAFILE\DF_LAT_D_02_01.DBF
+RMAN-08523: restoring datafile 00065 to C:\ORACLE\ORADATA\MIAFISNB\DATAFILE\DF_IDT_I_03_01.DBF
+RMAN-08523: restoring datafile 00067 to C:\ORACLE\ORADATA\MIAFISNB\DATAFILE\DF_CRM_L_01_01.DBF
+RMAN-08523: restoring datafile 00068 to C:\ORACLE\ORADATA\MIAFISNB\DATAFILE\DF_MCR_D_01_01.DBF
+RMAN-08523: restoring datafile 00070 to C:\ORACLE\ORADATA\MIAFISNB\DATAFILE\DF_IPE_D_01_01.DBF
+RMAN-08523: restoring datafile 00072 to C:\ORACLE\ORADATA\MIAFISNB\DATAFILE\DF_OBT_D_01_01.DBF
+RMAN-08523: restoring datafile 00074 to C:\ORACLE\ORADATA\MIAFISNB\DATAFILE\DF_JPA_D_01_01.DBF
+RMAN-08023: channel ch1: restored backup piece 1
+RMAN-08511: piece handle=C:\ORACLE\BACKUP\MIAFIS\D0_MIAFIS_1405_1_20040319_203053.BAK tag=20040319_203053 params=NULL
+RMAN-08024: channel ch1: restore complete
+RMAN-08016: channel ch1: starting datafile backupset restore
+RMAN-08502: set_count=1406 set_stamp=521239077 creation_time=19-MAR-04
+RMAN-08089: channel ch1: specifying datafile(s) to restore from backup set
+RMAN-08523: restoring datafile 00002 to C:\ORACLE\ORADATA\MIAFISNB\DATAFILE\DF_RBS_R_01_01.DBF
+RMAN-08523: restoring datafile 00005 to C:\ORACLE\ORADATA\MIAFISNB\DATAFILE\DF_GBK_D_01_01.DBF
+RMAN-08523: restoring datafile 00007 to C:\ORACLE\ORADATA\MIAFISNB\DATAFILE\DF_BDI_D_01_01.DBF
+RMAN-08523: restoring datafile 00009 to C:\ORACLE\ORADATA\MIAFISNB\DATAFILE\DF_BDI_B_01_01.DBF
+RMAN-08523: restoring datafile 00010 to C:\ORACLE\ORADATA\MIAFISNB\DATAFILE\DF_CRP_D_01_01.DBF
+RMAN-08523: restoring datafile 00011 to C:\ORACLE\ORADATA\MIAFISNB\DATAFILE\DF_CRP_I_01_01.DBF
+RMAN-08523: restoring datafile 00012 to C:\ORACLE\ORADATA\MIAFISNB\DATAFILE\DF_DGT_D_01_01.DBF
+RMAN-08523: restoring datafile 00014 to C:\ORACLE\ORADATA\MIAFISNB\DATAFILE\DF_GBK_B_01_01.DBF
+RMAN-08523: restoring datafile 00015 to C:\ORACLE\ORADATA\MIAFISNB\DATAFILE\DF_AFISMAIN_D_03_01.DBF
+RMAN-08523: restoring datafile 00018 to C:\ORACLE\ORADATA\MIAFISNB\DATAFILE\TS_CRM_D_01_01.DBF
+RMAN-08523: restoring datafile 00020 to C:\ORACLE\ORADATA\MIAFISNB\DATAFILE\DF_BDI_I_02_01.DBF
+RMAN-08523: restoring datafile 00024 to C:\ORACLE\ORADATA\MIAFISNB\DATAFILE\DF_CFB_I_01_01.DBF
+RMAN-08523: restoring datafile 00025 to C:\ORACLE\ORADATA\MIAFISNB\DATAFILE\DF_AFISMAN_D_01_01.DBF
+RMAN-08523: restoring datafile 00026 to C:\ORACLE\ORADATA\MIAFISNB\DATAFILE\DF_AFISMAN_I_01_01.DBF
+RMAN-08523: restoring datafile 00027 to C:\ORACLE\ORADATA\MIAFISNB\DATAFILE\DF_AFISTEMP_D_01_01.DBF
+RMAN-08523: restoring datafile 00029 to C:\ORACLE\ORADATA\MIAFISNB\DATAFILE\DF_AFISMAN_B_01_01.DBF
+RMAN-08523: restoring datafile 00030 to C:\ORACLE\ORADATA\MIAFISNB\DATAFILE\DF_CRM_D_02_01.DBF
+RMAN-08523: restoring datafile 00032 to C:\ORACLE\ORADATA\MIAFISNB\DATAFILE\DF_WFL_I_01_01.DBF
+RMAN-08523: restoring datafile 00037 to C:\ORACLE\ORADATA\MIAFISNB\DATAFILE\DF_CIV_D_01_01.DBF
+RMAN-08523: restoring datafile 00039 to C:\ORACLE\ORADATA\MIAFISNB\DATAFILE\DF_MIG_D_01_01.DBF
+RMAN-08523: restoring datafile 00042 to C:\ORACLE\ORADATA\MIAFISNB\DATAFILE\DF_IDCIVIL_INDX_01.DBF
+RMAN-08523: restoring datafile 00044 to C:\ORACLE\ORADATA\MIAFISNB\DATAFILE\DF_CRP_I_02_01.DBF
+RMAN-08523: restoring datafile 00046 to C:\ORACLE\ORADATA\MIAFISNB\DATAFILE\DF_DGT_I_02_01.DBF
+RMAN-08523: restoring datafile 00047 to C:\ORACLE\ORADATA\MIAFISNB\DATAFILE\DF_IDT_D_02_01.DBF
+RMAN-08523: restoring datafile 00048 to C:\ORACLE\ORADATA\MIAFISNB\DATAFILE\DF_IDT_I_02_01.DBF
+RMAN-08523: restoring datafile 00051 to C:\ORACLE\ORADATA\MIAFISNB\DATAFILE\DF_WFL_D_02_01.DBF
+RMAN-08523: restoring datafile 00056 to C:\ORACLE\ORADATA\MIAFISNB\DATAFILE\DF_AFISMAIN_D_02_02.DBF
+RMAN-08523: restoring datafile 00057 to C:\ORACLE\ORADATA\MIAFISNB\DATAFILE\DF_IMG_D_01_01.DBF
+RMAN-08523: restoring datafile 00059 to C:\ORACLE\ORADATA\MIAFISNB\DATAFILE\DF_LAT_D_01_01.DBF
+RMAN-08523: restoring datafile 00061 to C:\ORACLE\ORADATA\MIAFISNB\DATAFILE\DF_LAT_I_01_01.DBF
+RMAN-08523: restoring datafile 00062 to C:\ORACLE\ORADATA\MIAFISNB\DATAFILE\DF_LAT_I_02_01.DBF
+RMAN-08523: restoring datafile 00063 to C:\ORACLE\ORADATA\MIAFISNB\DATAFILE\DF_IDT_L_01_01.DBF
+RMAN-08523: restoring datafile 00064 to C:\ORACLE\ORADATA\MIAFISNB\DATAFILE\DF_IDT_D_03_01.DBF
+RMAN-08523: restoring datafile 00066 to C:\ORACLE\ORADATA\MIAFISNB\DATAFILE\DF_CIV_L_01_01.DBF
+RMAN-08523: restoring datafile 00069 to C:\ORACLE\ORADATA\MIAFISNB\DATAFILE\DF_MCR_I_01_01.DBF
+RMAN-08523: restoring datafile 00071 to C:\ORACLE\ORADATA\MIAFISNB\DATAFILE\DF_IPE_I_01_01.DBF
+RMAN-08523: restoring datafile 00073 to C:\ORACLE\ORADATA\MIAFISNB\DATAFILE\DF_OBT_I_01_01.DBF
+RMAN-08023: channel ch1: restored backup piece 1
+RMAN-08511: piece handle=C:\ORACLE\BACKUP\MIAFIS\D0_MIAFIS_1406_1_20040319_203053.BAK tag=20040319_203053 params=NULL
+RMAN-08024: channel ch1: restore complete
+
+RMAN-03022: compiling command: alter db
+RMAN-06199: database mounted
+
+RMAN-03022: compiling command: recover
+RMAN-03025: performing implicit partial resync of recovery catalog
+RMAN-03023: executing command: partial resync
+RMAN-08003: starting partial resync of recovery catalog
+RMAN-08005: partial resync complete
+
+RMAN-03022: compiling command: recover(1)
+RMAN-03023: executing command: recover(1)
+RMAN-08015: datafile 1 switched to datafile copy
+RMAN-08507: input datafilecopy recid=452 stamp=521748654 filename=C:\ORACLE\ORADATA\MIAFISNB\DATAFILE\SYSTEM01.DBF
+RMAN-08015: datafile 2 switched to datafile copy
+RMAN-08507: input datafilecopy recid=454 stamp=521748655 filename=C:\ORACLE\ORADATA\MIAFISNB\DATAFILE\DF_RBS_R_01_01.DBF
+RMAN-08015: datafile 3 switched to datafile copy
+RMAN-08507: input datafilecopy recid=456 stamp=521748656 filename=C:\ORACLE\ORADATA\MIAFISNB\DATAFILE\USERS01.DBF
+RMAN-08015: datafile 4 switched to datafile copy
+RMAN-08507: input datafilecopy recid=458 stamp=521748656 filename=C:\ORACLE\ORADATA\MIAFISNB\DATAFILE\TEMP01.DBF
+RMAN-08015: datafile 5 switched to datafile copy
+RMAN-08507: input datafilecopy recid=460 stamp=521748657 filename=C:\ORACLE\ORADATA\MIAFISNB\DATAFILE\DF_GBK_D_01_01.DBF
+RMAN-08015: datafile 6 switched to datafile copy
+RMAN-08507: input datafilecopy recid=462 stamp=521748658 filename=C:\ORACLE\ORADATA\MIAFISNB\DATAFILE\DF_GBK_I_01_01.DBF
+RMAN-08015: datafile 7 switched to datafile copy
+RMAN-08507: input datafilecopy recid=464 stamp=521748659 filename=C:\ORACLE\ORADATA\MIAFISNB\DATAFILE\DF_BDI_D_01_01.DBF
+RMAN-08015: datafile 8 switched to datafile copy
+RMAN-08507: input datafilecopy recid=466 stamp=521748659 filename=C:\ORACLE\ORADATA\MIAFISNB\DATAFILE\DF_BDI_I_01_01.DBF
+RMAN-08015: datafile 9 switched to datafile copy
+RMAN-08507: input datafilecopy recid=468 stamp=521748660 filename=C:\ORACLE\ORADATA\MIAFISNB\DATAFILE\DF_BDI_B_01_01.DBF
+RMAN-08015: datafile 10 switched to datafile copy
+RMAN-08507: input datafilecopy recid=470 stamp=521748661 filename=C:\ORACLE\ORADATA\MIAFISNB\DATAFILE\DF_CRP_D_01_01.DBF
+RMAN-08015: datafile 11 switched to datafile copy
+RMAN-08507: input datafilecopy recid=472 stamp=521748662 filename=C:\ORACLE\ORADATA\MIAFISNB\DATAFILE\DF_CRP_I_01_01.DBF
+RMAN-08015: datafile 12 switched to datafile copy
+RMAN-08507: input datafilecopy recid=474 stamp=521748663 filename=C:\ORACLE\ORADATA\MIAFISNB\DATAFILE\DF_DGT_D_01_01.DBF
+RMAN-08015: datafile 13 switched to datafile copy
+RMAN-08507: input datafilecopy recid=476 stamp=521748664 filename=C:\ORACLE\ORADATA\MIAFISNB\DATAFILE\DF_DGT_I_01_01.DBF
+RMAN-08015: datafile 14 switched to datafile copy
+RMAN-08507: input datafilecopy recid=478 stamp=521748665 filename=C:\ORACLE\ORADATA\MIAFISNB\DATAFILE\DF_GBK_B_01_01.DBF
+RMAN-08015: datafile 15 switched to datafile copy
+RMAN-08507: input datafilecopy recid=480 stamp=521748665 filename=C:\ORACLE\ORADATA\MIAFISNB\DATAFILE\DF_AFISMAIN_D_03_01.DBF
+RMAN-08015: datafile 16 switched to datafile copy
+RMAN-08507: input datafilecopy recid=482 stamp=521748666 filename=C:\ORACLE\ORADATA\MIAFISNB\DATAFILE\DF_AFISMAIN_I_02_01.DBF
+RMAN-08015: datafile 17 switched to datafile copy
+RMAN-08507: input datafilecopy recid=484 stamp=521748667 filename=C:\ORACLE\ORADATA\MIAFISNB\DATAFILE\DF_BDI_D_02_01.DBF
+RMAN-08015: datafile 18 switched to datafile copy
+RMAN-08507: input datafilecopy recid=486 stamp=521748667 filename=C:\ORACLE\ORADATA\MIAFISNB\DATAFILE\TS_CRM_D_01_01.DBF
+RMAN-08015: datafile 19 switched to datafile copy
+RMAN-08507: input datafilecopy recid=488 stamp=521748668 filename=C:\ORACLE\ORADATA\MIAFISNB\DATAFILE\TS_CRM_I_01_01.DBF
+RMAN-08015: datafile 20 switched to datafile copy
+RMAN-08507: input datafilecopy recid=490 stamp=521748669 filename=C:\ORACLE\ORADATA\MIAFISNB\DATAFILE\DF_BDI_I_02_01.DBF
+RMAN-08015: datafile 21 switched to datafile copy
+RMAN-08507: input datafilecopy recid=492 stamp=521748670 filename=C:\ORACLE\ORADATA\MIAFISNB\DATAFILE\DF_CIV_D_02_01.DBF
+RMAN-08015: datafile 22 switched to datafile copy
+RMAN-08507: input datafilecopy recid=494 stamp=521748670 filename=C:\ORACLE\ORADATA\MIAFISNB\DATAFILE\DF_CIV_I_02_01.DBF
+RMAN-08015: datafile 23 switched to datafile copy
+RMAN-08507: input datafilecopy recid=496 stamp=521748671 filename=C:\ORACLE\ORADATA\MIAFISNB\DATAFILE\DF_CFB_D_01_01.DBF
+RMAN-08015: datafile 24 switched to datafile copy
+RMAN-08507: input datafilecopy recid=498 stamp=521748672 filename=C:\ORACLE\ORADATA\MIAFISNB\DATAFILE\DF_CFB_I_01_01.DBF
+RMAN-08015: datafile 25 switched to datafile copy
+RMAN-08507: input datafilecopy recid=500 stamp=521748672 filename=C:\ORACLE\ORADATA\MIAFISNB\DATAFILE\DF_AFISMAN_D_01_01.DBF
+RMAN-08015: datafile 26 switched to datafile copy
+RMAN-08507: input datafilecopy recid=502 stamp=521748673 filename=C:\ORACLE\ORADATA\MIAFISNB\DATAFILE\DF_AFISMAN_I_01_01.DBF
+RMAN-08015: datafile 27 switched to datafile copy
+RMAN-08507: input datafilecopy recid=504 stamp=521748674 filename=C:\ORACLE\ORADATA\MIAFISNB\DATAFILE\DF_AFISTEMP_D_01_01.DBF
+RMAN-08015: datafile 28 switched to datafile copy
+RMAN-08507: input datafilecopy recid=506 stamp=521748675 filename=C:\ORACLE\ORADATA\MIAFISNB\DATAFILE\DF_AFISTEMP_I_01_01.DBF
+RMAN-08015: datafile 29 switched to datafile copy
+RMAN-08507: input datafilecopy recid=508 stamp=521748675 filename=C:\ORACLE\ORADATA\MIAFISNB\DATAFILE\DF_AFISMAN_B_01_01.DBF
+RMAN-08015: datafile 30 switched to datafile copy
+RMAN-08507: input datafilecopy recid=510 stamp=521748676 filename=C:\ORACLE\ORADATA\MIAFISNB\DATAFILE\DF_CRM_D_02_01.DBF
+RMAN-08015: datafile 31 switched to datafile copy
+RMAN-08507: input datafilecopy recid=512 stamp=521748677 filename=C:\ORACLE\ORADATA\MIAFISNB\DATAFILE\DF_WFL_D_01_01.DBF
+RMAN-08015: datafile 32 switched to datafile copy
+RMAN-08507: input datafilecopy recid=514 stamp=521748677 filename=C:\ORACLE\ORADATA\MIAFISNB\DATAFILE\DF_WFL_I_01_01.DBF
+RMAN-08015: datafile 33 switched to datafile copy
+RMAN-08507: input datafilecopy recid=516 stamp=521748678 filename=C:\ORACLE\ORADATA\MIAFISNB\DATAFILE\DF_IDT_D_01_01.DBF
+RMAN-08015: datafile 34 switched to datafile copy
+RMAN-08507: input datafilecopy recid=518 stamp=521748679 filename=C:\ORACLE\ORADATA\MIAFISNB\DATAFILE\DF_IDT_I_01_01.DBF
+RMAN-08015: datafile 35 switched to datafile copy
+RMAN-08507: input datafilecopy recid=520 stamp=521748679 filename=C:\ORACLE\ORADATA\MIAFISNB\DATAFILE\DF_SQLNAV_D_01_01.DBF
+RMAN-08015: datafile 36 switched to datafile copy
+RMAN-08507: input datafilecopy recid=522 stamp=521748680 filename=C:\ORACLE\ORADATA\MIAFISNB\DATAFILE\DF_CRM_I_02_01.DBF
+RMAN-08015: datafile 37 switched to datafile copy
+RMAN-08507: input datafilecopy recid=524 stamp=521748681 filename=C:\ORACLE\ORADATA\MIAFISNB\DATAFILE\DF_CIV_D_01_01.DBF
+RMAN-08015: datafile 38 switched to datafile copy
+RMAN-08507: input datafilecopy recid=526 stamp=521748682 filename=C:\ORACLE\ORADATA\MIAFISNB\DATAFILE\DF_CIV_I_01_01.DBF
+RMAN-08015: datafile 39 switched to datafile copy
+RMAN-08507: input datafilecopy recid=528 stamp=521748682 filename=C:\ORACLE\ORADATA\MIAFISNB\DATAFILE\DF_MIG_D_01_01.DBF
+RMAN-08015: datafile 40 switched to datafile copy
+RMAN-08507: input datafilecopy recid=530 stamp=521748683 filename=C:\ORACLE\ORADATA\MIAFISNB\DATAFILE\DF_MIG_I_01_01.DBF
+RMAN-08015: datafile 41 switched to datafile copy
+RMAN-08507: input datafilecopy recid=532 stamp=521748684 filename=C:\ORACLE\ORADATA\MIAFISNB\DATAFILE\DF_IDCIVIL_DATA_01.DBF
+RMAN-08015: datafile 42 switched to datafile copy
+RMAN-08507: input datafilecopy recid=534 stamp=521748685 filename=C:\ORACLE\ORADATA\MIAFISNB\DATAFILE\DF_IDCIVIL_INDX_01.DBF
+RMAN-08015: datafile 43 switched to datafile copy
+RMAN-08507: input datafilecopy recid=536 stamp=521748685 filename=C:\ORACLE\ORADATA\MIAFISNB\DATAFILE\DF_CRP_D_02_01.DBF
+RMAN-08015: datafile 44 switched to datafile copy
+RMAN-08507: input datafilecopy recid=538 stamp=521748687 filename=C:\ORACLE\ORADATA\MIAFISNB\DATAFILE\DF_CRP_I_02_01.DBF
+RMAN-08015: datafile 45 switched to datafile copy
+RMAN-08507: input datafilecopy recid=540 stamp=521748687 filename=C:\ORACLE\ORADATA\MIAFISNB\DATAFILE\DF_DGT_D_02_01.DBF
+RMAN-08015: datafile 46 switched to datafile copy
+RMAN-08507: input datafilecopy recid=542 stamp=521748688 filename=C:\ORACLE\ORADATA\MIAFISNB\DATAFILE\DF_DGT_I_02_01.DBF
+RMAN-08015: datafile 47 switched to datafile copy
+RMAN-08507: input datafilecopy recid=544 stamp=521748689 filename=C:\ORACLE\ORADATA\MIAFISNB\DATAFILE\DF_IDT_D_02_01.DBF
+RMAN-08015: datafile 48 switched to datafile copy
+RMAN-08507: input datafilecopy recid=546 stamp=521748689 filename=C:\ORACLE\ORADATA\MIAFISNB\DATAFILE\DF_IDT_I_02_01.DBF
+RMAN-08015: datafile 49 switched to datafile copy
+RMAN-08507: input datafilecopy recid=548 stamp=521748690 filename=C:\ORACLE\ORADATA\MIAFISNB\DATAFILE\DF_MIG_D_02_01.DBF
+RMAN-08015: datafile 50 switched to datafile copy
+RMAN-08507: input datafilecopy recid=550 stamp=521748691 filename=C:\ORACLE\ORADATA\MIAFISNB\DATAFILE\DF_MIG_I_02_01.DBF
+RMAN-08015: datafile 51 switched to datafile copy
+RMAN-08507: input datafilecopy recid=552 stamp=521748691 filename=C:\ORACLE\ORADATA\MIAFISNB\DATAFILE\DF_WFL_D_02_01.DBF
+RMAN-08015: datafile 52 switched to datafile copy
+RMAN-08507: input datafilecopy recid=554 stamp=521748692 filename=C:\ORACLE\ORADATA\MIAFISNB\DATAFILE\DF_BDI_B_0002_01.DBF
+RMAN-08015: datafile 53 switched to datafile copy
+RMAN-08507: input datafilecopy recid=556 stamp=521748693 filename=C:\ORACLE\ORADATA\MIAFISNB\DATAFILE\DF_BDI_B_0003_01.DBF
+RMAN-08015: datafile 54 switched to datafile copy
+RMAN-08507: input datafilecopy recid=558 stamp=521748694 filename=C:\ORACLE\ORADATA\MIAFISNB\DATAFILE\DF_WFL_I_02_01.DBF
+RMAN-08015: datafile 55 switched to datafile copy
+RMAN-08507: input datafilecopy recid=560 stamp=521748695 filename=C:\ORACLE\ORADATA\MIAFISNB\DATAFILE\DF_AFISMAIN_D_02_01.DBF
+RMAN-08015: datafile 56 switched to datafile copy
+RMAN-08507: input datafilecopy recid=562 stamp=521748695 filename=C:\ORACLE\ORADATA\MIAFISNB\DATAFILE\DF_AFISMAIN_D_02_02.DBF
+RMAN-08015: datafile 57 switched to datafile copy
+RMAN-08507: input datafilecopy recid=564 stamp=521748696 filename=C:\ORACLE\ORADATA\MIAFISNB\DATAFILE\DF_IMG_D_01_01.DBF
+RMAN-08015: datafile 58 switched to datafile copy
+RMAN-08507: input datafilecopy recid=566 stamp=521748697 filename=C:\ORACLE\ORADATA\MIAFISNB\DATAFILE\DF_IMG_I_01_01.DBF
+RMAN-08015: datafile 59 switched to datafile copy
+RMAN-08507: input datafilecopy recid=568 stamp=521748697 filename=C:\ORACLE\ORADATA\MIAFISNB\DATAFILE\DF_LAT_D_01_01.DBF
+RMAN-08015: datafile 60 switched to datafile copy
+RMAN-08507: input datafilecopy recid=570 stamp=521748698 filename=C:\ORACLE\ORADATA\MIAFISNB\DATAFILE\DF_LAT_D_02_01.DBF
+RMAN-08015: datafile 61 switched to datafile copy
+RMAN-08507: input datafilecopy recid=572 stamp=521748699 filename=C:\ORACLE\ORADATA\MIAFISNB\DATAFILE\DF_LAT_I_01_01.DBF
+RMAN-08015: datafile 62 switched to datafile copy
+RMAN-08507: input datafilecopy recid=574 stamp=521748700 filename=C:\ORACLE\ORADATA\MIAFISNB\DATAFILE\DF_LAT_I_02_01.DBF
+RMAN-08015: datafile 63 switched to datafile copy
+RMAN-08507: input datafilecopy recid=576 stamp=521748700 filename=C:\ORACLE\ORADATA\MIAFISNB\DATAFILE\DF_IDT_L_01_01.DBF
+RMAN-08015: datafile 64 switched to datafile copy
+RMAN-08507: input datafilecopy recid=578 stamp=521748701 filename=C:\ORACLE\ORADATA\MIAFISNB\DATAFILE\DF_IDT_D_03_01.DBF
+RMAN-08015: datafile 65 switched to datafile copy
+RMAN-08507: input datafilecopy recid=580 stamp=521748702 filename=C:\ORACLE\ORADATA\MIAFISNB\DATAFILE\DF_IDT_I_03_01.DBF
+RMAN-08015: datafile 66 switched to datafile copy
+RMAN-08507: input datafilecopy recid=582 stamp=521748703 filename=C:\ORACLE\ORADATA\MIAFISNB\DATAFILE\DF_CIV_L_01_01.DBF
+RMAN-08015: datafile 67 switched to datafile copy
+RMAN-08507: input datafilecopy recid=584 stamp=521748704 filename=C:\ORACLE\ORADATA\MIAFISNB\DATAFILE\DF_CRM_L_01_01.DBF
+RMAN-08015: datafile 68 switched to datafile copy
+RMAN-08507: input datafilecopy recid=586 stamp=521748704 filename=C:\ORACLE\ORADATA\MIAFISNB\DATAFILE\DF_MCR_D_01_01.DBF
+RMAN-08015: datafile 69 switched to datafile copy
+RMAN-08507: input datafilecopy recid=588 stamp=521748705 filename=C:\ORACLE\ORADATA\MIAFISNB\DATAFILE\DF_MCR_I_01_01.DBF
+RMAN-08015: datafile 70 switched to datafile copy
+RMAN-08507: input datafilecopy recid=590 stamp=521748706 filename=C:\ORACLE\ORADATA\MIAFISNB\DATAFILE\DF_IPE_D_01_01.DBF
+RMAN-08015: datafile 71 switched to datafile copy
+RMAN-08507: input datafilecopy recid=592 stamp=521748707 filename=C:\ORACLE\ORADATA\MIAFISNB\DATAFILE\DF_IPE_I_01_01.DBF
+RMAN-08015: datafile 72 switched to datafile copy
+RMAN-08507: input datafilecopy recid=594 stamp=521748707 filename=C:\ORACLE\ORADATA\MIAFISNB\DATAFILE\DF_OBT_D_01_01.DBF
+RMAN-08015: datafile 73 switched to datafile copy
+RMAN-08507: input datafilecopy recid=596 stamp=521748708 filename=C:\ORACLE\ORADATA\MIAFISNB\DATAFILE\DF_OBT_I_01_01.DBF
+RMAN-08015: datafile 74 switched to datafile copy
+RMAN-08507: input datafilecopy recid=598 stamp=521748709 filename=C:\ORACLE\ORADATA\MIAFISNB\DATAFILE\DF_JPA_D_01_01.DBF
+RMAN-03023: executing command: partial resync
+RMAN-08003: starting partial resync of recovery catalog
+RMAN-08005: partial resync complete
+
+RMAN-03022: compiling command: recover(2)
+RMAN-03023: executing command: recover(2)
+RMAN-08039: channel ch1: starting incremental datafile backupset restore
+RMAN-08502: set_count=1411 set_stamp=521584229 creation_time=23-MAR-04
+RMAN-08089: channel ch1: specifying datafile(s) to restore from backup set
+RMAN-08509: destination for restore of datafile 00001: C:\ORACLE\ORADATA\MIAFISNB\DATAFILE\SYSTEM01.DBF
+RMAN-08509: destination for restore of datafile 00003: C:\ORACLE\ORADATA\MIAFISNB\DATAFILE\USERS01.DBF
+RMAN-08509: destination for restore of datafile 00004: C:\ORACLE\ORADATA\MIAFISNB\DATAFILE\TEMP01.DBF
+RMAN-08509: destination for restore of datafile 00006: C:\ORACLE\ORADATA\MIAFISNB\DATAFILE\DF_GBK_I_01_01.DBF
+RMAN-08509: destination for restore of datafile 00008: C:\ORACLE\ORADATA\MIAFISNB\DATAFILE\DF_BDI_I_01_01.DBF
+RMAN-08509: destination for restore of datafile 00013: C:\ORACLE\ORADATA\MIAFISNB\DATAFILE\DF_DGT_I_01_01.DBF
+RMAN-08509: destination for restore of datafile 00016: C:\ORACLE\ORADATA\MIAFISNB\DATAFILE\DF_AFISMAIN_I_02_01.DBF
+RMAN-08509: destination for restore of datafile 00017: C:\ORACLE\ORADATA\MIAFISNB\DATAFILE\DF_BDI_D_02_01.DBF
+RMAN-08509: destination for restore of datafile 00019: C:\ORACLE\ORADATA\MIAFISNB\DATAFILE\TS_CRM_I_01_01.DBF
+RMAN-08509: destination for restore of datafile 00021: C:\ORACLE\ORADATA\MIAFISNB\DATAFILE\DF_CIV_D_02_01.DBF
+RMAN-08509: destination for restore of datafile 00022: C:\ORACLE\ORADATA\MIAFISNB\DATAFILE\DF_CIV_I_02_01.DBF
+RMAN-08509: destination for restore of datafile 00023: C:\ORACLE\ORADATA\MIAFISNB\DATAFILE\DF_CFB_D_01_01.DBF
+RMAN-08509: destination for restore of datafile 00028: C:\ORACLE\ORADATA\MIAFISNB\DATAFILE\DF_AFISTEMP_I_01_01.DBF
+RMAN-08509: destination for restore of datafile 00031: C:\ORACLE\ORADATA\MIAFISNB\DATAFILE\DF_WFL_D_01_01.DBF
+RMAN-08509: destination for restore of datafile 00033: C:\ORACLE\ORADATA\MIAFISNB\DATAFILE\DF_IDT_D_01_01.DBF
+RMAN-08509: destination for restore of datafile 00034: C:\ORACLE\ORADATA\MIAFISNB\DATAFILE\DF_IDT_I_01_01.DBF
+RMAN-08509: destination for restore of datafile 00035: C:\ORACLE\ORADATA\MIAFISNB\DATAFILE\DF_SQLNAV_D_01_01.DBF
+RMAN-08509: destination for restore of datafile 00036: C:\ORACLE\ORADATA\MIAFISNB\DATAFILE\DF_CRM_I_02_01.DBF
+RMAN-08509: destination for restore of datafile 00038: C:\ORACLE\ORADATA\MIAFISNB\DATAFILE\DF_CIV_I_01_01.DBF
+RMAN-08509: destination for restore of datafile 00040: C:\ORACLE\ORADATA\MIAFISNB\DATAFILE\DF_MIG_I_01_01.DBF
+RMAN-08509: destination for restore of datafile 00041: C:\ORACLE\ORADATA\MIAFISNB\DATAFILE\DF_IDCIVIL_DATA_01.DBF
+RMAN-08509: destination for restore of datafile 00043: C:\ORACLE\ORADATA\MIAFISNB\DATAFILE\DF_CRP_D_02_01.DBF
+RMAN-08509: destination for restore of datafile 00045: C:\ORACLE\ORADATA\MIAFISNB\DATAFILE\DF_DGT_D_02_01.DBF
+RMAN-08509: destination for restore of datafile 00049: C:\ORACLE\ORADATA\MIAFISNB\DATAFILE\DF_MIG_D_02_01.DBF
+RMAN-08509: destination for restore of datafile 00050: C:\ORACLE\ORADATA\MIAFISNB\DATAFILE\DF_MIG_I_02_01.DBF
+RMAN-08509: destination for restore of datafile 00052: C:\ORACLE\ORADATA\MIAFISNB\DATAFILE\DF_BDI_B_0002_01.DBF
+RMAN-08509: destination for restore of datafile 00053: C:\ORACLE\ORADATA\MIAFISNB\DATAFILE\DF_BDI_B_0003_01.DBF
+RMAN-08509: destination for restore of datafile 00054: C:\ORACLE\ORADATA\MIAFISNB\DATAFILE\DF_WFL_I_02_01.DBF
+RMAN-08509: destination for restore of datafile 00055: C:\ORACLE\ORADATA\MIAFISNB\DATAFILE\DF_AFISMAIN_D_02_01.DBF
+RMAN-08509: destination for restore of datafile 00058: C:\ORACLE\ORADATA\MIAFISNB\DATAFILE\DF_IMG_I_01_01.DBF
+RMAN-08509: destination for restore of datafile 00060: C:\ORACLE\ORADATA\MIAFISNB\DATAFILE\DF_LAT_D_02_01.DBF
+RMAN-08509: destination for restore of datafile 00065: C:\ORACLE\ORADATA\MIAFISNB\DATAFILE\DF_IDT_I_03_01.DBF
+RMAN-08509: destination for restore of datafile 00067: C:\ORACLE\ORADATA\MIAFISNB\DATAFILE\DF_CRM_L_01_01.DBF
+RMAN-08509: destination for restore of datafile 00068: C:\ORACLE\ORADATA\MIAFISNB\DATAFILE\DF_MCR_D_01_01.DBF
+RMAN-08509: destination for restore of datafile 00070: C:\ORACLE\ORADATA\MIAFISNB\DATAFILE\DF_IPE_D_01_01.DBF
+RMAN-08509: destination for restore of datafile 00072: C:\ORACLE\ORADATA\MIAFISNB\DATAFILE\DF_OBT_D_01_01.DBF
+RMAN-08509: destination for restore of datafile 00074: C:\ORACLE\ORADATA\MIAFISNB\DATAFILE\DF_JPA_D_01_01.DBF
+RMAN-08023: channel ch1: restored backup piece 1
+RMAN-08511: piece handle=C:\ORACLE\BACKUP\MIAFIS\D1_MIAFIS_1411_1_20040323_203004.BAK tag=20040323_203004 params=NULL
+RMAN-08024: channel ch1: restore complete
+RMAN-08039: channel ch1: starting incremental datafile backupset restore
+RMAN-08502: set_count=1412 set_stamp=521584531 creation_time=23-MAR-04
+RMAN-08089: channel ch1: specifying datafile(s) to restore from backup set
+RMAN-08509: destination for restore of datafile 00002: C:\ORACLE\ORADATA\MIAFISNB\DATAFILE\DF_RBS_R_01_01.DBF
+RMAN-08509: destination for restore of datafile 00005: C:\ORACLE\ORADATA\MIAFISNB\DATAFILE\DF_GBK_D_01_01.DBF
+RMAN-08509: destination for restore of datafile 00007: C:\ORACLE\ORADATA\MIAFISNB\DATAFILE\DF_BDI_D_01_01.DBF
+RMAN-08509: destination for restore of datafile 00009: C:\ORACLE\ORADATA\MIAFISNB\DATAFILE\DF_BDI_B_01_01.DBF
+RMAN-08509: destination for restore of datafile 00010: C:\ORACLE\ORADATA\MIAFISNB\DATAFILE\DF_CRP_D_01_01.DBF
+RMAN-08509: destination for restore of datafile 00011: C:\ORACLE\ORADATA\MIAFISNB\DATAFILE\DF_CRP_I_01_01.DBF
+RMAN-08509: destination for restore of datafile 00012: C:\ORACLE\ORADATA\MIAFISNB\DATAFILE\DF_DGT_D_01_01.DBF
+RMAN-08509: destination for restore of datafile 00014: C:\ORACLE\ORADATA\MIAFISNB\DATAFILE\DF_GBK_B_01_01.DBF
+RMAN-08509: destination for restore of datafile 00015: C:\ORACLE\ORADATA\MIAFISNB\DATAFILE\DF_AFISMAIN_D_03_01.DBF
+RMAN-08509: destination for restore of datafile 00018: C:\ORACLE\ORADATA\MIAFISNB\DATAFILE\TS_CRM_D_01_01.DBF
+RMAN-08509: destination for restore of datafile 00020: C:\ORACLE\ORADATA\MIAFISNB\DATAFILE\DF_BDI_I_02_01.DBF
+RMAN-08509: destination for restore of datafile 00024: C:\ORACLE\ORADATA\MIAFISNB\DATAFILE\DF_CFB_I_01_01.DBF
+RMAN-08509: destination for restore of datafile 00025: C:\ORACLE\ORADATA\MIAFISNB\DATAFILE\DF_AFISMAN_D_01_01.DBF
+RMAN-08509: destination for restore of datafile 00026: C:\ORACLE\ORADATA\MIAFISNB\DATAFILE\DF_AFISMAN_I_01_01.DBF
+RMAN-08509: destination for restore of datafile 00027: C:\ORACLE\ORADATA\MIAFISNB\DATAFILE\DF_AFISTEMP_D_01_01.DBF
+RMAN-08509: destination for restore of datafile 00029: C:\ORACLE\ORADATA\MIAFISNB\DATAFILE\DF_AFISMAN_B_01_01.DBF
+RMAN-08509: destination for restore of datafile 00030: C:\ORACLE\ORADATA\MIAFISNB\DATAFILE\DF_CRM_D_02_01.DBF
+RMAN-08509: destination for restore of datafile 00032: C:\ORACLE\ORADATA\MIAFISNB\DATAFILE\DF_WFL_I_01_01.DBF
+RMAN-08509: destination for restore of datafile 00037: C:\ORACLE\ORADATA\MIAFISNB\DATAFILE\DF_CIV_D_01_01.DBF
+RMAN-08509: destination for restore of datafile 00039: C:\ORACLE\ORADATA\MIAFISNB\DATAFILE\DF_MIG_D_01_01.DBF
+RMAN-08509: destination for restore of datafile 00042: C:\ORACLE\ORADATA\MIAFISNB\DATAFILE\DF_IDCIVIL_INDX_01.DBF
+RMAN-08509: destination for restore of datafile 00044: C:\ORACLE\ORADATA\MIAFISNB\DATAFILE\DF_CRP_I_02_01.DBF
+RMAN-08509: destination for restore of datafile 00046: C:\ORACLE\ORADATA\MIAFISNB\DATAFILE\DF_DGT_I_02_01.DBF
+RMAN-08509: destination for restore of datafile 00047: C:\ORACLE\ORADATA\MIAFISNB\DATAFILE\DF_IDT_D_02_01.DBF
+RMAN-08509: destination for restore of datafile 00048: C:\ORACLE\ORADATA\MIAFISNB\DATAFILE\DF_IDT_I_02_01.DBF
+RMAN-08509: destination for restore of datafile 00051: C:\ORACLE\ORADATA\MIAFISNB\DATAFILE\DF_WFL_D_02_01.DBF
+RMAN-08509: destination for restore of datafile 00056: C:\ORACLE\ORADATA\MIAFISNB\DATAFILE\DF_AFISMAIN_D_02_02.DBF
+RMAN-08509: destination for restore of datafile 00057: C:\ORACLE\ORADATA\MIAFISNB\DATAFILE\DF_IMG_D_01_01.DBF
+RMAN-08509: destination for restore of datafile 00059: C:\ORACLE\ORADATA\MIAFISNB\DATAFILE\DF_LAT_D_01_01.DBF
+RMAN-08509: destination for restore of datafile 00061: C:\ORACLE\ORADATA\MIAFISNB\DATAFILE\DF_LAT_I_01_01.DBF
+RMAN-08509: destination for restore of datafile 00062: C:\ORACLE\ORADATA\MIAFISNB\DATAFILE\DF_LAT_I_02_01.DBF
+RMAN-08509: destination for restore of datafile 00063: C:\ORACLE\ORADATA\MIAFISNB\DATAFILE\DF_IDT_L_01_01.DBF
+RMAN-08509: destination for restore of datafile 00064: C:\ORACLE\ORADATA\MIAFISNB\DATAFILE\DF_IDT_D_03_01.DBF
+RMAN-08509: destination for restore of datafile 00066: C:\ORACLE\ORADATA\MIAFISNB\DATAFILE\DF_CIV_L_01_01.DBF
+RMAN-08509: destination for restore of datafile 00069: C:\ORACLE\ORADATA\MIAFISNB\DATAFILE\DF_MCR_I_01_01.DBF
+RMAN-08509: destination for restore of datafile 00071: C:\ORACLE\ORADATA\MIAFISNB\DATAFILE\DF_IPE_I_01_01.DBF
+RMAN-08509: destination for restore of datafile 00073: C:\ORACLE\ORADATA\MIAFISNB\DATAFILE\DF_OBT_I_01_01.DBF
+RMAN-08023: channel ch1: restored backup piece 1
+RMAN-08511: piece handle=C:\ORACLE\BACKUP\MIAFIS\D1_MIAFIS_1412_1_20040323_203004.BAK tag=20040323_203004 params=NULL
+RMAN-08024: channel ch1: restore complete
+
+RMAN-03022: compiling command: recover(3)
+RMAN-03023: executing command: recover(3)
+RMAN-08054: starting media recovery
+
+RMAN-03022: compiling command: recover(4)
+RMAN-03023: executing command: recover(4)
+RMAN-08017: channel ch1: starting archivelog restore to default destination
+RMAN-08022: channel ch1: restoring archivelog
+RMAN-08510: archivelog thread=1 sequence=718
+RMAN-08023: channel ch1: restored backup piece 1
+RMAN-08511: piece handle=C:\ORACLE\BACKUP\MIAFIS\L1_MIAFIS_1416_1_20040324_203008.BAK tag=null params=NULL
+RMAN-08024: channel ch1: restore complete
+RMAN-08515: archivelog filename=C:\ORACLE\ORA817\RDBMS\ARC00718.001 thread=1 sequence=718
+RMAN-08055: media recovery complete
+
+RMAN-03022: compiling command: sql
+RMAN-06162: sql statement: alter database rename file ''d:\oracle\oradata\miafis\redo\redo01.log'' to ''C:\oracle\oradata\miafisnb\redo\REDO01.log'' 
+RMAN-03023: executing command: sql
+
+RMAN-03022: compiling command: sql
+RMAN-06162: sql statement: alter database rename file ''d:\oracle\oradata\miafis\redo\redo02.log'' to ''C:\oracle\oradata\miafisnb\redo\REDO02.log'' 
+RMAN-03023: executing command: sql
+
+RMAN-03022: compiling command: sql
+RMAN-06162: sql statement: alter database rename file ''d:\oracle\oradata\miafis\redo\redo03.log'' to ''C:\oracle\oradata\miafisnb\redo\REDO03.log'' 
+RMAN-03023: executing command: sql
+
+RMAN-03022: compiling command: alter db
+RMAN-06400: database opened
+RMAN-03023: executing command: alter db
+RMAN-08006: database registered in recovery catalog
+RMAN-03023: executing command: full resync
+RMAN-08002: starting full resync of recovery catalog
+RMAN-08004: full resync complete
+
+RMAN-03022: compiling command: release
+RMAN-03023: executing command: release
+RMAN-08031: released channel: ch1
+
+RMAN-03022: compiling command: sql
+RMAN-06162: sql statement: ALTER TABLESPACE TEMP ADD TEMPFILE ''C:\ORACLE\ORADATA\MIAFISNB\DATAFILE\TEMP01.DBF'' size 100m REUSE
+RMAN-03023: executing command: sql
+RMAN-00571: ===========================================================
+RMAN-00569: =============== ERROR MESSAGE STACK FOLLOWS ===============
+RMAN-00571: ===========================================================
+RMAN-03006: non-retryable error occurred during execution of command: sql
+RMAN-07004: unhandled exception during command execution on channel default
+RMAN-20000: abnormal termination of job step
+RMAN-11003: failure during parse/execution of SQL statement: ALTER TABLESPACE TEMP ADD TEMPFILE 'C:\ORACLE\ORADATA\MIAFISNB\DATAFILE\TEMP01.DBF' size 100m REUSE
+RMAN-11001: Oracle Error: ORA-03217: invalid option for alter of TEMPORARY TABLESPACE
+
+Recovery Manager complete.

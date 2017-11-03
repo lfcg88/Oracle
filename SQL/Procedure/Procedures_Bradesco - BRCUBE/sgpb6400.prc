@@ -1,0 +1,58 @@
+CREATE OR REPLACE PROCEDURE SGPB_PROC.SGPB6400(
+RESULSET      OUT SYS_REFCURSOR,
+INTRCAMPA     IN CAMPA_DSTAQ.CCAMPA_DSTAQ %TYPE,
+INTRCPF_CNPJ  IN HIERQ_PBLIC_ALVO.CCPF_CNPJ_BASE %TYPE,
+CHRTPPESSOA   IN HIERQ_PBLIC_ALVO.CTPO_PSSOA %TYPE,
+INTRCANAL     IN HIERQ_PBLIC_ALVO.CCANAL_PROD_DW %TYPE,
+INTRREGIONAL  IN HIERQ_PBLIC_ALVO.CRGNAL %TYPE
+
+) IS
+  -------------------------------------------------------------------------------------------------
+  --      BRADESCO SEGUROS S.A.
+  --      PROCEDURE       : SGPB6400
+  --      NEGÓCIO         : SGPB DESTAQUE PLUS - 3ª CAMPANHA
+  --      DATA            : 21/02/2008
+  --      AUTOR           : RICARDO LUIZ BARATA LOPES
+  --      OBJETIVO        : RECUPERAR PRODUÇÃO TRIMESTRAL DO CORRETOR POR CANAL/REGIONAL
+  --      ALTERAÇÕES      :
+  --                DATA  :
+  --                AUTOR :
+  --                OBS   :
+  -------------------------------------------------------------------------------------------------
+
+  intCpfCnpjBase         NUMBER;
+
+BEGIN
+
+OPEN RESULSET FOR
+
+SELECT PSD.VPROD_AUTO
+     , PSD.VPROD_RE
+  FROM CAMPA_DSTAQ CPD
+     , HIERQ_PBLIC_ALVO HPA
+     , POSIC_DSTAQ PSD
+ WHERE CPD.CCAMPA_DSTAQ            = HPA.CCAMPA_DSTAQ
+   AND CPD.CCAMPA_DSTAQ            = PSD.CCAMPA_DSTAQ
+   AND CPD.DAPURC_DSTAQ            = PSD.DAPURC_DSTAQ
+-- AND HPA.CCANAL_PROD_DW          = PSD.CCANAL_PROD_DW
+   AND HPA.CHIERQ_PBLIC_ALVO_DSTAQ = PSD.CHIERQ_PBLIC_ALVO_DSTAQ
+   AND CPD.CCAMPA_DSTAQ            = 2
+   AND CPD.CIND_SITE_ATIVO         = 'S'
+   AND HPA.CCANAL_PROD_DW          = 999
+   AND HPA.CTPO_PSSOA              = 'J'
+   AND HPA.CRGNAL                  = 99999
+   AND HPA.CCPF_CNPJ_BASE          = 999999999;
+
+  EXCEPTION
+  WHEN OTHERS THEN
+    --
+    PC_UTIL_01.SGPB0028('SGPB DESTAQUE: CPF_CNPJ'||intCpfCnpjBase||' ERROR: '||
+    SUBSTR(SQLERRM,1,100), 'SGPB6400');
+    --
+    ROLLBACK;
+    --
+    RAISE_APPLICATION_ERROR(-20000,'SGPB DESTAQUE ' || SUBSTR(SQLERRM,1,100));
+
+END SGPB6400;
+/
+

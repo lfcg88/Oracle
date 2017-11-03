@@ -1,0 +1,53 @@
+#! /bin/ksh 
+# Locate oratab file, exit if we can't find it 
+if [ -f /etc/oratab ]; then 
+ORATAB="/etc/oratab" ; 
+elif [ -f /var/opt/oracle/oratab ]; then 
+ORATAB="/var/opt/oracle/oratab" ; 
+else 
+echo 
+echo "ERROR: Unable to locate oratab file" 
+exit 1 ; 
+fi 
+
+# Display Simple Header 
+echo 
+echo "Oracle Software Version(s) Installed on" `date` 
+echo "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~" 
+
+# LOOP for each unique ORACLE_HOME found in the oratab 
+# Get the oracle version from the install log 
+
+for i in `egrep '^[a-zA-Z].*:.*:.*$' $ORATAB | awk -F: '{ print $2}' | sort -u ` 
+do 
+echo 
+echo "Software Installed In ORACLE_HOME = " $i 
+echo "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~n" 
+
+if [ -f $i/install/unix.rgs ]; then 
+grep rdbms $i/install/unix.rgs | awk -F" '{ print $6 " " $4}' 
+
+echo 
+echo "Consists of the following Software" 
+echo "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~n" 
+
+cat $i/install/unix.rgs | sort 
+
+elif [ -f $i/orainst/unix.rgs ]; then 
+
+grep '"rdbms"' $i/orainst/unix.rgs | awk -F" '{ print $6 " " $4}' 
+
+echo 
+echo "Consists of the following Software" 
+echo "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~n" 
+
+grep -v '"rdbms"' $i/orainst/unix.rgs | awk -F" '{print $6 " " $4}' | sort 
+
+else 
+
+echo "ERROR: Unable to locate installation registry" 
+return 1 ; 
+
+fi 
+done 
+exit 0 

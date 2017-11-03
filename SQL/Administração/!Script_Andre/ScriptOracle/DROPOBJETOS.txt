@@ -1,0 +1,43 @@
+
+
+
+
+select DISTINCT (OBJECT_TYPE)
+from dba_objects
+where  owner ='OCASIONAL' and object_type NOT IN ('PACKAGE BODY','SYNONYM','DATABASE LINK','INDEX')
+
+
+
+
+select DISTINCT (OBJECT_TYPE)
+from dba_objects
+where  owner ='OCASIONAL' and object_type NOT IN ('PACKAGE BODY','SYNONYM','DATABASE LINK','INDEX')
+
+
+
+
+
+
+
+
+
+select 'drop '||DECODE(object_type,'PACKAGE',object_type,OBJECT_TYPE)||' '||owner||'.'||object_name||'  '||decode (object_type,'TABLE','CASCADE CONSTRAINT',' ')||' ;'
+from dba_objects
+where  owner IN ('DBASPCACR','DBASPGVC') 
+and object_type NOT IN ('PACKAGE BODY','SYNONYM','DATABASE LINK','INDEX')
+
+
+
+
+
+select 'drop '||decode(object_type,'PACKAGE BODY',' PACKAGE ',object_type)||' '||owner||'.'||object_name||'  '||decode (object_type,'TABLE','CASCADE CONSTRAINT',' ')||' ;'
+from dba_objects
+where  owner ='SISCOB' and object_type ('PACKAGE BODY'
+ ;
+
+
+
+select owner,object_type,count(*)
+from dba_objects
+where  owner IN ('DBASPCACR','DBASPGVC') 
+group by owner,object_type

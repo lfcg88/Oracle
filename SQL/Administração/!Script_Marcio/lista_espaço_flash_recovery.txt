@@ -1,0 +1,5 @@
+select round(space_limit/1024/1024,2) Limite, round(space_used/1024/1024,2) Usado 
+  from v$recovery_file_dest;
+
+select FILE_TYPE, NUMBER_OF_FILES, PERCENT_SPACE_USED 
+  from v$flash_recovery_area_usage;

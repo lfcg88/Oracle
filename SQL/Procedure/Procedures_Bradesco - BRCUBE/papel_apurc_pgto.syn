@@ -1,0 +1,3 @@
+create or replace synonym SGPB_PROC.PAPEL_APURC_PGTO
+  for SGPB.PAPEL_APURC_PGTO;
+

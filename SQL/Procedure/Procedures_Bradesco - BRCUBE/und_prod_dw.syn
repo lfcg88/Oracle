@@ -1,0 +1,3 @@
+create or replace synonym SGPB_PROC.UND_PROD_DW
+  for DWCO.UND_PROD;
+

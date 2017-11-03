@@ -1,0 +1,30 @@
+set termout off
+set pause off
+set pages 540
+set feedback off
+set time off
+set linesize 120
+
+rem Tablespace Information Report
+
+column init/next format a25
+column min/max format a15
+column pct format 999
+column tablespace_name format a25 heading "Tablespace"
+column status format a8
+column Ext_Man format a7
+set linesize 120
+
+prompt ########################################################################
+prompt
+prompt Tablespace Information
+prompt
+
+select a.tablespace_name,a.initial_extent||'/'||a.next_extent "Init/Next",
+a.min_extents||'/'||a.max_extents "Min/Max",a.pct_increase pct,a.status,
+a.CONTENTS,substr(a.EXTENT_MANAGEMENT,1,7) "Ext_Man", ALLOCATION_TYPE     
+from sys.dba_tablespaces a
+/
+
+
+

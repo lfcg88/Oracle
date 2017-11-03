@@ -1,0 +1,3 @@
+create or replace synonym SGPB_PROC.ARQ_TRAB
+  for DWMF.ARQ_TRAB;
+

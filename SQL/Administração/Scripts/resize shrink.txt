@@ -1,0 +1,4 @@
+alter table mrc_processo_figur enable row  movement;
+alter table mrc_processo_figur   shrink space ;
+
+ALTER TABLE  mrc_processo_figur_bkpa move TABLESPACE TBS_MARCAS; 

@@ -1,0 +1,307 @@
+... Installing Required Packages
+
+Package created.
+
+
+Grant succeeded.
+
+
+View created.
+
+
+Package body created.
+
+
+Package created.
+
+
+Synonym created.
+
+
+Grant succeeded.
+
+
+View created.
+
+
+Synonym created.
+
+
+View created.
+
+
+Synonym created.
+
+
+View created.
+
+
+Synonym created.
+
+
+View created.
+
+
+Synonym created.
+
+
+View created.
+
+
+Synonym created.
+
+
+View created.
+
+
+Synonym created.
+
+... Creating PERFSTAT user ...
+
+Choose the PERFSTAT user's password.
+
+Not specifying a password will result in the installation FAILING
+
+Specify PERFSTAT password
+Enter value for perfstat_password: perfstat
+perfstat
+
+PL/SQL procedure successfully completed.
+
+
+User created.
+
+
+Grant succeeded.
+
+
+Grant succeeded.
+
+
+Grant succeeded.
+
+
+Grant succeeded.
+
+
+Grant succeeded.
+
+
+Grant succeeded.
+
+
+Grant succeeded.
+
+
+Grant succeeded.
+
+
+Grant succeeded.
+
+
+Grant succeeded.
+
+
+Grant succeeded.
+
+
+Grant succeeded.
+
+
+Grant succeeded.
+
+
+Grant succeeded.
+
+
+Grant succeeded.
+
+
+Grant succeeded.
+
+
+Grant succeeded.
+
+
+Grant succeeded.
+
+
+Grant succeeded.
+
+
+Grant succeeded.
+
+
+Grant succeeded.
+
+
+Grant succeeded.
+
+
+Grant succeeded.
+
+
+Grant succeeded.
+
+
+Grant succeeded.
+
+
+Grant succeeded.
+
+
+Grant succeeded.
+
+
+Grant succeeded.
+
+
+Grant succeeded.
+
+
+Grant succeeded.
+
+
+Grant succeeded.
+
+
+Grant succeeded.
+
+
+Grant succeeded.
+
+
+Grant succeeded.
+
+
+Grant succeeded.
+
+
+Grant succeeded.
+
+
+Grant succeeded.
+
+
+Grant succeeded.
+
+
+Grant succeeded.
+
+
+Grant succeeded.
+
+
+Grant succeeded.
+
+
+Grant succeeded.
+
+
+Grant succeeded.
+
+
+Grant succeeded.
+
+
+Grant succeeded.
+
+
+Grant succeeded.
+
+
+Grant succeeded.
+
+
+Grant succeeded.
+
+
+Grant succeeded.
+
+
+Grant succeeded.
+
+
+Grant succeeded.
+
+
+Grant succeeded.
+
+
+Grant succeeded.
+
+
+Grant succeeded.
+
+
+Below are the list of online tablespaces in this database.
+Decide which tablespace you wish to create the STATSPACK tables
+and indexes.  This will also be the PERFSTAT user's default tablespace.
+
+Specifying the SYSTEM tablespace will result in the installation
+FAILING, as using SYSTEM for performance data is not supported.
+
+
+TABLESPACE_NAME                CONTENTS                                         
+------------------------------ ---------                                        
+CWMLITE                        PERMANENT                                        
+DRSYS                          PERMANENT                                        
+EXAMPLE                        PERMANENT                                        
+INDX                           PERMANENT                                        
+ODM                            PERMANENT                                        
+OEM_REPOSITORY                 PERMANENT                                        
+TBS_DATA_PDM_01                PERMANENT                                        
+TBS_DATA_REPLICA_PROD          PERMANENT                                        
+TBS_DATA_TEMP_SAFIT01          PERMANENT                                        
+TBS_DATA_TEMP_SAFIT02          PERMANENT                                        
+TBS_RECUPERA_TEMP              PERMANENT                                        
+
+TABLESPACE_NAME                CONTENTS                                         
+------------------------------ ---------                                        
+TBS_SAPR_DATA_01               PERMANENT                                        
+TBS_SAPR_IDX_01                PERMANENT                                        
+TBS_SCP_DATA_01                PERMANENT                                        
+TBS_SCP_IDX_01                 PERMANENT                                        
+TEMP                           TEMPORARY                                        
+TOOLS                          PERMANENT                                        
+UNDOTBS1                       UNDO                                             
+USERS                          PERMANENT                                        
+USR_TBS_01                     PERMANENT                                        
+USR_TBS_02                     PERMANENT                                        
+XDB                            PERMANENT                                        
+
+22 rows selected.
+
+
+Specify PERFSTAT user's default   tablespace
+Enter value for default_tablespace: TBS_DATA_PERFSTAT
+Using TBS_DATA_PERFSTAT for the default tablespace
+
+PL/SQL procedure successfully completed.
+
+
+User altered.
+
+
+User altered.
+
+
+Choose the PERFSTAT user's temporary tablespace.
+
+Specifying the SYSTEM tablespace will result in the installation
+FAILING, as using SYSTEM for the temporary tablespace is not recommended.
+
+Specify PERFSTAT user's temporary tablespace.
+Enter value for temporary_tablespace: TEMP
+Using TEMP for the temporary tablespace
+
+
+PL/SQL procedure successfully completed.
+
+
+User altered.
+
+
+NOTE:
+SPCUSR complete. Please check spcusr.lis for any errors.
+

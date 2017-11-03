@@ -1,0 +1,2 @@
+select dba_objects
+LAST_DDL_TIME

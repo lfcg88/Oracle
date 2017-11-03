@@ -1,0 +1,118 @@
+{\rtf1\ansi\ansicpg1252\deff0\deflang1033\deflangfe1042{\fonttbl{\f0\fswiss\fprq2\fcharset0 Arial;}{\f1\fmodern\fprq1\fcharset0 Courier New;}}
+{\colortbl ;\red0\green0\blue255;}
+{\stylesheet{ Normal;}{\s1 heading 1;}}
+{\*\generator Msftedit 5.41.21.2510;}\viewkind4\uc1\pard\sb480\sa480\b\f0\fs60 How to do Trouble-Shooting\par
+\pard\sb120\sl-260\slmult0\b0\fs23 A search of the internet will find all sorts of tools and tips on trouble-shooting an Oracle database, but it\rquote s very easy to be drawn into a chase that wastes a huge amount of time and effort if you don\rquote t start with a clear image of what you are trying to achieve and why. \par
+Focusing only on performance trouble-shooting, I\rquote ve gone back to basics to produce a shortlist of targets, to remind you of the only source of information that\rquote s available to help you.\par
+\pard\keepn\s1\sb360\sa120\b\fs36 Where\rquote s the problem.\par
+\pard\sb120\sl-260\slmult0\b0\fs23 If you\rquote re looking for a performance problem you\rquote re probably facing one of three scenarios \endash  which can be typified by the questions:\par
+\pard\li720\sb120\sl-260\slmult0 Why is this screen / report always so slow ?\par
+Why did the batch over-run by three hours last night ?\par
+What\rquote s going on right now ?\par
+\pard\sb120\sl-260\slmult0 The third question can, of course, be split into two forms \endash  why is \i\ldblquote the system\rdblquote\i0  always slow, and why is \i\ldblquote the system\rdblquote\i0  sometimes slow \endash  but the critical feature is that there is (apparently) no specific issue, just a general malaise.\par
+It\rquote s important to remember which of these three scenarios you are addressing, because the most fruitful approach to problem solving should be guided by the class of problem you are addressing. Regardless of the type of problem, however, Oracle has only one source of information that can help you \endash  the dynamic performance views.\par
+\pard\keepn\s1\sb360\sa120\b\fs36 The dynamic performance views.\par
+\pard\sb120\sl-260\slmult0\b0\fs23 Internally, Oracle captures a huge amount of information about what\rquote s going on from moment to moment and summarises it in a variety of different ways. Broadly speaking you could divide these summaries across three dimensions: people (sessions), resources, and statements; for example:\par
+People: \tab v$sesstat, v$session_event, v$sess_time_model\par
+Resources:\tab v$filestat, v$segstat, v$latch, v$event_histogram\par
+Statements:\tab v$sql, v$sqlstats\par
+Summaries can be very helpful, of course, but sometimes what we really need are answers to questions like \ldblquote how many times did I hit child 43 of the cache buffers chains latch the third time I ran statement X using execution plan Y, and how much CPU time did I spend spinning on that latch and how much time sleeping\rdblquote . \par
+That kind of detail, of course, is far too voluminous for any realistic capture process, but with 10g we do get some extra sampling across the three dimensions that can be very helpful. Extending from \b\i v$session_wait\b0\i0  we get \b\i v$session_wait_history\b0\i0  (a 100% sample of the last 10 wait events for each session), \b\i v$active_session_history\b0\i0  (a sample once per second for the last hour or so of every session) and \b\i dba_hist_active_sess_history\b0\i0  (a sample from \b\i v$active_session_history\b0\i0  that is kept, by default, for the last seven days). The \b\i v$active_session_history\b0\i0  and \b\i dba_hist_active_sess_history\b0\i0 , however, are only available to users with the appropriate licences.\par
+\pard\keepn\s1\sb360\sa120\b\fs36 Improving performance\par
+\pard\sb120\sl-260\slmult0\b0\fs23 So when you go trouble-shooting, what does it mean to \i\ldblquote improve performance\rdblquote\i0 . In simple terms you want something to happen faster, whether it\rquote s a screen response, report run, batch run, time is probably the single visible measure of success.\par
+The formula: \b\i response time = wait time + service time\b0\i0  is probably very well known to the Oracle community (largely due to the efforts of Anjo Kolk and Cary Millsap); but I\rquote d also like to throw another equation, or pair of equations, into the pot:\par
+\pard\li720\sb120\sl-260\slmult0 Wait time = competitive wait time + resource wait time\par
+Service time = competitive service time + resource service time\par
+\pard\sb120\sl-260\slmult0 I\rquote m not entirely happy with the wording I have used in these expressions, but the idea I want to get across is that there is a very fluid boundary between how you decide what you call \lquote wait\rquote  time and what you call \lquote service\rquote  time.  \par
+Consider, for example, a simple disk I/O which, on an idle system, should take 6 milliseconds. From Oracle\rquote s perspective, that would probably be considered virtually 100% wait time. From the viewpoint of \lquote response time = wait time + service time\rquote , most of that time is waiting for the heads to settle and waiting for the disk to rotate to the right position \endash  so, at a difference level, how much of that 6 seconds is wait time, and how much is service time ?. But when two users try to access the same disc at the same time one of them will see a 12 m/s response time, of which 6 m/s is definitely waiting (on what I call competition time) for the other user to get out of the way.\par
+\pard At the opposite extreme, consider a simple latch acquisition. It takes a few microseconds (service time) to run through the code to acquire a latch; but if someone else is holding a latch that I want, I start to spin on that latch, working to avoid sleeping. Is the spin time \ldblquote wait time\rdblquote  or \ldblquote service time\rdblquote  ? I\rquote d like to think of it as service time \endash  I am still working, not waiting \endash  but identify it as competitive service time rather than resource service time.  (For a simple example of this type of competition resulting in a massive CPU overhead, see {\field{\*\fldinst{HYPERLINK "http://jonathanlewis.wordpress.com/2008/05/10/cpu-usage/"}}{\fldrslt{\ul\cf1 http://jonathanlewis.wordpress.com/2008/05/10/cpu-usage/}}}\f0\fs23  ).\par
+\pard\sb120\sl-260\slmult0 One guideline to consider when it comes to competition time is that higher frequency tends to lead to more competition. That\rquote s part of the thinking behind strategies which say: \ldblquote if you\rquote re going to update 1,000 rows do it in one statement, not in 1,000 statements\rdblquote  \endash  the more steps you take, the more times you compete, and the higher the probability of wasting time in competition.\par
+The reason I am struggling to make a distinction between competition and usage is simple. After the \ldblquote time-based tuning\rdblquote  revolution, too many people spent too much time focusing on the \lquote service time + wait time\rquote  viewpoint, translating this into: \lquote you\rquote ve got to use the 10046 trace to see the time\rdblquote . That\rquote s an important aspect of trouble-shooting and the best strategy for some circumstances \endash  but you still have to reduce the time, and you can spend too much effort trying to reduce your \b\i usage\b0\i0  time when you could do better to reduce the \b\i competition\b0\i0  time by reducing \ul other people\rquote s\ulnone  usage.\par
+\pard\keepn\s1\sb360\sa120\b\fs36 Strategies\par
+\pard\sb120\sl-260\slmult0\b0\fs23 So let\rquote s put the pieces together and address the three basic questions.\par
+\pard\li720\sb120\sl-260\slmult0 Why is this screen / report always so slow ?\par
+\pard\sb120\sl-260\slmult0 There\rquote s an obvious best strategy on this one; if you can identify the task so precisely then the 10046 trace gives you the maximum detail available for every operation \endash  except it doesn\rquote t show you much indication of where you spent the CPU and how much of it was used in competition and you may need to do some work, and make some intelligent guesses, about how reasonable your wait times are.  \par
+Obviously the summarized (\b\i tkprof\b0\i0 ) output from the trace will allow you to identify the statements that were responsible for most of the time, and let you guess that some of the statements may have been badly affected by competition time \endash  but you still need to know if the statement that took 1,000 sequential reads and 10 seconds is behaving reasonably because (a) that\rquote s a reasonable number of disk reads to expect and (b) the average of 0.01 seconds per read is meaningful or did 90% of the I/Os come from cache with 10% coming from an overloaded disk system.\par
+\pard\li720\sb120\sl-260\slmult0 Why did the batch over-run by three hours last night ?\par
+\pard\sb120\sl-260\slmult0 Until the advent of 10g and the licences for the diagnostic pack and performance pack, you couldn\rquote t get any fine detail about a single session in the past.  You could only get the system-wide \b\i statspack\b0\i0  reports, which could give you some clues about resource hogs (which might be heavy users, but might also be sources of intense competition).\par
+So the ideal has always been to do the smallest amount of extra work to get the maximum viable instrumentation into the batch jobs. In the simplest case, all it takes is two basic SQL statements each time you disconnect \endash  with a third, possibly, for 10g. The queries simply report the work done (\b\i v$mystat \b0\i0\endash  the slice of\b\i  v$sesstat\b0\i0  for the session\b\i )\b0\i0 ) time waited (\b\i v$session_event\b0\i0 ) and, optionally, database time distribution (\b\i v$sess_time_model\b0\i0 ) for the session.  \par
+\pard\li567\sb60\tx567\tx1134\tx1701\tx2268\tx2835\tx3402\tx3969\tx4536\f1\fs18 Select\par
+\tab stn.name, mst.value \par
+\pard\li567\tx567\tx1134\tx1701\tx2268\tx2835\tx3402\tx3969\tx4536 from\par
+\tab v$mystat mst, v$statname stn\par
+where\par
+\tab mst.value != 0 \par
+and\tab mst.statistic# = stn.statistic#\par
+;\par
+\par
+select\tab\par
+\tab /*+ leading(mys) no_merge(mys) */\par
+\tab event, total_waits, total_timeouts, \par
+\tab round(time_waited/100,2) time_waited, \par
+\tab round(max_wait/100,2) max_wait\par
+from\par
+ \tab (select sid from v$mystat where rownum = 1)\tab mys,\par
+\tab v$session_event \tab\tab\tab\tab\tab\tab sev\par
+where\par
+ \tab sev.sid = mys.sid\par
+;\par
+\par
+select\tab\par
+\tab /*+ leading(mys) no_merge(mys) */\par
+\tab stat_name, value\par
+from\par
+ \tab (select sid from v$mystat where rownum = 1)\tab mys,\par
+\tab v$sess_time_model\tab\tab\tab\tab\tab\tab stm\par
+where\par
+\tab stm.sid = mys.sid\par
+and\tab stm.value != 0\par
+\pard\li567\sa60\tx567\tx1134\tx1701\tx2268\tx2835\tx3402\tx3969\tx4536 ;\par
+\pard\sb120\sl-260\slmult0\fs23 With a relatively short report you get a head start on trouble-shooting because you can compare the report for a bad day with the report for the previous day and ask questions like: \i\ldblquote did I do far more single block reads today than yesterday \endash  or was the average read time longer\rdblquote\i0 , \i\ldblquote did more Workarea executions spill to disk today\rdblquote\i0 , \i\ldblquote why has the number of SQL*Net roundtrips gone up by a factor of 10\rdblquote\i0 .\par
+The three queries can\rquote t give you the complete answers because the detail isn\rquote t there, but they will direct you to the right places to look for the answers.\par
+Of course, with 10g, you could start with this report, to find out which jobs did most work, or suffered from the worst competition, and then go into the \b\i dba_hist_active_sess_history\b0\i0  to see if it gives you a good sample of the critical work this session was doing when it had a problem.\par
+\par
+\pard\li720\sb120\sl-260\slmult0 What\rquote s going on right now ?\par
+\pard\sb120\sl-260\slmult0 Finally the generic \lquote system is bad\rquote  question. This may be the \i\lquote instant response\rquote\i0  question, or may be the longer term view of a badly performing system. Either way, your best bet is taking snapshots.\par
+For the longer term viewpoint, of course, \b\i Statspack\b0\i0  (or \b\i AWR\b0\i0 ) give you a default way of collecting all sorts of interesting data in snapshots, and their mechanisms tell you all you need to know about snapshots \endash  copy the data from a dynamic performance view, wait a bit, make another copy, report the difference.\par
+In the case of the longer term view, you\rquote re probably going to look for competition \endash  what resources are under most pressure, can you see what SQL is (probably) causing that pressure. In many cases this means looking at the \b\i\ldblquote Load Profile\rdblquote\b0\i0  and the \b\i\ldblquote Top 5 Timed events\rdblquote\b0\i0  to get an idea of work done and time lost, then jumping to the most appropriate section of \b\i\lquote SQL ordered by \'85\rquote\b0\i0 .\par
+When you look at the SQL \endash  there are two things to remember: usage and competition. A statement which uses a lot of CPU is denying CPU to other statements. A statement that does a lot of physical reads is slowing down the physical reads by other statements. A statement that executes a large number of times is interrupting other statements and competing for latches. \par
+When you look at \i\lquote greedy\rquote\i0  statements, don\rquote t forget to check how greedy they are \endash  what impact are they having on the total resource available. Several of the \i\lquote SQL ordered by \'85\rquote\i0  reports have some text to help, such as:\par
+\pard\li567\sb60\tx567\tx1134\tx1701\tx2268\tx2835\tx3402\tx3969\tx4536\fs18 SQL ordered by Gets                  DB/Inst: XXXXXX/XXXXXX Snaps: 8277-8278\par
+\pard\li567\tx567\tx1134\tx1701\tx2268\tx2835\tx3402\tx3969\tx4536 -> Resources reported for PL/SQL code includes the resources used by all SQL\par
+   statements called by the code.\par
+-> Total Buffer Gets:     263,043,933\par
+\pard\li567\sa60\tx567\tx1134\tx1701\tx2268\tx2835\tx3402\tx3969\tx4536 -> Captured SQL account for      \ul\b 49.8%\ulnone\b0  of Total \par
+\pard\sb120\sl-260\slmult0\fs23 This report would be fairly useful as it has captured roughly half the buffer gets accounted for in the period.  But if this turns out to be 30 statements each responsible for about 1.6% of the total then you might move rapidly on to check the SQL ordered by CPU, or the SQL ordered by executions to see if there are any single SQL statements with a larger potential payback.\par
+\pard In the case of the short-term view, you need some quick, lightweight, code to take similar snapshots of several of the dynamic performance views.  I have various packages to look at \b\i v$sess_io\b0\i0 , \b\i v$sysstat\b0\i0 , \b\i v$session_event\b0\i0  and so on, but one of the best examples I\rquote ve come across of such code is on Tanel Poder\rquote s \ldblquote Session Level Statspack\rdblquote  at {\field{\*\fldinst{HYPERLINK "http://blog.tanelpoder.com/2007/06/24/session-level-statspack/"}}{\fldrslt{\ul\cf1 http://blog.tanelpoder.com/2007/06/24/session-level-statspack/}}}\f1\fs23\par
+\pard\sb120\sl-260\slmult0 The idea is simple \endash  if the system is busy, someone, somewhere, is doing something inefficient \endash  in this case you want to find the culprit quickly \endash  who\rquote s doing the work that is causing a problem. (Notice how the time scale changes the direction of search \endash  although the snapshot principle is the same as the \b\i Statspack\b0\i0  report, we can search for a \ul person\ulnone  in real-time, but only search for the \ul SQL\ulnone  in Statspack).\par
+The output from a simple snapshot of \b\i v$sess_io\b0\i0  might look like this:\par
+\pard\li567\sb60\tx567\tx1134\tx1701\tx2268\tx2835\tx3402\tx3969\tx4536\fs18 SQL> execute snap_sess_io.start_snap\par
+\pard\li567\tx567\tx1134\tx1701\tx2268\tx2835\tx3402\tx3969\tx4536 PL/SQL procedure successfully completed.\par
+\par
+-- wait 5 seconds\par
+\par
+SQL> execute snap_sess_io.end_snap\par
+-----------------------------------\par
+Session I/O:-   17-Jun 14:28:40\par
+Interval:-      5 seconds\par
+-----------------------------------\par
+SID          CU Gets       CR Gets         Reads    Blk Change    Con Change\par
+------    ----------    ----------    ----------    ----------    ----------\par
+9               3654       445,630        13,925         7,194         8,539\par
+\pard\li567\sa60\tx567\tx1134\tx1701\tx2268\tx2835\tx3402\tx3969\tx4536 13                 0        50,157             0             0             0\par
+\pard\sb120\sl-260\slmult0\fs23 With a suitable filter to bring out only the larger numbers, you can get a short report that points you to just one or two sessions that might be worth following. (The \i\lquote Reads\rquote\i0  in the above report are probably coming from a file-system cache, by the way, so not only is session 9 threatening the discs, it\rquote s always burning extra CPU).\par
+\pard\keepn\s1\sb360\sa120\b\f0\fs36 Conclusion\par
+\pard\sb120\sl-260\slmult0\b0\fs23 There are cases where you can identify a business operation that is believed to be inefficient. If you have this luxury, then the 10046 trace is an enormous help to pinning down exactly where you should spend your efforts in fixing the problem.  But there are cases where this direct approach is not possible.\par
+If you have to find problems in the past, or problems that are non-localised, then Oracle offers you summaries of the work and time attributed to users, statements, and resources. You can used snapshots (at various timescales) on these summaries to help you identify the best place to spend your efforts.\par
+Remember that competition for resources can be as great a threat to performance as use of a resource. If you stop me from working too hard, you are also reducing the competition for resources being suffered by other users. So, in the absence of precise targets, identifying the most significant resource threats may be the most cost-effective use of your time.\par
+Footnote: in this article I\rquote ve avoided the question of locking. When a user says \endash  \i\ldblquote The system is hung\rdblquote\i0 , one of the first quick checks is \b\i v$lock\b0\i0  to see if there are some blocking locks causing a problem. Because the view falls outside the normal range of performance issues due to inefficiency, I\rquote ve left the topic aside to be pursued at a later date.\par
+\pard\fi360\sl-260\slmult0\par
+\pard\lang2057\fs24\par
+\i Jonathan Lewis is a freelance consultant whose experience with Oracle goes back just over 20 years to version 5.1a (though he does try to forget that when dealing with modern systems).  He specialises in physical database design, the strategic use of the Oracle database engine and solving performance issues.\par
+\par
+Jonathan is the author of \lquote Cost Based Oracle \endash  Fundamentals\rquote  published by Apress, and 'Practical Oracle 8i \endash  Designing Efficient Databases' published by Addison-Wesley, and is one of the best-known speakers on the UK Oracle circuit, as well as being very popular on the international scene.\par
+\par
+Further details of his published papers, presentations, tutorials and seminars can be found at {\field{\*\fldinst{HYPERLINK "http://www.jlcomp.demon.co.uk"}}{\fldrslt{\ul\cf1 http://www.jlcomp.demon.co.uk}}}\f0\fs24  and on his blog at {\field{\*\fldinst{HYPERLINK "http://jonathanlewis.wordpress.com"}}{\fldrslt{\ul\cf1 http://jonathanlewis.wordpress.com}}}\f0\fs24 .\par
+\pard\sb120\sl-260\slmult0\lang1033\i0\fs23 Publish Aug 2008. \'a9 Jonathan Lewis\par
+}
+ 

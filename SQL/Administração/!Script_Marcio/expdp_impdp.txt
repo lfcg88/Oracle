@@ -1,0 +1,62 @@
+
+create directory SEAPROD as 'F:\backup\seaprod';
+
+/*Dar grant de leitura e escrita para o schema no diretorio*/
+grant read,write on directory dir to pousada
+
+/*Dar grant as devidas roles ao schema*/
+grant exp_full_database, imp_full_database to pousada
+
+grant exp_full_database, imp_full_database to operador;
+
+
+
+impdp system/unimed017 dumpfile=exp_PRODUCAO.dmp logfile=PRODUCAO.log schemas=INFOMED remap_schema=INFOMED:INFOTRE directory=DIR
+:
+expdp '"/ as sysdba"' dumpfile=exp_PRODUCAO.dmp logfile=exp_PRODUCAO.log schemas=INFOMED directory=DIR
+
+
+
+exp_parfile_full 
+dumpfile=exp_full.dmp 
+logfile=exp_full.log 
+include=schemas:"IN ('INFOMED', 'API', 'INFOTISS', 'PTU', 'SMS', 'EMAIL', 'INFOINSTALL')"
+full=Y 
+flashback_time="TO_TIMESTAMP (TO_CHAR (SYSDATE, 'YYYY-MM-DD HH24:MI:SS'), 'YYYY-MM-DD HH24:MI:SS')"
+directory=EXP_DIR
+
+
+exp_parfile_parcial
+dumpfile=exp_full.dmp 
+logfile=exp_full.log 
+schemas=INFOMED, API, INFOTISS, PTU, SMS, EMAIL, INFOINSTALL
+flashback_time="TO_TIMESTAMP (TO_CHAR (SYSDATE, 'YYYY-MM-DD HH24:MI:SS'), 'YYYY-MM-DD HH24:MI:SS')"
+directory=EXP_DIR
+
+
+expdp '"/ as sysdba"' full=yes directory=dir flashback_time=systimestamp dumpfile=expdpSEAPROD.dmp log=expdpSEAPROD.log
+
+
+impdp '"/ as sysdba"' dumpfile=expdp-unimed-30082011.dmp logfile=impdp-25012012.log schemas=INFOMED include=TABLE:"IN('INF_LANCAMENTO_FIN_PREST')" remap_schema=INFOMED:INFOMED_BKP
+
+
+impdp '"/ as sysdba"' dumpfile=expdp-unimed-30082011.dmp logfile=impdp-25012012.log tables=INFOMED.INF_LANCAMENTOS_FIN_PREST remap_schema=INFOMED:INFOMED_BKP directory=EXP
+ 
+ 
+exp '"/ as sysdba"' file=exp_PRODUCAO.dmp log=exp_PRODUCAO.log owner=INFOMED, API, INFOTISS, PTU, SMS, EMAIL, INFOINSTALL grant=y consistent=y
+
+
+exp '"/ as sysdba"' file=exp_API.dmp log=exp_API.log owner=API
+
+
+imp system/unimed017@unimedteste file=exp_API.dmp fromuser=API  touser=APITRE 
+
+
+imp system/unimed017@unimedteste file=exp_INFOMED.dmp log=imp_INFOTRE.log fromuser=INFOMED touser=INFOTRE
+
+
+
+
+expdp 'operador/gcopergolden' full=yes directory=SEAPROD dumpfile=expdp_SEAPROD.dmp logfile=expdp_SEAPROD.log parfile='F:\backup\seaprod\22h\SEAPROD.par'
+
+

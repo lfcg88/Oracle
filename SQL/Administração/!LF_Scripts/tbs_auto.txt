@@ -1,0 +1,3 @@
+select tablespace_name, file_name ,AUTOEXTENSIBLE,MAXBYTES,INCREMENT_BY
+from dba_data_files WHERE file_name like '%siginpi%'
+order by 1,2;

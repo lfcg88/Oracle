@@ -1,0 +1,3 @@
+create or replace synonym SGPB_PROC.APOLC_PROD_CRRTR
+  for SGPB.APOLC_PROD_CRRTR;
+

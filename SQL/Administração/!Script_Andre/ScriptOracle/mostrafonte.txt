@@ -1,0 +1,169 @@
+rem =========================================================================
+rem 
+rem                     show_line.sql
+rem 
+rem     Copyright (C) Oriole Software, 1999
+rem
+rem		Downloaded from http://www.oriolecorp.com
+rem 
+rem     This script for Oracle database administration is free software; you
+rem     can redistribute it and/or modify it under the terms of the GNU General
+rem     Public License as published by the Free Software Foundation; either
+rem     version 2 of the License, or any later version.
+rem 
+rem     This script is distributed in the hope that it will be useful,
+rem     but WITHOUT ANY WARRANTY; without even the implied warranty of
+rem     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+rem     GNU General Public License for more details.
+rem 
+rem     You should have received a copy of the GNU General Public License
+rem     along with this program; if not, write to the Free Software
+rem     Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+rem 
+rem =========================================================================
+--
+--     This script displays a specified line in a stored object,
+--     and a (-5,+5) 'context window' if possible. The nice feature
+--     is that it processes not only the easy-to-access source of
+--     packages, procedures and functions, but views and triggers
+--     as well.
+--     Must be run by the object owner.
+--
+--     Usage : @show_line <object owner> <object name> <object type> <line #>
+--
+--     Notes : Doesn't display the source of PACKAGES but PACKAGE BODIES.
+--             Doesn't work for triggers or views the text of which is
+--             > 32K
+--
+--     Revision history:
+--     09/13/1999  Steven Patenaude, AMD
+--         Added new parameter (type) to handle the case when more than
+--         one object has the same name.
+--         Added new parameter (owner) to allow privileged non-owners
+--         the ability to see the object throught the "all" views.
+--
+set scan on
+set verify off
+set serveroutput on
+declare
+   v_source        varchar2(32767);   -- Maximum allowed !
+   v_owner         all_objects.owner%type;
+   v_name          all_objects.object_name%type;
+   v_lineno        number := 1;
+   v_window        number := 5;       -- Context window
+   v_type          ALL_OBJECTS.OBJECT_TYPE%TYPE;
+   v_pos           number := 1;
+   v_crpos         number;
+   v_marker        char(1);
+   v_in_long       boolean := FALSE;
+   cursor c_source is
+                   select line,
+                          decode(line, &4, '*', ' ') marker,
+                          text
+                   from all_source
+                   where owner = v_owner
+                     and name = v_name
+                     and type = v_type
+                     and line  between greatest(1, &4 - v_window)
+                                   and &4 + v_window;
+   e_wrong_object  exception;
+   e_wrong_line    exception;
+begin
+  begin
+    select owner, object_type, substr(object_name, 1, 30)
+    into v_owner, v_type, v_name
+    from all_objects
+    where owner = upper('&1')
+      and object_name = upper('&2')
+      and object_type = upper('&3')
+      and object_type != 'PACKAGE';  -- Only package bodies are deemed to
+                                     -- be interesting
+  exception
+    when no_data_found then
+      raise e_wrong_object;
+  end;
+  --     
+  if (v_type = 'VIEW')
+  then
+    select text
+    into v_source
+    from all_views
+    where owner = v_owner
+      and view_name = v_name;
+    v_in_long := TRUE;
+  else
+    if (v_type = 'TRIGGER')
+    then
+      select trigger_body
+      into v_source
+      from all_triggers
+      where owner = v_owner
+        and trigger_name = v_name;
+      v_in_long := TRUE;
+    end if;
+  end if;
+  if (v_in_long)
+  then
+    v_lineno := &4 - v_window;
+    if (v_lineno < 2)
+    then
+      v_lineno := 1;
+      v_pos := 0;
+    else
+      v_pos := instr(v_source, chr(10), 1, v_lineno - 1);
+      if (v_pos = 0)
+      then
+        raise e_wrong_line;
+      end if;
+    end if;
+    v_crpos := 1; -- dummy
+    while ((v_crpos <> 0) and (v_lineno <= &4 + v_window))
+    loop
+      v_crpos := instr(v_source, chr(10), v_pos + 1);
+      if (v_lineno = &4)
+      then
+        v_marker := '*';
+      else
+        v_marker := ' ';
+      end if;
+      if (v_crpos <> 0)
+      then
+        dbms_output.put_line(to_char(v_lineno, '00000') || v_marker
+                   || substr(v_source, v_pos + 1, v_crpos - v_pos - 1));
+      else
+        dbms_output.put_line(to_char(v_lineno, '00000') || v_marker
+                   || substr(v_source, v_pos + 1));
+      end if;
+      v_pos := v_crpos;
+      v_lineno := v_lineno + 1;
+    end loop;
+    if (v_lineno < &4)
+    then
+      raise e_wrong_line;
+    end if;
+  else
+    --
+    --   The usual user_source
+    --
+    for rec in c_source
+    loop
+      v_lineno := rec.line;
+      dbms_output.put_line(to_char(v_lineno, '00000') || rec.marker
+                   || rtrim(rec.text, chr(10)));
+    end loop;
+  end if;
+  if (v_lineno < &4)
+  then
+    raise e_wrong_line;
+  end if;
+exception
+  when e_wrong_object then
+     raise_application_error(-20001, 'Unknown object &2');
+  when e_wrong_line then
+     raise_application_error(-20002, 'Not enough lines in ' ||
+                                     v_type || ' ' || v_name);
+end;
+/
+
+
+

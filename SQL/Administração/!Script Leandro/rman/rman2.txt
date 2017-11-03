@@ -1,0 +1,348 @@
+DBID=1229390655
+
+show all;
+list backup ;
+delete backup;
+
+
+backup database plus archivelog;
+
+
+shutdown abort ;
+
+cd /home/oracle/app/oracle/oradata/orcl
+
+rm redo*
+
+
+
+startup;
+
+
+
+startup mount;
+
+restore controlfile from '';
+
+SET DBID 1229390655
+
+DevMedia - asp.net, Java, Delphi, SQL e web Design, tudo em um só lugar!
+
+    Tecnologias
+    Revistas
+    Cursos
+    Pocket videos
+    DevWare
+    Fórum
+    Serviços
+    Publicar
+    Compre Créditos
+    Loja Virtual
+    Assine
+
+Bem vindo a DevMedia!
+LOGIN:     SENHA:
+Esqueci minha senha      Cadastre-se
+ 
+ 
+post favorito     comentários
+Guia rápido para uso do RMAN
+Você continua usando exp e expdp como ferramentas de backup? Porque? Neste artigo ilustro que o uso do RMAN é tão facil quanto utilizar o exp ou expdp.
+ 0
+ 
+ 
+ Gostei (1)
+(0)
+
+Você continua usando exp e expdp como ferramentas de backup? Porque?
+
+Toda vez que assumo um ambiente de banco legado e me deparo com um backup sendo feito via Export (exp) ou Data Pump Export (expdp) ou ainda pior, "cold backup via shell script".
+
+E toda vez eu sou obrigado a perguntar "porque vocês estão fazendo seus backups com export"? As respostas são das mais variadas possíveis, entre "não sei" e entre "não fomos nós que desenvolvemos a rotina", mas fico atônito quanto ouço respostas do tipo "é mais fácil do que o RMAN".
+
+Esta semana isto ocorreu novamente. Bom, sinto em lhes informar, mas o uso do RMAN (Recovery Manager) é tão fácil e prático que, na minha opinião, a unica resposta válida para não usa-lo seria "eu não sei como se usa, por isto tenho medo de usar".
+
+Além disto tal como consta na documentação do Oracle Database, o export (logical backup) pode ser utilizado como estratégia complementar para proteção dos dados, mas jamais como sendo a principal estratégia.
+
+Admitir que não sabemos algo não é uma deficiência, afial de contas ninguém nasce sabendo tudo, mas continuar em uma zona de conforto e não querer aprender a usar uma ferramenta tão importante, neste caso em particular eu considero muito arriscado.
+
+Por isto como eu disse no começo "DON'T PANIC", vamos desmistificar este dogma.
+
+Para começar é preciso ter em mente que a principal função de uma "ferramenta de backup" não é apenas garantir um backup fácil e rápido, mas principalmente é garantir uma restauração rápida, eficiente e consistente dos dados perdidos.
+
+Como é que você tem garantido a consistência dos seus dados usando "expdp"? Em 99% dos casos eu vejo scripts/rotinas de backup com "expdp" que não usam os parâmetros corretos para garantir a consistência da exportação de dados.
+
+Então eis os 5 passos para começar a usar o Oracle Recovery Manager o quanto antes, afinal de contas, antes tarde do que nunca.
+Prefácio
+
+Para que seja possível efetuar o backup do banco de forma "online", primeiramente é necessário ativar o "modo archivelog" para que os redologs sejam armazenados e nenhuma transação seja perdida durante a execução do backup. Caso você ainda não tenha feito isto deve se reiniciar a instância de banco de dados da seguinte forma:
+
+sqlplus / as sysdba
+SQL> shutdown immediate
+SQL> startup mount
+SQL> alter database archivelog;
+SQL> alter database open;
+
+Caso contrário será apenas possível efetuar backups com o banco desligado, veja a documentação a respeito.
+
+Quanto ao destino padrão dos Archivelogs e Backups eu costumo sempre que possível utilizar a Flash Recovery Area (FRA). Para isto deve se configurar os parâmetros "db_recovery_file_dest" (local de destino) e "db_recovery_file_dest_size" (tamanho máximo da área).
+
+Quando o uso da FRA atingir o valor do tamanho máximo da área definido o Oracle irá se encarregar de eliminar backupsets e archivelogs obsoletos automaticamente, veremos como fazer isto manualmente no parte 3 deste artigo.
+
+Como destino da FRA use sempre um disco (ou grupo de discos LUN, LVM, ASM, etc) que de preferencia não seja físicamente o mesmo já utilizado por outro banco de dados vivo, a fim de evitar concorrência durante o backup.
+
+Eu considero como uma política muito simples e eficiente manter de 1 a 15 dias de backup em disco (para acesso mais rápido) e os demais em unidades externas, preferencialmente unidades de fita. Lembre-se que a política de retenção de dados deve ser definida junto ao seu cliente ou gestores de segurança de dados, etc. não tome decisões sem antes consultar e discuti-las com os demais responsáveis pela segurança dos dados.
+1) Bem vindo ao maravilhoso mundo novo, entre nele sem medo
+
+Para se conectar no Recovery Manager como "sysdba" basta usar o comando "rman target /", mais fácil impossível:
+
+sh> rman target /
+
+Ao se conectar deve aparecer uma mensagem informando "connected to target database: (DBID=)". É importante anotar o número do DBID em um local seguro, pois ele pode ser necessário no futuro.
+
+Existem diversas opções para o comando "rman" caso você use uma opção inválida, tal como "rman help" serão exibidas as opções válidas. Leia a documentação.
+
+Uma vez dentro da ferramenta é possível se fazer tudo que se deseja com relação a backup e recuperação de dados. E o Guia de Referencia possui uma relação de todos os comandos da ferramenta.
+2) Configure, se quiser, apenas uma vez
+
+O mais importante que deve ser lembrado é que estas configurações são persistentes, ou seja, uma vez atribuído um determinado valor ele não precisa ser reconfigurado a cada execução.
+
+Para exibir a configuração atual da ferramenta execute:
+
+RMAN> SHOW ALL;
+
+Todos os comandos listados podem ser reexecutados com outros valores para que a alteração seja feita. A princípio basta que sejam reconfigurados os seguintes valores:
+
+RMAN> CONFIGURE CONTROLFILE AUTOBACKUP ON;
+
+Este comando informa o RMAN que ele sempre que um backup for feito ele também deve extrair um backup dos arquivos "controlfile" e "spfile" automaticamente ao fim do backup.
+
+RMAN> CONFIGURE RETENTION POLICY TO RECOVERY WINDOW OF 2 DAYS;
+
+Este comando define a política de retenção de backups para uma janela de 2 dias. Veremos que esta configuração torna muito fácil a remoção dos backups antigos.
+
+Ao definir o tamanho da janela deve se levar em conta o espaço disponível para armazenamento dos backups, portanto ajuste de acordo com o espaço que houver disponível no seu ambiente.
+
+Caso você não queira utilizar a Flash Recovery Area para armazenar seus backups é possível se alterar o destino padrão dos backups através do comando:
+
+RMAN> CONFIGURE CHANNEL DEVICE TYPE DISK FORMAT '/adirectory/anotherdirectory/%U'
+
+Acho que não preciso dizer que deve se ler a documentação para um entendimento completo dos parâmetros e opções de configuração.
+3) Executando um backup simples em apenas 1 linha, ou talvez 2
+
+Agora, toda vez que se desejar fazer um backup, basta executar um simples comando:
+
+RMAN> BACKUP DATABASE;
+
+Sinceramente me diga, quando isto é mais complicado do que um expdp e todos aqueles parametros: FULL, SCHEMAS, FLASHBACK_SCN ou FLASHBACK_TIME (muitos esquecem destes 2 para manter os dados consistentes, deixando o "backup lógico" Completamente inútil), DUMP_FILE, LOG_FILE, etc?
+
+Este backup será dividido em um ou mais "backup sets" (guarde bem este nome), que são conjuntos de datafiles, archivelogs, etc., por padrão cada "backupset" é formado por 1 "backup piece" que consiste em um formato proprietário de arquivo. A grosso modo, tendo o(s) backupset(s) e os archivelogs é possível restaurar o banco para qualquer "ponto no tempo" da vida do banco de dados.
+
+Tudo bem, vou ser sincero, eu menti um pouco, é que minhas rotinas de backup normalmente consistem em 3 linhas:
+
+RMAN> BACKUP INCREMENTAL LEVEL 0 DATABASE;
+RMAN> DELETE NOPROMPT OBSOLETE;
+RMAN> SQL "alter database backup controlfile to trace as /adirectory/controlfile.txt"
+
+A opção "incremental level 0" eu costumo usar sempre, o que me permite decidir se quero tornar os backups parte de uma política de backup incremental do dia para a noite. Não vou me aprofundar neste assunto no momento, caso não esteja familiarizado busque na documentação.
+
+Já o comando "delete noprompt obsolete" é para remover qualquer backup e archivelog que não se enquadre na política de retenção. Como falei na etapa 2, a configuração de uma janela de retenção torna muito fácil a limpeza dos backups antigos, ou seja, todos os backups e archivelogs que já estejam "obsoletos" (fora da janela de retenção) são apagados com 1 simples comando.
+
+E o SQL "alter database backup controlfile to trace" gera uma versão em texto, caso o controlfile precise ser recriado manualmente. Confie em mim, isto pode ocorrer.
+
+Uma regra que é valida sempre em qualquer situação tanto nas áreas de TI quanto na vida real, quanto mais simples e claro for um sistema mais fácil de entende-lo, mante-lo e menos sujeita a falhas ele se torna.
+
+Tente manter suas rotinas de backup sempre o mais simples e diretas possíveis configurações de destinos, formatação, parallelismo, etc pode ser feita com o comando "CONFIGURE" e persistidas evitando scripts imensos para backups padronizados.
+
+Outra recomendação importante, não adianta fazer backup dos archivelogs para dentro da própria Flash Recovery Area. Se ela já é o destino dos archivelogs, para que copia-los para onde eles já estão?
+
+Faz sentido sim fazer backup dos archivelogs para um outro destino em disco, ou servidor de arquivos remoto, ou unidade de fita, etc. Os archivelogs já fazem parte da política de backup, por tanto não faça "backups de backups" sem a devida necessidade.
+
+Duas recomendação simples de performance para o backup:
+
+    Evitar que o destino dos backup seja o mesmo disco onde estão os dados, evitando um "gargalo" tal como ja foi dito;
+    Evitar que o destino inicial do backup seja uma unidade remota (ex. NFS) em uma rede de banda estreita e/ou tráfego intenso;
+
+A ideia é sempre fazer o backup do banco de forma rápida, para evitar um longo tempo de contenção de leitura dos datafiles. Eu costumo fazer um primeiro backup do database (ou seja, datafiles, controlfile e spfile) em disco, tal como ilustrei acima, e efetuar backup dos backupsets e archivelogs para unidades externas (fita ou NFS) usando os comandos "backup backupset" e "backup archivelog" (não vou abordar este script aqui pois ele depende da mídia de destino do backup), sendo que se for fazer via NFS recomendo que seja através de uma rede de banda Gigabit (ou superior) dedicada exclusivamente para tráfego de backup.
+E por fim, para verificar se temos backup de todos os arquivos do database podemos utilizar o comando:
+
+RMAN> REPORT NEED BACKUP;
+
+4) Encontre e valide backups sem complicações
+
+Para listar seus backups você basicamente irá utilizar o comando "LIST" em suas diversas variações. Um resumo geral dos seus backups pode ser visto com o comando:
+
+RMAN> LIST BACKUP SUMMARY;
+
+Já para obter mais detalhes sobre o conteúdo e local dos seus backups execute o comando:
+
+RMAN> LIST BACKUP;
+
+Este comando lhe trará o valor descrito como "Piece Name", que indica o nome do arquivo onde se encontra aquele "pedaço" do backup. Outro dado importante nesta relação é o valor "Tag", pois varias operações podem ser feitas utilizando-se este valor, tais como validação, remoção e restore.
+
+O RMAN também é uma excelente ferramenta para encontrar possíveis corruções do banco de dados, veja a documentação e procure a referencia dos comandos "VALIDATE DATABASE" e "BACKUP DATABASE ... VALIDATE".
+
+Mas tendo em mente que a função principal é garantir um restore de dados é considerada uma boa prática testar periódicamten se os backups não estão corrompidos. Assim usamos a opção VALIDATE tal como no comando abaixo:
+
+RMAN> RESTORE DATABASE VALIDATE;
+
+Este comando irá efetuar uma leitura completa dos backupsets necessários para restaurar todos os datafiles, controlfiles e spfiles do banco, sem escreve-los em disco.
+
+Mas também é uma boa prática de tempos em tempos se efetuar restores e recover completo do banco de dados em um servidor/host, assim testando a validade do seu backup e deixando você mais preparado caso o piór venha a acontecer. Para isto recomendo a leitura do seguinte documento.
+5) RMAN na hora H - Restore e recover
+
+Ninguém deseja perder seus dados, mas é um fato inegável que mais cedo ou mais tarde isto pode acontecer.
+
+O Recovery Manager possui diversas opções de restore/recover de falhas de mídia, com ele é possível restaurar desde 1 unico bloco de dados corrompido, um datafile perdido, até o banco de dados inteiro. É importante ter em mente que se houve apenas a corrupção de 1 unico bloco, não existe necessidade de se restaurar todo o banco de dados. Por isto é importante que se leia atentamente a documentação sobre "Preparação e Planejamento da Estratégia de Restore e Recover" e também as informações a respeito de BLOCKRECOVER.
+
+Para demonstrar o processo de restauração ilustraremos um caso muito ruim, não o pior, mas um caso de perda total do banco de dados. Lembramos aqui que existen dezenas se não centenas ou milhares de cenários possíveis para um restore de banco de dados, por isto é importante estudar e conhecer todas as funcionalidades para que as decisões corretas sejam tomadas no momento de se efetuar a restauração.
+
+Cenário: digamos que tenha sido perdido o storage, ou os discos, onde estavam todos os arquivos que compõe o database (datafiles, controlfiles e redologs). Apenas se salvando o ORACLE_HOME, o SPFILE (que estava no ORACLE_HOME) e a Flash Recovery Area
+
+Supondo que o destino original dos arquivos já esteja pronto para recebe-lo novamente (filesystems formatados e montados, ou grupo ASM criado e montado, etc.)
+
+Então para restaurarmos todo o banco de dados ao seu destino original, devemos abrir uma sessão do RMAN e podemos executar os seguintes comandos, aqui explicados passo a passo:
+
+RMAN> SET DBID <número do DBID>;
+RMAN> STARTUP FORCE NOMOUNT;
+
+Uma vez que a instância esteja inicializada o RMAN saberá onde encontrar a Flash Recovery Area pelo parametro "db_recovery_file_dest".
+
+RMAN> RESTORE CONTROLFILE FROM AUTOBACKUP; 
+
+Este comando efetua o restore do controlfile, pois é dentro dele que esta o repositório do RMAN que contém o catalogo de todos os backups, e sem ele a ferramenta não saberia quais backupsets precisam ser restaurados, ou onde eles se encontram.
+
+RMAN> ALTER DATABASE MOUNT; 
+
+Com a montagem do banco (leitura do controlfile) permitimos que o RMAN tome conhecimento do repositório de catalogo dos backups.
+
+RMAN> RESTORE DATABASE PREVIEW;
+
+Este comando lista todos os backupsets que serão utilizados para restaurar e recuperar o banco de dados por completo. Pode ser útil checar se todos os backup pieces e archivelogs estão disponíveis antes de iniciar o processo de recuperação.
+
+RMAN> RESTORE DATABASE;
+
+Efetua o restore completo dos datafiles que não estejam em seu destino e com o SCN apropriado.
+
+RMAN> RECOVER DATABASE UNTIL CANCEL;
+
+É a ação que atualiza/sincroniza os datafiles para manter a integridade dos dados. Podemos dizer a grosso modo que com a execução do recover as transações são "refeitas" em todo o banco, aplicando os arquivelogs necessários (e redologs se ainda existirem ao menos 1 cópia disponível) até o ultimo estado válido conhecido, fazendo com que o banco de dados esteja apto a ser aberto.
+
+Caso estejam faltando archivelogs e/ou apenas os redologs dizemos que este é um "recover incompleto", pois algumas transações serão perdidas. Neste caso é importante informar aos responsáveis pelas aplicações até que momento foi possível se recuperar os dados, pois talvez algumas atividades tenham que ser refeitas por parte dos usuários.
+
+RMAN> ALTER DATABASE OPEN RESETLOGS; 
+
+Caso os redologs tenham sido perdidos (que na minha experiência é o caso mais comum) o banco de dados é aberto novamente com o uso do "OPENRESETLOGS".
+
+Após isto o procedimento de Restauração e Recuperação completa do banco é finalizado. E os usuários poderão voltar a utilizar as aplicações normalmente.
+Epílogo
+
+O repositório principal do catalogo de recuperação (RMAN REPOSITORY) fica dentro do próprio "control file" do database, e por tanto não é necessário ficar inventando formas de catalogar e indexar seus arquivos de dump ou cópias de datafiles dos cold backups com scripts mirabolantes.
+
+Mas de qualquer forma é aconselhável criar um repositório externo, em uma base de dados Oracle que de preferencia esteja em outro servidor, para isto leia a documentação.
+Para se aprofundar no assunto, arregace as mangas e leia os manuais:
+
+    Documentação Básica Backup/Recovery Oracle 10gR2
+    Documentação Avançada Backup/Recovery Oracle 10gR2
+    Guia de referencia do RMAN p/ Oracle 10gR2 - sintaxe dos comandos
+
+PS.: Este uso básico é válido para diferentes versões do Oracle Database, mas recomendo que se leia sempre a documentação específica da versão em uso. Neste artigo nos baseamos na versão 10gR2.
+
+Rafael Henchen
+DBA com mais de 8 anos de experiência, certificado em administração Oracle 10g (OCP) e Linux (LPIC1). Atualmente trabalha no segmento de Defesa/Aeroespacial na Atech S/A, empresa do Grupo Embraer.
+O que você achou deste post?
+ Gostei (1)
+(0)
+
+    4 COMENTÁRIOS
+
+
+
+Pedro De Jesus Barruzi
+Muito bom artigo, parabéns.
+
+Gostaria de saber o que seria necessário alterar na recuperação do banco de dados em outro host, mas mudando o nome do banco de dados?
+
+obrigado
+[há +1 mês] - Responder
+
+ 
+
+Wesley Yamazack
+Pedro,tudo bem?
+
+Entramos em contato com o autor para que ele possa te auxiliar, tudo bem ? Peço que aguarde um pouco até que o mesmo possa retornar o contato.
+
+Um abraço.
+[há +1 mês] - Responder
+ 
+
+[autor] Rafael Henchen
+Ola Pedro,
+
+Primeiro, muito obrigado pelo comentário.
+
+Bom, para restaurar o banco em outra máquina o processo não é tão simples que possa ser feito com apenas 1 comando, com a informação que você me deu eu ainda imagino 2 cenários iniciais diferentes:
+
+1) Você quer criar uma cópia de um banco de dados já existente (e ativo) só que com outro nome.
+R: neste caso você deve usar o processo de DUPLICATE DATABASE, ele não é difícil apesar de trabalhoso, eu já realizei diversas vezes, ele é muito bem documentado e tem um "como-fazer" (em ingles) na própria documentação do Oracle. Segue o link: http://docs.oracle.com/cd/B19306_01/backup.102/b14191/rcmdupdb.htm#i1008537
+
+Lembre-se que o TARGET database é o seu banco ativo (original) que deve estar online (em modo MOUNT ou OPEN) para que o RMAN utilize o catálogo de backup dele, e o AUXILIARY é a nova base (no servidor remoto), que deve estar ativa em modo NOMOUNT e que será restaurada com o comando DUPLICATE DATABASE. Para alterar o nome, basta que durante o processo de preparação da Auxiliary Instance você configure o pfile com um novo valor no parâmetro DB_NAME.
+
+Basicamente você:
+- copia o pfile da maquina antiga para a nova, altera o DB_NAME e sobe ela em NOMOUNT,
+- conecta o RMAN usando "rman TARGET <target> CATALOG <catalog> AUXILIARY <auxiliary>" (se não tiver CATALOG não tem problema o catalogo fica no controlfile do target database)
+- aloca 1 ou mais auxiliary channels com ALLOCATE AUXILIARY CHANNEL (se ja não estiver configurado)
+- depois inicia o "DUPLICATA TARGET DATABASE TO <new db name>" e o RMAN toma conta do resto.
+
+Outra coisa, os arquivos de backup (backup pieces) precisam estar acessíveis na máquina que você quer restaurar, via NFS, Samba ou também podes simplesmente copiar eles para a nova máquina, mas tem que ser no mesmo local (estrutura de diretório) da maquina original.
+
+Uma coisa importante é que o processo de RESTORE sempre restaura os arquivos (datafiles, controlfiles e redologs) para o mesmo diretório onde eles estavam anteriormente. Caso queira alterar o local de destino existem 2 parametros que precisam ser alterados no pfile, são DB_FILE_NAME_CONVERT e LOG_FILE_NAME_CONVERT.
+
+2) Ou você quer restaurar um banco já não mais ativo em uma nova maquina, e trocar o nome durante o processo.
+R: este cenário não vi documentado e nunca realizei, mas é possível, precisa se restaurar um snapshot do controlfile original, ou um autobackup controlfile usando o DBID da base original (eis a importancia de anota-lo, tal como descrito no artigo) e subir a base em modo MOUNT, depois iniciar o processo normal de RESTORE e RECOVER da base. Mas isto vai subir a base com o nome original, por isto se você quiser trocar o nome pode usar o utilitário DBNEWID (executável "nid" ou "nid.exe"), que deve ser usado com muita cautela em um banco de produção.
+
+Documentação do restore do restore do controlfile: http://docs.oracle.com/cd/B19306_01/backup.102/b14191/rcmrecov.htm#i1006328
+
+Documentação do restore do restore do DBNEWID: http://docs.oracle.com/cd/B19306_01/server.102/b14215/dbnewid.htm
+
+Bom, existem muitas e muitas variações destes 2 cenários, mas a melhor forma de aprender e fazendo. Ler a documentação da Oracle é sempre importante em qualquer situação. Eu mesmo sempre leio mesmo para atividades que já tenha feito dezenas de vezes, só para garantir que não esqueci de nada.
+
+Espero ter ajudado, ao menos um pouquinho.
+
+Abraços,
+Rafael
+[há +1 mês] - Responder
+ 
+
+Pedro De Jesus Barruzi
+Olá Rafael,
+muito obrigado pela resposta.
+
+Vou conferir os dois modos para ter domínio e dúvidas.
+
+Vc ajudou muito - sem dúvida alguma.
+vlw.
+[há +1 mês] - Responder
+ 
+Cursos relacionados
+Administração do Firebird/InterBase
+Curso de Administração do Microsoft SQL Server
+Ferramentas Administrativas do MySQL
+PL/SQL Oracle
+Administração do Firebird/InterBase
+[Ver todos]
++SQL
+Publicidade
+Serviços
+Inclua um comentário
+Adicionar aos Favoritos
+Marcar como lido/assistido
+Incluir anotação pessoal	
+Versão para impressão
+web-03
+DevMedia  |  Anuncie  |  Fale conosco
+Hospedagem web por Porta 80 Web Hosting
+2013 - Todos os Direitos Reservados a web-03
+
+Leia mais em: Guia rápido para uso do RMAN http://www.devmedia.com.br/guia-rapido-para-uso-do-rman/24131#ixzz2Xutua3rV

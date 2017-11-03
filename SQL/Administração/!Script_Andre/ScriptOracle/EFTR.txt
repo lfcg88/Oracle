@@ -1,0 +1,181 @@
+--
+-- Extrai fonte de trigger
+--
+declare
+-- Information triggers
+  v_trigger_name sys.all_triggers.trigger_name%TYPE;
+  v_trigger_type sys.all_triggers.trigger_type%TYPE;
+  v_triggering_event sys.all_triggers.triggering_event%TYPE;
+  v_table_owner sys.all_triggers.table_owner%TYPE;
+  v_trigtab_name sys.all_triggers.table_name%TYPE;
+  v_when_clause sys.all_triggers.when_clause%TYPE;
+  v_status sys.all_triggers.status%TYPE;
+  v_description sys.all_triggers.description%TYPE;
+  v_trigger_body sys.all_triggers.trigger_body%TYPE;
+  v_referencing_names  sys.all_triggers.referencing_names%TYPE;
+--
+--
+  outfile utl_file.file_type; 
+   vowner  varchar2(30);
+   varq  varchar2(50);
+   vDir  varchar2(200);
+  stmt varchar2(1024);
+  vtipo varchar2(20);
+  v_column_name varchar2(50);
+  comma_needed            boolean;
+--
+--
+
+  cursor c_triggers(powner varchar2) is
+     select trigger_name, trigger_type, triggering_event, table_owner, table_name, when_clause, status,
+            description, trigger_body,referencing_names  
+     from all_triggers where   owner = powner;
+
+ cursor trig_col_cursor (powner in varchar2, ptrigger_name in varchar2,ptable_owner in varchar2, ptable_name in varchar2)   is 
+     select    column_name
+     from      sys.all_trigger_cols
+     where     trigger_owner = powner and trigger_name = ptrigger_name and
+               table_owner = ptable_owner and table_name = ptable_name and
+               column_list = 'YES';
+--        
+--
+ PROCEDURE dump_body(trigger_name IN VARCHAR2, stmt IN varchar2,tmpfile utl_file.file_type,powner IN VARCHAR2)
+  IS
+    data_chunk          VARCHAR2(254);  -- these can go higher
+    chunk_size          NUMBER:=254;    -- up to 32k
+    chunk_size_returned NUMBER;
+    mycursor            INTEGER; 
+    cur_pos             NUMBER:=0;
+    rows                NUMBER;
+    dummy               NUMBER;
+    status              VARCHAR2(50);
+--    tmpfile                         utl_file.file_type;
+  BEGIN
+
+--     tmpfile := utl_file.fopen(dir, file_name, 'a', 32767);
+     mycursor:=dbms_sql.open_cursor;
+     dbms_sql.parse(mycursor, stmt, dbms_sql.v7);
+     dbms_sql.bind_variable(mycursor, ':trigger_name', trigger_name);
+     dbms_sql.bind_variable(mycursor, ':owner', powner);
+--
+     dbms_sql.define_column_long(mycursor,1);
+     dummy:=dbms_sql.execute(mycursor);
+     rows:=dbms_sql.fetch_rows(mycursor);
+     loop
+         -- fetch 'chunks' of the long until we have got the lot
+         dbms_sql.column_value_long(mycursor,
+                                  1,
+                                  chunk_size,
+                                  cur_pos,
+                                  data_chunk,
+                                  chunk_size_returned);
+         utl_file.put(tmpfile, data_chunk); -- use PUT to preserve data
+         cur_pos:=cur_pos + chunk_size;
+         exit when chunk_size_returned = 0; 
+     end loop;
+     dbms_sql.close_cursor(mycursor);
+--         utl_file.fflush(tmpfile);
+--         utl_file.fclose(tmpfile);
+  EXCEPTION
+        when utl_file.invalid_path then
+                raise_application_error(-20100, 'Invalid path in dump_body');
+        when utl_file.invalid_mode then
+                raise_application_error(-20101, 'Invalid mode in dump_body');
+        when utl_file.invalid_operation then
+                raise_application_error(-20102, 'Invalid operation in dump_body');
+        when utl_file.invalid_filehandle then
+                raise_application_error(-20103, 'Invalid filehandle in dump_body');
+        when utl_file.write_error then
+                raise_application_error(-20104, 'Write error in dump_body');
+        when utl_file.read_error then
+                raise_application_error(-20105, 'Read error in dump_body');
+        when utl_file.internal_error then
+                raise_application_error(-20106, 'Internal error in dump_body');
+    WHEN OTHERS THEN
+                raise_application_error(-20107, 'Other Error in dump_body');
+  END dump_body;
+        
+
+--        
+--
+begin
+   vowner :='OWNRECUP';
+   vdir:='/u00/app/oracle/admin/prd5/utl_file';
+--
+--   utl_file.putf(outfile,'\n-- Creating triggers for table %s.%s\n\n', v_owner, v_table_name);
+   stmt:='SELECT TRIGGER_BODY FROM SYS.ALL_TRIGGERS WHERE OWNER = :owner AND TRIGGER_NAME = :trigger_name';
+   open c_triggers(vowner);
+   loop
+     fetch c_triggers into v_trigger_name, v_trigger_type, v_triggering_event, v_table_owner,
+     v_trigtab_name, v_when_clause, v_status, v_description, v_trigger_body,v_referencing_names;
+     exit when c_triggers%NOTFOUND;
+--
+--      varq := v_trigger_name||'.trg';
+      varq := v_trigger_name||'.txt';
+      outfile := Utl_File.Fopen(vdir,varq,'W');
+--     
+--     utl_file.putf(outfile,'CREATE OR REPLACE TRIGGER %s.%s %s ', v_table_owner, v_trigger_name,
+--                   v_trigger_type);
+     utl_file.putf(outfile,'CREATE OR REPLACE TRIGGER %s\n ', v_trigger_name);
+--
+     if substr(v_trigger_type, 1, 6) = 'BEFORE' then
+        vtipo := substr(v_trigger_type,1,6);
+      elsif substr(v_trigger_type, 1, 10) = 'INSTEAD OF' then
+        vtipo := substr(v_trigger_type, 1, 10);
+      else
+        vtipo := 'AFTER';
+      end if;
+--
+--
+--
+     utl_file.putf(outfile,'%s ',vtipo);
+     utl_file.putf(outfile, '%s\n',v_triggering_event);
+     comma_needed := FALSE;
+--
+--
+     open trig_col_cursor (vowner,v_trigger_name,v_table_owner,v_trigtab_name);
+     loop
+       fetch trig_col_cursor into v_column_name;
+       exit when trig_col_cursor%NOTFOUND;
+--       utl_file.putf(outfile,' %s', v_column_name);
+--
+         if comma_needed then
+                 utl_file.putf(outfile,',');
+         else
+                 utl_file.putf(outfile,'OF ');
+                 comma_needed := TRUE;
+         end if;
+       utl_file.putf(outfile,' %s', v_column_name);
+       end loop;
+--
+--
+      close trig_col_cursor;
+--
+ utl_file.putf(outfile, '\nON %s.%s\n', v_table_owner, v_trigtab_name);
+--
+     if nvl(v_referencing_names, ' ') != ' ' then
+        utl_file.putf(outfile, '%s\n', v_referencing_names);
+     end if;
+--
+    if v_trigger_type = 'BEFORE EACH ROW' or
+        v_trigger_type = 'AFTER EACH ROW'
+    then
+        utl_file.putf(outfile, 'FOR EACH ROW\n');
+    end if;
+--
+    if nvl(v_when_clause, ' ') != ' ' then
+          utl_file.putf(outfile, 'WHEN %s\n', v_when_clause);
+     end if;
+--
+--     utl_file.putf(outfile, 'WHEN %s\n', v_when_clause);
+--     utl_file.fclose(outfile);
+     dump_body(v_trigger_name, stmt,outfile,vowner);
+     utl_file.putf(outfile, '\n%s','/'); 
+--     outfile := utl_file.fopen(dir, file_name,'a');
+--     utl_file.putf(outfile, '\nEND;\n');                     
+--     utl_file.fflush(outfile);
+     utl_file.fclose(outfile);
+   end loop;               
+  close c_triggers;
+End;
+/

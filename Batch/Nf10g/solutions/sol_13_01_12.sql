@@ -1,0 +1,2 @@
+
+purge table dept2;

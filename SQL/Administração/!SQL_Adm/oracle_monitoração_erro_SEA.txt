@@ -1,0 +1,2 @@
+select descricao_erro from goldencross.controle_erro
+where dt_erro >= to_date('20/10/2010 00:01','DD/MM/YYYY HH24:MI:SS')

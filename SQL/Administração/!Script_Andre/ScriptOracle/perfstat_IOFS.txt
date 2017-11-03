@@ -1,0 +1,141 @@
+--
+-- I/O por file system
+--
+set serveroutput on size 1000000
+accept vDataInicio prompt 'Informe a Data Inicial (dd/mm/yyyy) =>  ';
+accept vDataFim    prompt 'Informe a Data Final   (dd/mm/yyyy) =>  ';
+accept vIntervalo NUMBER FORMAT '99' DEFAULT '0' prompt 'Intervalo em Horas             (HH) =>  ';
+DECLARE
+-- teste number;
+ vData varchar2(10);
+ vphyrds number;
+-- vHoras number;
+ vphywrts number;
+-- vdata_inicio date;
+-- vdata_fim date;
+-- 
+ bsnap_id number;
+ bsnap_time date;
+ vsnap_id number;
+ vsnap_time date;
+ vasnap_id number;
+ vasnap_time date;
+--
+--- amostra
+-- Cursor c_periodo (pinicio varchar2,pfim varchar2) IS
+--  SELECT a.snap_id inicio_snap_id,a.snap_time inicio_snap_time, b.snap_id fim_snap_id,b.snap_time fim_snap_time
+--  FROM 
+--      stats$snapshot a, stats$snapshot b  
+--  WHERE 
+--     a.snap_time >= to_date(pinicio,'dd/mm/yyyy') and  
+--     a.snap_time <  to_date(pfim,'dd/mm/yyyy') and  a.snap_id = b.snap_id - 1;
+-- por hora 
+--Cursor c_periodo_h (pinicio varchar2) IS
+--  SELECT to_char(snap_time,'DD/MM/YYYY HH24'),max(snap_id) fim_snap_id, min(snap_id) inicio_snap_id
+--  FROM 
+--      stats$snapshot   
+--  WHERE 
+--     snap_time >= to_date('12/07/2001','dd/mm/yyyy') and  snap_time < to_date('13/07/2001','dd/mm/yyyy')  
+--  group by   to_char(snap_time,'DD/MM/YYYY HH24');
+-- por hora novo
+Cursor c_periodo_hn (pinicio varchar2,pfim varchar2) IS
+  SELECT snap_id,snap_time
+  FROM 
+      stats$snapshot   
+  WHERE 
+     snap_time >= to_date(pinicio,'dd/mm/yyyy') and  snap_time < (to_date(pfim,'dd/mm/yyyy')+1/12)
+ORDER BY snap_time;  
+--  group by   to_char(snap_time,'DD/MM/YYYY HH24');
+--
+--
+ Cursor c_arquivo_io (psnap_id number) IS
+  select substr(filename,1,5) name,sum(phyrds) reads ,sum(phywrts) writes 
+    from  STATS$FILESTATXS
+    where SNAP_ID = psnap_id
+  group by substr(filename,1,5); 
+-- 
+-- Procedure Imprimir 
+--
+Procedure Imprime_Statisticas(pinicio_snap_time date,pfim_snap_time date,pinicio_snap_id number ,pfim_snap_id number) 
+Is 
+-- Declare
+   vname varchar2(40);
+Begin
+   Dbms_Output.Put_Line('-------------------------------------------------------------------------------');
+   Dbms_Output.Put_Line(To_char(pinicio_snap_time,'dd/mm/yyyy hh24:mi')||' ---- '||To_char(pfim_snap_time,'dd/mm/yyyy hh24:mi')); 
+   Dbms_Output.Put_Line('-------------------------------------------------------------------------------');
+   Dbms_Output.Put_Line(Rpad('File System',15,' ')||' '||Rpad('Read',8,' ')||' '||Rpad('Write',8,' '));
+   For r_arquivo_io in c_arquivo_io(pinicio_snap_id)  Loop
+--
+       Select substr(filename,1,5) ,sum(phyrds),sum(phywrts) into vname,vphyrds,vphywrts
+       From  stats$filestatxs
+       Where substr(filename,1,5) = r_arquivo_io.name And snap_id = pfim_snap_id
+       Group by substr(filename,1,5); 
+---
+       If SQL%NOTFOUND  Then
+          Dbms_Output.Put_Line('nao achou');
+       End if;
+       vphyrds  := vphyrds  - r_arquivo_io.reads;  
+       vphywrts := vphywrts - r_arquivo_io.writes;
+       Dbms_Output.Put_Line(rpad(r_arquivo_io.name,10,' ')||' '||lpad(vphyrds,8,' ')||' '||lpad(vphywrts,8,' '));
+   End Loop;
+End; 
+--
+--
+Function Det_Data(psnap_id number) return date is
+vdata date;
+Begin
+  select snap_time into vdata
+  from  stats$snapshot
+  where snap_id= psnap_id;
+Return(vdata);
+End;
+--
+--
+-- vData varchar2(10);
+-- vphyrds number;
+-- vphywrts number;
+--
+Begin
+--
+-- vHoras := To_Number(&vIntervalo);
+--
+--accept vDataInicio prompt 'Informe a Data Inicial (DD/MM/YYYY) =>  ';
+--accept vDataFim    prompt 'Informe a Data Final   (DD/MM/YYYY) =>  ';
+--accept vIntervalo  prompt 'Intervalo em Horas             (HH) =>  ';
+-- vData:='12/07/2001';
+-- Dbms_Output.Put_Line(' -------------- Arquivo ------------------  Read ----------------- Write ');
+--If Upper('H') = 'H' Then
+--   For r_periodo in c_periodo_h(&vDataInicio,&vDataFim)  Loop
+--      vdata_inicio := Det_Data(r_periodo.inicio_snap_id);
+--      vdata_fim    := Det_Data(r_periodo.fim_snap_id);
+--      Imprime_Statisticas(vdata_inicio,vdata_fim,r_periodo.inicio_snap_id,r_periodo.fim_snap_id);
+--   End Loop;
+If not c_periodo_hn%ISOPEN then open c_periodo_hn('&vDataInicio','&vDataFim'); end if;
+fetch c_periodo_hn into bsnap_id, bsnap_time;
+while true Loop
+  Fetch c_periodo_hn Into vsnap_id, vsnap_time;
+  If c_periodo_hn%NOTFOUND then
+     close c_periodo_hn;
+     exit;
+  End if;
+--  If to_char(vsnap_time,'dd/mm/yyyy:hh24mi') <= to_char(bsnap_time+(12/24),'dd/mm/yyyy:hh24mi') Then
+    If to_char(vsnap_time,'dd/mm/yyyy:hh24mi') >= to_char(bsnap_time+(&vIntervalo/24),'dd/mm/yyyy:hh24mi') Then
+     -- vasnap_id   := vsnap_id;
+     -- vasnap_time := vsnap_time;
+     --  Else
+    Imprime_Statisticas(bsnap_time,vsnap_time,bsnap_id,vsnap_id);
+--    Imprime_Statisticas(bsnap_time,vasnap_time,bsnap_id,vasnap_id);
+    bsnap_time := vsnap_time;
+    bsnap_id   := vsnap_id;
+  End If;
+End Loop;
+--    
+-- End If;
+End ;
+/
+
+
+
+
+

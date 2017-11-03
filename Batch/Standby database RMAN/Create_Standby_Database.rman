@@ -1,0 +1,29 @@
+connect target /@tst1;
+connect catalog rman/senha@rman;
+connect auxiliary /@tst2;
+
+run { 
+# Horário máximo
+#   set until time '09/07/2003 22:00:00';
+       #Allocate the channel for the duplicate work   
+      Allocate auxiliary channel ch1 type disk;  
+      Allocate auxiliary channel ch2 type disk;  
+      Allocate auxiliary channel ch3 type disk;  
+#set the new file names and locations for all datafiles  
+set newname for datafile 'C:\ORACLE\ORADATA\TST1\SYSTEM01.DBF' to 'C:\ORACLE\ORADATA\TST2\SYSTEM01.DBF';
+set newname for datafile 'C:\ORACLE\ORADATA\TST1\UNDOTBS01.DBF' to 'C:\ORACLE\ORADATA\TST2\UNDOTB01';
+set newname for datafile 'C:\ORACLE\ORADATA\TST1\DRSYS01.DBF' to 'C:\ORACLE\ORADATA\TST2\DRSYS01.DBF';
+set newname for datafile 'C:\ORACLE\ORADATA\TST1\EXAMPLE01.DBF' to 'C:\ORACLE\ORADATA\TST2\EXAMPLE01.DBF';
+set newname for datafile 'C:\ORACLE\ORADATA\TST1\INDX01.DBF' to 'C:\ORACLE\ORADATA\TST2\INDX01.DBF';
+set newname for datafile 'C:\ORACLE\ORADATA\TST1\ODM01.DBF' to 'C:\ORACLE\ORADATA\TST2\ODM01.DBF';
+set newname for datafile 'C:\ORACLE\ORADATA\TST1\TOOLS01.DBF' to 'C:\ORACLE\ORADATA\TST2\TOOLS01.DBF';
+set newname for datafile 'C:\ORACLE\ORADATA\TST1\USERS01.DBF' to 'C:\ORACLE\ORADATA\TST2\USERS01.DBF';
+set newname for datafile 'C:\ORACLE\ORADATA\TST1\XDB01.DBF' to 'C:\ORACLE\ORADATA\TST2\XDB01.DBF';
+set newname for datafile 'C:\ORACLE\ORADATA\TST1\DF_RMAN_01_01.DBF' to 'C:\ORACLE\ORADATA\TST2\DF_RMAN_01_01.DBF';
+
+
+#Duplicate the database 
+DUPLICATE TARGET DATABASE for standby dorecover;
+  }  
+
+exit;

@@ -1,0 +1,851 @@
+<i>ver: 8.2</i>
+<hr>
+
+
+<html>
+<a name=top></a>
+
+<b> HOST: adclap05.dufry.com.br </b>
+<hr>
+<b> INSTANCE: rjd5tst </b>
+<hr>
+<b> VERSION: 8.1.7.4.0 </b>
+<hr>
+<b> DATE: 10-DEZ-2010 </b>
+<hr>
+<pre>
+
+
+BANNER                                                                          
+----------------------------------------------------------------                
+Oracle8i Enterprise Edition Release 8.1.7.4.0 - Production                      
+PL/SQL Release 8.1.7.4.0 - Production                                           
+CORE	8.1.7.0.0	Production                                                       
+TNS for Linux: Version 8.1.7.4.0 - Production                                   
+NLSRTL Version 3.4.1.0.0 - Production                                           
+
+
+.CLIENT_CONFIGURATION.                                                          
+----------------------                                                          
+CURRENT_USER                  HOST                                              
+----------------------------- ---------------------------                       
+SYSTEM                        DUFRY\INV01235
+
+
+</pre>
+<hr>
+<hr>
+
+[adclap05.dufry.com.br / rjd5tst] Collecting default passwords...
+
+
+<br>
+
+<b>.DEFAULT PASSWORDS.</b>
+
+<pre>
+		select 	dba_users.username, dba_users.account_status,case when (substr(v$instance.version,1,2))=11
+		       	                                             *
+ERRO na linha 16:
+ORA-06550: line 16, column 56: 
+PLS-00103: Encountered the symbol "CASE" when expecting one of the following: 
+( - + mod null <an identifier> 
+<a double-quoted delimited-identifier> <a bind variable> 
+table avg count current max min prior sql stddev sum variance 
+execute the forall time timestamp interval date 
+<a string literal with character set specification> 
+<a number> <a single-quoted SQL string> 
+
+
+
+</pre>
+<a HREF=#top><h6>Top</h6></a>
+<hr>
+
+[adclap05.dufry.com.br / rjd5tst] Collecting DBlinks...
+
+
+<br>
+
+<b>.DBLINKS.</b>
+
+<pre>
+
+NAME                                     USERID               PASSWORD           HOST                                    
+---------------------------------------- -------------------- ------------------ ----------------------------------------
+DBA1.ADCEN.BRASIF.COM                    COMERCIAL            SUT357Y            DBA1                                    
+DBWSS.BRASIFNET.COM.BR                   INTQ                 L1SKYWALKER        rjd5                                    
+INTQ.BRASIFNET.COM.BR                    INTQ                 L1SKYWALKER        intq                                    
+MAQ1.BRASIFNET.COM.BR                    SIB                  SUPER2005          MAQ1                                    
+MIA2.BRASIFNET.COM.BR                    INTQ                 L1SKYWALKER        mia2                                    
+RJD10.BRASIFNET.COM.BR                   INTQ                 L1SKYWALKER        rjd10                                   
+RJD11.BRASIFNET.COM.BR                   INTQ_RJD11           INTQ               rjd11                                   
+RJD6.BRASIFNET.COM.BR                    PUBLI                PUBLI              rjd6                                    
+RJD8.ADCEN.BRASIF.COM                    IQTESTE              SUPERTST           rjd8                                    
+RJD8.BRASIFNET.COM.BR                    IQTESTE              SUPERTST           RJD8                                    
+CAD0.BRASIFNET.COM.BR                    PUBLI                PUBLI              cad0                                    
+
+</pre>
+<a HREF=#top><h6>Top</h6></a>
+<hr>
+
+[adclap05.dufry.com.br / rjd5tst] Collecting RESTRICTED OBJECTS ACCCESS...
+
+
+<br>
+
+<b>.RESTRICTED OBJECTS ACCESS.</b>
+
+'ALL_USERS','AUD$','LINK$','ALL_DB_LINKS', 'DBMS_SYSTEM'
+
+<pre>
+
+PRIVILEGE            GRANTEE                   TABLE_NAME                                 
+-------------------- ------------------------- ----------------------------------------   
+SELECT               PUBLIC                    ALL_DB_LINKS                               
+SELECT               PUBLIC                    ALL_USERS                                  
+
+</pre>
+<a HREF=#top><h6>Top</h6></a>
+<hr>
+
+[adclap05.dufry.com.br / rjd5tst] Collecting Account/Passwords Policy ...
+
+
+<br>
+
+<b>.USER PROFILES.</b>
+
+<pre>
+
+PROFILE                        RESOURCE_NAME                  LIMIT               
+------------------------------ ------------------------------ --------------------
+DEFAULT                        FAILED_LOGIN_ATTEMPTS          UNLIMITED           
+DEFAULT                        PASSWORD_LIFE_TIME             UNLIMITED           
+DEFAULT                        PASSWORD_REUSE_MAX             UNLIMITED           
+DEFAULT                        PASSWORD_LOCK_TIME             UNLIMITED           
+DEFAULT                        PASSWORD_GRACE_TIME            UNLIMITED           
+DEFAULT                        PASSWORD_VERIFY_FUNCTION       UNLIMITED           
+DEFAULT                        PASSWORD_REUSE_TIME            UNLIMITED           
+USUARIO                        FAILED_LOGIN_ATTEMPTS          DEFAULT             
+USUARIO                        PASSWORD_LIFE_TIME             DEFAULT             
+USUARIO                        PASSWORD_REUSE_MAX             DEFAULT             
+USUARIO                        PASSWORD_LOCK_TIME             DEFAULT             
+USUARIO                        PASSWORD_GRACE_TIME            DEFAULT             
+USUARIO                        PASSWORD_VERIFY_FUNCTION       DEFAULT             
+USUARIO                        PASSWORD_REUSE_TIME            DEFAULT             
+
+</pre>
+<a HREF=#top><h6>Top</h6></a>
+<hr>
+
+[adclap05.dufry.com.br / rjd5tst] Collecting users in profiles ...
+
+
+<br>
+
+<b>.TOTAL USERS IN PROFILES.</b>
+
+<pre>
+
+ TOT_USERS PROFILE                                                                
+---------- ------------------------------                                         
+         7 DEFAULT                                                                
+         1 USUARIO                                                                
+
+</pre>
+<a HREF=#top><h6>Top</h6></a>
+<hr>
+
+[adclap05.dufry.com.br / rjd5tst] Collecting OS Authentications Prefix...
+
+
+<br>
+
+<b>.AUTHENT PREFIX.</b>
+
+<pre>
+
+</pre>
+<a HREF=#top><h6>Top</h6></a>
+<hr>
+
+[adclap05.dufry.com.br / rjd5tst] Collecting parameter dblink_encrypt...
+
+
+<br>
+
+<b>.DBLink_encrypt.</b>
+
+<pre>
+
+NAME                         VALUE                                    
+---------------------------- ---------------                          
+dblink_encrypt_login         FALSE                                    
+
+</pre>
+<a HREF=#top><h6>Top</h6></a>
+<hr>
+
+[adclap05.dufry.com.br / rjd5tst] Collecting Parameter O7_DICTIONARY...
+
+
+<br>
+
+<b>.O7_DICTIONARY.</b>
+
+<pre>
+
+NAME                         VALUE                                    
+---------------------------- ---------------                          
+O7_DICTIONARY_ACCESSIBILITY  TRUE                                     
+
+</pre>
+<a HREF=#top><h6>Top</h6></a>
+<hr>
+
+[adclap05.dufry.com.br / rjd5tst] Collecting Remote Logins...
+
+
+<br>
+
+<b>.REMOTE LOGINS.</b>
+
+<pre>
+
+NAME                         VALUE                     
+---------------------------- --------------------------
+remote_login_passwordfile    EXCLUSIVE                 
+
+</pre>
+<a HREF=#top><h6>Top</h6></a>
+<hr>
+
+[adclap05.dufry.com.br / rjd5tst] Collecting privileges "ADMIN OPTION"...
+
+
+<br>
+
+<b>.ADMIN OPTION.</b>
+
+<pre>
+
+</pre>
+<a HREF=#top><h6>Top</h6></a>
+<hr>
+
+[adclap05.dufry.com.br / rjd5tst] Collecting users with "OLAP_DBA"...
+
+
+<br>
+
+<b>.OLAP_ADMIN.</b>
+
+<pre>
+
+</pre>
+<a HREF=#top><h6>Top</h6></a>
+<hr>
+
+[adclap05.dufry.com.br / rjd5tst] Collecting "SPECIAL PRIVS"...
+
+
+<br>
+
+<b>.SPECIAL PRIVS.</b>
+
+<pre>
+
+GRANTEE                   PRIVILEGE                                             
+------------------------- --------------------------------------------------    
+INTQ                      CREATE PUBLIC SYNONYM                                 
+INTQ                      DROP PUBLIC SYNONYM                                   
+INTQ_BKP                  ALTER SYSTEM                                          
+INTQ_BKP                  ALTER USER                                            
+INTQ_BKP                  CREATE PUBLIC SYNONYM                                 
+INTQ_BKP                  DROP PUBLIC SYNONYM                                   
+INTQ_BKP                  DROP USER                                             
+INTQ2005                  ALTER SYSTEM                                          
+INTQ2005                  ALTER USER                                            
+INTQ2005                  CREATE PUBLIC SYNONYM                                 
+INTQ2005                  DROP PUBLIC SYNONYM                                   
+INTQ2005                  DROP USER                                             
+
+</pre>
+<a HREF=#top><h6>Top</h6></a>
+<hr>
+
+[adclap05.dufry.com.br / rjd5tst] Collecting "RISK PACKAGES"...
+
+
+<br>
+
+<b>.RISK_PACKAGES.</b>
+
+<pre>
+
+PRIVILEGE  OWNER           TABLE_NAME                GRANTEE                    
+---------- --------------- ------------------------- -------------------------  
+EXECUTE    SYS             DBMS_DDL                  PUBLIC                     
+EXECUTE    SYS             DBMS_EXPORT_EXTENSION     PUBLIC                     
+EXECUTE    SYS             DBMS_STATS                PUBLIC                     
+EXECUTE    SYS             DBMS_LOB                  PUBLIC                     
+EXECUTE    SYS             DBMS_RANDOM               PUBLIC                     
+EXECUTE    SYS             OWA_OPT_LOCK              PUBLIC                     
+EXECUTE    SYS             DBMS_REPUTIL              PUBLIC                     
+EXECUTE    SYS             DBMS_REPCAT_RGT_EXP       PUBLIC                     
+EXECUTE    SYS             DBMS_REPCAT_INSTANTIATE   PUBLIC                     
+
+</pre>
+<a HREF=#top><h6>Top</h6></a>
+<hr>
+
+[adclap05.dufry.com.br / rjd5tst] Collecting privileges "ANY"...
+
+
+<br>
+
+<b>.PRIVILEGE_ANY.</b>
+
+<pre>
+
+GRANTEE                                            PRIVILEGE                     
+-------------------------------------------------- ------------------------------
+INTQ                                               ALTER ANY CLUSTER             
+INTQ                                               ALTER ANY INDEX               
+INTQ                                               ALTER ANY PROCEDURE           
+INTQ                                               ALTER ANY SEQUENCE            
+INTQ                                               ALTER ANY SNAPSHOT            
+INTQ                                               ALTER ANY TABLE               
+INTQ                                               ALTER ANY TRIGGER             
+INTQ                                               CREATE ANY CLUSTER            
+INTQ                                               CREATE ANY INDEX              
+INTQ                                               CREATE ANY PROCEDURE          
+INTQ                                               CREATE ANY SEQUENCE           
+INTQ                                               CREATE ANY SNAPSHOT           
+INTQ                                               CREATE ANY SYNONYM            
+INTQ                                               CREATE ANY TABLE              
+INTQ                                               CREATE ANY TRIGGER            
+INTQ                                               CREATE ANY VIEW               
+INTQ                                               DELETE ANY TABLE              
+INTQ                                               DROP ANY CLUSTER              
+INTQ                                               DROP ANY INDEX                
+INTQ                                               DROP ANY PROCEDURE            
+INTQ                                               DROP ANY SEQUENCE             
+INTQ                                               DROP ANY SNAPSHOT             
+INTQ                                               DROP ANY SYNONYM              
+INTQ                                               DROP ANY TABLE                
+INTQ                                               DROP ANY TRIGGER              
+INTQ                                               DROP ANY VIEW                 
+INTQ                                               EXECUTE ANY PROCEDURE         
+INTQ                                               INSERT ANY TABLE              
+INTQ                                               SELECT ANY TABLE              
+INTQ2005                                           ALTER ANY CLUSTER             
+INTQ2005                                           ALTER ANY INDEX               
+INTQ2005                                           ALTER ANY PROCEDURE           
+INTQ2005                                           ALTER ANY SEQUENCE            
+INTQ2005                                           ALTER ANY SNAPSHOT            
+INTQ2005                                           ALTER ANY TABLE               
+INTQ2005                                           ALTER ANY TRIGGER             
+INTQ2005                                           CREATE ANY CLUSTER            
+INTQ2005                                           CREATE ANY INDEX              
+INTQ2005                                           CREATE ANY PROCEDURE          
+INTQ2005                                           CREATE ANY SEQUENCE           
+INTQ2005                                           CREATE ANY SNAPSHOT           
+INTQ2005                                           CREATE ANY SYNONYM            
+INTQ2005                                           CREATE ANY TABLE              
+INTQ2005                                           CREATE ANY TRIGGER            
+INTQ2005                                           CREATE ANY VIEW               
+INTQ2005                                           DELETE ANY TABLE              
+INTQ2005                                           DROP ANY CLUSTER              
+INTQ2005                                           DROP ANY INDEX                
+INTQ2005                                           DROP ANY PROCEDURE            
+INTQ2005                                           DROP ANY SEQUENCE             
+INTQ2005                                           DROP ANY SNAPSHOT             
+INTQ2005                                           DROP ANY SYNONYM              
+INTQ2005                                           DROP ANY TABLE                
+INTQ2005                                           DROP ANY TRIGGER              
+INTQ2005                                           DROP ANY VIEW                 
+INTQ2005                                           EXECUTE ANY PROCEDURE         
+INTQ2005                                           INSERT ANY TABLE              
+INTQ2005                                           SELECT ANY TABLE              
+INTQ_BKP                                           ALTER ANY CLUSTER             
+INTQ_BKP                                           ALTER ANY INDEX               
+INTQ_BKP                                           ALTER ANY PROCEDURE           
+INTQ_BKP                                           ALTER ANY SEQUENCE            
+INTQ_BKP                                           ALTER ANY SNAPSHOT            
+INTQ_BKP                                           ALTER ANY TABLE               
+INTQ_BKP                                           ALTER ANY TRIGGER             
+INTQ_BKP                                           CREATE ANY CLUSTER            
+INTQ_BKP                                           CREATE ANY INDEX              
+INTQ_BKP                                           CREATE ANY PROCEDURE          
+INTQ_BKP                                           CREATE ANY SEQUENCE           
+INTQ_BKP                                           CREATE ANY SNAPSHOT           
+INTQ_BKP                                           CREATE ANY SYNONYM            
+INTQ_BKP                                           CREATE ANY TABLE              
+INTQ_BKP                                           CREATE ANY TRIGGER            
+INTQ_BKP                                           CREATE ANY VIEW               
+INTQ_BKP                                           DELETE ANY TABLE              
+INTQ_BKP                                           DROP ANY CLUSTER              
+INTQ_BKP                                           DROP ANY INDEX                
+INTQ_BKP                                           DROP ANY PROCEDURE            
+INTQ_BKP                                           DROP ANY SEQUENCE             
+INTQ_BKP                                           DROP ANY SNAPSHOT             
+INTQ_BKP                                           DROP ANY SYNONYM              
+INTQ_BKP                                           DROP ANY TABLE                
+INTQ_BKP                                           DROP ANY TRIGGER              
+INTQ_BKP                                           DROP ANY VIEW                 
+INTQ_BKP                                           EXECUTE ANY PROCEDURE         
+INTQ_BKP                                           INSERT ANY TABLE              
+INTQ_BKP                                           SELECT ANY TABLE              
+
+</pre>
+<a HREF=#top><h6>Top</h6></a>
+<hr>
+
+[adclap05.dufry.com.br / rjd5tst] Collecting Default TableSpaces...
+
+
+<br>
+
+<b>.DEFAULT TABLESPACES.</b>
+
+<pre>
+
+</pre>
+<a HREF=#top><h6>Top</h6></a>
+<hr>
+
+[adclap05.dufry.com.br / rjd5tst] Collecting PUBLIC permission on system privileges...
+
+
+<br>
+
+<b>.PUBLIC SYS.</b>
+
+<pre>
+
+</pre>
+<a HREF=#top><h6>Top</h6></a>
+<hr>
+
+[adclap05.dufry.com.br / rjd5tst] Collecting AUDIT value...
+
+
+<br>
+
+<b>.AUDITING CONFIGURATION OPTIONS.</b>
+
+<pre>
+
+NAME                      VALUE                                                 
+------------------------- --------------------------------------------------    
+audit_trail               NONE                                                  
+
+</pre>
+<a HREF=#top><h6>Top</h6></a>
+<hr>
+
+[adclap05.dufry.com.br / rjd5tst] Collecting Auditing Configutation...
+
+
+<br>
+
+<b>.AUDITING COMMANDS.</b>
+
+<pre>
+
+</pre>
+<a HREF=#top><h6>Top</h6></a>
+<hr>
+
+[adclap05.dufry.com.br / rjd5tst] Collecting TABLESPACE_AUD$...
+
+
+<br>
+
+<b>.TABLESPACE_AUD$.</b>
+
+<pre>
+
+TABLESPACE_NAME           SEGMENT_NAME                                          
+------------------------- -------------------------                             
+SYSTEM                    AUD$                                                  
+SYSTEM                    I_AUD1                                                
+
+</pre>
+<a HREF=#top><h6>Top</h6></a>
+<hr>
+
+[adclap05.dufry.com.br / rjd5tst] Collecting public privileges on UTL_packages ...
+
+
+<br>
+
+<b>.UTL_packages.</b>
+
+<pre>
+
+PRIVILEGE            GRANTEE                   TABLE_NAME                                 
+-------------------- ------------------------- ----------------------------------------   
+EXECUTE              PUBLIC                    UTL_HTTP                                   
+EXECUTE              PUBLIC                    UTL_FILE                                   
+EXECUTE              PUBLIC                    UTL_TCP                                    
+EXECUTE              PUBLIC                    UTL_SMTP                                   
+
+</pre>
+<a HREF=#top><h6>Top</h6></a>
+<hr>
+
+[adclap05.dufry.com.br / rjd5tst] Collecting users with DBA role...
+
+
+<br>
+
+<b>.USERS_DBA_ROLE.</b>
+
+<pre>
+
+GRANTEE                   DEFA ADMI                                                                 
+------------------------- ---- ----                                                                 
+INTQ2005                  YES  NO                                                                   
+INTQ_BKP                  YES  NO                                                                   
+
+</pre>
+<a HREF=#top><h6>Top</h6></a>
+<hr>
+<br>
+
+<b>.SYSDBA AND SYSOPER USERS.</b>
+
+<pre>
+
+</pre>
+<a HREF=#top><h6>Top</h6></a>
+<hr>
+
+[adclap05.dufry.com.br / rjd5tst] Collecting privileges "CATALOG_ROLE"...
+
+
+<br>
+
+<b>.CATALOG_ROLES.</b>
+
+<pre>
+
+</pre>
+<a HREF=#top><h6>Top</h6></a>
+<hr>
+
+[adclap05.dufry.com.br / rjd5tst] Collecting DBA Users...
+
+
+<br>
+
+<b>.DBA_USERS.</b>
+
+<pre>
+
+USERNAME                            PROFILE           PASSWORD           ACCOUNT_STATUS                                 
+----------------------------------- ----------------- ------------------ ------------------                             
+SYS                                 DEFAULT           *****************  OPEN                                           
+SYSTEM                              DEFAULT           *****************  OPEN                                           
+OUTLN                               DEFAULT           *****************  OPEN                                           
+IQCONECTA                           DEFAULT           *****************  OPEN                                           
+INTQ2005                            DEFAULT           *****************  OPEN                                           
+INTQ_BKP                            DEFAULT           *****************  OPEN                                           
+DBSNMP                              DEFAULT           *****************  OPEN                                           
+INTQ                                USUARIO           *****************  OPEN                                           
+
+</pre>
+<a HREF=#top><h6>Top</h6></a>
+<hr>
+
+[adclap05.dufry.com.br / rjd5tst] Collecting externally users...
+
+
+<br>
+
+<b>.Externally Users.</b>
+
+<pre>
+
+</pre>
+<a HREF=#top><h6>Top</h6></a>
+<hr>
+
+[adclap05.dufry.com.br / rjd5tst] Collecting Roles...
+
+
+<br>
+
+<b>.ROLES.</b>
+
+<pre>
+
+GRANTEE                   GRANTED_ROLE                   ADMIN_ DEFAULT 
+------------------------- ------------------------------ ------ ------- 
+INTQ                      CONNECT                        NO     YES     
+INTQ                      RESOURCE                       NO     YES     
+INTQ                      ROIQADM                        NO     YES     
+INTQ                      ROIQADMIQ                      NO     YES     
+INTQ                      ROIQUSUIQ                      NO     YES     
+INTQ2005                  CONNECT                        NO     YES     
+INTQ2005                  DBA                            NO     YES     
+INTQ2005                  RESOURCE                       NO     YES     
+INTQ_BKP                  CONNECT                        NO     YES     
+INTQ_BKP                  DBA                            NO     YES     
+INTQ_BKP                  RESOURCE                       NO     YES     
+IQCONECTA                 ROIQADM                        NO     YES     
+IQCONECTA                 ROIQADMIQ                      NO     YES     
+IQCONECTA                 ROIQUSUIQ                      NO     YES     
+JAVASYSPRIV               JAVAUSERPRIV                   NO     YES     
+ROIQADM                   ROIQUSUIQ                      NO     YES     
+
+</pre>
+<a HREF=#top><h6>Top</h6></a>
+<hr>
+
+[adclap05.dufry.com.br / rjd5tst] Collecting CPU...
+
+
+<br>
+
+<b>.CPU.</b>
+
+<pre>
+	select comments, id from sys.registry$history
+	                             *
+ERRO na linha 1:
+ORA-00942: table or view does not exist 
+
+
+
+</pre>
+<a HREF=#top><h6>Top</h6></a>
+<hr>
+
+[adclap05.dufry.com.br / rjd5tst] Collecting Parameters...
+
+
+<br>
+
+<b>.PARAMETERS.</b>
+
+<pre>
+
+NAME                            VALOR                                                     
+------------------------------- -------------------------------------------------------   
+row_locking                     ALWAYS                                                    
+nls_territory                   AMERICA                                                   
+nls_language                    AMERICAN                                                  
+optimizer_mode                  CHOOSE                                                    
+core_dump_dest                  ?/DBS                                                     
+standby_archive_dest            ?/DBS/ARCH                                                
+serial_reuse                    DISABLE                                                   
+log_archive_dest_state_1        ENABLE                                                    
+log_archive_dest_state_2        ENABLE                                                    
+log_archive_dest_state_3        ENABLE                                                    
+log_archive_dest_state_4        ENABLE                                                    
+log_archive_dest_state_5        ENABLE                                                    
+query_rewrite_integrity         ENFORCED                                                  
+cursor_sharing                  EXACT                                                     
+remote_login_passwordfile       EXCLUSIVE                                                 
+backup_tape_io_slaves           FALSE                                                     
+blank_trimming                  FALSE                                                     
+cursor_space_for_time           FALSE                                                     
+db_block_checking               FALSE                                                     
+db_block_checksum               FALSE                                                     
+dblink_encrypt_login            FALSE                                                     
+global_names                    FALSE                                                     
+lock_sga                        FALSE                                                     
+log_archive_start               FALSE                                                     
+log_checkpoints_to_alert        FALSE                                                     
+mts_multiple_listeners          FALSE                                                     
+oracle_trace_enable             FALSE                                                     
+os_roles                        FALSE                                                     
+parallel_adaptive_multi_user    FALSE                                                     
+parallel_automatic_tuning       FALSE                                                     
+parallel_broadcast_enabled      FALSE                                                     
+parallel_server                 FALSE                                                     
+partition_view_enabled          FALSE                                                     
+plsql_v2_compatibility          FALSE                                                     
+pre_page_sga                    FALSE                                                     
+query_rewrite_enabled           FALSE                                                     
+read_only_open_delayed          FALSE                                                     
+remote_os_authent               FALSE                                                     
+remote_os_roles                 FALSE                                                     
+resource_limit                  FALSE                                                     
+serializable                    FALSE                                                     
+sql_trace                       FALSE                                                     
+sql92_security                  FALSE                                                     
+star_transformation_enabled     FALSE                                                     
+text_enable                     FALSE                                                     
+timed_statistics                FALSE                                                     
+use_indirect_data_buffers       FALSE                                                     
+fast_start_parallel_rollback    LOW                                                       
+sql_version                     NATIVE                                                    
+always_anti_join                NESTED_LOOPS                                              
+audit_trail                     NONE                                                      
+os_authent_prefix               OPS$                                                      
+oracle_trace_facility_name      ORACLED                                                   
+control_files                   /ORACLE/ORADATA/RJD5TST/CONTROL01.CTL, /ORACLE/ORADATA/   
+                                RJD5TST/CONTROL02.CTL, /ORACLE/ORADATA/RJD5TST/CONTROL0   
+                                3.CTL                                                     
+                                                                                          
+oracle_trace_collection_path    ?/OTRACE/ADMIN/CDF                                        
+oracle_trace_facility_path      ?/OTRACE/ADMIN/FDF                                        
+background_core_dump            PARTIAL                                                   
+shadow_core_dump                PARTIAL                                                   
+mts_dispatchers                 (PROTOCOL=TCP)(PRE=ORACLE.AURORA.SERVER.SGIOPSERVER)      
+audit_file_dest                 ?/RDBMS/AUDIT                                             
+db_name                         RJD5TST                                                   
+instance_name                   RJD5TST                                                   
+mts_service                     RJD5TST                                                   
+service_names                   RJD5TST                                                   
+always_semi_join                STANDARD                                                  
+remote_dependencies_mode        TIMESTAMP                                                 
+disk_asynch_io                  TRUE                                                      
+hash_join_enabled               TRUE                                                      
+hs_autoregister                 TRUE                                                      
+O7_DICTIONARY_ACCESSIBILITY     TRUE                                                      
+replication_dependency_tracking TRUE                                                      
+tape_asynch_io                  TRUE                                                      
+transaction_auditing            TRUE                                                      
+log_archive_format              %T_%S.DBF                                                 
+background_dump_dest            /U01/APP/ORACLE/ADMIN/RJD5TST/BDUMP                       
+user_dump_dest                  /U01/APP/ORACLE/ADMIN/RJD5TST/UDUMP                       
+aq_tm_processes                 0                                                         
+dbwr_io_slaves                  0                                                         
+gc_releasable_locks             0                                                         
+hash_multiblock_io_count        0                                                         
+hi_shared_memory_address        0                                                         
+instance_number                 0                                                         
+java_max_sessionspace_size      0                                                         
+java_soft_sessionspace_limit    0                                                         
+license_max_sessions            0                                                         
+license_max_users               0                                                         
+license_sessions_warning        0                                                         
+log_archive_trace               0                                                         
+optimizer_index_caching         0                                                         
+optimizer_percent_parallel      0                                                         
+parallel_min_percent            0                                                         
+parallel_min_servers            0                                                         
+recovery_parallelism            0                                                         
+session_cached_cursors          0                                                         
+shared_memory_address           0                                                         
+thread                          0                                                         
+timed_os_statistics             0                                                         
+gc_rollback_locks               0-1024=32!8REACH                                          
+commit_point_strength           1                                                         
+db_writer_processes             1                                                         
+log_archive_max_processes       1                                                         
+log_archive_min_succeed_dest    1                                                         
+mts_servers                     1                                                         
+parallel_server_instances       1                                                         
+distributed_transactions        10                                                        
+gc_defer_time                   10                                                        
+object_cache_max_size_percent   10                                                        
+session_max_open_files          10                                                        
+optimizer_index_cost_adj        100                                                       
+log_checkpoint_interval         10000                                                     
+db_files                        1024                                                      
+max_dump_file_size              10240                                                     
+object_cache_optimal_size       102400                                                    
+bitmap_merge_area_size          1048576                                                   
+lm_locks                        12000                                                     
+db_block_buffers                120802                                                    
+db_block_max_dirty_target       120802                                                    
+fast_start_io_target            120802                                                    
+max_rollback_segments           122                                                       
+hash_area_size                  131072                                                    
+max_enabled_roles               148                                                       
+db_file_multiblock_read_count   16                                                        
+log_checkpoint_timeout          1800                                                      
+db_block_lru_latches            2                                                         
+parallel_threads_per_cpu        2                                                         
+sort_multiblock_read_count      2                                                         
+mts_max_servers                 20                                                        
+open_links                      20                                                        
+java_pool_size                  20971520                                                  
+shared_pool_reserved_size       20971520                                                  
+parallel_execution_message_size 2148                                                      
+dml_locks                       2440                                                      
+open_cursors                    300                                                       
+enqueue_resources               3484                                                      
+cpu_count                       4                                                         
+job_queue_processes             4                                                         
+open_links_per_instance         4                                                         
+shared_pool_size                419430400                                                 
+mts_max_dispatchers             5                                                         
+parallel_max_servers            5                                                         
+transactions_per_rollback_segme 5                                                         
+nt                                                                                        
+                                                                                          
+processes                       500                                                       
+oracle_trace_collection_size    5242880                                                   
+mts_sessions                    550                                                       
+mts_circuits                    555                                                       
+sessions                        555                                                       
+job_queue_interval              60                                                        
+lm_ress                         6000                                                      
+transactions                    610                                                       
+large_pool_size                 614400                                                    
+db_file_direct_io_count         64                                                        
+log_buffer                      65536                                                     
+sort_area_retained_size         65536                                                     
+sort_area_size                  65536                                                     
+control_file_record_keep_time   7                                                         
+max_commit_propagation_delay    700                                                       
+optimizer_max_permutations      80000                                                     
+compatible                      8.1.0                                                     
+optimizer_features_enable       8.1.7                                                     
+db_block_size                   8192                                                      
+create_bitmap_area_size         8388608                                                   
+active_instance_count                                                                     
+buffer_pool_keep                                                                          
+buffer_pool_recycle                                                                       
+db_domain                                                                                 
+db_file_name_convert                                                                      
+event                                                                                     
+fixed_date                                                                                
+gc_files_to_locks                                                                         
+hpux_sched_noage                                                                          
+ifile                                                                                     
+instance_groups                                                                           
+local_listener                                                                            
+lock_name_space                                                                           
+log_archive_dest                                                                          
+log_archive_dest_1                                                                        
+log_archive_dest_2                                                                        
+log_archive_dest_3                                                                        
+log_archive_dest_4                                                                        
+log_archive_dest_5                                                                        
+log_archive_duplex_dest                                                                   
+log_file_name_convert                                                                     
+mts_listener_address                                                                      
+nls_calendar                                                                              
+nls_comp                                                                                  
+nls_currency                                                                              
+nls_date_format                                                                           
+nls_date_language                                                                         
+nls_dual_currency                                                                         
+nls_iso_currency                                                                          
+nls_numeric_characters                                                                    
+nls_sort                                                                                  
+nls_time_format                                                                           
+nls_timestamp_format                                                                      
+nls_timestamp_tz_format                                                                   
+nls_time_tz_format                                                                        
+ops_interconnects                                                                         
+oracle_trace_collection_name                                                              
+parallel_instance_group                                                                   
+rdbms_server_dn                                                                           
+resource_manager_plan                                                                     
+rollback_segments                                                                         
+tracefile_identifier                                                                      
+utl_file_dir                                                                              
+
+</pre>
+<a HREF=#top><h6>Top</h6></a>
+<hr>

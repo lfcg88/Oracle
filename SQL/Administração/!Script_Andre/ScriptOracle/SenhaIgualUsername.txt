@@ -1,0 +1,22 @@
+create or replace procedure sys.find_joes as
+-- Find users that have their password equal to their username
+ hexpw varchar2(30);
+ modpw varchar2(30);
+ un varchar2(30);
+ cursor c1 is select username,password from dba_users
+    where length(trim(password)) = 16; -- only consider db authenticated
+begin
+ for i in c1 loop
+  hexpw := i.password;
+  un := i.username;
+  execute immediate 'alter user '||un||' identified by '||un;
+  select password into modpw from dba_users where username = un;
+  if modpw = hexpw then
+   dbms_output.put_line(un);
+  else
+   -- change password back to what it was
+   execute immediate
+   'alter user '||un||' identified by values '''||hexpw||'''';
+  end if;
+ end loop;
+end;

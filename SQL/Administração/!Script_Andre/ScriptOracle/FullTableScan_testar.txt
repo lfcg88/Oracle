@@ -1,0 +1,208 @@
+This tip is useful for identifying all full table scans (FTS) occuring in your database. Doing a FTS on big tables often causes performance problems. There are many tools available that allow you to select a SQL statement and then present you with the SQL plan; however, when you have thousands of SQL statements and you want to find out only those statements that are going through a FTS, this is a better script.
+
+
+This script has been tested on Oracle versions 9.0.1 and 9.2. There is a slight change required to make it work in 8i. The cursor CUR_SQLTEXT query does not work inside a PL/SQL block in 8i, so you'll need a create a temp table to store the query result in SQL*PLUS -- see the intructions below where the cursor is defined. 
+
+-- Other requirements: 
+
+-- Execute this procedure from a user that has DBA privileges such as system. Asuming that you are
+--  logged in as system, follow these steps:
+-- 
+-- Make sure Plan_Table exists. Do 'desc plan_table'. 
+-- Create public synonym plan_table for system.plan_table. 
+-- Grant select, insert, update, delete on plan_tabe to public. 
+-- If you are using Oracle 9.2 then run the following from sys account unless you are compiling
+--  this procedure using sys account; e.g., if you are using a system account, then you must do 
+-- the following using sys account. By default, Oracle 9.2 has O7_DICTIONARY_ACCESSIBILITY set to FALSE, so: 
+-- grant select any DICTIONARY to system;
+-- 
+-- 
+-- What to expect: Execute this procedure at the SQL*PLUS prompt by using: 
+-- 
+SQLPLUS>set serveroutput on size 100000
+SQLPLUS>exec F_GET_FTS
+
+-- This will populate the FTS$_TEMP table with SQL statements that are going through a full table 
+-- scan. It populates with other useful information also, such as how many disk reads, executions, etc.
+
+-- Limitations: 
+
+-- You may see this error when serveroutput is set to on: 
+-- ORA-01039: Insufficient privileges on underlying objects of the view. 
+
+-- This message means that the user does not have privileges to run explain plan for that query. 
+-- This usually happens with data dictionary views. 
+-- SQL_TEXT and SQL_PLAN is limited to 4000 characters, so statements longer than 4000 charcters
+--  will be ignored but you will see an error when serveroutput is set on. If you see a "Cannot bind 
+-- long column" error, that means either your SQL statement is greater than 4000 or its SQL plan is greater than 4000. Sorry, such statements will have to be ignored. 
+
+-- Here is the script:
+
+SQL_PLAN  Varchar2(32000)  :='' ;
+isFullScan  PLS_INTEGER   ;
+strSQL   Varchar2(32000)  :='' ;
+sessionSetting  Varchar2(100)   :='' ;
+SQL_COUNT  PLS_INTEGER   :=1  ;
+strINSERT Varchar2(4000)   ;
+
+
+/* This cursor will not work in 8i, in 8i lead 
+function does not work inside pl/sql block but works 
+in sqlplus so in order to work in 8i environment,  
+execute following query in sqlplus using system account.
+
+    Create Table SQL$_TEMP AS
+         SELECT b.hash_value,
+          lead(b.hash_value,1) over ( order by a.parsing_user_id,B.hash_value,B.piece ) as nexthash,
+          b.sql_text,
+          piece,
+          executions ,
+          c.username,
+          a.disk_reads,a.buffer_gets,a.rows_processed
+  FROM   v$sqlarea a,
+          v$sqltext_with_newlines b,
+         dba_users c
+  WHERE
+         a.address               =       b.address
+ AND     a.hash_value            =       b.hash_value
+ AND     b.COMMAND_TYPE          IN      (3,6,7)     
+-- 2 for Insert,3 for SELECT, 6 For Update, 7 for Delete
+ AND     a.parsing_user_id       =       c.user_id
+ AND     c.username              NOT IN  ('SYS','SYSTEM','CTXSYS','PREFSTAT','QUEST')
+ and     a.disk_reads > 0
+ order by a.parsing_user_id,B.hash_value,B.piece;
+        Grant  Select on SQL$_TEMP to PUBLIC;
+      
+        Create Public Synonym SQL$_TEMP for system.FTS$_TEMP
+
+
+   CURSOR CUR_SQLTEXT IS SELECT * FROM SQL$_TEMP;
+
+*/
+CURSOR CUR_SQLTEXT is
+ SELECT  b.hash_value,
+         lead(b.hash_value,1) over ( order by a.parsing_user_id,B.hash_value,B.piece ) as nexthash,
+         b.sql_text,
+         piece,
+         executions ,
+         c.username,
+         a.disk_reads,a.buffer_gets,a.rows_processed
+FROM    v$sqlarea a,
+         v$sqltext_with_newlines b,
+        dba_users c
+WHERE
+        a.address               =       b.address
+AND     a.hash_value            =       b.hash_value
+AND     b.COMMAND_TYPE          IN      (3,6,7)    
+ -- 2 for insert,3 for SELECT, 6 For Update, 7 for Delete
+AND     a.parsing_user_id       =       c.user_id
+AND     c.username              NOT IN  ('SYS','SYSTEM','CTXSYS','PREFSTAT','QUEST')
+and     a.disk_reads > 0
+order by a.parsing_user_id,B.hash_value,B.piece;
+
+CALLINGUSER VARCHAR2(100);
+LASTUSER VARCHAR2(100) :=' ';
+CURSOR CUR_PLAN IS  select  lpad(' ',2*(level-1))|| operation||' '||
+        options||' '||object_name||
+        ' '||object_type||' '||object_instance||' '||
+        decode(id,0,'Cost = '||position) as Plan
+from    plan_table
+where   statement_id='FTS'
+        start   with id = 0
+        connect by prior id = parent_id;
+
+TableExists PLS_INTEGER;
+
+BEGIN
+
+DBMS_OUTPUT.ENABLE(1000000);
+
+
+
+
+SELECT SYS_CONTEXT ('USERENV', 'SESSION_USER') INTO CALLINGUSER FROM DUAL;
+
+Begin
+        Select count(*) into TableExists from user_tables where table_name ='FTS$_TEMP' ;
+        IF TableExists > 0 Then
+             Begin
+  EXECUTE IMMEDIATE 'Drop   Table FTS$_TEMP';
+  EXECUTE IMMEDIATE 'Drop   public synonym  FTS$_TEMP';
+             Exception When Others Then
+                NULL;
+             End;
+        End If;
+ EXECUTE IMMEDIATE 'Create TABLE FTS$_TEMP (SQLID NUMBER, 
+     SQL_TEXT varchar2(4000),executions NUMBER,hash_value number,
+     username varchar2(30),DISK_READS NUMBER, BUFFER_GETS NUMBER,
+     ROWS_PROCESSED NUMBER,sqlplan varchar2(4000))';
+
+ EXECUTE IMMEDIATE 'Grant Select,insert,update,delete on  FTS$_TEMP to public';
+ EXECUTE IMMEDIATE 'create public synonym  FTS$_TEMP for ' || CALLINGUSER ||'.FTS$_TEMP' ;
+Exception When Others Then
+dbms_output.put_line(SQLERRM);
+End;
+
+
+FOR REC_SQLTEXT IN CUR_SQLTEXT
+LOOP
+
+begin
+ strSQL:= strSQL || REC_SQLTEXT.sql_text;
+     IF (REC_SQLTEXT.HASH_VALUE = NVL(REC_SQLTEXT.NEXTHASH,-9999) )
+ THEN
+               NULL;
+        ELSE
+                if LASTUSER <> REC_SQLTEXT.username
+                then
+                    sessionSetting := 'alter session set current_schema='||REC_SQLTEXT.username;
+                    EXECUTE IMMEDIATE sessionSetting;
+                    LASTUSER := REC_SQLTEXT.username;
+                end if;
+
+                EXECUTE IMMEDIATE 'EXPLAIN PLAN SET statement_ID = ''FTS'' FOR ' || strSQL;
+
+                FOR REC_PLAN IN CUR_PLAN
+  LOOP
+                    SQL_PLAN := SQL_PLAN || rtrim(REC_PLAN.PLAN) || chr(10);
+
+  END LOOP;
+
+                SELECT count(*) INTO isFullScan FROM PLAN_TABLE
+  WHERE options = 'FULL'
+  AND operation = 'TABLE ACCESS'
+  AND statement_id = 'FTS';
+
+
+  if isFULLScan >= 1
+                THEN
+                    strINSERT := 'INSERT INTO FTS$_TEMP (SQLID,SQL_TEXT,
+                                  EXECUTIONS, HASH_VALUE,USERNAME,disk_reads,
+                                  buffer_gets,rows_processed,sqlplan) 
+                                  Values (:1,:2,:3,:4,:5,:6,:7,:8,:9)';
+   EXECUTE IMMEDIATE strINSERT USING
+        SQL_COUNT,strSQL,REC_SQLTEXT.executions,REC_SQLTEXT.HASH_VALUE,
+        REC_SQLTEXT.username,REC_SQLTEXT.disk_reads,REC_SQLTEXT.buffer_gets,
+        REC_SQLTEXT.rows_processed,SQL_PLAN;
+
+      SQL_COUNT := SQL_COUNT + 1;
+   END IF;
+                delete PLAN_TABLE where statement_id = 'FTS';
+                commit;
+                SQL_PLAN :='';
+                strSQL :='';
+
+ END IF;
+exception when others then
+dbms_output.put_line('hash:' || REC_SQLTEXT.HASH_VALUE || sqlerrm ) ;
+
+strSQL :='';
+SQL_PLAN :='';
+delete PLAN_TABLE where statement_id = 'FTS';
+end;
+END LOOP;
+EXECUTE IMMEDIATE 'alter session set current_schema='||CALLINGUSER;
+commit;
+END F_GET_FTS;
+/
+

@@ -1,0 +1,323 @@
+
+Thread 1 cannot allocate new log, sequence 160554
+Checkpoint not complete
+  Current log# 9 seq# 160553 mem# 0: C:\ORACLE\ORADATA\ORCL\REDO09A
+  Current log# 9 seq# 160553 mem# 1: C:\ORACLE\ORADATA\ORCL\REDO09B
+Thread 1 advanced to log sequence 160554 (LGWR switch)
+  Current log# 10 seq# 160554 mem# 0: C:\ORACLE\ORADATA\ORCL\REDO10A
+  Current log# 10 seq# 160554 mem# 1: C:\ORACLE\ORADATA\ORCL\REDO10B
+Sat Mar 15 05:37:42 2014
+ARC2: Error 19504 Creating archive log file to 'I:\ORACLE\ARCHIVE2\IPAS\MANDATORYLOG_IPAS_1_0000160553_0773780282.ARC'
+ARC2: Error 19504 Creating archive log file to 'H:\ORACLE\ARCHIVE1\IPAS\MANDATORYLOG_IPAS_1_0000160553_0773780282.ARC'
+ARCH: Archival stopped, error occurred. Will continue retrying
+Sat Mar 15 05:37:43 2014
+ARCH: Archival stopped, error occurred. Will continue retrying
+Sat Mar 15 05:37:50 2014
+Thread 1 advanced to log sequence 160555 (LGWR switch)
+  Current log# 4 seq# 160555 mem# 0: C:\ORACLE\ORADATA\ORCL\REDO04A
+  Current log# 4 seq# 160555 mem# 1: C:\ORACLE\ORADATA\ORCL\REDO04B
+
+
+
+
+Sat Mar 15 10:17:45 2014
+Archiver process freed from errors. No longer stopped
+Sat Mar 15 10:22:46 2014
+ORA-00020: maximum number of processes (150) exceeded
+ ORA-20 errors will not be written to the alert log for
+ the next minute. Please look at trace files to see all
+ the ORA-20 errors.
+Process m000 submission failed with error = 20
+Process m001 submission failed with error = 20
+Process m000 submission failed with error = 20
+Process m001 submission failed with error = 20
+Process m000 submission failed with error = 20
+Process m001 submission failed with error = 20
+Process m000 submission failed with error = 20
+Process m002 submission failed with error = 20
+
+
+(*)===> memory-monitor process (MMON): process for automatic problem-detection, self-tuning and statistics-gathering
+(*)===> mmon slaves (Mnnnn—M0000, M0001, etc.): background slaves of the MMON process[29]
+
+
+
+
+Process m007 submission failed with error = 20
+Process m008 submission failed with error = 20
+Process m009 submission failed with error = 20
+Process m00A submission failed with error = 20
+Sat Mar 15 12:07:52 2014
+ARCH: Archival stopped, error occurred. Will continue retrying
+ARCH: Archival stopped, error occurred. Will continue retrying
+Sat Mar 15 12:09:50 2014
+ORA-00020: maximum number of processes (150) exceeded
+ ORA-20 errors will not be written to the alert log for
+ the next minute. Please look at trace files to see all
+ the ORA-20 errors.
+Process m000 submission failed with error = 20
+Process m001 submission failed with error = 20
+Process m000 submission failed with error = 20
+
+
+
+Process m00B submission failed with error = 20
+Process m00C submission failed with error = 20
+Process m00D submission failed with error = 20
+Process m00E submission failed with error = 20
+Process m00F submission failed with error = 20
+Sat Mar 15 12:12:52 2014
+ARCH: Archival stopped, error occurred. Will continue retrying
+Sat Mar 15 12:12:52 2014
+ARCH: Archival stopped, error occurred. Will continue retrying
+ORA-00020: maximum number of processes (150) exceeded
+ ORA-20 errors will not be written to the alert log for
+ the next minute. Please look at trace files to see all
+ the ORA-20 errors.
+Process m000 submission failed with error = 20
+Process m001 submission failed with error = 20
+Process m000 submission failed with error = 20
+Process m001 submission failed with error = 20
+Process m000 submission failed with error = 20
+Process m001 submission failed with error = 20
+Process m000 submission failed with error = 20
+Process m002 submission failed with error = 20
+Process m003 submission failed with error = 20
+
+
+
+Process m00A submission failed with error = 20
+Process m00B submission failed with error = 20
+Process m00C submission failed with error = 20
+Process m00D submission failed with error = 20
+Process m00E submission failed with error = 20
+Process m00F submission failed with error = 20
+Sat Mar 15 12:52:54 2014
+Archiver process freed from errors. No longer stopped
+Sat Mar 15 12:52:54 2014
+ARCH: Archival stopped, error occurred. Will continue retrying
+Archiver process freed from errors. No longer stopped
+Sat Mar 15 12:52:55 2014
+ARCH: Archival stopped, error occurred. Will continue retrying
+Archiver process freed from errors. No longer stopped
+Process m000 submission failed with error = 20
+Process m001 submission failed with error = 20
+Process m000 submission failed with error = 20
+Process m001 submission failed with error = 20
+Process m000 submission failed with error = 20
+Process m001 submission failed with error = 20
+Process m000 submission failed with error = 20
+Process m002 submission failed with error = 20
+Process m003 submission failed with error = 20
+Process m004 submission failed with error = 20
+Process m005 submission failed with error = 20
+Process m006 submission failed with error = 20
+Process m007 submission failed with error = 20
+Process m008 submission failed with error = 20
+Process m009 submission failed with error = 20
+Process m00A submission failed with error = 20
+Process m00B submission failed with error = 20
+Process m00C submission failed with error = 20
+Process m00D submission failed with error = 20
+Process m00E submission failed with error = 20
+Sat Mar 15 12:52:58 2014
+ORA-00020: maximum number of processes (150) exceeded
+ ORA-20 errors will not be written to the alert log for
+ the next minute. Please look at trace files to see all
+ the ORA-20 errors.
+Process m000 submission failed with error = 20
+Process m001 submission failed with error = 20
+Process m000 submission failed with error = 20
+Process m001 submission failed with error = 20
+Process m000 submission failed with error = 20
+Process m001 submission failed with error = 20
+Process m000 submission failed with error = 20
+Process m002 submission failed with error = 20
+Process m003 submission failed with error = 20
+
+
+
+Process m005 submission failed with error = 20
+Process m006 submission failed with error = 20
+Process m007 submission failed with error = 20
+Process m008 submission failed with error = 20
+Process m009 submission failed with error = 20
+Process m00A submission failed with error = 20
+
+
+Sat Mar 15 15:37:54 2014
+Archived Log entry 90382 added for thread 1 sequence 160553 ID 0x4d93a0b8 dest 1:
+krse_arc_driver_core: Successful archiving of previously failed ORL
+Archiver process freed from errors. No longer stopped
+
+
+Sat Mar 15 15:37:54 2014
+Thread 1 advanced to log sequence 160563 (LGWR switch)
+  Current log# 9 seq# 160563 mem# 0: C:\ORACLE\ORADATA\ORCL\REDO09A
+  Current log# 9 seq# 160563 mem# 1: C:\ORACLE\ORADATA\ORCL\REDO09B
+Sat Mar 15 15:37:58 2014
+Archived Log entry 90383 added for thread 1 sequence 160555 ID 0x4d93a0b8 dest 1:
+Archived Log entry 90384 added for thread 1 sequence 160554 ID 0x4d93a0b8 dest 1:
+Sat Mar 15 15:37:59 2014
+Archived Log entry 90385 added for thread 1 sequence 160556 ID 0x4d93a0b8 dest 1:
+Archived Log entry 90386 added for thread 1 sequence 160557 ID 0x4d93a0b8 dest 1:
+Sat Mar 15 15:38:01 2014
+ALTER DATABASE BACKUP CONTROLFILE TO TRACE AS 'S:\ORACLE\BACKUP\IPAS\ORCL\ORCL_bkp_db_day_6\20140315\bkp_ctlfile_ORCL_201403150000.TRC' REUSE
+Completed: ALTER DATABASE BACKUP CONTROLFILE TO TRACE AS 'S:\ORACLE\BACKUP\IPAS\ORCL\ORCL_bkp_db_day_6\20140315\bkp_ctlfile_ORCL_201403150000.TRC' REUSE
+Archived Log entry 90387 added for thread 1 sequence 160558 ID 0x4d93a0b8 dest 1:
+Archived Log entry 90388 added for thread 1 sequence 160559 ID 0x4d93a0b8 dest 1:
+Archived Log entry 90389 added for thread 1 sequence 160561 ID 0x4d93a0b8 dest 1:
+Archived Log entry 90390 added for thread 1 sequence 160560 ID 0x4d93a0b8 dest 1:
+Sat Mar 15 15:38:07 2014
+Begin automatic SQL Tuning Advisor run for special tuning task  "SYS_AUTO_SQL_TUNING_TASK"
+Sat Mar 15 15:38:09 2014
+Archived Log entry 90391 added for thread 1 sequence 160562 ID 0x4d93a0b8 dest 1:
+Sat Mar 15 15:38:09 2014
+Thread 1 advanced to log sequence 160564 (LGWR switch)
+  Current log# 10 seq# 160564 mem# 0: C:\ORACLE\ORADATA\ORCL\REDO10A
+  Current log# 10 seq# 160564 mem# 1: C:\ORACLE\ORADATA\ORCL\REDO10B
+Sat Mar 15 15:38:10 2014
+Archived Log entry 90392 added for thread 1 sequence 160563 ID 0x4d93a0b8 dest 1:
+Thread 1 advanced to log sequence 160565 (LGWR switch)
+  Current log# 4 seq# 160565 mem# 0: C:\ORACLE\ORADATA\ORCL\REDO04A
+  Current log# 4 seq# 160565 mem# 1: C:\ORACLE\ORADATA\ORCL\REDO04B
+Sat Mar 15 15:38:19 2014
+Archived Log entry 90393 added for thread 1 sequence 160564 ID 0x4d93a0b8 dest 1:
+Sat Mar 15 15:38:27 2014
+Thread 1 advanced to log sequence 160566 (LGWR switch)
+  Current log# 5 seq# 160566 mem# 0: C:\ORACLE\ORADATA\ORCL\REDO05A
+  Current log# 5 seq# 160566 mem# 1: C:\ORACLE\ORADATA\ORCL\REDO05B
+Sat Mar 15 15:38:28 2014
+Archived Log entry 90394 added for thread 1 sequence 160565 ID 0x4d93a0b8 dest 1:
+Thread 1 advanced to log sequence 160567 (LGWR switch)
+  Current log# 6 seq# 160567 mem# 0: C:\ORACLE\ORADATA\ORCL\REDO06A
+  Current log# 6 seq# 160567 mem# 1: C:\ORACLE\ORADATA\ORCL\REDO06B
+Sat Mar 15 15:38:37 2014
+Archived Log entry 90395 added for thread 1 sequence 160566 ID 0x4d93a0b8 dest 1:
+Sat Mar 15 15:38:39 2014
+Thread 1 advanced to log sequence 160568 (LGWR switch)
+  Current log# 7 seq# 160568 mem# 0: C:\ORACLE\ORADATA\ORCL\REDO07A
+  Current log# 7 seq# 160568 mem# 1: C:\ORACLE\ORADATA\ORCL\REDO07B
+Sat Mar 15 15:38:40 2014
+Archived Log entry 90396 added for thread 1 sequence 160567 ID 0x4d93a0b8 dest 1:
+Thread 1 advanced to log sequence 160569 (LGWR switch)
+  Current log# 1 seq# 160569 mem# 0: C:\ORACLE\ORADATA\ORCL\REDO01A
+  Current log# 1 seq# 160569 mem# 1: C:\ORACLE\ORADATA\ORCL\REDO01B
+Sat Mar 15 15:38:49 2014
+Archived Log entry 90397 added for thread 1 sequence 160568 ID 0x4d93a0b8 dest 1:
+Sat Mar 15 15:38:50 2014
+ALTER SYSTEM ARCHIVE LOG
+Sat Mar 15 15:38:50 2014
+Thread 1 cannot allocate new log, sequence 160570
+
+
+
+=====================================================
+
+
+
+
+
+
+. 
+****** 
+Inicio do Backup: 20140315 ==> 0700 
+Log: S:\ORACLE\BACKUP\IPAS\ORCL\ORCL_bkp_arch_day_6\20140315\log\ORCL_201403150700.log 
+******
+
+
+
+
+
+
+sql statement: ALTER SYSTEM ARCHIVE LOG CURRENT
+released channel: bkp_arch_ch1
+RMAN-00571: ===========================================================
+RMAN-00569: =============== ERROR MESSAGE STACK FOLLOWS ===============
+RMAN-00571: ===========================================================
+RMAN-03009: failure of sql command on default channel at 03/15/2014 08:00:28
+RMAN-11003: failure during parse/execution of SQL statement: ALTER SYSTEM ARCHIVE LOG CURRENT
+ORA-16014: log 9 sequence# 160553 not archived, no available destinations
+ORA-00312: online log 9 thread 1: 'C:\ORACLE\ORADATA\ORCL\REDO09A'
+ORA-00312: online log 9 thread 1: 'C:\ORACLE\ORADATA\ORCL\REDO09B'
+
+Recovery Manager complete.
+****** 
+
+SQL*Plus: Release 11.2.0.3.0 Production on Sat Mar 15 07:00:02 2014
+
+Copyright (c) 1982, 2011, Oracle.  All rights reserved.
+
+ERROR:
+ORA-00257: archiver error. Connect internal only, until freed.
+
+
+Enter user-name: 
+
+
+
+
+
+. 
+****** 
+Inicio do Backup: 20140315 ==> 1000 
+Log: S:\ORACLE\BACKUP\IPAS\ORCL\ORCL_bkp_arch_day_6\20140315\log\ORCL_201403151000.log 
+****** 
+
+SQL*Plus: Release 11.2.0.3.0 Production on Sat Mar 15 07:00:02 2014
+
+Copyright (c) 1982, 2011, Oracle.  All rights reserved.
+
+ERROR:
+ORA-00257: archiver error. Connect internal only, until freed.
+
+
+Enter user-name: Starting the script of Recovery Manager (started at 201403151000) 
+
+Recovery Manager: Release 11.2.0.3.0 - Production on Sat Mar 15 10:00:02 2014
+
+Copyright (c) 1982, 2011, Oracle and/or its affiliates.  All rights reserved.
+
+RMAN-00571: ===========================================================
+RMAN-00569: =============== ERROR MESSAGE STACK FOLLOWS ===============
+RMAN-00571: ===========================================================
+RMAN-00554: initialization of internal recovery manager package failed
+RMAN-04005: error from target database: 
+ORA-12520: TNS:listener could not find available handler for requested type of server
+****** 
+
+SQL*Plus: Release 11.2.0.3.0 Production on Sat Mar 15 07:00:02 2014
+
+Copyright (c) 1982, 2011, Oracle.  All rights reserved.
+
+ERROR:
+ORA-00257: archiver error. Connect internal only, until freed.
+
+
+
+
+
+
+
+
+
+
+Starting backup at 15-MAR-14
+current log archived
+archived log H:\ORACLE\ARCHIVE1\IPAS\MANDATORYLOG_IPAS_1_0000159568_0773780282.ARC not found or out of sync with catalog
+trying alternate file for archived log of thread 1 with sequence 159568
+released channel: bkp_arch_ch1
+RMAN-00571: ===========================================================
+RMAN-00569: =============== ERROR MESSAGE STACK FOLLOWS ===============
+RMAN-00571: ===========================================================
+RMAN-03002: failure of backup command at 03/15/2014 17:00:50
+RMAN-06059: expected archived log not found, loss of archived log compromises recoverability
+ORA-19625: error identifying file I:\ORACLE\ARCHIVE2\IPAS\MANDATORYLOG_IPAS_1_0000159568_0773780282.ARC
+ORA-27041: unable to open file
+OSD-04002: unable to open file
+O/S-Error: (OS 2) The system cannot find the file specified.
+
+Recovery Manager complete.
+****** 
+
+

@@ -1,0 +1,9 @@
+
+set linesize 90
+column File format a50
+
+
+select	 member "File", (bytes/1024) " Tam. Kb"
+from	v$logfile a, v$log b
+where a.GROUP# = b.GROUP#
+/

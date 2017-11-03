@@ -1,0 +1,138 @@
+
+
+
+Diagnostic Information :
+=======================
+
+If above steps did not help in resolving the issue, please collect 
+the below specified information and submit the same while a creating Service Request(SR).
+ 
+1. Provide the output of  following when the issue occurs.
+
+$ lsnrctl (from database server(s)) 
+
+lsnrctl>set displaymode verbose  
+lsnrctl>services <listener_name>  
+
+sql> connect sys as sysdba 
+Enter Password: 
+sql> connected 
+sql> select * from v$resource_limit;
+
+
+
+Enabling Oracle Net Client / Server tracing
+============================================
+
+
+The SQLNET.ORA will now look like the following :
+
+TRACE_LEVEL_CLIENT = SUPPORT 
+TRACE_UNIQUE_CLIENT = on 
+TRACE_LEVEL_SERVER = SUPPORT 
+TRACE_DIRECTORY_CLIENT = C:\TEMP 
+TRACE_FILE_CLIENT = CLIENT 
+TRACE_DIRECTORY_SERVER = C:\TEMP 
+TRACE_FILE_SERVER = SERVER 
+TRACE_TIMESTAMP_ CLIENT = ON 
+
+
+
+Enabling Oracle SQLNet Listener tracing.
+
+=========================================
+
+
+TRACE_FILE_LISTENER = LISTENER.TRC 
+TRACE_DIRECTORY_LISTENER = C:\TEMP 
+TRACE_LEVEL_LISTENER = SUPPORT
+
+
+
+Tnsping Trace
+
+===============
+
+
+TNSPING.TRACE_LEVEL = SUPPORT 
+TNSPING.TRACE_DIRECTORY = <path where tnsping.trc will go> 
+
+
+
+
+Enabling Dynamic Listener Tracing 
+=====================================
+
+
+There might be situations when you cannot reload or restart the listener to enable the traces.Such times, you can fmake use of the dynamic tracing for the listener .
+
+LSNRCTL> set current_listener listener 
+Current Listener is listener 
+LSNRCTL> set trc_level 16 
+Connecting to (ADDRESS=(PROTOCOL=tcp)(HOST=)(PORT=1521)) 
+LISTENER parameter "trc_level" set to support 
+The command completed successfully 
+LSNRCTL> set trc_directory /home/oracle 
+Connecting to (ADDRESS=(PROTOCOL=tcp)(HOST=)(PORT=1521)) 
+LISTENER parameter "trc_directory" set to /home/oracle 
+The command completed successfully 
+LSNRCTL> exit 
+
+
+
+Values
+	off for no trace output 
+	user for user trace information 
+	admin for administration trace information 
+	support for Oracle Support Services trace information 
+
+
+
+
+
+Listener and sqlnet trace
+Posted by decipherinfosys on June 5, 2007
+
+At times, when troubleshooting connectivity issues or performance issues, you might need to run listener trace (server side) and/or a sqlnet trace (client side trace).  Oracle support staff will also ask for these files when you enlist their help in troubleshooting these issues.  Here are the steps on how you can do that:
+
+To enable sqlnet trace (client side trace):
+
+Add the following to the sqlnet.ora file on the application server(s) from where the connections are being made to the Oracle database:
+
+Trace_level_client=16
+Trace_directory_client=<path_to_the_trace_directory> # use the full path to the trace directory
+Trace_unique_client=on
+Trace_timestamp_client=on
+
+To enable listener trace (server side):
+
+Add the following to the listener.ora file on the db server before starting the listener:
+
+TRACE_TIMESTAMP_<listener_name>=on
+TRACE_DIRECTORY_< listener_name>=<path_to_the_trace_directory>
+
+Here <listener_name> is the name of the listener. Then run lsnrctl to turn on the listener trace:
+
+lsnrctl> set current_listener <listener_name>
+lsnrctl> set trc_level support
+
+You can run both trace at the same time for 15 minutes or so in order to get some meaningful data set.
+
+To stop the sqlnet trace:
+
+Remove the following entries from sqlnet.ora or comment them out by using the # sign:
+
+Trace_level_client=16
+Trace_directory_client=<path_to_the_trace_directory> # use the full path to the trace directory
+Trace_unique_client=on
+Trace_timestamp_client=on
+
+To stop the listener trace:
+
+lsnrctl> set trc_level off
+
+For getting more information on the trace levels and the different parameters for these traces, please refer metalink or otn. 
+
+
+
+

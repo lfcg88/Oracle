@@ -1,0 +1,10 @@
+Oracle has published fixes on Metalink (http://metalink.oracle.com), here is a list of the Net8 versions and the appropriate patches:
+
+      8.1.7.1  Patch 1859604
+      8.1.7.0  Patch 1859628
+      8.1.6.3  Patch 1859654
+      8.1.6.2  Patch 1859778
+      8.1.6.1  Patch 1859788
+      8.1.6.0  Patch 1859791
+      8.0.6.3  Patch 1864109
+

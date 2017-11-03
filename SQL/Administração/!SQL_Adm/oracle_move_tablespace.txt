@@ -1,0 +1,15 @@
+alter table dwsinistro.temp_empresa_prod move tablespace dwsinistro3;
+
+alter index AMBGOLDEN.MOVIMENTACOES_AMB_IDX rebuild tablespace AMBGOLDEN_IND;
+
+
+
+select index_name from user_indexes
+where status <> 'VALID';
+
+
+alter index PK_LOG_AGENDA_REVISAO_GLOSA rebuild online;
+
+
+
+alter table forponto.pmarfpto move tablespace users;

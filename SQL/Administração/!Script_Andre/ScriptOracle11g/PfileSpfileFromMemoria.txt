@@ -1,0 +1,17 @@
+
++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+You can now create a text initialization parameter file (PFILE) or a server parameter
+file (SPFILE) from the system-wide parameters currently in use by the instance. Here’s
+how you generate the initialization parameter file from the settings in memory:
++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+SQL> create pfile from memory;
+File created.
+
++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+You can also create an SPFILE from the parameter settings in memory, as follows:
++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+SQL> create spfile from memory;
+File created.
+SQL>

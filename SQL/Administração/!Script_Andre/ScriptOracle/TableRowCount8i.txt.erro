@@ -1,0 +1,58 @@
+--Version: 2.1
+--Description
+--This script lists the number of rows in all tables for a given schema. Can be useful of you've had a database import fail with constraint errors and some rows have not been imported. 
+--
+----You can use this script to check against the log file of the database import. 
+--
+--Also now lists the number of rows from an ANALYZE TABLE or GATHER STATISTICS command for comparison. It they are vastly different, analyze the table again.
+--
+--Parameters
+--1 - Table Owner
+
+--SQL Source
+--REM Copyright (C) Think Forward.com 1998, 2004. All rights reserved. 
+
+set serverout on size 1000000
+set verify off
+spool c:\numrows_&&1..lst
+
+declare
+
+sql_stmt varchar2(254);
+row_count number;
+
+cursor get_tab is
+    select table_name, num_rows
+    from dba_tables
+    where owner=upper('&&1');
+
+begin
+
+dbms_output.put_line('Checking Record Counts for schema &&1 ');
+dbms_output.put_line('Log file to numrows_&&1.lst ....');
+dbms_output.put_line('....');
+
+FOR get_tab_rec IN get_tab LOOP
+
+BEGIN
+
+  sql_stmt := 'select count(*) col1 from &&1..'||get_tab_rec.table_name;
+  
+  EXECUTE IMMEDIATE sql_stmt INTO row_count;
+
+  dbms_output.put_line('Table '||rpad(get_tab_rec.table_name,30)
+           ||' '||TO_CHAR(row_count)||' rows (Analyze '||get_tab_rec.num_rows||' rows).');
+
+EXCEPTION WHEN OTHERS THEN
+   dbms_output.put_line('Error counting rows for table '
+        ||get_tab_rec.table_name);
+
+END;
+
+END LOOP;
+
+END;
+/
+set verify on
+spool off
+

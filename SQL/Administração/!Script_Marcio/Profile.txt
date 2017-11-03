@@ -1,0 +1,7 @@
+select profile from DBA_USERS where username = '<username>';
+Then you can change the limit to never expire using:
+
+alter profile <profile_name> limit password_life_time UNLIMITED;
+If you want to previously check the limit you may use:
+
+select resource_name,limit from dba_profiles where profile='<profile_name>';

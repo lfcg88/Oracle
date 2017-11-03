@@ -1,0 +1,62 @@
++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+shows that we have a number of tables that are full-scanned
++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+SQL> select * from (
+select tab.owner,tab.table_name,count(ss.table_scans_delta) cnt
+from dba_tables tab, dba_hist_seg_stat ss, dba_objects obj
+where ss.obj#=obj.object_id
+and obj.object_type in ('TABLE','TABLE PARTITION','TABLE SUBPARTITION')
+and tab.table_name=obj.object_name
+group by tab.owner,tab.table_name
+order by 3 desc)
+where rownum < &&display_rows
+/
+
+
++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+display tables that are full-scanned with a size greater than 2% the size of a specified buffer cache size
++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+SQL> select * from (
+select tab.owner,tab.table_name,count(ss.table_scans_delta) cnt
+from dba_tables tab, dba_hist_seg_stat ss, dba_objects obj
+where ss.obj#=obj.object_id
+and obj.object_type in ('TABLE','TABLE PARTITION','TABLE SUBPARTITION')
+and tab.table_name=obj.object_name
+and tab.blocks >=
+( select .02 * ((&&cache_size_gb*1024*1024*1024)/&&db_blk_size) from dual )
+group by tab.owner,tab.table_name
+order by 3 desc)
+where rownum < &&display_rows
+/
+
+++++++++++++++++++++++++++++++++++
+we will search for full scan SQL plan operations
+++++++++++++++++++++++++++++++++++++++++++++++++++
+
+SQL> select sql_id,sql_child_number,sql_plan_operation||' '||sql_plan_options sqlop,
+owner||'.'||object_name seg,
+sum(sql_secs_per_snap)/60 dbt from (
+SELECT ash.snap_id,ash.sample_id,ash.sql_id, ash.sql_child_number,
+ash.sql_plan_operation, ash.sql_plan_options, obj.owner, obj.object_name,
+10*(count(sample_id) over (partition by ash.sql_id,ash.sql_child_number,ash.snap_id))
+sql_secs_per_snap
+FROM dba_hist_active_sess_history ash,
+dba_objects obj
+WHERE ash.wait_class = 'User I/O'
+AND ( ( ash.sql_plan_operation = 'TABLE ACCESS' AND ash.sql_plan_options LIKE '%FULL%')
+OR ( ash.sql_plan_operation = 'INDEX' AND ash.sql_plan_options LIKE '%FAST%FULL%'))
+and obj.object_id=ash.current_obj#
+and obj.owner not in ('SYS','SYSTEM')
+and obj.object_type in ('TABLE','INDEX')
+)
+group by sql_id
+
+
+
+
+
+
+
+

@@ -1,0 +1,57 @@
+BEGIN
+  DBMS_SCHEDULER.create_job (
+    job_name        => 'estatisticas_schema_EMARCAS',
+    job_type        => 'PLSQL_BLOCK',
+    job_action      => 'begin dbms_stats.gather_schema_stats
+                            ( OWNNAME=>''EMARCAS'',
+                            options=> ''GATHER AUTO'',    
+                            method_opt=>''FOR ALL INDEXED COLUMNS SIZE 1'',
+                            degree=> 4,
+                            cascade=>TRUE ); end;',
+    start_date      => trunc(sysdate)+23/24,
+    repeat_interval => 'Freq=Daily;ByMinute=0',
+    end_date        => NULL,
+    enabled         => TRUE,
+    comments        => 'Job defined entirely by the CREATE JOB procedure.');
+END;
+
+
+
+
+
+
+
+
+
+
+BEGIN
+  DBMS_SCHEDULER.create_job (
+    job_name        => 'estatisticas_schema_EMARCAS',
+    job_type        => 'PLSQL_BLOCK',
+    job_action      => 'BEGIN DBMS_STATS.gather_schema_stats(''EMARCAS''); END;',
+    start_date      => SYSTIMESTAMP,
+    repeat_interval => 'Freq=Daily;ByMinute=0',
+    end_date        => NULL,
+    enabled         => TRUE,
+    comments        => 'Job defined entirely by the CREATE JOB procedure.');
+END;
+
+
+
+BEGIN
+  DBMS_SCHEDULER.create_job (
+    job_name        => 'estatisticas_schema_EMARCAS',
+    job_type        => 'PLSQL_BLOCK',
+    job_action      => 'BEGIN DBMS_STATS.gather_schema_stats(''EMARCAS''); END;',
+    start_date      => trunc(sysdate)+23/24,
+    repeat_interval => 'Freq=Daily;ByMinute=0',
+    end_date        => NULL,
+    enabled         => TRUE,
+    comments        => 'Job defined entirely by the CREATE JOB procedure.');
+END;
+
+
+
+
+
+

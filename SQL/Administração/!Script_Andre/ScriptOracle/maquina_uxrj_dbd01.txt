@@ -1,0 +1,42 @@
+
+
+================================ produtos instalados ========================
+
+
+[orabkp.uxrj-dbd01.stodes] /opt/oracle/product/8.1.7/install> more unix.rgs   
+sql*plus 8.1.7.0.0 Production                                                 
+Java 8.1.7.0.0 Production                                                     
+rdbms 8.1.7.0.0 Production                                                    
+svrmgr 8.1.7.0.0 Production                                                   
+Oracle8 Spatial Cartridge 8.1.7.0.0 Production                                
+Oracle8i interMedia Locator Service 8.1.7.0.0 Production                      
+Oracle8i interMedia Text Manager 8.1.7.0.0 Production                         
+Oracle8i interMedia Image Management 8.1.7.0.0 Production                     
+Oracle8i interMedia Audio Management 8.1.7.0.0 Production                     
+Oracle8i interMedia Video Management 8.1.7.0.0 Production                     
+interMedia 8.1.7.0.0 Production                                               
+[orabkp.uxrj-dbd01.stodes] /opt/oracle/product/8.1.7/install>                 
+
+
+=============================================================================
+
+
+
+Oracle8i Enterprise Edition Release 8.1.7.4.0 - 64bit Production
+With the Partitioning option                                    
+JServer Release 8.1.7.4.0 - 64bit Production                    
+
+=============================================================================
+
+SQL> select * from v$version;                                    
+                                                                 
+BANNER                                                           
+---------------------------------------------------------------- 
+Oracle8i Enterprise Edition Release 8.1.7.4.0 - 64bit Production 
+PL/SQL Release 8.1.7.4.0 - Production                            
+CORE    8.1.7.0.0       Production                               
+TNS for Solaris: Version 8.1.7.4.0 - Production                  
+NLSRTL Version 3.4.1.0.0 - Production                            
+
+=============================================================================
+

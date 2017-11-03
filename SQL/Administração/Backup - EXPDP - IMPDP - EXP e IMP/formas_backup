@@ -1,0 +1,10 @@
+modos de backup
+
+exp/imp
+
+expdp/impdp
+
+Rman
+
+Backup frio -> retira-se o banco do ar, e copia os arquivos de:
+redo, controlfile, archive, datafile

@@ -1,0 +1,208 @@
+--
+-- Hit do Library Cache Detalhado
+--
+set serveroutput on size 1000000
+accept vDataInicio prompt 'Informe a Data Inicial (dd/mm/yyyy) =>  ';
+accept vDataFim    prompt 'Informe a Data Final   (dd/mm/yyyy) =>  ';
+accept vIntervalo NUMBER FORMAT '99' DEFAULT '0' prompt 'Intervalo em Horas             (HH) =>  ';
+DECLARE
+-- teste number;
+ vData varchar2(10);
+ vphyrds number;
+-- vHoras number;
+ vphywrts number;
+-- vdata_inicio date;
+-- vdata_fim date;
+-- 
+ bsnap_id number;
+ bsnap_time date;
+ vsnap_id number;
+ vsnap_time date;
+ vasnap_id number;
+ vasnap_time date;
+--
+--- amostra
+-- Cursor c_periodo (pinicio varchar2,pfim varchar2) IS
+--  SELECT a.snap_id inicio_snap_id,a.snap_time inicio_snap_time, b.snap_id fim_snap_id,b.snap_time fim_snap_time
+--  FROM 
+--     perfstat.stats$snapshot a,perfstat.stats$snapshot b  
+--  WHERE 
+--     a.snap_time >= to_date(pinicio,'dd/mm/yyyy') and  
+--     a.snap_time <  to_date(pfim,'dd/mm/yyyy') and  a.snap_id = b.snap_id - 1;
+-- por hora 
+--Cursor c_periodo_h (pinicio varchar2) IS
+--  SELECT to_char(snap_time,'DD/MM/YYYY HH24'),max(snap_id) fim_snap_id, min(snap_id) inicio_snap_id
+--  FROM 
+--     perfstat.stats$snapshot   
+--  WHERE 
+--     snap_time >= to_date('12/07/2001','dd/mm/yyyy') and  snap_time < to_date('13/07/2001','dd/mm/yyyy')  
+--  group by   to_char(snap_time,'DD/MM/YYYY HH24');
+-- por hora novo
+Cursor c_periodo_hn (pinicio varchar2,pfim varchar2) IS
+  SELECT snap_id,snap_time
+  FROM 
+     perfstat.stats$snapshot   
+  WHERE 
+     snap_time >= to_date(pinicio,'dd/mm/yyyy') and  snap_time < (to_date(pfim,'dd/mm/yyyy')+1/12)
+ORDER BY snap_time; ;  
+--  group by   to_char(snap_time,'DD/MM/YYYY HH24');
+--
+--
+-- Cursor c_arquivo_io (psnap_id number) IS
+--  select filename,phyrds reads ,phywrts writes 
+--    from PERFSTAT.STATS$FILESTATXS
+--    where SNAP_ID = psnap_id; 
+--
+ cursor c_lib_cache (i_snap_id number) is
+            select namespace,pins, pinhits
+              from stats$librarycache
+             where snap_id         = i_snap_id ;
+--               and dbid            = p_dbid
+--
+-- 
+--  
+--
+-- linha 84
+Procedure Cal_Hit_Lib_Cache(pfim_snap_id number,pnamespace varchar2,pinicio_pins number,pinicio_pinhits number,
+                              ptotal_pins  number,ptotal_pinhits number,phit  number) 
+ Is
+     vfim_pins number;
+   vfim_pinhits number;
+   cursor LH (i_snap_id number) is
+            select pins, pinhits
+              from stats$librarycache
+             where snap_id         = i_snap_id and
+                   namespace       =  pnamespace;
+--
+--               and dbid            = p_dbid
+--               and instance_number = p_instance_number;
+--   vfim_pins number;
+--   vfim_pinhits number;
+--   
+   begin
+      if not LH%ISOPEN then open LH (pfim_snap_id ); end if;
+      fetch LH into vfim_pins, vfim_pinhits;
+      if LH%NOTFOUND then
+        raise_application_error(-20100,'Missing start value for stats$librarycache');
+      end if; 
+      close LH;
+-- 
+--  
+--    
+--      ptotal_pins    := vfim_pins    - pinicio_pins;
+--      ptotal_pinhits := vfim_pinhits - pinicio_pinhits;
+ --     If ptotal_pins = 0 then
+--        phit := (round(ptotal_pinhits / 1),2);
+--      Else
+--        phit := (round(ptotal_pinhits / ptotal_pins),2);
+--      End If;
+--      return (round(vresult,2));
+end;
+--
+--
+
+Procedure Colhe_Estatistica (psnap_id number,pnamespace varchar2,ppins out number,ppinhits out number)
+Is
+teste number;
+  cursor LCD (i_snap_id number,i_namespace varchar2) is
+       select pins, pinhits
+       from stats$librarycache
+      where  snap_id         = i_snap_id and
+             namespace       =  i_namespace;
+Begin
+ if not LCD%ISOPEN then open LCD (psnap_id,pnamespace); end if;
+      Fetch LCD into ppins,ppinhits;
+      if LCD%NOTFOUND then
+        raise_application_error(-20100,'Missing start value ');
+      end if; 
+      close LCD;
+End;
+-- affafaf := 0;
+--
+--
+Function Cal_Hit_Lib_Cache (pinicio_pins number,pinicio_pinhits number,pfim_pins number,pfim_pinhits number)
+Return number
+Is
+  vtotal_pins      number;
+  vtotal_pinhits   number;
+  vhit             number;
+Begin
+  vtotal_pins    := pfim_pins    - pinicio_pins;
+  vtotal_pinhits := pfim_pinhits - pinicio_pinhits;
+  If vtotal_pins = 0 Then
+          vhit := vtotal_pinhits / 1;
+  Else
+    vhit := vtotal_pinhits / vtotal_pins;
+ End If;
+-- linha 129 affafaf := 0;
+  Return (round(vhit,2)*100);
+End;
+
+--
+Procedure Imprime_Statisticas(pinicio_snap_time date,pfim_snap_time date,pinicio_snap_id number ,pfim_snap_id number) 
+Is 
+--  vparameter        varchar2(60);
+--  vgets             number(10);
+--  vgetmisses        number(10);
+  vhit_lib_cache      number(10);
+--  vDivisor              number(10);
+  vfim_pins              number(10);
+  vfim_pinhits         number(10);
+Begin
+   Dbms_Output.Put_Line('-------------------------------------------------------------------------------');
+   Dbms_Output.Put_Line(To_char(pinicio_snap_time,'dd/mm/yyyy hh24:mi')||' ---- '||To_char(pfim_snap_time,'dd/mm/yyyy hh24:mi')); 
+   Dbms_Output.Put_Line('-------------------------------------------------------------------------------');
+   Dbms_Output.Put_Line(Rpad('Tipo de Objeto ',28,' ')||'Hit Lib. Cache (%)');
+   For r_lib_cache in c_lib_cache(pinicio_snap_id)  Loop
+    Colhe_Estatistica (pfim_snap_id,r_lib_cache.namespace,vfim_pins,vfim_pinhits);  
+    vhit_lib_cache := Cal_Hit_Lib_Cache (r_lib_cache.pins ,r_lib_cache.pinhits,vfim_pins,vfim_pinhits);
+    Dbms_Output.Put_Line(rpad(r_lib_cache.namespace,30,' ')||Lpad(vhit_lib_cache,5,' '));
+--  
+ End Loop;
+End; 
+--
+--
+Function Det_Data(psnap_id number) return date is
+vdata date;
+Begin
+  select snap_time into vdata
+  from perfstat.stats$snapshot
+  where snap_id= psnap_id;
+Return(vdata);
+End;
+--
+--
+-- vData varchar2(10);
+-- vphyrds number;
+-- vphywrts number;
+--
+Begin
+--
+If not c_periodo_hn%ISOPEN then open c_periodo_hn('&vDataInicio','&vDataFim'); end if;
+fetch c_periodo_hn into bsnap_id, bsnap_time;
+while true Loop
+  Fetch c_periodo_hn Into vsnap_id, vsnap_time;
+  If c_periodo_hn%NOTFOUND then
+     close c_periodo_hn;
+     exit;
+  End if;
+--  If to_char(vsnap_time,'dd/mm/yyyy:hh24mi') <= to_char(bsnap_time+(12/24),'dd/mm/yyyy:hh24mi') Then
+    If to_char(vsnap_time,'dd/mm/yyyy:hh24mi') >= to_char(bsnap_time+(&vIntervalo/24),'dd/mm/yyyy:hh24mi') Then
+     -- vasnap_id   := vsnap_id;
+     -- vasnap_time := vsnap_time;
+     --  Else
+     Imprime_Statisticas(bsnap_time,vsnap_time,bsnap_id,vsnap_id);
+--    Imprime_Statisticas(bsnap_time,vasnap_time,bsnap_id,vasnap_id);
+    bsnap_time := vsnap_time;
+    bsnap_id   := vsnap_id;
+  End If;
+End Loop;
+--    
+-- End If;
+End ;
+/
+
+
+
+
+

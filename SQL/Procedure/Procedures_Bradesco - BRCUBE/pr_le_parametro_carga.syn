@@ -1,0 +1,3 @@
+create or replace synonym SGPB_PROC.PR_LE_PARAMETRO_CARGA
+  for SCHD_PROC.PR_LE_PARAMETRO_CARGA;
+

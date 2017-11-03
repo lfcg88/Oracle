@@ -1,0 +1,52 @@
+
+======================================
+ delete from ownbmpa.EBT_BMP_PREPAY t1
+   where rowid <> ( select max(rowid)
+                       from ownbmpa.EBT_BMP_PREPAY b
+                      where b.nic = t1.nic
+                         and b.ncr = t1.ncr )
+   
+=====================================
+
+select nic,ncr,count(*)
+
+
+
+delete from T1
+  where rowid < ( select max(rowid)
+                       from t1 b
+                     where b.c1 = t1.c1
+                       and b.c2 = t1.c2 )
+   /
+
+
+
+create table exceptions(row_id rowid,
+                            owner varchar2(30),
+                            table_name varchar2(30),
+                            constraint varchar2(30))
+tablespace RAWDATA;
+
+
+alter table EBT_BMP_PREPAY_back add constraint t_unique 
+unique(nic,ncr) exceptions into exceptions;
+
+
+ALTER TABLE ebt_assinante_viplinephone
+ ADD CONSTRAINT pk_ebt_assinante_viplinephone PRIMARY KEY (assinante)
+using index
+  INITRANS   2
+  MAXTRANS   255
+  TABLESPACE bmpc_sma_idx_01
+ STORAGE (
+   INITIAL     131072
+   NEXT        131072
+   PCTINCREASE 0
+   MINEXTENTS  1
+   MAXEXTENTS  2147483645
+   )
+/
+
+
+delete from ebt_assinante_viplinephone
+where rowid in ( select ROW_ID from exceptions )

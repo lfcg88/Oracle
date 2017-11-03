@@ -1,0 +1,6 @@
+Use the DBA_SQL_PROFILES view to determine which SQL profiles have been
+automatically implemented by the database. The value of the TYPE column in this
+view will be set to AUTO for all automatically implemented SQL profiles.
+
+
+select * from DBA_SQL_PROFILES;

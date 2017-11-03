@@ -1,0 +1,1 @@
+alter table dwsinistro.temp_empresa_prod move tablespace dwsinistro3;

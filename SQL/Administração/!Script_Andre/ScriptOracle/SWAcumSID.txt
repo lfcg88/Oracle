@@ -1,0 +1,30 @@
+/********************************************************************
+ * File:        w.sql
+ * Type:        SQL*Plus script
+ * Author:      Tim Gorman (Evergreen Database Technologies, Inc.)
+ * Date:        01-Dec-99
+ *
+ * Description:
+ *      Script to display summary information from V$SESSION_WAIT,
+ *	just to allow the user to get an idea of what's going on
+ *	right now...
+ *
+ * Modification:
+ *
+ ********************************************************************/
+set echo off feedback off timing off pause off
+set pages 100 lines 500 trimspool on trimout on space 1 recsep off
+col event format a50 word_wrap heading "Event"
+col cnt format 999,990
+select	event,
+	count(*) cnt
+from	v$session_wait
+where	event not in
+	('SQL*Net message from client',	/* don't worry about these events */
+	 'SQL*Net message to client',
+	 'pmon timer', 'smon timer',
+	 'rdbms ipc message', 'rdbms ipc reply')
+and sid=10
+group by event
+order by 2 desc
+/

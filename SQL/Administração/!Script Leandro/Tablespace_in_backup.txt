@@ -1,0 +1,5 @@
+SELECT DISTINCT 'ALTER TABLESPACE '||d.tablespace_name||' END BACKUP;'  
+FROM v$backup b, dba_data_files d 				      	
+WHERE d.file_id=b.file# 						
+AND b.status='ACTIVE' 						 
+/

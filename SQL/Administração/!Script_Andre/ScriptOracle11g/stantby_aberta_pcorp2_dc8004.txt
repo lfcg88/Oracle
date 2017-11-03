@@ -1,0 +1,159 @@
+
+diretorio: /opt/oracle/otk/scr/clone/PCORP2STB1
+
+
+a) producao
+
+ select nome,sum(bytes)/1024/1024  from (
+  select substr(file_name,1,5) nome  ,bytes
+    FROM dba_data_files )
+ group by nome
+  /
+
+NOME       SUM(BYTES)/1024/1024
+---------- --------------------
+/u01/                     37050
+/u04/                65806,9844
+/u00/                     41990
+/u02/                     50220
+/u03/                     45870
+
+SQL> select * from v$instance;
+
+INSTANCE_NUMBER INSTANCE_NAME    HOST_NAME                                                      
+--------------- ---------------- ----------------------------------------------------------
+              1 PCORP2           dc8003.fgv.br                                                  
+
+
+
+b_ standby
+===========
+
+
+ select nome,sum(bytes)/1024/1024  from (
+  select substr(name,1,5) nome  ,bytes
+    FROM v$datafile )
+ group by nome
+  /
+
+
+NOME       SUM(BYTES)/1024/1024
+---------- --------------------
+/u00/                78217,9844
+/u01/                     73100
+/u02/                     87289
+
+
+
+02)====> scripts
+
+
+/opt/oracle/otk/scr/clone/PCORP2STB1
+
+
+03)====> executando parte1
+
+
+04 ===> pegando control file
+
+list backup of controlfile da producao (dc8003)
+
+
+BS Key  Type LV Size       Device Type Elapsed Time Horário de Conclusão
+------- ---- -- ---------- ----------- ------------ --------------------
+10022   Full    26.25M     SBT_TAPE    00:00:49     27/09/11
+        Chave BP: 10022   Status: AVAILABLE  Compactado: NO  Tag: TAG20110927T143300
+        Handle: c-4057681452-20110927-08   Média: 0835L5
+  Arquivo de Controle Incluído: SCN Ckp: 17486387167   Tempo Ckp: 27/09/11
+
+RMAN> exit
+
+
+Recovery Manager completo.
+You have new mail in /var/spool/mail/oracle
+oracle@dc8003.fgv.br:/opt/oracle/otk/home[PCORP2]
+
+
+05) ========> DBID da producao
+
+SQL> select dbid from v$database;
+
+      DBID
+----------
+4057681452
+
+
+06) ====> nomount no banco
+
+
+oracle@dc8004.fgv.br:/opt/oracle/otk/scr/clone/PCORP2STB1[PCORP2]
+> ps -ef | grep -i pmon
+oracle    4933     1  0 Apr24 ?        00:11:08 ora_pmon_PCORP1
+oracle    5345     1  0 Apr24 ?        00:05:12 ora_pmon_PCORP
+oracle   14541     1  0 Sep25 ?        00:00:03 ora_pmon_PSEC03
+oracle   24378 20867  0 19:52 pts/0    00:00:00 grep -i pmon
+oracle@dc8004.fgv.br:/opt/oracle/otk/scr/clone/PCORP2STB1[PCORP2]
+> echo $ORACLE_SID
+PCORP2
+
+oracle@dc8004.fgv.br:/opt/oracle/otk/scr/clone/PCORP2STB1[PCORP2]
+> sqlplus /nolog
+
+SQL*Plus: Release 11.2.0.2.0 Production on Ter Set 27 19:52:36 2011
+
+Copyright (c) 1982, 2010, Oracle.  All rights reserved.
+
+SQL> connect / as sysdba
+Conectado a uma instância inativa.
+SQL> satrtup nomoun
+
+Instância ORACLE iniciada.
+
+Total System Global Area 1837244416 bytes
+Fixed Size                  2227472 bytes
+Variable Size            1006633712 bytes
+Database Buffers          822083584 bytes
+Redo Buffers                6299648 bytes
+SQL> exit
+Desconectado de Oracle Database 11g Enterprise Edition Release 11.2.0.2.0 - 64bit Production
+With the Partitioning, OLAP, Data Mining and Real Application Testing options
+oracle@dc8004.fgv.br:/opt/oracle/otk/scr/clone/PCORP2STB1[PCORP2]
+> ps -ef | grep -i pmon
+oracle    4933     1  0 Apr24 ?        00:11:08 ora_pmon_PCORP1
+oracle    5345     1  0 Apr24 ?        00:05:12 ora_pmon_PCORP
+oracle   14541     1  0 Sep25 ?        00:00:03 ora_pmon_PSEC03
+oracle   24453     1  0 19:52 ?        00:00:00 ora_pmon_PCORP2
+oracle   24537 20867  0 19:53 pts/0    00:00:00 grep -i pmon
+oracle@dc8004.fgv.br:/opt/oracle/otk/scr/clone/PCORP2STB1[PCORP2]
+
+07) ==> execução da parte02 ( restore control file )
+
+ok
+
+
+08) ==> execucao da parte3 ( foi na mao )
+
+
+# monta restore de rman para mudar de local
+echo "Entre com a senha do SYSTEM do banco primario:"  | tee -a $RMAN_LOG_FILE
+sqlplus system@pcorp2 <<EOF | tee -a $RMAN_LOG_FILE
+set pages 0 lines 180 trimspool on
+spool restore-full.rman
+@gera_newname.sql
+spool off
+spool rename-files.sql
+@gera_rename.sql
+spool off
+EOF
+
+/opt/oracle/otk/scr/clone/PCORP2STB1
+
+
+09) ==> execucao da parte4
+
+
+colcoa na crontab tab
+
+/opt/oracle/otk/scr/clone/PCORP2STB1/renove-pcorp2stb1-parte4.sh
+
+

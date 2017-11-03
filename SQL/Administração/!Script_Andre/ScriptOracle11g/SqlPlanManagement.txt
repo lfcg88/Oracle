@@ -1,0 +1,75 @@
++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+Loading SQL Plans from a SQL Tuning Set
++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+1. Create an empty SQL Tuning Set, as shown here:
+
+begin
+dbmns_sqltune.create_sqlset(
+sqlset_name => 'testset1',
+description => 'Test STS to capture AWR Data');
+end;
+/
+
+2. Use the LOAD_SQLSET procedure to populate the empty STS with SQL
+statements from the AWR snapshots
+
+declare
+test_cursor1 dbms_sqltune.sqlset_cursor;
+begin
+open baseline_cursor for
+select value(p) from table (dbms_sqltune.
+select_workload_repository(
+'peak baseline',null,null,'elapsed_time',null,null,null,20)) p;
+dbms_sqlset.load_sqlset (
+sqlset_name => 'testset1',
+populate_cursor => test_cursor1);
+end;
+/
+
+
+
+3. In order to load the SQL plans from the STS as SQL plan baselines
+
+declare
+test_plans pls_integer;
+begin
+test_plans := dbms_spm.load_plans_from_sqlset(
+sqlset_name => 'testset1');
+end;
+
+
++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+Loading SQL Plans from the Cursor Cache
++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+dbms_spm.load_plans_from_cursor_cache (
+sql_id in varchar2,
+plan_hash_value in number := null,
+sql_text in clob,
+fixed in varchar2 :='no',
+enabled in varchar2 := 'yes')
+return pls_integer;
+
+
++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+change the plan retention period  The following example showshow to change the plan retention period to 2 years:
++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+automatic purging of unused SQL baselines
+
+SQL> exec dbms_spm.configure ('plan_retention_weeks', 105);
+
+
+manually purge the plan baseline
+
+SQL> exec dbms_spm.purge_sql_plan_baseline(''SYS_SQL_PLAN_b5429522ee05ab0e');
+
+
++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+view shows the current configuration settings for the SQL Management Base.
++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+select * from DBA_SQL_MANAGEMENT_CONFIG 
+
+

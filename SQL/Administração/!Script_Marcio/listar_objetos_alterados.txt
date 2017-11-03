@@ -1,0 +1,4 @@
+select owner, object_name,object_type,created, last_ddl_time from dba_objects
+where owner = 'FPW'
+and last_ddl_time > '13092011'
+order by object_type,last_ddl_time

@@ -1,0 +1,9 @@
+Este script serve para matar as sessões que estão sem uso por mais de 10 minutos no banco de dados e estejam com o status SNIPED ou INACTIVE. 
+Com isso, ocorrerá uma liberação de memória no servidor.
+
+BEGIN FOR matarSessoesSniped IN 
+(select 'alter system kill session '''||sid||','||serial#||'''' AS matarSessao                             from v$session where status in ('SNIPED','INACTIVE') AND seconds_in_wait > 600 AND Upper(username) in ('TESTE','MJV','FANTONI' ))
+LOOP
+EXECUTE IMMEDIATE matarSessoesSniped.matarSessao;  
+END LOOP;
+END;/

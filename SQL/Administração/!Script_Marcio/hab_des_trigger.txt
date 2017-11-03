@@ -1,0 +1,7 @@
+select 'alter trigger '||owner|| '.' ||trigger_name||' disable;'
+from dba_triggers
+where owner = 'USERNAME';
+
+select 'alter trigger '||owner|| '.' ||trigger_name||' enable;'
+from dba_triggers
+where owner = 'USERNAME';

@@ -1,0 +1,6 @@
+SELECT file_name,
+  file_id,
+  ROUND(bytes   /1024/1024,2) MB,
+  ROUND(maxbytes/1024/1024,2) Max_MB,
+  online_status
+FROM DBA_DATA_FILES;

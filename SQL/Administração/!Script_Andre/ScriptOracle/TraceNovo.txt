@@ -1,0 +1,338 @@
+CONTEÚDO:
+
+1) SQL TRACE 
+2) TKPROF E 
+3) EXPLAIN PLAN
+4) CAPITURAR SQL EXECUTADO PELO USUARIO
+5) USUARIO ASSOCIADO AO PID DO SISTEMA OPERACIONAL
+6) TRIGGER DE LOGON
+
+MAIORES INFORMAÇÕES ESTÃO NO ARQUIVO "FERRAMENTASMONITORAMNETOTUNING" e NO PRÓPRIO LIVRO
+
+
+1) SQL TRACE
+*************
+
+===========================================================================================
+ SQL TRACE NIVEL DE QUALQUER SESSAO 
+===========================================================================================
+ select 'execute sys.DBMS_SUPPORT.START_TRACE_IN_SESSION ('||sid||','||serial#||',TRUE,TRUE);'
+   FROM V$SESSION
+   WHERE USERNAME NOT IN ('SYS','SYSTEM','AGENT','DBSNMP','DBIT') AND USERNAME IS NOT NULL;
+
+
+select 'execute sys.DBMS_SUPPORT.STOP_TRACE_IN_SESSION('||sid||','||serial#||');'
+  FROM V$SESSION
+   WHERE USERNAME not IN ('SYS','SYSTEM','AGENT','DBSNMP') OR USERNAME IS NOT NULL;
+
+
+Tracing your own Session
+To start tracing your own session simply execute the PL/SQL call:
+
+  DBMS_SUPPORT.START_TRACE; 
+
+ EXECUTE SYS.DBMS_SUPPORT.START_TRACE(TRUE,TRUE)
+
+Tracing another Session
+Once a session has been isolated then you need to know the SID of the target session (and possibly the SERIAL#). To start tracing the target session simply call: 
+  DBMS_SUPPORT.START_TRACE_IN_SESSION( SID , NULL );
+
+If it is important to capture an exact session you should specify both the SID and SERIAL# . Eg: 
+
+  DBMS_SUPPORT.START_TRACE_IN_SESSION( SID , SERIAL# );
+
+This PL/SQL procedure will ask the target session to start writing trace output. The trace may NOT start immediately as there are certain points in the Oracle code where a session checks to see if it has been asked to do something (like writing trace output) - the target session only starts tracing once it has seen the request. 
+
+Stopping Trace
+To stop tracing in your own session call: 
+  EXECUTE SYS.DBMS_SUPPORT.STOP_TRACE;
+
+To stop tracing another session call: 
+
+  DBMS_SUPPORT.STOP_TRACE_IN_SESSION( SID , NULL );
+
+
+
+
+
+
+
+===========================================================================================
+ SQL TRACE NIVEL DE QUALQUER SESSAO 
+===========================================================================================
+
+   select 'execute sys.dbms_system.set_sql_trace_in_session('||sid||','||serial#||',TRUE);'
+   FROM V$SESSION
+   WHERE USERNAME='OM7000';
+
+ 
+   SELECT 'execute dbms_system.set_sql_trace_in_session('||sid||','||serial#||',true);' 
+   FROM v$session where sid=(select pid from
+   v$process where spid='
+
+   execute sys.DBMS_SESSION.SET_SQL_TRACE (TRUE);
+
+
+==========================================================================================
+ SQL TRACE NIVEL DA SESSÃO CORRENTE 
+==========================================================================================
+
+ alter session set sql_trace=true ( Pag: 389 Livro: Oracle Performance Tuning )
+
+==========================================================================================
+ SQL TRACE A NIVEL DE INSTANCE
+==========================================================================================
+         
+ INIT.ORA (SQL_TRACE=TRUE)
+
+
+
+2)  INTERPRETANDO O ARQUIVO DE TRACE 
+*************************************
+
+=========================================================================================
+TKPROF (Pag 321 Livro: Oracle Performance Tuning  )
+========================================================================================
+
+tkprof explain=user/passwd table=sys.plan_tables aggregate=yes sys=no 
+sort=prscpu,execpu,fchcpu
+
+
+
+
+3) EXPLAIN PLAN 
+***************
+
+========================================================================================
+COMANDO PARA GERAR O PLNO DE EXCUÇÃO ( pag 397  Livro: Oracle Performance Tuning )
+=======================================================================================
+
+
+	EXPLAIN PLAN [ SET STATEMENT_ID [=] string literal ]
+	[ INTO table_name ]
+        FOR sql_statement
+
+
+===========================================================================================
+LISTA O PLANO DE EXECUÇÃO ( pag 32  Livro: Oracle Performance Tuning TIPS & TECHNIQUES)
+===========================================================================================
+
+oficial
+
+COLUMN ORDER FORMAT A20
+
+COLUMN operation FORMAT A20
+
+COLUMN OBJECT_NAME FORMAT A20
+
+COLUMN OPTIONS FORMAT A15
+
+set linesize 500
+
+select lpad(' ',2*(level-1))||level||'.'||nvl(position,0)||' '||operation||' '|| options
+       ||' '||object_name||' '||Object_type||' '||decode(id,0,statement_id||' cost = '||position)
+--       || other ||' '
+       ||object_node "query_plan"
+       from   plan_table
+start with id=0 and statement_id= 'FIM'
+connect by prior id = parent_id
+and statement_id='FIM'
+
+nesta pagina explica como a saida deve ser interpretada
+
+
+Outro maneira de visualizar a saida:
+
+select lpad(' ',2*(level-1))||operation "operation",
+       options "options",
+       decode(to_char(id),'0','cost+'||nvl(to_char(position),'n/a'),object_name) "object_name",
+       id||'-'||nvl(parent_id,0)||'-'||nvl(position,0) "order",
+       substr(optimizer,1,6) "opt"
+   from   plan_table
+   start with id=0 and statement_id= 'FIM'
+   connect by prior id = parent_id
+   and statement_id='FIM'
+
+===========================================================================================
+LISTA O PLANO DE EXECUÇÃO ( pag 397  Livro: Oracle Performance Tuning )
+===========================================================================================
+
+
+select lpad(' ',2*level)||operation||' '||options
+           ||' '||object_name query_plan
+from   plan_table
+connect by prior id = parent_id 
+start with id = 1
+
+
+
+
+
+===========================================================================================
+CRIA  PLANO DE EXECUÇÃO PARA COMANDOS QUE TENHAM TEMPO DE EXECUÇÃO 
+MAIOR QUE UM DETERMINADO VALOR ( pag 406  Livro: Oracle Performance Tuning )
+===========================================================================================
+
+O seguinte script identifica todos comandos sql que terão um tempo de 
+execução esperado > 2.5 segundos e executa o EXPLAIN PLAN junto a eles. 
+( considere que aproximadamente 50 I/O possa ser realizado por segundo)  
+
+
+set linesize 2000
+set arraysize 1
+spool expstat.sql
+select 'delete from plan_table;' nl,
+       'explain plan for ' nl,
+       sql_text||';' nl,
+       'start explain.sql' nl
+from v$sqlarea
+where executions > 0 and disk_reads/executions > 250
+order by disk_reads/executions
+spool off
+spool expstat.lis
+start expstat.sql
+spool off
+
+
+================================================================================
+BUSCANDO SQL SENDO EXECUTADO PELO USUARIO
+===============================================================================
+SELECT SQL_TEXT
+FROM V$SESSION A , V$SQLTEXT B
+WHERE A.SQL_ADDRESS=B.ADDRESS AND USERNAME='ALIMA'
+ORDER BY PIECE;
+
+================================================================================
+BUSCANDO SQL SENDO EXECUTADO POR TODOS OS USUARIOS EXECETO SYS E SYSTEM
+===============================================================================
+
+SET SERVEROUTPUT ON SIZE 100000
+
+
+DECLARE   
+    CURSOR c_users IS
+       SELECT username,sql_address
+       FROM v$session
+       WHERE username not in ('SYS','SYSTEM');
+    CURSOR c_sql(v_address sys.v_$sqltext.address%type) IS
+       SELECT sql_text
+       FROM sys.v_$sqltext
+       WHERE address=v_address
+       ORDER BY piece;
+BEGIN
+    FOR r_users IN c_users LOOP
+       DBMS_OUTPUT.PUT_LINE('=========================');
+       DBMS_OUTPUT.PUT_LINE(r_users.username);
+       DBMS_OUTPUT.PUT_LINE('=========================');
+       FOR r_sql IN c_sql(r_users.sql_address) LOOP
+              DBMS_OUTPUT.PUT_LINE(r_sql.sql_text);
+       END LOOP;
+       DBMS_OUTPUT.PUT_LINE(' ');
+       DBMS_OUTPUT.PUT_LINE(' ');
+    END LOOP;
+END;
+
+
+====================================================================================
+USUARIO ASSOCIADO AO PID DO SISTEMA OPERACIONAL
+====================================================================================
+
+set verify off
+col sid form 999999
+col spid form 999999
+col username form a12
+col status form a10
+col process form 999999
+col program form a80
+col MAQ form a16
+col EXT_USR form a8
+col event form a40
+col sql_text form a500
+accept OSPID prompt 'Informe o PID a ser pesquisado => '
+select p.spid "OSPID", s.sid,s.username,s.status,s.process "PID_PAI",
+s.machine "MAQ", s.osuser "EXT_USR",
+       s.program,q.sql_text from
+ v$session s, v$sql q, v$process p
+where p.spid=&OSPID
+  and s.paddr=p.addr
+  and q.address=s.sql_address
+ /
+
+====================================================================================
+USUARIO ASSOCIADO AO PID DO SISTEMA OPERACIONAL E ESTA ESPERANDO
+====================================================================================
+
+set verify off
+col sid form 999999
+col spid form 999999
+col username form a12
+col status form a10
+col process form 999999
+col program form a80
+col MAQ form a16
+col EXT_USR form a8
+col event form a40
+col sql_text form a500
+accept OSPID prompt 'Informe o PID a ser pesquisado => '
+select p.spid "OSPID", s.sid,s.username,s.status,s.process "PID_PAI",
+s.machine "MAQ", s.osuser "EXT_USR",
+       s.program,e.event,q.sql_text from
+ v$session s, v$sql q, v$process p, v$session_wait e
+where p.spid=&OSPID
+  and s.paddr=p.addr
+  and q.address=s.sql_address
+  and e.sid=s.sid
+/
+
+=======================================================
+TRIGGER DE LOGON
+====================================================
+CREATE OR REPLACE TRIGGER sys.tr_trace_logon
+AFTER LOGON
+ON DATABASE
+begin 
+ 	IF ora_login_user IN ('OWNRECUP','RECUPUSR') THEN
+        SYS.DBMS_SUPPORT.START_TRACE(TRUE,TRUE); 
+    END IF;
+ end;
+/
+
+
+
+CREATE OR REPLACE TRIGGER sys.tr_trace_logon
+AFTER LOGON
+ON DATABASE
+begin 
+    EXECUTE IMMEDIATE 'alter session set TIMED_STATISTICS=TRUE';
+    EXECUTE IMMEDIATE 'alter session set max_dump_file_size=UNLIMITED';
+    SYS.DBMS_SUPPORT.START_TRACE(TRUE,TRUE); 
+ end;
+/
+
+
+=======================================================
+
+CREATE OR REPLACE TRIGGER sys.tr_trace_logon_tuning
+AFTER LOGON
+ON DATABASE
+begin 
+    EXECUTE IMMEDIATE 'alter session set hash_area_size=10485760';
+ end;
+/
+
+==> Crie no sir no 24/11/2008
+
+
+========================================================
+EXECUTE IMMEDIATE 'alter session set optimizer_index_cost_adj = 40';
+
+
+
+CREATE OR REPLACE TRIGGER sys.tr_trace_logon
+AFTER LOGON
+ON DATABASE
+begin 
+ EXECUTE IMMEDIATE 'alter session set optimizer_index_cost_adj = 40';
+end;
+/
+

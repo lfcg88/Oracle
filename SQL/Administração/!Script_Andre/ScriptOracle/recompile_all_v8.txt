@@ -1,0 +1,298 @@
+rem =========================================================================
+rem 
+rem                  recompile_all_V8.sql
+rem 
+rem     Copyright (C) Oriole Software, 1998
+rem 
+rem     Downloaded from http://www.oriolecorp.com
+rem 
+rem     This program is free software; you can redistribute it and/or modify
+rem     it under the terms of the GNU General Public License as published by
+rem     the Free Software Foundation; either version 2 of the License, or
+rem     any later version.
+rem 
+rem     This program is distributed in the hope that it will be useful,
+rem     but WITHOUT ANY WARRANTY; without even the implied warranty of
+rem     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+rem     GNU General Public License for more details.
+rem 
+rem     You should have received a copy of the GNU General Public License
+rem     along with this program; if not, write to the Free Software
+rem     Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+rem 
+rem =========================================================================
+rem
+rem     This script recompiles all stored procedures, views, etc. except
+rem     those owned by SYS. Objects are recompiled in the order of 
+rem     dependencies and source code and error messages are displayed for
+rem     procedures which failed to be recompiled.
+rem     As SYS tables are queried, this must be run from a DBA account.
+rem
+rem     This script is V8 specific because the 'type#' column in 
+rem     table SYS.OBJ$ was formally known as 'type'. 
+rem
+rem     Beware of databases which have just been migrated from v7, then
+rem     sys.dependency$ is empty. All objects must be systematically
+rem     recompiled at least once.
+rem
+rem     Note that it is not absolutely fool-proof - some perfectly valid
+rem     store procedures may fail to recompile properly. A typical example
+rem     are stored procedures which contain references to private database
+rem     links. As database links cannot be prefixed with an owner name,
+rem     only the owner can properly recompile, no DBA can do it.
+rem     But this is an Oracle feature, not a problem with this script.
+rem
+prompt recompile_all_V8 - (c) Oriole Software, 1998
+prompt Downloaded from www.oriolecorp.com
+prompt This routine will look for all the : views, procedures, functions
+prompt packages and triggers.
+ --
+ --   Get 'Before' status
+ --
+set pause off
+set echo off
+set feedback off
+set heading off
+select '*** BEFORE status : '
+         || to_char(sum(decode(o.status, 1, 0, 6, 0, 1)), -- Invalid
+                                              '999990')
+         || ' invalid objects - '
+         || to_char(sum(decode(o.status, 6, 1, 0)),       -- To recompile
+                                              '999990')
+         || ' objects to recompile.'
+from sys.obj$ o
+where o.type# in (4, 7, 8, 11, 12)
+  and o.owner# != 0
+/
+prompt Please wait - Working...
+set serveroutput on size 1000000
+declare
+    type objidtable is table of sys.obj$.obj#%type
+                       index by binary_integer;
+    v_start      date;
+    v_owner      varchar2(30);
+    v_object     varchar2(30);
+    v_ntype      number;
+    v_type       varchar2(15);
+    v_objid      number;
+    v_rc         integer;
+    v_status     varchar2(50);
+    v_views      number := 0;
+    v_procs      number := 0;
+    v_funcs      number := 0;
+    v_packs      number := 0;
+    v_trigs      number := 0;
+    v_found      boolean;
+    c_id         integer;
+    a_objid      objidtable;
+    i            binary_integer;
+    done         binary_integer := 0;
+    loop_count   binary_integer := 5;
+    cursor c0 is select d_obj# objid
+                 from sys.dependency$
+                 connect by p_obj# = prior d_obj#;
+    cursor c1 is select u.name,
+                        o.name,
+                        o.type#,
+                        decode(o.type#, 4, 'VIEW',
+                                        7, 'PROCEDURE',
+                                        8, 'FUNCTION',
+                                       11, 'PACKAGE',
+                                          -- type 11 is PACKAGE BODY in fact
+                                          -- (PACKAGE is 9) but if we are
+                                          -- interested by the dependencies
+                                          -- of the package body we shall
+                                          -- recompile the package (which
+                                          -- recompiles the body too)
+                                       12, 'TRIGGER',
+                                           '?')
+                 from sys.obj$ o,
+                      sys.user$ u
+                 where o.obj# = v_objid
+                   and o.type# in (4, 7, 8, 11, 12)
+                   and o.owner# != 0   -- Do not mingle with SYS's objects
+                   and o.owner# = u.user#;
+    cursor c2 is select s.line, 1 dummy, s.source
+                 from sys.error$ e,
+                      sys.source$ s
+                 where e.obj# = v_objid
+                   and e.obj# = s.obj#
+                   and e.line = s.line
+                 union
+                 select s.line, 2, lpad('^', e.position# + 1, '-')
+                 from sys.error$ e,
+                      sys.source$ s
+                 where e.obj# = v_objid
+                   and e.obj# = s.obj#
+                   and e.line = s.line
+                 union
+                 select s.line, 3, e.text
+                 from sys.error$ e,
+                      sys.source$ s
+                 where e.obj# = v_objid
+                   and e.obj# = s.obj#
+                   and e.line = s.line
+                 order by 1, 2;
+    cursor c3 is select u.name owner,
+                        o.name obj,
+                        decode(o.type#, 4, 'VIEW',
+                                        7, 'PROCEDURE',
+                                        8, 'FUNCTION',
+                                       11, 'PACKAGE',
+                                          -- type 11 is PACKAGE BODY in fact
+                                          -- (PACKAGE is 9) but if we are
+                                          -- interested by the dependencies
+                                          -- of the package body we shall
+                                          -- recompile the package (which
+                                          -- recompiles the body too)
+                                       12, 'TRIGGER',
+                                           '?') type
+                 from sys.obj$ o,
+                      sys.user$ u
+                 where o.status = 6
+                   and o.type# in (4, 7, 8, 11, 12)
+                   and o.owner# != 0   -- Do not mingle with SYS's objects
+                   and o.owner# = u.user#;
+begin
+  dbms_output.enable(50000);  -- Increase the default buffer size
+  v_start := sysdate;
+  c_id := dbms_sql.open_cursor;
+  --
+  --  Note that if the database has been migrated from v7,
+  --  SYS.DEPENDENCY$ is empty as long as the stored object
+  --  has not been recompiled.
+  --
+  for rec0 in c0
+  loop
+    v_objid := rec0.objid;
+    a_objid(done + 1) := v_objid;
+    i := 1;
+    while (a_objid(i) != v_objid)
+    loop
+      i := i + 1;
+    end loop;
+    if (i = done + 1) -- Not processed yet
+    then
+      open c1;
+      fetch c1 into v_owner, v_object, v_ntype, v_type;
+      if (c1%FOUND)
+      then
+        begin
+           dbms_sql.parse(c_id, 'alter ' || v_type || ' ' || v_owner
+                                    || '.' || v_object || ' compile',
+                                  dbms_sql.native);
+           v_rc := dbms_sql.execute(c_id);
+           --
+           --   dbms_sql.execute() does not return anything
+           --   about the success or failure of the operation,
+           --   therefore we must check the sys.obj$ table
+           --   afterwards.
+           --
+           begin
+             select decode(o.status, 1, 'VALID/AUTH WITHOUT ERRORS',
+                                     2, 'VALID/AUTH WITH AUTH. ERRORS',
+                                     3, 'VALID/AUTH WITH COMP. ERRORS',
+                                     4, 'VALID/UNAUTHORIZED',
+                                     5, 'INVALID/UNAUTHORIZED',
+                                     6, 'NEEDS RECOMPILING',
+                                        'INVALID')
+             into v_status
+             from sys.obj$ o
+             where o.obj# = v_objid
+               and o.status != 1;
+             dbms_output.put_line(v_type || chr(9)
+                                  || v_owner || '.' || v_object || chr(9)
+                                  || v_status);
+           exception
+             when no_data_found
+                  then 
+                    begin
+                       if (v_ntype = 4) then
+                         v_views := v_views + 1;
+                       elsif (v_ntype = 7) then
+                         v_procs := v_procs + 1;
+                       elsif (v_ntype = 8) then
+                         v_funcs := v_funcs + 1;
+                       elsif (v_ntype = 11) then
+                         v_packs := v_packs + 1;
+                       elsif (v_ntype = 12) then
+                         v_trigs := v_trigs + 1;
+                       end if;
+                    end;
+           end;
+        exception
+          when others then
+            v_rc := SQLCODE;
+            dbms_output.put_line('*** FAILED TO RECOMPILE ' || v_type ||
+                                 ' ' || v_owner || '.' || v_object );
+            dbms_output.put_line(SQLERRM(v_rc));
+            --
+            --  The loop will work for stored procedures only
+            --  (not for views)
+            --
+            for rec2 in c2
+            loop
+              dbms_output.put_line(substr(rec2.source,1,250));
+            end loop;
+        end;
+      end if;
+      close c1;
+      done := done + 1;
+    end if;
+  end loop;
+  --
+  --  Even by following dependencies, recompiling will invalidate a
+  --  few things. Loop while we have some objects in a 'need recompiling'
+  --  state (up to 5 loops)
+  --
+  v_found := true;
+  while (v_found and (loop_count > 0))
+  loop
+    v_found := false;
+    for rec3 in c3
+    loop
+      dbms_sql.parse(c_id, 'alter ' || rec3.type || ' ' || rec3.owner
+                                    || '.' || rec3.obj || ' compile',
+                                  dbms_sql.native);
+      v_rc := dbms_sql.execute(c_id);
+      --
+      --  We do not check the status then, as it is at least the second
+      --  pass
+      --
+      v_found := true;
+    end loop;
+    loop_count := loop_count - 1;
+  end loop;
+  dbms_sql.close_cursor(c_id);
+  dbms_output.put_line(to_char(v_views) || ' views successfully recompiled.');
+  dbms_output.put_line(to_char(v_procs)
+                || ' procedures successfully recompiled.');
+  dbms_output.put_line(to_char(v_funcs)
+                || ' functions successfully recompiled.');
+  dbms_output.put_line(to_char(v_packs)
+                || ' packages successfully recompiled.');
+  dbms_output.put_line(to_char(v_trigs)
+                || ' triggers successfully recompiled.');
+  dbms_output.put_line('-- Done in '
+                      || to_char(trunc((sysdate - v_start) * 1440))
+                      || ':'
+                      || ltrim(to_char(mod((sysdate - v_start) * 86400, 60),
+                                             '00')));
+end;
+.
+/
+select '*** AFTER status  : '
+         || to_char(sum(decode(o.status, 1, 0, 6, 0, 1)), -- Invalid
+                                              '999990')
+         || ' invalid objects - '
+         || to_char(sum(decode(o.status, 6, 1, 0)),       -- To recompile
+                                              '999990')
+         || ' objects to recompile.'
+from sys.obj$ o
+where o.type# in (4, 7, 8, 11, 12)
+  and o.owner# != 0
+/
+set feedback on
+set heading on
+
+

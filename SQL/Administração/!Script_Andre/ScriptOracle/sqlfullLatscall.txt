@@ -1,0 +1,27 @@
+set echo off
+set feed off
+set linesize 100
+set pagesize 300
+set echo off
+set feed off
+set linesize 130
+set pagesize 300
+break on username on sid on Minutos
+column sql_text      format a70   heading Text word_wrapped
+column username      format a10
+column pie noprint
+column adr noprint
+column Data_Inicio noprint
+SELECT distinct s.username,
+       s.sid,
+       s.sql_address adr,
+       t.piece pie,
+       to_char(sysdate-(s.last_call_et/60/60/24), 'Dy HH24:MI:SS') "Data_Inicio",
+       round(s.last_call_et/60) "Minutos",
+       t.sql_text
+FROM    v$session  s,
+        sys.v_$sqltext t
+WHERE   s.username is not null
+        and s.status='ACTIVE'
+        and s.sql_hash_value=t.hash_value(+)
+        and round(s.last_call_et/60) > 0

@@ -1,0 +1,30 @@
+connect target /@tst1 
+connect rcvcat rman/senha@rman
+
+# retira archivelogs deletados do catalogo 
+
+change archivelog all crosscheck; 
+
+run 
+
+{ 
+  allocate channel ch1 type DISK format 'c:\oracle\Backup\TST1\D0_%d_%s_%p_%T.BAK'; 
+  backup incremental 
+    level 0 
+    cumulative 
+    TAG "20031210_214800" 
+    (database  setsize 3145728)
+    (current controlfile for standby)
+    (spfile); 
+
+  # arquiva log corrente 
+  sql 'alter system archive log current'; 
+  release channel ch1; 
+
+  allocate channel ch1 type DISK format 'c:\oracle\Backup\TST1\L0_%d_%s_%p_%T.BAK'; 
+  backup 
+    (archivelog all delete input setsize 3145728 channel ch1 
+    ); 
+  release channel ch1; 
+}
+

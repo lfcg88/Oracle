@@ -1,0 +1,105 @@
+rem =========================================================================
+rem 
+rem                     objacc8.sql
+rem 
+rem     Copyright (C) Oriole Software, 1998, 1999
+rem 
+rem     Downloaded from http://www.oriolecorp.com
+rem 
+rem     This script for Oracle database administration is free software; you
+rem     can redistribute it and/or modify it under the terms of the GNU General
+rem     Public License as published by the Free Software Foundation; either
+rem     version 2 of the License, or any later version.
+rem 
+rem     This script is distributed in the hope that it will be useful,
+rem     but WITHOUT ANY WARRANTY; without even the implied warranty of
+rem     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+rem     GNU General Public License for more details.
+rem 
+rem     You should have received a copy of the GNU General Public License
+rem     along with this program; if not, write to the Free Software
+rem     Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+rem 
+rem =========================================================================
+rem
+rem This scripts lists, giving privileges in a Unix fashion (r : right
+rem to SELECT, w : right to insert, update or delete, x : right to execute)
+rem who can do what on a given Oracle object (table, view, sequence, stored
+rem procedure ...). When grantees are roles, their name appears between square
+rem brackets. It follows the orimenu convention, i.e. that passing
+rem the '-' argument means all objects in the database.
+rem
+rem For DBAs only, as usual. Oracle8 version.
+rem
+rem # Who can access a given object [v8] (arg : [ownername.]objectname)
+rem
+column object format A40
+column type format A2
+column "ACCESS" format A3
+column grantees format A25
+clear breaks
+break on object on type on "ACCESS"
+select u.name || '.' || o.name OBJECT,
+       decode(o.type#, 2, 'T',
+                       4, 'V',
+                       6, 'Sq',
+                       7, 'F',
+                       8, 'P',
+                       9, 'PK',
+                          '?') type,
+        decode(sum(decode(m.name, 'SELECT', 1, 0)), 0, '-', 'r')
+     || decode(sum(decode(m.name, 'DELETE', 1,
+                                  'INSERT', 1,
+                                  'UPDATE', 1,
+                                  0)), 0, '-', 'w')
+     || decode(sum(decode(m.name, 'EXECUTE', 1, 0)), 0, '-', 'x') "ACCESS",
+     decode(g.type#, 0, '[' || g.name || ']',
+                        g.name) GRANTEES
+from sys.user$ u,
+     sys.obj$ o,
+     sys.objauth$ oa,
+     sys.table_privilege_map m,
+     sys.user$ g
+where o.obj# = oa.obj#
+  and o.name = decode('&1', '-', o.name,
+                        substr(upper('&&1'), 1 + instr('&&1', '.')))
+  and o.type# in (2, 4, 6, 7, 8, 9)
+  and u.user# = o.owner#
+  and u.name = decode('&&1', '-', u.name,
+                          decode(instr('&&1', '.'), 0, u.name,
+                                 substr(upper('&&1'), 1, instr('&&1', '.') - 1)))
+  and oa.privilege# = m.privilege
+  and m.name in ('DELETE', 'INSERT', 'SELECT', 'UPDATE', 'EXECUTE')
+  and oa.grantee# = g.user#
+group by  u.name, o.name, o.type#, g.type#, g.name
+union
+select u.name || '.' || o.name OBJECT,
+       decode(o.type#, 2, 'T',
+                       4, 'V',
+                       6, 'Sq',
+                       7, 'F',
+                       8, 'P',
+                       9, 'PK',
+                          '?') type,
+     '---',
+     '*** Strictly private ***'
+from sys.user$ u,
+     sys.obj$ o
+where o.name = decode('&&1', '-', o.name,
+                        substr(upper('&&1'), 1 + instr('&&1', '.')))
+  and o.type# in (2, 4, 6, 7, 8, 9)
+  and u.user# = o.owner#
+  and u.name = decode('&&1', '-', u.name,
+                          decode(instr('&&1', '.'), 0, u.name,
+                                 substr(upper('&&1'), 1, instr('&&1', '.') - 1)))
+  and not exists (select null
+                  from sys.objauth$ oa,
+                       sys.table_privilege_map m
+                  where oa.obj# = o.obj#
+                    and oa.privilege# = m.privilege
+                    and m.name in ('DELETE', 'INSERT', 'SELECT',
+                                   'UPDATE', 'EXECUTE'))
+order by 1, 3, 4
+/
+clear breaks
+

@@ -1,0 +1,39 @@
+purge recyclebin;
+
+Enable the database recyclebin
+The recycle bin is enabled by default. 
+
+SQL> ALTER SYSTEM SET recyclebin = ON;
+To disable for the entire database (not recommended): 
+
+SQL>ALTER SYSTEM SET recyclebin = OFF;
+
+
+
+To enable the recycle bin for a session: 
+
+SQL> ALTER SESSION SET recyclebin = ON;
+To disable the recycle bin for a session: 
+
+SQL> ALTER SESSION SET recyclebin = OFF;
+[edit] Show recyclebin contents
+To see the objects in the recyclebin: 
+
+SHOW RECYCLEBIN
+[edit] Clear recyclebin
+To remove all dropped objects from the recyclebin (current user): 
+
+PURGE RECYCLEBIN;
+To remove all dropped objects from the recyclebin (system wide): 
+
+PURGE DBA_RECYCLEBIN;
+Tables can also be droped without sending them to the recyclebin. Example: 
+
+DROP TABLE t1 PURGE;
+[edit] Examples
+Drop a table: 
+
+SQL> DROP TABLE t1;
+Undrop the table: 
+
+SQL> FLASHBACK TABLE t1 TO BEFORE DROP;

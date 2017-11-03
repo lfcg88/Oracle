@@ -1,0 +1,93 @@
+-- FOLD_STR function to break SQL at given lengths
+-- Dilbagh Singh
+-- 31 Jul 2002
+-- Rating: --- (out of 5)
+-- 
+-- This script is designed to create a function that breaks/folds a SQL string into multiple 
+-- lines of a given length without any syntax errors. Lines are broken at a location that provides
+--  a syntatically correct SQL statement for direct cutting/pasting. This funciton has been tested 
+-- on Oracle 8.1.7.3 Enterprise Edition.
+
+
+                
+create function fold_str (sql_text_in varchar2,line_length number) 
+return varchar2 is 
+str_length number; 
+chr_pos    number; 
+cur_line   number; 
+sql_text_out varchar2(4000); 
+begin 
+        chr_pos         := 1; 
+        sql_text_out    := ''; 
+        cur_line        := 0; 
+
+        select length(sql_text_in) into str_length from dual; 
+        while str_length - chr_pos >= 0 LOOP 
+           if substr(sql_text_in,chr_pos,1) = ' ' or 
+                substr(sql_text_in,chr_pos,1) = ',' or 
+              substr(sql_text_in,chr_pos,1) = ' ' then 
+                if cur_line >= line_length then 
+                        sql_text_out := sql_text_out||substr(sql_text_in,chr_pos,1)||chr(10); 
+                        cur_line := 0; 
+                else 
+                        sql_text_out := sql_text_out||substr(sql_text_in,chr_pos,1);    
+                end if; 
+           else 
+                sql_text_out := sql_text_out||substr(sql_text_in,chr_pos,1); 
+                cur_line := cur_line + 1; 
+          end if; 
+        chr_pos := chr_pos + 1; 
+        end loop; 
+        return sql_text_out; 
+end fold_str; 
+/ 
+
+
+
+-- Reader Feedback
+
+-- Andy W. writes: Very nice and quite simple. I have included some suggestions for improvement.
+
+--** create function fold_str (sql_text_in varchar2,line_length number)
+
+--** Defaults are nice
+create function fold_str (sql_text_in varchar2 default null,line_length number default 80)
+return varchar2 is
+
+--** pls_integer more efficient than number
+str_length pls_integer := length(sql_text_in);
+chr_pos    pls_integer := 1;
+cur_line   pls_integer := 0;
+sql_text_out varchar2(4000);
+begin
+
+--** select length(sql_text_in) into str_length from dual; (not necessary, initialized above)
+
+        while str_length - chr_pos >= 0 LOOP
+          --** if substr(sql_text_in,chr_pos,1) = ' ' or
+          --**   substr(sql_text_in,chr_pos,1) = ',' or
+          --** substr(sql_text_in,chr_pos,1) = ' ' then  (same as 2 lines back or some special character??)
+
+            --** how about this instead?
+             if substr(sql_text_in,chr_pos,1) in (' ',',',' ') then
+
+                if cur_line >= line_length then
+                        sql_text_out := sql_text_out||substr(sql_text_in,chr_pos,1)||chr(10);
+                        cur_line := 0;
+                else
+                        sql_text_out := sql_text_out||substr(sql_text_in,chr_pos,1);
+                end if;
+             else
+                sql_text_out := sql_text_out||substr(sql_text_in,chr_pos,1);
+                cur_line := cur_line + 1;
+          end if;
+        chr_pos := chr_pos + 1;
+        end loop;
+        return sql_text_out;
+
+  --** always put in exception handler, return null to signify error exception
+    when others then -- possibly length sql_text_out > 4000
+      return null;
+end fold_str;
+
+ 

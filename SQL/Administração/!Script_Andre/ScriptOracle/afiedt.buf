@@ -1,0 +1,5 @@
+select trunc(last_analyzed),count(*)
+from dba_tables
+where owner='MARCAS'
+GROUP BY 1
+/

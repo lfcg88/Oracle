@@ -1,0 +1,170 @@
+Informe o valor para 1: 1
+
+                                                                                                   
+                                                                                                   
+04/06/11                         FILE_USE - Files for database DB01                                
+                                                                                                   
+                                                                                      Act MB       
+                                                                                          on       
+Type Tablesp             File Name                                                      Disk Stat  
+---- ------------------- ------------------------------------------------------------ ------ ----- 
+Data ANBD01              /u01/oradata/DB01/ANBD01.dbf                                     50 Avail 
+Data ANBD02              /u01/oradata/DB01/ANBD02.dbf                                     50 Avail 
+Data ANBI01              /u01/oradata/DB01/ANBI01.dbf                                     50 Avail 
+Data ANBI02              /u01/oradata/DB01/ANBI02.dbf                                     50 Avail 
+Data ANCD01              /u01/oradata/DB01/ANCD01.dbf                                     50 Avail 
+Data ANCD02              /u01/oradata/DB01/ANCD02.dbf                                     50 Avail 
+Data ANCI01              /u01/oradata/DB01/ANCI01.dbf                                     50 Avail 
+Data ANCI02              /u01/oradata/DB01/ANCI02.dbf                                     50 Avail 
+Data BASE_ACESSO_DAT1    /u04/oradata/DB01/BASE_ACESSO_DAT01.dbf                         300 Avail 
+Data BASE_ACESSO_IDX1    /u02/oradata/DB01/BASE_ACESSO_IDX01.dbf                         350 Avail 
+Data BASE_ADMBD_IDX1     /u04/oradata/DB01/BASE_ADMBD_IDX01.dbf                           30 Avail 
+Data BASE_AGR_DAT1       /u04/oradata/DB01/BASE_AGR_DAT01.dbf                           1800 Avail 
+Data BASE_AGR_IDX1       /u02/oradata/DB01/BASE_AGR_IDX01.dbf                           1600 Avail 
+Data BASE_ANB_DAT1       /u03/oradata/DB01/BASE_ANB_DAT01.dbf                            500 Avail 
+Data BASE_ANB_IDX1       /u04/oradata/DB01/BASE_ANB_IDX01.dbf                            500 Avail 
+Data BASE_BIOMETRIA_DAT1 /u05/oradata/DB01/BASE_BIOMETRIA_DAT01.dbf                       30 Avail 
+Data BASE_BIOMETRIA_IDX1 /u01/oradata/DB01/BASE_BIOMETRIA_IDX01.dbf                       30 Avail 
+Data BASE_CEP_DAT1       /u02/oradata/DB01/BASE_CEP_DAT01.dbf                            320 Avail 
+Data BASE_CEP_IDX1       /u05/oradata/DB01/BASE_CEP_IDX01.dbf                            110 Avail 
+Data BASE_DICIONARIO_DAT /u02/oradata/DB01/BASE_DICIONARIO_DAT01.dbf                      30 Avail 
+     1                                                                                             
+                                                                                                   
+Data BASE_DICIONARIO_IDX /u05/oradata/DB01/BASE_DICIONARIO_IDX01.dbf                      30 Avail 
+     1                                                                                             
+                                                                                                   
+Data BASE_DISSEM_DAT1    /u01/oradata/DB01/BASE_DISSEM_DAT01.dbf                          60 Avail 
+Data BASE_DISSEM_IDX1    /u03/oradata/DB01/BASE_DISSEM_IDX01.dbf                          30 Avail 
+Data BASE_IBRCEP_DAT1    /u05/oradata/DB01/BASE_IBRCEP_DAT01.dbf                          30 Avail 
+Data BASE_IBRCEP_IDX1    /u01/oradata/DB01/BASE_IBRCEP_IDX01.dbf                          30 Avail 
+Data BASE_IBRE_DAT1      /u04/oradata/DB01/BASE_IBRE_DAT01.dbf                         18432 Avail 
+Data BASE_IBRE_IDX1      /u02/oradata/DB01/BASE_IBRE_IDX01.dbf                          3072 Avail 
+Data BASE_IBRIND_DAT1    /u03/oradata/DB01/BASE_IBRIND_DAT01.dbf                          30 Avail 
+Data BASE_IBRIND_IDX1    /u04/oradata/DB01/BASE_IBRIND_IDX01.dbf                          30 Avail 
+Data BASE_ICC_DAT1       /u01/oradata/DB01/BASE_ICC_DAT01.dbf                           3072 Avail 
+Data BASE_ICC_IDX1       /u03/oradata/DB01/BASE_ICC_IDX01.dbf                           2500 Avail 
+Data BASE_IGP_DAT1       /u03/oradata/DB01/BASE_IGP_DAT01.dbf                             40 Avail 
+Data BASE_IGP_IDX1       /u04/oradata/DB01/BASE_IGP_IDX01.dbf                             30 Avail 
+Data BASE_IIP_DAT1       /u04/oradata/DB01/BASE_IIP_DAT01.dbf                            190 Avail 
+Data BASE_IIP_IDX1       /u02/oradata/DB01/BASE_IIP_IDX01.dbf                            180 Avail 
+Data BASE_INDGER_DAT1    /u01/oradata/DB01/BASE_INDGER_DAT01.dbf                        6197 Avail 
+Data BASE_INDGER_IDX1    /u03/oradata/DB01/BASE_INDGER_IDX01.dbf                        2776 Avail 
+Data BASE_IPA_DAT1       /u05/oradata/DB01/BASE_IPA_DAT01.dbf                           3902 Avail 
+Data BASE_IPA_IDX1       /u01/oradata/DB01/BASE_IPA_IDX01.dbf                           4800 Avail 
+Data BASE_IPC_DAT1       /u01/oradata/DB01/BASE_IPC_DAT01.dbf                          26797 Avail 
+Data                     /u04/oradata/DB01/BASE_IPC_DAT02.dbf                           5120 Avail 
+Data BASE_IPC_IDX1       /u03/oradata/DB01/BASE_IPC_IDX01.dbf                          16761 Avail 
+Data                     /u04/oradata/DB01/BASE_IPC_IDX02.dbf                           1000 Avail 
+Data BASE_IPM_DAT1       /u03/oradata/DB01/BASE_IPM_DAT01.dbf                             30 Avail 
+Data BASE_IPM_IDX1       /u04/oradata/DB01/BASE_IPM_IDX01.dbf                             30 Avail 
+Data BASE_IPS_DAT1       /u04/oradata/DB01/BASE_IPS_DAT01.dbf                             30 Avail 
+Data BASE_IPS_IDX1       /u02/oradata/DB01/BASE_IPS_IDX01.dbf                             30 Avail 
+Data BASE_ISP_DAT1       /u02/oradata/DB01/BASE_ISP_DAT01.dbf                          32767 Avail 
+Data                     /u03/oradata/DB01/BASE_ISP_DAT0102.dbf                        21376 Avail 
+Data BASE_ISP_DAT2       /u03/oradata/DB01/BASE_ISP_DAT202.dbf                           190 Avail 
+Data                     /u04/oradata/DB01/BASE_ISP_DAT201.dbf                           500 Avail 
+Data BASE_ISP_IDX1       /u05/oradata/DB01/BASE_ISP_IDX01.dbf                          32767 Avail 
+Data                     /u05/oradata/DB01/BASE_ISP_IDX1_02.dbf                         4096 Avail 
+Data BASE_ISP_IDX2       /u04/oradata/DB01/BASE_ISP_IDX2_01.dbf                         1024 Avail 
+Data BASE_ISP_IDX3       /u01/oradata/DB01/BASE_ISP_IDX3_01.dbf                          100 Avail 
+Data BASE_ISP2_DAT1      /u02/oradata/DB01/BASE_ISP2_DAT01.dbf                            30 Avail 
+Data BASE_ISP2_IDX1      /u05/oradata/DB01/BASE_ISP2_IDX01.dbf                            30 Avail 
+Data BASE_PCC_DAT1       /u05/oradata/DB01/BASE_PCC_DAT01.dbf                           4200 Avail 
+Data BASE_PCC_IDX1       /u01/oradata/DB01/BASE_PCC_IDX01.dbf                           7334 Avail 
+Data BASE_POF_DAT1       /u05/oradata/DB01/BASE_POF_DAT01.dbf                            100 Avail 
+Data BASE_POF_IDX1       /u01/oradata/DB01/BASE_POF_IDX01.dbf                            200 Avail 
+Data BASE_PRECO_DAT1     /u03/oradata/DB01/BASE_PRECO_DAT1_02.dbf                       9934 Avail 
+Data                     /u05/oradata/DB01/BASE_PRECO_DAT01.dbf                        10263 Avail 
+Data BASE_PRECO_DAT2     /u04/oradata/DB01/BASE_PRECO_DAT2_01.dbf                       1024 Avail 
+Data BASE_PRECO_IDX1     /u01/oradata/DB01/BASE_PRECO_IDX01.dbf                        16000 Avail 
+Data                     /u02/oradata/DB01/BASE_PRECO_IDX1_02.dbf                      19456 Avail 
+Data BASE_PRECO_IDX2     /u04/oradata/DB01/BASE_PRECO_IDX2_01.dbf                       2462 Avail 
+Data BASE_PROJ_DAT1      /u02/oradata/DB01/BASE_PROJ_DAT01.dbf                            30 Avail 
+Data BASE_PROJ_IDX1      /u05/oradata/DB01/BASE_PROJ_IDX01.dbf                            30 Avail 
+Data BASE_REGPRE_DAT     /u04/oradata/DB01/BASE_REGPRE_DAT_01.dbf                         20 Avail 
+Data BASE_REGPRE_IDX     /u05/oradata/DB01/BASE_REGPRE_IDX_01.dbf                         20 Avail 
+Data BASE_RESETE_DAT1    /u01/oradata/DB01/BASE_RESETE_DAT01.dbf                         601 Avail 
+Data BASE_RESETE_IDX1    /u03/oradata/DB01/BASE_RESETE_IDX01.dbf                          30 Avail 
+Data BASE_RST_DAT1       /u03/oradata/DB01/BASE_RST_DAT01.dbf                             30 Avail 
+Data BASE_RST_IDX1       /u04/oradata/DB01/BASE_RST_IDX01.dbf                             30 Avail 
+Data BASE_SAT_DAT1       /u04/oradata/DB01/BASE_SAT_DAT01.dbf                            668 Avail 
+Data BASE_SAT_IDX1       /u02/oradata/DB01/BASE_SAT_IDX01.dbf                           3072 Avail 
+Data BASE_SIAC_DAT1      /u01/oradata/DB01/BASE_SIAC_DAT01.dbf                            30 Avail 
+Data BASE_SIAC_IDX1      /u03/oradata/DB01/BASE_SIAC_IDX01.dbf                            30 Avail 
+Data BASE_SIGA_DAT1      /u04/oradata/DB01/BASE_SIGA_DAT01.dbf                            30 Avail 
+Data BASE_SIGA_IDX1      /u02/oradata/DB01/BASE_SIGA_IDX01.dbf                            30 Avail 
+Data BASE_SIMA_DAT1      /u02/oradata/DB01/BASE_SIMA_DAT01.dbf                           100 Avail 
+Data BASE_SIMA_IDX1      /u05/oradata/DB01/BASE_SIMA_IDX01.dbf                            50 Avail 
+Data BASE_SIS_DAT1       /u03/oradata/DB01/BASE_SIS_DAT01.dbf                           5050 Avail 
+Data BASE_SIS_IDX1       /u04/oradata/DB01/BASE_SIS_IDX01.dbf                            430 Avail 
+Data BASE_SONDA_DAT1     /u05/oradata/DB01/BASE_SONDA_DAT01.dbf                         6221 Avail 
+Data BASE_SONDA_IDX1     /u01/oradata/DB01/BASE_SONDA_IDX01.dbf                        12012 Avail 
+
+                                                                                                   
+                                                                                                   
+04/06/11                         FILE_USE - Files for database DB01                                
+                                                                                                   
+                                                                                      Act MB       
+                                                                                          on       
+Type Tablesp             File Name                                                      Disk Stat  
+---- ------------------- ------------------------------------------------------------ ------ ----- 
+Data BASE_SOND_DAT1      /u02/oradata/DB01/BASE_SOND_DAT01.dbf                            80 Avail 
+Data BASE_SOND_IDX1      /u05/oradata/DB01/BASE_SOND_IDX01.dbf                           150 Avail 
+Data DBA                 /u04/oradata/DB01/dba_tbs.dbf                                  1024 Avail 
+Data DISD01              /u04/oradata/DB01/DISD01.dbf                                     50 Avail 
+Data EULD01              /u01/oradata/DB01/EULD01.dbf                                     50 Avail 
+Data IBRD01              /u01/oradata/DB01/IBRD01.dbf                                     90 Avail 
+Data IBRI01              /u01/oradata/DB01/IBRI01.dbf                                     50 Avail 
+Data ICCI03              /u01/oradata/DB01/ICCI03.dbf                                     50 Avail 
+Data IGPI03              /u01/oradata/DB01/IGPI03.dbf                                     50 Avail 
+Data IPAI03              /u01/oradata/DB01/IPAI03.dbf                                     50 Avail 
+Data IPCD01              /u02/oradata/DB01/IPCD01.dbf                                     50 Avail 
+Data IPCD02              /u04/oradata/DB01/IPCD02.dbf                                     50 Avail 
+Data IPCD03              /u01/oradata/DB01/IPCD03.dbf                                     50 Avail 
+Data IPCD05              /u01/oradata/DB01/IPCD05.dbf                                     50 Avail 
+Data IPCI01              /u01/oradata/DB01/IPCI01.dbf                                    302 Avail 
+Data IPCI02              /u01/oradata/DB01/IPCI02.dbf                                    445 Avail 
+Data IPCI03              /u01/oradata/DB01/IPCI03.dbf                                    477 Avail 
+Data IPCI04              /u01/oradata/DB01/IPCI04.dbf                                    596 Avail 
+Data IPCI05              /u01/oradata/DB01/IPCI05.dbf                                    351 Avail 
+Data ISPD01              /u03/oradata/DB01/ISPD01.dbf                                     50 Avail 
+Data ISPD02              /u01/oradata/DB01/ISPD02.dbf                                     50 Avail 
+Data ISPI01              /u01/oradata/DB01/ISPI01.dbf                                     50 Avail 
+Data ISPI02              /u01/oradata/DB01/ISPI02.dbf                                     50 Avail 
+Data PCCD01              /u05/oradata/DB01/PCCD01.dbf                                     50 Avail 
+Data PRCD01_00256        /u01/oradata/DB01/PRCD01_00256.dbf                               50 Avail 
+Data PRCI01_00256        /u01/oradata/DB01/PRCI01_00256.dbf                               50 Avail 
+Data PRCI01_99999        /u04/oradata/DB01/BASE_IND_IDX_202.dbf                         2000 Avail 
+Data SATI01              /u01/oradata/DB01/SATI01.dbf                                     90 Avail 
+Data SDGD01              /u02/oradata/DB01/SDGD01.dbf                                     50 Avail 
+Data SDGD03              /u01/oradata/DB01/SDGD03.dbf                                     50 Avail 
+Data SDGI01              /u01/oradata/DB01/SDGI01.dbf                                     50 Avail 
+Data SUPD01              /u01/oradata/DB01/SUPD01.dbf                                     50 Avail 
+Data SYSAUX              /u02/oradata/DB01/sysaux01.dbf                                32768 Avail 
+Data                     /u02/oradata/DB01/sysaux02.dbf                                15000 Avail 
+Data                     /u05/oradata/DB01/sysaux_03.dbf                               10000 Avail 
+Data SYSAUX2             /u03/oradata/DB01/SYSAUX2_2.dbf                               16699 Avail 
+Data                     /u04/oradata/DB01/SYSAUX2_1.dbf                               17607 Avail 
+Data SYSTEM              /u01/oradata/DB01/system01.dbf                                 2600 Avail 
+Data TOOLS               /u01/oradata/DB01/tools.dbf                                     300 Avail 
+Data UNDOTBS1            /u03/oradata/DB01/undotbs01.dbf                                2048 Avail 
+Data UNDOTBS2            /u04/oradata/DB01/undotbs02.dbf                               13193 Avail 
+Data USERS               /u01/oradata/DB01/users01.dbf                                  9253 Avail 
+Parm Archive              - ENABLED                                                                
+Parm Ctrl 1              /oracle/oradata/DB01/control01.ctl                                        
+Parm Ctrl 2              /u02/oradata/DB01/control02.ctl                                           
+Parm Ctrl 3              /u04/oradata/DB01/control03.ctl                                           
+Parm Ctrl 4                (none)                                                                  
+Parm Ifile                                                                                         
+Redo Grp 1               /u02/oradata/DB01/redo1a.rdo                                    500 Inact 
+Redo                     /u03/oradata/DB01/redo1b.rdo                                    500 Inact 
+Redo Grp 2               /u04/oradata/DB01/redo2a.rdo                                    500 Inact 
+Redo                     /u05/oradata/DB01/redo2b.rdo                                    500 Inact 
+Redo Grp 3               /u02/oradata/DB01/redo3a.rdo                                    500 Inact 
+Redo                     /u03/oradata/DB01/redo3b.rdo                                    500 Inact 
+Redo Grp 4               /u01/oradata/DB01/redo4a.rdo                                    500 Inact 
+Redo                     /u02/oradata/DB01/redo4b.rdo                                    500 Inact 
+Redo Grp 5               /u03/oradata/DB01/redo5a.rdo                                    500 Curr  
+Redo                     /u04/oradata/DB01/redo5b.rdo                                    500 Curr  
+     *******************                                                              ------       
+sum                                                                                   ######       

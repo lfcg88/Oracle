@@ -1,0 +1,78 @@
+set pages 0
+
+select 'grant select, insert, delete, update on '||table_name||' to RL_scew;'
+from user_tables;
+
+select 'grant select on '||table_name||' to RL_scew_DESENV;'
+from user_tables;
+
+select 'grant select  on '||sequence_name||' to <usuário>;'
+from user_sequences;
+
+select 'grant select on '||view_name||' to <usuário>'
+from user_views;
+
+select * from dba_tab_privs
+where TABLE_NAME='VW_VERIFICA_DUP_CONSULTAS_NAT';
+
+----------------------------------------------------------------------------------------------------------------
+
+
+declare
+
+i number;
+ii number;
+iii number;
+
+begin
+  for i in (select table_name from all_tables where OWNER = 'GOLDENCROSS') loop
+    execute immediate 'GRANT SELECT ON GOLDENCROSS.'||i.TABLE_NAME||' TO RL_SEA_DESENV';
+  end loop;
+
+
+  for ii in (select sequence_name from all_sequences where SEQUENCE_OWNER = 'GOLDENCROSS') loop
+    execute immediate 'GRANT SELECT ON GOLDENCROSS.'||ii.SEQUENCE_NAME||' RL_SEA_DESENV';
+  end loop;
+  
+    for iii in (select view_name from all_views where OWNER = 'GOLDENCROSS') loop
+    execute immediate 'GRANT SELECT ON GOLDENCROSS.'||iii.VIEW_NAME||' TO RL_SEA_DESENV';
+  end loop;
+  
+end;
+
+----------------------------------------------------------------------------------------------------------------
+
+declare
+
+i number;
+ii number;
+
+begin
+  for i in (select table_name from all_tables where OWNER = 'CWEB') loop
+    execute immediate 'GRANT SELECT,INSERT,UPDATE,DELETE ON CWEB.'||I.TABLE_NAME||' TO RL_CWEB';
+  end loop;
+
+end;
+
+----------------------------------------------------------------------------------------------------------------
+
+declare
+
+i number;
+
+begin
+   for i in (
+   select * from dba_objects
+   where object_type = 'VIEW'
+   and owner = 'SYSADM'
+   and status = 'VALID'
+   ) loop
+    execute immediate 'GRANT SELECT ON SYSADM.'||i.OBJECT_NAME||' TO COSIS';
+  end loop;
+  
+end;
+
+----------------------------------------------------------------------------------------------------------------
+
+SELECT 'GRANT SELECT ON SYSADM.'||view_name||' TO RL_SYSADM_DESENV;' FROM ALL_VIEWS
+WHERE OWNER = 'SYSADM'

@@ -1,0 +1,19 @@
+select  b.tablespace_name,a.OWNER,a.object_name 
+from    dba_objects a, dba_segments b 
+where   A.OBJECT_NAME=B.segment_name
+AND     object_type = 'INDEX'
+AND     b.tablespace_name = 'PS_VCHR_ACCTG_LINE_IDX'
+
+select  b.tablespace_name,a.OWNER,a.object_name 
+from    dba_objects a, dba_segments b 
+where   A.OBJECT_NAME=B.segment_name
+AND     object_type = 'INDEX'
+AND     b.tablespace_name = 'PSINDEX'
+
+SELECT 
+    OWNER, 
+    TABLE_NAME, 
+    TABLESPACE_NAME 
+FROM 
+    ALL_TABLES
+ where OWNER = 'SYSADM' AND TABLE_NAME = 'PS_VOUCHER'

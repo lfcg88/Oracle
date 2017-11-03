@@ -1,0 +1,273 @@
+-------------------------- Cut here and save as tab_gen.sql --------------- 
+DECLARE 
+cursor cur0 is 
+select table_name,TABLESPACE_NAME,PCT_FREE,PCT_USED,INI_TRANS,MAX_TRANS, 
+INITIAL_EXTENT,NEXT_EXTENT,PCT_INCREASE 
+from user_tables 
+order by table_name; 
+cursor cur1 (t_name varchar2) is 
+select table_name, column_name, data_type, data_length, 
+data_precision, data_scale, nullable 
+from user_tab_columns 
+where table_name = t_name 
+order by column_name; 
+tab_name varchar2(40); 
+tabsp_name varchar2(40); 
+mpct_free number; 
+mpct_used number; 
+mini_trans number; 
+mmax_trans number; 
+mini_ext number; 
+mnext_ext number; 
+mpct_inc number; 
+col_name varchar2(40); 
+ct number := 0; 
+line_ct number := 0; 
+BEGIN 
+delete from AAA; 
+for cur0_rec in cur0 loop 
+tab_name := cur0_rec.table_name; 
+tabsp_name := cur0_rec.TABLESPACE_NAME; 
+mpct_free := cur0_rec.PCT_FREE ; 
+mpct_used := cur0_rec.PCT_USED; 
+mini_trans := cur0_rec.INI_TRANS; 
+mmax_trans := cur0_rec.MAX_TRANS; 
+mini_ext := cur0_rec.INITIAL_EXTENT ; 
+mnext_ext := cur0_rec.NEXT_EXTENT ; 
+mpct_inc := cur0_rec.PCT_INCREASE ; 
+insert into AAA(f1, line) 
+values(line_ct, 'create table '|| tab_name || '(' ); 
+line_ct := line_ct + 1; 
+ct := 0; 
+for cur1_rec in cur1(tab_name) loop 
+ct := ct + 1; 
+if ct = 1 then 
+insert into AAA(f1, line ) 
+values (line_ct , 
+' '|| cur1_rec.column_name||' '||cur1_rec.data_type|| 
+decode(cur1_rec.data_type, 'VARCHAR2','('|| 
+to_char(cur1_rec.data_length)||')', 
+'NUMBER',decode(cur1_rec.data_precision, null,'', 
+'('||to_char(cur1_rec.data_precision)|| 
+decode(cur1_rec.data_scale, null, ')', ','|| 
+to_char(cur1_rec.data_scale)||')' ) 
+), '')|| decode(cur1_rec.nullable, 'Y', '', ' NOT NULL') ); 
+line_ct := line_ct + 1; 
+else 
+insert into AAA(f1, line) 
+values (line_ct, ' ,'|| cur1_rec.column_name||' 
+'||cur1_rec.data_type|| 
+decode(cur1_rec.data_type, 'VARCHAR2','('|| 
+to_char(cur1_rec.data_length)||')', 
+'NUMBER',decode(cur1_rec.data_precision, null,'', 
+'('||to_char(cur1_rec.data_precision)|| 
+decode(cur1_rec.data_scale, null, ')', ','|| 
+to_char(cur1_rec.data_scale)||')' ) 
+), '')|| decode(cur1_rec.nullable, 'Y', '', ' NOT NULL') ); 
+line_ct := line_ct + 1; 
+end if; 
+end loop; 
+insert into AAA (f1, line ) 
+values(line_ct, ')' ); 
+line_ct := line_ct + 1; 
+insert into AAA (f1, line ) 
+values (line_ct, ' PCTFREE ' || mpct_free || ' PCTUSED ' || mpct_used ) ; 
+line_ct := line_ct + 1; 
+insert into AAA (f1, line ) 
+values (line_ct, ' INITRANS ' || mini_trans || ' MAXTRANS ' || mmax_trans); 
+insert into AAA (f1, line ) 
+values (line_ct, ' TABLESPACE '||tabsp_name ); 
+line_ct := line_ct + 1; 
+insert into AAA (f1, line ) 
+values(line_ct, ' STORAGE ( INITIAL ' || mini_ext || ' NEXT ' 
+|| mnext_ext || ' PCTINCREASE ' || mpct_inc || ');' ); 
+line_ct := line_ct + 1; 
+insert into AAA (f1, line ) 
+values(line_ct, 'REM -------------NEXT TABLE ------------ '); 
+line_ct := line_ct + 1; 
+commit; 
+end loop; 
+END; 
+/ 
+---------------- file tab_gen.sql ends here --------------------- 
+========================================================================== 
+Script 2. con_gen.sql 
+========================================================================== 
+------------------- cut here and save as con_gen.sql ---------- 
+DECLARE 
+cursor cur0 is 
+select table_name 
+from user_tables 
+order by table_name; 
+cursor cur1 (t_name varchar2) is 
+select constraint_name, r_constraint_name, 
+constraint_type, search_condition 
+from user_constraints 
+where table_name = t_name 
+and constraint_name not like 'SYS_C%' 
+order by constraint_name; 
+cursor cur2 (c_name varchar2) is 
+select column_name 
+from user_cons_columns 
+where constraint_name = c_name 
+order by position; 
+tab_name varchar2(40); 
+r_table_name varchar2(40); 
+c_type varchar2(1); 
+ct number := 0; 
+line_ct number := 0; 
+BEGIN 
+delete from AAA; 
+for cur0_rec in cur0 loop 
+tab_name := cur0_rec.table_name; 
+for cur1_rec in cur1(tab_name) loop 
+c_type := cur1_rec.constraint_type; 
+insert into AAA(f1, line) 
+values(line_ct, 'alter table ' || tab_name || ' add constraint '); 
+line_ct := line_ct + 1; 
+insert into AAA(f1, line) 
+values(line_ct, cur1_rec.constraint_name ); 
+line_ct := line_ct + 1; 
+if c_type = 'C' then 
+insert into AAA(f1, line) 
+values(line_ct, ' check( '|| cur1_rec.search_condition ); 
+line_ct := line_ct + 1; 
+end if; 
+ct := 0; 
+for cur2_rec in cur2(cur1_rec.constraint_name) loop 
+ct := ct + 1; 
+if ct = 1 then 
+if c_type = 'R' then 
+insert into AAA(f1, line) 
+values(line_ct, ' foreign key( '|| cur2_rec.column_name); 
+end if; 
+if c_type = 'P' then 
+insert into AAA(f1, line) 
+values(line_ct, ' primary key( '|| cur2_rec.column_name); 
+end if; 
+if c_type = 'U' then 
+insert into AAA(f1, line) 
+values(line_ct, ' unique( '|| cur2_rec.column_name ); 
+end if; 
+line_ct := line_ct + 1; 
+else 
+insert into AAA(f1, line) 
+values(line_ct, ' ,'|| cur2_rec.column_name ); 
+line_ct := line_ct + 1; 
+end if; 
+end loop; 
+insert into AAA(f1, line) 
+values(line_ct, ' )' ); 
+line_ct := line_ct + 1; 
+if c_type = 'R' then 
+select table_name 
+into r_table_name 
+from user_constraints 
+where constraint_name = cur1_rec.r_constraint_name; 
+ct := 0; 
+for cur2_rec in cur2(cur1_rec.r_constraint_name) loop 
+ct := ct + 1; 
+if ct = 1 then 
+insert into AAA(f1, line) 
+values(line_ct, ' references ' || r_table_name || '(' ); 
+line_ct := line_ct + 1; 
+insert into AAA(f1, line) 
+values(line_ct, ' '|| cur2_rec.column_name ); 
+line_ct := line_ct + 1; 
+else 
+insert into AAA(f1, line) 
+values(line_ct, ' ,'|| cur2_rec.column_name); 
+line_ct := line_ct + 1; 
+end if; 
+end loop; 
+insert into AAA(f1, line) 
+values(line_ct, ' )' ); 
+line_ct := line_ct + 1; 
+end if; 
+insert into AAA(f1, line) 
+values(line_ct, ');' ); 
+line_ct := line_ct + 1; 
+end loop; 
+commit; 
+end loop; 
+END; 
+/ 
+-------------------file con_gen.sql ends here -------------------------- 
+============================================================================ 
+Script 3. ind_gen.sql 
+============================================================================ 
+---------------------- cut here and save as ind_gen.sql ------------- 
+DECLARE 
+cursor cur0 is 
+select table_name 
+from user_tables 
+order by table_name; 
+cursor cur1 (t_name varchar2) is 
+select index_name, uniqueness 
+from user_indexes 
+where table_name = t_name 
+order by index_name; 
+cursor cur2 (i_name varchar2) is 
+select column_name 
+from user_ind_columns 
+where index_name = i_name 
+order by column_position; 
+tab_name varchar2(40); 
+ind_name varchar2(40); 
+col_name varchar2(40); 
+line_ct number := 0; 
+ct number := 0; 
+BEGIN 
+delete from AAA; 
+for cur0_rec in cur0 loop 
+tab_name := cur0_rec.table_name; 
+for cur1_rec in cur1(tab_name) loop 
+insert into AAA(f1, line) 
+values(line_ct, 'create'|| 
+decode(cur1_rec.uniqueness,'UNIQUE','UNIQUE ','')|| 
+'index ' ||cur1_rec.index_name ||' on '||tab_name|| ' ( '); 
+line_ct := line_ct + 1; 
+ct := 0; 
+for cur2_rec in cur2(cur1_rec.index_name) loop 
+ct := ct + 1; 
+if ct = 1 then 
+insert into AAA(f1, line) 
+values(line_ct, ' ' || cur2_rec.column_name ); 
+line_ct := line_ct + 1; 
+else 
+insert into AAA(f1, line) 
+values(line_ct, ' ,' || cur2_rec.column_name ); 
+line_ct := line_ct + 1; 
+end if; 
+end loop; 
+insert into AAA(f1, line) 
+values(line_ct, ');' ); 
+line_ct := line_ct + 1; 
+end loop; 
+commit; 
+end loop; 
+END; 
+/ 
+----------------------- file ind_gen.sql ends here ------------------- 
+========================================================================== 
+Script 4. sch_gen.sql 
+------------------- cut here and save this file as sch_gen.sql ---------- 
+set heading off ; 
+set echo off ; 
+set term off ; 
+set feedback off; 
+drop table aaa; 
+create table aaa (f1 number, line varchar2(120)); 
+start tab_gen.sql 
+spool tab_cr.sql 
+select line from aaa order by f1 ; 
+spool off 
+start con_gen.sql 
+spool con_cr.sql 
+select line from aaa order by f1 ; 
+spool off 
+start ind_gen.sql 
+spool ind_cr.sql 
+select line from aaa order by f1 ; 
+spool off 
+---------------------- file sch_gen.sql ends here ------------------------ 

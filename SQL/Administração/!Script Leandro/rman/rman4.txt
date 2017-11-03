@@ -1,0 +1,2 @@
+show parameters recovery;
+alter system set db_recovery_file_dest='/backup' scope=both;

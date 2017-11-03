@@ -1,0 +1,12 @@
+
+
+column Data_Call format a20
+
+
+
+
+  SELECT  'alter system kill session '||''''||SID||','||serial#||''''||';'
+  FROM v$session
+  where  status='ACTIVE'  and username='W_SIGA'
+  and last_call_et/60 > 20
+/

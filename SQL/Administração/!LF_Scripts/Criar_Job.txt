@@ -1,0 +1,95 @@
+## Criar Job para executar procedure diariamente ##
+BEGIN
+    DBMS_SCHEDULER.create_job (job_name => 'executa_prc_teste',
+                            job_type => 'PLSQL_BLOCK',
+                            job_action => 'BEGIN 
+												teste.prc_teste;
+                                            END;',
+                            start_date => to_date('23-12-2013 16:20:00', 'dd-mm-yyyy hh24:mi:ss'),
+                            repeat_interval => 'freq=hourly; Interval=24',
+                            end_date => NULL,
+                            enabled => TRUE,
+                            comments => 'Job criado para a execução da procedure teste;');
+END;
+/
+
+
+## Criar Job para executar procedure de 10 em 10 minutos ##
+BEGIN
+    DBMS_SCHEDULER.create_job (job_name => 'executa_proc_y',
+                                        job_type => 'PLSQL_BLOCK',
+                            job_action => 'BEGIN 
+												exec owner.procy(); 
+                                            END;',
+                            start_date          => to_date('06-02-2014 00:00:00', 'dd-mm-yyyy hh24:mi:ss'),
+                            repeat_interval => 'freq=minutely; Interval=10',
+                            end_date => NULL,
+                            enabled => TRUE,
+                            comments => 'Job criado para a execução da procedure y');
+END;
+/
+
+## Criar Job para executar script SH ##
+BEGIN
+    DBMS_SCHEDULER.create_job (job_name => 'executa_prc_teste',
+                            job_type => 'EXECUTABLE',
+                            job_action => '/u01/teste.sh',
+                            start_date => to_date('23-12-2013 17:01:00', 'dd-mm-yyyy hh24:mi:ss'),
+                            repeat_interval => 'freq=hourly; Interval=24',
+                            end_date => NULL,
+                            enabled => TRUE,
+                            comments => 'Job criado para a execução da procedure teste;');
+END;
+/
+
+## Deletar um JOB ##
+BEGIN
+DBMS_SCHEDULER.DROP_JOB(job_name => 'executa_prc_teste');
+END;
+/
+
+## Desabilitar um JOB ##
+BEGIN
+dbms_scheduler.disable('executa_prc_teste');
+END;
+/
+
+## Habilitar um JOB ##
+BEGIN
+dbms_scheduler.enable('executa_prc_teste');
+END;
+/
+
+## Executar um JOB ##
+BEGIN
+dbms_scheduler.run_job('EXECUTA_PRC_TESTE');
+END;
+/
+ 
+## CONSULTAR A TABELA DBA_SCHEDULER_JOBS
+
+============
+
+BEGIN
+
+  DBMS_SCHEDULER.create_job
+
+(   job_name        => 'COLETAR_MARCACOES_SB',
+
+    job_type        => 'PLSQL_BLOCK',
+
+    job_action      => 'BEGIN COLETAR_MARCACOES_SB; END;',
+
+    start_date      => SYSTIMESTAMP,
+
+    repeat_interval => 'Freq=Secondly;BySecond=30',
+
+    end_date        => NULL,
+
+    enabled         => TRUE,
+
+    comments        => 'Job para executar procedure de coleta de marcações da SB.');
+
+END;
+
+/

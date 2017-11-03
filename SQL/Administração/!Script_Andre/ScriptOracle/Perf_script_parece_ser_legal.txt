@@ -1,0 +1,2107 @@
+-------------------------------------------------------------------------------
+-- install_perfsys.sql
+-------------------------------------------------------------------------------
+SET FEEDBACK ON;
+SET ECHO OFF;
+CLEAR SCREEN;
+spool install_perfsys.log;
+
+PROMPT
+PROMPT COLLECTING USER INFORMATION
+PROMPT
+ACCEPT database_sid    CHAR PROMPT 'SID OF DATABASE FOR INSTALL    [ORCL]: ' DEFAULT ORCL
+ACCEPT system_password CHAR PROMPT 'PASSWORD FOR USER SYSTEM    [MANAGER]: ' DEFAULT MANAGER HIDE
+ACCEPT mhsys_password  CHAR PROMPT 'PASSWORD FOR USER MHSYS       [MHSYS]: ' DEFAULT MHSYS   HIDE
+ACCEPT mhsys_deftblsp  CHAR PROMPT 'DEFAULT TABLESPACE FOR MHSYS  [TOOLS]: ' DEFAULT TOOLS
+ACCEPT mhsys_tmptblsp  CHAR PROMPT 'TEMPOR. TABLESPACE FOR MHSYS   [TEMP]: ' DEFAULT TEMP
+PROMPT
+
+PROMPT  CONNECTING USER SYSTEM@&database_sid
+CONNECT SYSTEM/&system_password@&database_sid;
+PROMPT
+
+prompt CREATING USER MHSYS
+create user MHSYS identified by &mhsys_password
+       DEFAULT TABLESPACE &mhsys_deftblsp
+       TEMPORARY TABLESPACE &mhsys_tmptblsp;
+
+GRANT "CONNECT" TO "MHSYS";
+GRANT "RESOURCE" TO "MHSYS";
+
+GRANT ALTER USER TO "MHSYS";
+GRANT CREATE PUBLIC SYNONYM TO "MHSYS";
+GRANT DROP PUBLIC SYNONYM TO "MHSYS";
+GRANT EXECUTE ANY PROCEDURE TO "MHSYS";
+GRANT SELECT ANY TABLE TO "MHSYS";
+GRANT UNLIMITED TABLESPACE TO "MHSYS";
+
+ALTER USER "MHSYS" DEFAULT ROLE ALL;
+-------------------------------------------------------------------------------
+
+
+
+prompt  CONNECTING USER MHSYS
+connect MHSYS/&mhsys_password@&database_sid;
+prompt
+-------------------------------------------------------------------------------
+
+
+
+drop public synonym PERFSYS_LIST;
+drop public synonym PERFSYS_HIST;
+commit;
+
+
+-- table PERFSYS_LIST to use in simulating user transactions 
+DROP TABLE perfsys_list CASCADE CONSTRAINTS;
+CREATE TABLE perfsys_list
+(
+   column1         INTEGER,
+   column2         INTEGER,
+   column3         INTEGER,
+   column4         INTEGER,
+   column5         INTEGER
+)
+   PCTFREE         10
+   PCTUSED         60
+   INITRANS        1
+   MAXTRANS        255
+   TABLESPACE      &mhsys_deftblsp
+   STORAGE (       INITIAL       500K
+                   NEXT          500K
+                   MINEXTENTS    1
+                   PCTINCREASE   0
+           );
+COMMIT;
+
+
+-- table PERFSYS_HIST to use as repository of collected indicator values
+DROP TABLE perfsys_hist CASCADE CONSTRAINTS;
+CREATE TABLE perfsys_hist
+(
+   session_num                 INTEGER,
+   start_time                  DATE,
+   exec_time_secs              NUMBER(12,2), -- for inserting 10000 rows
+--
+--
+-- DICTIONARY CACHE HIT RATIO > 99%, else increase SHARED_POOL_SIZE in INIT.ORA
+-------------------------------------------------------------------------------------------------------
+   dictcache_hitratio          NUMBER(12,2), -- from V$ROWCACHE =
+                                             -- (1-sum(getmisses)/sum(gets))*100 > 99%
+--
+--
+-- LIBRARY CACHE HIT RATIO > 99%, else increase SHARED_POOL_SIZE in INIT.ORA
+--                                               OPEN_CURSORS in INIT.ORA
+-------------------------------------------------------------------------------------------------------
+   libcache_hitratio           NUMBER(12,2), -- from V$LIBRARYCACHE =
+                                             -- (1-sum(reloads)/sum(pins))*100 > 99%
+--
+--
+-- LIBRARY CACHE - GET HIT RATIO > 70%, else increase SHARED_POOL_SIZE in INIT.ORA
+-------------------------------------------------------------------------------------------------------
+   libcache_gethit_ratio       NUMBER(12,2), -- from V$LIBRARYCACHE =
+                                             -- min(gethitratio)*100 > 70%
+--
+--
+-- LIBRARY CACHE - PIN HIT RATIO > 70%, else increase SHARED_POOL_SIZE in INIT.ORA
+-------------------------------------------------------------------------------------------------------
+   libcache_pinhit_ratio       NUMBER(12,2), -- from V$LIBRARYCACHE =
+                                             -- min(pinhitratio)*100 > 70%
+--
+--
+-- DB BUFFER CACHE HIT RATIO > 80%, else increase DB_BLOCK_BUFFERS in INIT.ORA
+-------------------------------------------------------------------------------------------------------
+   db_buffercache_hitratio     NUMBER(12,2), -- from V$SYSSTAT =
+                                             -- (1-physreads/(dbblockgets+consistentgets))*100 > 80%
+--
+--
+-- REDO BUFFER ALLOCATION RETRIES RATIO < 1%, else increase LOG_BUFFER in INIT.ORA
+-------------------------------------------------------------------------------------------------------
+   redobuf_allocretries_ratio  NUMBER(12,2), -- from V$SYSSTAT =
+                                             -- redobufferallocationretries/redowrites*100 < 1%
+--
+--
+-- REDO BUFFER SPACE REQUEST RATIO < 0.02%, else increase LOG_BUFFER in INIT.ORA
+-------------------------------------------------------------------------------------------------------
+   redobuf_spacerequest_ratio  NUMBER(12,2), -- from V$SYSSTAT =
+                                             -- redologspacerequests/redoentries*100 < 0.02%
+--
+--
+-- FREE_MEMORY/SHARED_POOL RATIO < 1%, else decrease SHARED_POOL_SIZE in INIT.ORA
+-------------------------------------------------------------------------------------------------------
+   freemem_to_shpl_ratio       NUMBER(12,2), -- from V$SGASTAT, V$PARAMETER =
+                                             -- freememory/sharedpoolsize*100 < 1%
+--
+--
+-- FREE_MEMORY/SHARED_POOL_RESERVED RATIO < 50%, else decrease SHARED_POOL_RESERVED_SIZE in INIT.ORA
+--                                                           SHARED_POOL_RESERVED_MIN_ALLOC in INIT.ORA
+-------------------------------------------------------------------------------------------------------
+   freemem_to_shplres_ratio    NUMBER(12,2), -- from V$SGASTAT, V$PARAMETER =
+                                             -- freememory/sharedpoolreservedsize*100 < 50%
+--
+--
+-- SHARED POOL SIZES RATIOS < 10%, else decrease SHARED_POOL_RESERVED_SIZE in INIT.ORA
+--                                               SHARED_POOL_RESERVED_MIN_ALLOC in INIT.ORA
+-------------------------------------------------------------------------------------------------------
+   shplres_to_shpl_ratio       NUMBER(12,2), -- from V$PARAMETER =
+                                             -- sharedpoolreservedsize/sharedpoolsize*100 < 10%
+--
+--
+-- SHARED POOL RESERVED SIZES RATIOS < 1%, else decrease SHARED_POOL_RESERVED_SIZE in INIT.ORA
+--                                                       SHARED_POOL_RESERVED_MIN_ALLOC in INIT.ORA
+-------------------------------------------------------------------------------------------------------
+   shplmin_to_shplres_ratio    NUMBER(12,2), -- from V$PARAMETER =
+                                             -- sharedpoolreservedminalloc/sharedpoolreservedsize*100 < 1%
+--
+--
+-- SHARED POOL REQUESTS RATIOS < 1%, else increase SHARED_POOL_RESERVED_SIZE in INIT.ORA
+--                                                 SHARED_POOL_RESERVED_MIN_ALLOC in INIT.ORA
+-------------------------------------------------------------------------------------------------------
+   shplres_request_miss_ratio  NUMBER(12,2), -- from V$SHARED_POOL_RESERVED =
+                                             -- requestmisses/requests*100 < 1%
+--
+--
+-- SHARED POOL REQUESTS RATIOS < 1%, else increase SHARED_POOL_RESERVED_SIZE in INIT.ORA
+--                                                 SHARED_POOL_RESERVED_MIN_ALLOC in INIT.ORA
+-------------------------------------------------------------------------------------------------------
+   shplres_request_fail_ratio  NUMBER(12,2), -- from V$SHARED_POOL_RESERVED =
+                                             -- requestfailures/requests*100 < 1%
+--
+--
+-- SHARED POOL RESERVED MINALLOC SIZE RATIOS < 99%, else increase SHARED_POOL_RESERVED_SIZE in INIT.ORA
+--                                                                SHARED_POOL_RESERVED_MIN_ALLOC in INIT.ORA
+-------------------------------------------------------------------------------------------------------
+   shplmin_to_lastfail_ratio   NUMBER(12,2), -- from V$SHARED_POOL_RESERVED, V$PARAMETER =
+                                             -- sharedpoolreservedminalloc/lastfailuresize*100 < 99%
+--
+--
+-- SHARED POOL RESERVED MINALLOC SIZE RATIOS < 99%, else increase SHARED_POOL_RESERVED_SIZE in INIT.ORA
+--                                                                SHARED_POOL_RESERVED_MIN_ALLOC in INIT.ORA
+-------------------------------------------------------------------------------------------------------
+   shplmin_to_avgfree_ratio    NUMBER(12,2), -- from V$SHARED_POOL_RESERVED, V$PARAMETER =
+                                             -- sharedpoolreservedminalloc/avgfreesize*100 < 99%
+--
+--
+-- SORT AREA SIZE RATIOS < 50%, else decrease SORT_AREA_SIZE in INIT.ORA
+--                                            SORT_AREA_RETAINED_SIZE in INIT.ORA
+-------------------------------------------------------------------------------------------------------
+   sortarea_to_shpl            NUMBER(12,2), -- from V$PARAMETER =
+                                             -- sortareasize/sharedpoolsize*100 < 50%
+--
+--
+-- SORT AREA SIZE RATIOS < 50%, else decrease SORT_AREA_SIZE in INIT.ORA
+--                                            SORT_AREA_RETAINED_SIZE in INIT.ORA
+-------------------------------------------------------------------------------------------------------
+   saretained_to_sortarea      NUMBER(12,2), -- from V$PARAMETER =
+                                             -- sortarearetainedsize/sortareasize*100 < 50%
+--
+--
+-- SORT IN MEMORY/TOTAL RATIO > 99%, else increase SORT_AREA_SIZE in INIT.ORA
+--                                                 SORT_AREA_RETAINED_SIZE in INIT.ORA
+-------------------------------------------------------------------------------------------------------
+   sortsinmem_to_totalsorts    NUMBER(12,2), -- from V$SYSSTAT =
+                                             -- sortsinmemory/(sortsinmemory+sortsondisk)*100 > 99%
+--
+--
+-- CPU TIME WAIT RATIO < 1%, else increase SESSION_CACHED_CURSORS in INIT.ORA
+--                                         DB_BLOCK_BUFFERS in INIT.ORA
+-------------------------------------------------------------------------------------------------------
+   cputime_waitratio           NUMBER(12,2), -- from V$SYSSTAT =
+                                             -- (parsetimeelapsed-parsetimecpu)/parsecount*100 < 1%
+--
+--
+-- RBS PERFORMANCE HIT RATIO > 99%, else more RBS are needed
+-------------------------------------------------------------------------------------------------------
+   rbsperformance_hitratio     NUMBER(12,2), -- from V$WAITSTAT, V$SYSSTAT =
+                                             -- (1-max(waitstat.count/sum(sysstat.value)))*100 > 99%
+--
+--
+-- RBS SEGMENT CONTENTION RATIO < 1%, else more RBS are needed
+-------------------------------------------------------------------------------------------------------
+   rbs_segmcontention_ratio    NUMBER(12,2), -- from V$ROLLSTAT =
+                                             -- max(waits/gets)*100 < 1%
+--
+--
+-- FREELIST CONTENTION RATIO < 1% , else recreate table with increased freelists
+-------------------------------------------------------------------------------------------------------
+   freelist_contentionratio    NUMBER(12,2), -- from V$WAITSTAT, V$SYSSTAT =
+                                             -- w.count/sum(s.value)*100 < 1%
+--
+--
+-- LATCH WILLING TO WAIT MISS RATIO < 1%, else decrease LOG_SMALL_ENTRY_MAX_SIZE in INIT.ORA
+-------------------------------------------------------------------------------------------------------
+   latch_w2wmiss_ratio         NUMBER(12,2), -- from V$LATCH =
+                                             -- misses/(gets+misses)*100 < 1%
+--
+--
+-- LATCH IMMEDIATE MISS RATIO < 1%, else decrease LOG_SMALL_ENTRY_MAX_SIZE in INIT.ORA
+-------------------------------------------------------------------------------------------------------
+   latch_immedmiss_ratio       NUMBER(12,2), -- from V$LATCH =
+                                             -- immediatemisses/(immediategets+immediatemisses)*100 < 1%
+--
+--
+-- MAX SESSION EVENT AVERAGE WAIT = 0, else contention exists
+-------------------------------------------------------------------------------------------------------
+   max_sessevent_avgwait       NUMBER(12,2), -- from V$SESSION_EVENT =
+                                             -- max(average_wait) = 0
+--
+--
+-- MTS DISPATCHER BUSY RATE RATIO < 50%, else increase MTS_MAX_DISPATCHERS in INIT.ORA
+-------------------------------------------------------------------------------------------------------
+   mtsdispatch_busyrate_ratio  NUMBER(12,2), -- from V$DISPATCHER =
+                                             -- sum(busy)/sum(busy+idle)*100 < 50%
+--
+--
+-- MTS DISPATCHER TIME WAIT RATIO < 1%, else increase MTS_MAX_DISPATCHERS in INIT.ORA
+-------------------------------------------------------------------------------------------------------
+   mtsdispatch_timewait_ratio  NUMBER(12,2), -- from V$QUEUE, V$DISPATCHER =
+                                             -- sum(wait)/sum(totalq)*100 < 1%
+--
+--
+-- I/O BALANCE - FILESYSTEM SIZE RATIO > 50%, else re-locate datafiles
+-------------------------------------------------------------------------------------------------------
+   filesystem_size_ratio       NUMBER(12,2), -- from V$DATAFILE, V$FILESTAT =
+                                             -- min(sum(bytes))/max(sum(bytes))*100 > 50%
+--
+--
+-- I/O BALANCE - PHYSICAL READS RATIO > 50%, else re-locate datafiles
+-------------------------------------------------------------------------------------------------------
+   physical_reads_ratio        NUMBER(12,2), -- from V$DATAFILE, V$FILESTAT =
+                                             -- min(sum(phyrds))/max(sum(phyrds))*100 > 50%
+--
+--
+-- I/O BALANCE - PHYSICAL WRITES RATIO > 50%, else re-locate datafiles
+-------------------------------------------------------------------------------------------------------
+   physical_writes_ratio       NUMBER(12,2), -- from V$DATAFILE, V$FILESTAT =
+                                             -- min(sum(phywrts))/max(sum(phywrts))*100 > 50%
+--
+--
+   message                     VARCHAR2(240) -- error message
+)
+   PCTFREE         10
+   PCTUSED         60
+   INITRANS        1
+   MAXTRANS        255
+   TABLESPACE      &mhsys_deftblsp
+   STORAGE (       INITIAL       500K
+                   NEXT          500K
+                   MINEXTENTS    1
+                   PCTINCREASE   0
+           );
+COMMIT;
+
+
+create public synonym PERFSYS_LIST for PERFSYS_LIST;
+grant  select on PERFSYS_LIST to public;
+create public synonym PERFSYS_HIST for PERFSYS_HIST;
+grant  select on PERFSYS_HIST to public;
+commit;
+
+
+
+-------------------------------------------------------------------------------
+
+
+
+CREATE OR REPLACE
+PACKAGE PKG_PERFSYS
+IS
+
+--'+***************************************************************************
+--'+ PACKAGE:       PKG_PERFSYS
+--'+
+--'+                first published in DBAzine.com Online (June 2002)
+--'+---------------------------------------------------------------------------
+--'+ PURPOSE:       AUTOMATED BASIC DATABASE PERFORMANCE INDICATOR
+--'+---------------------------------------------------------------------------
+--'+ VERSION:       3.1 - Production
+--'+---------------------------------------------------------------------------
+--'+ COPYRIGHT 2000 (C) Parsons Advanced Technologies, Toronto, Ontario, Canada
+--'+                (formerly ProtectAir Inc.) - http://www.protectair.com
+--'+ AUTHOR:        Mike Hordila, DBActions Inc.
+--'+                mhordila@hordila.com, mhordila@dbactions.com
+--'+ MAINTENANCE:   Mike Hordila, updates posted on:
+--'+                www.hordila.com, www.dbactions.com
+--'+---------------------------------------------------------------------------
+--'+ LIMITATIONS:   this is only a basic performance indicator
+--'+                manual resolution of errors
+--'+ INPUT:         tune using constants/global cursors in package body
+--'+ OUTPUT:        basic    - PACKAGE LOG  - /tmp/${ORACLE_SID}-PERFsysPKG.log
+--'+                detailed - SQL*PLUS LOG - /tmp/${ORACLE_SID}-PERFsysSQL.log
+--'+ CAUTION:       run as Oracle users SYSTEM or owner of PKG_PERFSYS
+--'+---------------------------------------------------------------------------
+--'+ HISTORY:       15-Feb-2000 - created
+--'+                15-Jun-2002 - published in DBAzine.com Online
+--'+                15-Jun-2002 - last update
+--'+***************************************************************************
+
+PROCEDURE P_MAIN;
+
+-------------------------------------------------------------------------------
+-- PACKAGE SPECIFICATION PKG_PERFSYS
+END;
+/
+
+
+
+-------------------------------------------------------------------------------
+
+
+
+CREATE OR REPLACE
+PACKAGE BODY PKG_PERFSYS
+IS
+
+--'+***************************************************************************
+--'+ PACKAGE:       PKG_PERFSYS
+--'+
+--'+                first published in DBAzine.com Online (June 2002)
+--'+---------------------------------------------------------------------------
+--'+ PURPOSE:       AUTOMATED BASIC DATABASE PERFORMANCE INDICATOR
+--'+---------------------------------------------------------------------------
+--'+ VERSION:       3.1 - Production
+--'+---------------------------------------------------------------------------
+--'+ COPYRIGHT 2000 (C) Parsons Advanced Technologies, Toronto, Ontario, Canada
+--'+                (formerly ProtectAir Inc.) - http://www.protectair.com
+--'+ AUTHOR:        Mike Hordila, DBActions Inc.
+--'+                mhordila@hordila.com, mhordila@dbactions.com
+--'+ MAINTENANCE:   Mike Hordila, updates posted on:
+--'+                www.hordila.com, www.dbactions.com
+--'+---------------------------------------------------------------------------
+--'+ LIMITATIONS:   this is only a basic performance indicator
+--'+                manual resolution of errors
+--'+ INPUT:         tune using constants/global cursors in package body
+--'+ OUTPUT:        basic    - PACKAGE LOG  - /tmp/${ORACLE_SID}-PERFsysPKG.log
+--'+                detailed - SQL*PLUS LOG - /tmp/${ORACLE_SID}-PERFsysSQL.log
+--'+ CAUTION:       run as Oracle users SYSTEM or owner of PKG_PERFSYS
+--'+---------------------------------------------------------------------------
+--'+ HISTORY:       15-Feb-2000 - created
+--'+                15-Jun-2002 - published in DBAzine.com Online
+--'+                15-Jun-2002 - last update
+--'+***************************************************************************
+
+cc_package_name       CONSTANT VARCHAR2(30) := 'PKG_PERFSYS'; -- name of this package
+
+cc_star_line          CONSTANT VARCHAR2(80) :=
+                     '********************************************************************************';
+cc_single_line        CONSTANT VARCHAR2(80) :=
+                     '--------------------------------------------------------------------------------';
+cc_double_line        CONSTANT VARCHAR2(80) :=
+                     '================================================================================';
+
+--'*---------------------------------------------------------------------------
+--'* TUNING SECTION - PARAMETRIC CONSTANTS
+--'*---------------------------------------------------------------------------
+--'* change them to appropriate values for your database size
+--'* you need to experiment
+--'* no. days per statististical period should probably be 30,
+--'* max change per session 25, max days in history 365
+--'*----------------------------------------------------------------------------
+
+cc_bad_week_day_1     CONSTANT VARCHAR2(9)  := 'MONDA-';      -- days when processing should not be done
+cc_bad_week_day_2     CONSTANT VARCHAR2(9)  := 'TUESDA-';
+cc_bad_week_day_3     CONSTANT VARCHAR2(9)  := 'WEDNESDA-';   -- to stop it from running TUESDAY's, set:
+cc_bad_week_day_4     CONSTANT VARCHAR2(9)  := 'THURSDA-';    -- cc_bad_week_day_2 := 'TUESDAY'
+cc_bad_week_day_5     CONSTANT VARCHAR2(9)  := 'FRIDA-';      -- to let it run only SATURDAY's,
+cc_bad_week_day_6     CONSTANT VARCHAR2(9)  := 'SATURDA-';    -- set the 'Y' to all days, except ...day_6
+cc_bad_week_day_7     CONSTANT VARCHAR2(9)  := 'SUNDA-';
+cn_time_of_day_start  CONSTANT INTEGER      := 00;            -- time when to start processing
+cn_time_of_day_stop   CONSTANT INTEGER      := 24;            -- time when to stop processing
+
+cn_big_change         CONSTANT INTEGER      := 25;            -- big performance change in percent
+cn_max_days_in_hist   CONSTANT INTEGER      := 365;           -- max days of log in history
+cn_period_days        CONSTANT INTEGER      := 30;            -- no. days in a stats period
+cn_insert_num_rows    CONSTANT INTEGER      := 10000;         -- no. rows to be inserted as transaction
+
+--'*---------------------------------------------------------------------------
+--'* TUNING SECTION - PARAMETRIC CONSTANTS
+--'*---------------------------------------------------------------------------
+--'* tuning indicator values
+--'* change them to appropriate values for your database
+--'* you may need to experiment
+--'*----------------------------------------------------------------------------
+
+--'*---------------------------------------------------------------------------------------------------
+--'* DICTIONARY CACHE HIT RATIO                       > 99%
+--'* else increase in INIT.ORA:                         SHARED_POOL_SIZE
+--'*---------------------------------------------------------------------------------------------------
+cn_dictcache_hitratio          CONSTANT NUMBER(15,4) := 99;    -- from V$ROWCACHE =
+                                                               -- (1-sum(getmisses)/sum(gets))*100 > 99%
+
+--'*---------------------------------------------------------------------------------------------------
+--'* LIBRARY CACHE HIT RATIO                          > 99%
+--'* else increase in INIT.ORA:                         SHARED_POOL_SIZE, OPEN_CURSORS
+--'*---------------------------------------------------------------------------------------------------
+cn_libcache_hitratio           CONSTANT NUMBER(15,4) := 99;    -- from V$LIBRARYCACHE =
+                                                               -- (1-sum(reloads)/sum(pins))*100 > 99%
+
+--'*---------------------------------------------------------------------------------------------------
+--'* LIBRARY CACHE GET HIT RATIO                      > 70%
+--'* else increase in INIT.ORA:                         SHARED_POOL_SIZE
+--'*---------------------------------------------------------------------------------------------------
+cn_libcache_gethit_ratio       CONSTANT NUMBER(15,4) := 70;    -- from V$LIBRARYCACHE =
+                                                               -- min(gethitratio)*100 > 70%
+
+--'*---------------------------------------------------------------------------------------------------
+--'* LIBRARY CACHE PIN HIT RATIO                      > 70%
+--'* else increase in INIT.ORA:                         SHARED_POOL_SIZE
+--'*---------------------------------------------------------------------------------------------------
+cn_libcache_pinhit_ratio       CONSTANT NUMBER(15,4) := 70;    -- from V$LIBRARYCACHE =
+                                                               -- min(pinhitratio)*100 > 70%
+
+--'*---------------------------------------------------------------------------------------------------
+--'* DB BUFFER CACHE HIT RATIO                        > 80%
+--'* else increase in INIT.ORA:                         DB_BLOCK_BUFFERS
+--'*---------------------------------------------------------------------------------------------------
+cn_db_buffercache_hitratio     CONSTANT NUMBER(15,4) := 80;    -- from V$SYSSTAT =
+                                                               -- (1-physreads/(dbblockgets+consistentgets))*100 > 80%
+
+--'*---------------------------------------------------------------------------------------------------
+--'* REDO BUFFER ALLOCATION RETRIES RATIO             < 1%
+--'* else increase in INIT.ORA:                         LOG_BUFFER
+--'*---------------------------------------------------------------------------------------------------
+cn_redobuf_allocretries_ratio  CONSTANT NUMBER(15,4) := 1;     -- from V$SYSSTAT =
+                                                               -- redobufferallocationretries/redowrites*100 < 1%
+
+--'*---------------------------------------------------------------------------------------------------
+--'* REDO BUFFER SPACE REQUEST RATIO                  < 0.02%
+--'* else increase in INIT.ORA:                         LOG_BUFFER
+--'*---------------------------------------------------------------------------------------------------
+cn_redobuf_spacerequest_ratio  CONSTANT NUMBER(15,4) := 0.02;  -- from V$SYSSTAT =
+                                                               -- redologspacerequests/redoentries*100 < 0.02%
+
+--'*---------------------------------------------------------------------------------------------------
+--'* FREE_MEMORY/SHARED_POOL RATIO                    < 1%
+--'* else decrease in INIT.ORA:                         SHARED_POOL_SIZE
+--'*---------------------------------------------------------------------------------------------------
+cn_freemem_to_shpl_ratio       CONSTANT NUMBER(15,4) := 1;     -- from V$SGASTAT, V$PARAMETER =
+                                                               -- freememory/sharedpoolsize*100 < 1%
+
+--'*---------------------------------------------------------------------------------------------------
+--'* FREE_MEMORY/SHARED_POOL_RESERVED RATIO           < 50%
+--'* else decrease in INIT.ORA:                         SHARED_POOL_RESERVED_SIZE, SHARED_POOL_RESERVED_MIN_ALLOC
+--'*---------------------------------------------------------------------------------------------------
+cn_freemem_to_shplres_ratio    CONSTANT NUMBER(15,4) := 50;    -- from V$SGASTAT, V$PARAMETER =
+                                                               -- freememory/sharedpoolreservedsize*100 < 50%
+
+--'*---------------------------------------------------------------------------------------------------
+--'* SHARED_POOL_RES/SHARED_POOL RATIO                < 10%
+--'* else decrease in INIT.ORA:                         SHARED_POOL_RESERVED_SIZE, SHARED_POOL_RESERVED_MIN_ALLOC
+--'*---------------------------------------------------------------------------------------------------
+cn_shplres_to_shpl_ratio       CONSTANT NUMBER(15,4) := 10;    -- from V$PARAMETER =
+                                                               -- sharedpoolreservedsize/sharedpoolsize*100 < 10%
+
+--'*---------------------------------------------------------------------------------------------------
+--'* SHARED_POOL_RES_MIN_ALLOC/SHARED_POOL_RES RATIO  < 1%
+--'* else decrease in INIT.ORA:                         SHARED_POOL_RESERVED_SIZE, SHARED_POOL_RESERVED_MIN_ALLOC
+--'*---------------------------------------------------------------------------------------------------
+cn_shplmin_to_shplres_ratio    CONSTANT NUMBER(15,4) := 1;     -- from V$PARAMETER =
+                                                               -- sharedpoolreservedminalloc/sharedpoolreservedsize*100 < 1%
+
+--'*---------------------------------------------------------------------------------------------------
+--'* SHARED POOL REQUESTS MISS RATIO                  < 1%
+--'* else increase in INIT.ORA:                         SHARED_POOL_RESERVED_SIZE, SHARED_POOL_RESERVED_MIN_ALLOC
+--'*---------------------------------------------------------------------------------------------------
+cn_shplres_request_miss_ratio  CONSTANT NUMBER(15,4) := 1;     -- from V$SHARED_POOL_RESERVED =
+                                                               -- requestmisses/requests*100 < 1%
+
+--'*---------------------------------------------------------------------------------------------------
+--'* SHARED POOL REQUESTS FAIL RATIO                  < 1%
+--'* else increase in INIT.ORA:                         SHARED_POOL_RESERVED_SIZE, SHARED_POOL_RESERVED_MIN_ALLOC
+--'*---------------------------------------------------------------------------------------------------
+cn_shplres_request_fail_ratio  CONSTANT NUMBER(15,4) := 1;     -- from V$SHARED_POOL_RESERVED =
+                                                               -- requestfailures/requests*100 < 1%
+
+--'*---------------------------------------------------------------------------------------------------
+--'* SHARED_POOL_RESERVED_MINALLOC/LAST_FAIL RATIO    < 99%
+--'* else increase in INIT.ORA:                         SHARED_POOL_RESERVED_SIZE, SHARED_POOL_RESERVED_MIN_ALLOC
+--'*---------------------------------------------------------------------------------------------------
+cn_shplmin_to_lastfail_ratio   CONSTANT NUMBER(15,4) := 99;    -- from V$SHARED_POOL_RESERVED, V$PARAMETER =
+                                                               -- sharedpoolreservedminalloc/lastfailuresize*100 < 99%
+
+--'*---------------------------------------------------------------------------------------------------
+--'* SHARED_POOL_RESERVED_MINALLOC/AVG_FREE RATIO     < 99%
+--'* else increase in INIT.ORA:                         SHARED_POOL_RESERVED_SIZE, SHARED_POOL_RESERVED_MIN_ALLOC
+--'*---------------------------------------------------------------------------------------------------
+cn_shplmin_to_avgfree_ratio    CONSTANT NUMBER(15,4) := 99;    -- from V$SHARED_POOL_RESERVED, V$PARAMETER =
+                                                               -- sharedpoolreservedminalloc/avgfreesize*100 < 99%
+
+--'*---------------------------------------------------------------------------------------------------
+--'* SORT_AREA_SIZE/SHARED_POOL_SIZE RATIO            < 50%
+--'* else decrease in INIT.ORA:                         SORT_AREA_SIZE, SORT_AREA_RETAINED_SIZE
+--'*---------------------------------------------------------------------------------------------------
+cn_sortarea_to_shpl            CONSTANT NUMBER(15,4) := 50;    -- from V$PARAMETER =
+                                                               -- sortareasize/sharedpoolsize*100 < 50%
+
+--'*---------------------------------------------------------------------------------------------------
+--'* SORT_AREA_RETAINED_SIZE/SORT_AREA_SIZE RATIO     < 50%
+--'* else decrease in INIT.ORA:                         SORT_AREA_SIZE, SORT_AREA_RETAINED_SIZE
+--'*---------------------------------------------------------------------------------------------------
+cn_saretained_to_sortarea      CONSTANT NUMBER(15,4) := 50;    -- from V$PARAMETER =
+                                                               -- sortarearetainedsize/sortareasize*100 < 50%
+
+--'*---------------------------------------------------------------------------------------------------
+--'* SORTS_IN_MEMORY/TOTAL_SORTS RATIO                > 99%
+--'* else increase in INIT.ORA:                         SORT_AREA_SIZE, SORT_AREA_RETAINED_SIZE
+--'*---------------------------------------------------------------------------------------------------
+cn_sortsinmem_to_totalsorts    CONSTANT NUMBER(15,4) := 99;    -- from V$SYSSTAT =
+                                                               -- sortsinmemory/(sortsinmemory+sortsondisk)*100 > 99%
+
+--'*---------------------------------------------------------------------------------------------------
+--'* CPU TIME WAIT RATIO                              < 1%
+--'* else increase in INIT.ORA:                         SESSION_CACHED_CURSORS, DB_BLOCK_BUFFERS
+--'*---------------------------------------------------------------------------------------------------
+cn_cputime_waitratio           CONSTANT NUMBER(15,4) := 1;     -- from V$SYSSTAT =
+                                                               -- (parsetimeelapsed-parsetimecpu)/parsecount*100 < 1%
+
+--'*---------------------------------------------------------------------------------------------------
+--'* RBS PERFORMANCE HIT RATIO                        > 99%
+--'* else more RBS are needed
+--'*---------------------------------------------------------------------------------------------------
+cn_rbsperformance_hitratio     CONSTANT NUMBER(15,4) := 99;    -- from V$WAITSTAT, V$SYSSTAT =
+                                                               -- (1-max(waitstat.count/sum(sysstat.value)))*100 > 99%
+
+--'*---------------------------------------------------------------------------------------------------
+--'* RBS SEGMENT CONTENTION RATIO                     < 1%
+--'* else more RBS are needed
+--'*---------------------------------------------------------------------------------------------------
+cn_rbs_segmcontention_ratio    CONSTANT NUMBER(15,4) := 1;     -- from V$ROLLSTAT =
+                                                               -- max(waits/gets)*100 < 1%
+
+--'*---------------------------------------------------------------------------------------------------
+--'* FREELIST CONTENTION RATIO                        < 1%
+--'* else recreate table with increased freelists
+--'*---------------------------------------------------------------------------------------------------
+cn_freelist_contentionratio    CONSTANT NUMBER(15,4) := 1;     -- from V$WAITSTAT, V$SYSSTAT =
+                                                               -- w.count/sum(s.value)*100 < 1%
+
+--'*---------------------------------------------------------------------------------------------------
+--'* LATCH WILLING TO WAIT MISS RATIO                 < 1%
+--'* else decrease in INIT.ORA:                         LOG_SMALL_ENTRY_MAX_SIZE
+--'*---------------------------------------------------------------------------------------------------
+cn_latch_w2wmiss_ratio         CONSTANT NUMBER(15,4) := 1;     -- from V$LATCH =
+                                                               -- misses/(gets+misses)*100 < 1%
+
+--'*---------------------------------------------------------------------------------------------------
+--'* LATCH IMMEDIATE MISS RATIO                       < 1%
+--'* else decrease in INIT.ORA:                         LOG_SMALL_ENTRY_MAX_SIZE
+--'*---------------------------------------------------------------------------------------------------
+cn_latch_immedmiss_ratio       CONSTANT NUMBER(15,4) := 1;     -- from V$LATCH =
+                                                               -- immediatemisses/(immediategets+immediatemisses)*100 < 1%
+
+--'*---------------------------------------------------------------------------------------------------
+--'* MAX SESSION EVENT AVERAGE WAIT                   = 0
+--'* else contention exists
+--'*---------------------------------------------------------------------------------------------------
+cn_max_sessevent_avgwait       CONSTANT NUMBER(15,4) := 0;     -- from V$SESSION_EVENT =
+                                                               -- max(average_wait) = 0
+
+--'*---------------------------------------------------------------------------------------------------
+--'* MTS DISPATCHER BUSY RATE RATIO                   < 50%
+--'* else increase in INIT.ORA:                         MTS_MAX_DISPATCHERS
+--'*---------------------------------------------------------------------------------------------------
+cn_mtsdispatch_busyrate_ratio  CONSTANT NUMBER(15,4) := 50;    -- from V$DISPATCHER =
+                                                               -- sum(busy)/sum(busy+idle)*100 < 50%
+
+--'*---------------------------------------------------------------------------------------------------
+--'* MTS DISPATCHER TIME WAIT RATIO                   < 1%
+--'* else increase in INIT.ORA:                         MTS_MAX_DISPATCHERS
+--'*---------------------------------------------------------------------------------------------------
+cn_mtsdispatch_timewait_ratio  CONSTANT NUMBER(15,4) := 1;     -- from V$QUEUE, V$DISPATCHER =
+                                                               -- sum(wait)/sum(totalq)*100 < 50%
+
+--'*---------------------------------------------------------------------------------------------------
+--'* I/O BALANCE - FILESYSTEM SIZE RATIO              < 100%
+--'* else re-locate datafiles
+--'*---------------------------------------------------------------------------------------------------
+cn_filesystem_size_ratio       CONSTANT NUMBER(15,4) := 100;   -- from V$DATAFILE, V$FILESTAT =
+                                                               -- min(sum(bytes))/max(sum(bytes))*100 > 50%
+
+--'*---------------------------------------------------------------------------------------------------
+--'* I/O BALANCE - PHYSICAL READS RATIO               < 100%
+--'* else re-locate datafiles
+--'*---------------------------------------------------------------------------------------------------
+cn_physical_reads_ratio        CONSTANT NUMBER(15,4) := 100;   -- from V$DATAFILE, V$FILESTAT =
+                                                               -- min(sum(phyrds))/max(sum(phyrds))*100 > 50%
+
+--'*---------------------------------------------------------------------------------------------------
+--'* I/O BALANCE - PHYSICAL WRITES RATIO              < 100%
+--'* else re-locate datafiles
+--'*---------------------------------------------------------------------------------------------------
+cn_physical_writes_ratio       CONSTANT NUMBER(15,4) := 100;   -- from V$DATAFILE, V$FILESTAT =
+                                                               -- min(sum(phywrts))/max(sum(phywrts))*100 > 50%
+
+
+--'*----------------------------------------------------------------------------
+--'* variables for columns in PERFSYS tables (which have the same columns)
+--'*----------------------------------------------------------------------------
+
+gn_column1            perfsys_list.column1%TYPE;              -- INTEGER
+gn_column2            perfsys_list.column1%TYPE;              -- INTEGER
+gn_column3            perfsys_list.column1%TYPE;              -- INTEGER
+gn_column4            perfsys_list.column1%TYPE;              -- INTEGER
+gn_column5            perfsys_list.column1%TYPE;              -- INTEGER
+
+gn_session_num        perfsys_hist.session_num%TYPE;          -- INTEGER,
+gd_start_time         perfsys_hist.start_time%TYPE;           -- DATE,
+gn_exec_time_secs     perfsys_hist.exec_time_secs%TYPE;       -- NUMBER(15)
+
+gn_dictcache_hitratio           perfsys_hist.dictcache_hitratio%TYPE;           -- NUMBER(15,4)
+gn_libcache_hitratio            perfsys_hist.libcache_hitratio%TYPE;            -- NUMBER(15,4)
+gn_libcache_gethit_ratio        perfsys_hist.libcache_gethit_ratio%TYPE;        -- NUMBER(15,4)
+gn_libcache_pinhit_ratio        perfsys_hist.libcache_pinhit_ratio%TYPE;        -- NUMBER(15,4)
+gn_db_buffercache_hitratio      perfsys_hist.db_buffercache_hitratio%TYPE;      -- NUMBER(15,4)
+gn_redobuf_allocretries_ratio   perfsys_hist.redobuf_allocretries_ratio%TYPE;   -- NUMBER(15,4)
+gn_redobuf_spacerequest_ratio   perfsys_hist.redobuf_spacerequest_ratio%TYPE;   -- NUMBER(15,4)
+gn_freemem_to_shpl_ratio        perfsys_hist.freemem_to_shpl_ratio%TYPE;        -- NUMBER(15,4)
+gn_freemem_to_shplres_ratio     perfsys_hist.freemem_to_shplres_ratio%TYPE;     -- NUMBER(15,4)
+gn_shplres_to_shpl_ratio        perfsys_hist.shplres_to_shpl_ratio%TYPE;        -- NUMBER(15,4)
+gn_shplmin_to_shplres_ratio     perfsys_hist.shplmin_to_shplres_ratio%TYPE;     -- NUMBER(15,4)
+gn_shplres_request_miss_ratio   perfsys_hist.shplres_request_miss_ratio%TYPE;   -- NUMBER(15,4)
+gn_shplres_request_fail_ratio   perfsys_hist.shplres_request_fail_ratio%TYPE;   -- NUMBER(15,4)
+gn_shplmin_to_lastfail_ratio    perfsys_hist.shplmin_to_lastfail_ratio%TYPE;    -- NUMBER(15,4)
+gn_shplmin_to_avgfree_ratio     perfsys_hist.shplmin_to_avgfree_ratio%TYPE;     -- NUMBER(15,4)
+gn_sortarea_to_shpl             perfsys_hist.sortarea_to_shpl%TYPE;             -- NUMBER(15,4)
+gn_saretained_to_sortarea       perfsys_hist.saretained_to_sortarea%TYPE;       -- NUMBER(15,4)
+gn_sortsinmem_to_totalsorts     perfsys_hist.sortsinmem_to_totalsorts%TYPE;     -- NUMBER(15,4)
+gn_cputime_waitratio            perfsys_hist.cputime_waitratio%TYPE;            -- NUMBER(15,4)
+gn_rbsperformance_hitratio      perfsys_hist.rbsperformance_hitratio%TYPE;      -- NUMBER(15,4)
+gn_rbs_segmcontention_ratio     perfsys_hist.rbs_segmcontention_ratio%TYPE;     -- NUMBER(15,4)
+gn_freelist_contentionratio     perfsys_hist.freelist_contentionratio%TYPE;     -- NUMBER(15,4)
+gn_latch_w2wmiss_ratio          perfsys_hist.latch_w2wmiss_ratio%TYPE;          -- NUMBER(15,4)
+gn_latch_immedmiss_ratio        perfsys_hist.latch_immedmiss_ratio%TYPE;        -- NUMBER(15,4)
+gn_max_sessevent_avgwait        perfsys_hist.max_sessevent_avgwait%TYPE;        -- NUMBER(15,4)
+gn_mtsdispatch_busyrate_ratio   perfsys_hist.mtsdispatch_busyrate_ratio%TYPE;   -- NUMBER(15,4)
+gn_mtsdispatch_timewait_ratio   perfsys_hist.mtsdispatch_timewait_ratio%TYPE;   -- NUMBER(15,4)
+gn_filesystem_size_ratio        perfsys_hist.filesystem_size_ratio%TYPE;        -- NUMBER(15,4)
+gn_physical_reads_ratio         perfsys_hist.physical_reads_ratio%TYPE;         -- NUMBER(15,4)
+gn_physical_writes_ratio        perfsys_hist.physical_writes_ratio%TYPE;        -- NUMBER(15,4)
+
+gc_message                      perfsys_hist.message%TYPE;                      -- VARCHAR2(240)
+
+--'*----------------------------------------------------------------------------
+--'* work variables
+--'*----------------------------------------------------------------------------
+
+gc_display_01         VARCHAR2(240) := NULL;           -- string holders for the display procedures
+gc_display_02         VARCHAR2(240) := NULL;
+gc_display_03         VARCHAR2(240) := NULL;
+gc_display_04         VARCHAR2(240) := NULL;
+gc_display_05         VARCHAR2(240) := NULL;
+gc_display_06         VARCHAR2(240) := NULL;
+gc_display_07         VARCHAR2(240) := NULL;
+gc_display_08         VARCHAR2(240) := NULL;
+gc_display_09         VARCHAR2(240) := NULL;
+gc_display_10         VARCHAR2(240) := NULL;
+gc_display_11         VARCHAR2(240) := NULL;
+gc_display_12         VARCHAR2(240) := NULL;
+gc_display_13         VARCHAR2(240) := NULL;
+gc_display_14         VARCHAR2(240) := NULL;
+gc_display_15         VARCHAR2(240) := NULL;
+gc_display_16         VARCHAR2(240) := NULL;
+
+gd_period_start       DATE          := NULL;           -- start date of stats period
+gd_period_end         DATE          := NULL;           -- end   date of stats period
+
+gn_av_dur_secs        INTEGER       := 0;              -- average session duration in seconds
+gn_hi_dur_secs        INTEGER       := 0;              -- highest session duration in seconds
+gn_lo_dur_secs        INTEGER       := 0;              -- lowest  session duration in seconds
+
+--'*----------------------------------------------------------------------------
+--'* run-time changing variables -- set in other modules
+--'*----------------------------------------------------------------------------
+
+gc_module             VARCHAR2(80)  := NULL;           -- current module running -- in all modules
+gc_comment            VARCHAR2(160) := NULL;           -- comment for display    -- in all modules
+gc_day_of_week        VARCHAR2(12)  := NULL;           -- in P_INIT, F_BAD_TIME
+gn_time_of_day        INTEGER       := NULL;           -- in P_INIT, F_BAD_TIME
+gn_mins_of_hour       INTEGER       := NULL;           -- in P_INIT, F_BAD_TIME
+
+--'*----------------------------------------------------------------------------
+--'* "variable constants" - set in P_INIT, right at start, next paragraph
+--'*----------------------------------------------------------------------------
+
+gc_db                 VARCHAR2(8)   := NULL;           -- current database
+gc_ora_ver            VARCHAR2(9)   := NULL;           -- Oracle server version
+gc_file_name          VARCHAR2(160) := NULL;           -- datafile name to use for capturing format
+gc_os_type            VARCHAR2(8)   := NULL;           -- operating system type ('UNIX' or 'NT')
+gc_log_dir_name       VARCHAR2(160) := NULL;           -- log location ( INIT.ORA: UTL_FILE_DIR = * )
+gc_slash              VARCHAR2(1)   := NULL;           -- separation code between dir/file ('/' or '\')
+gc_log_file_name_pkg  VARCHAR2(160) := NULL;           -- name of log file created by PL/SQL PACKAGE
+gc_log_file_name_sql  VARCHAR2(160) := NULL;           -- name of log file created by SHELL/SQL*PLUS
+gf_log_file           UTL_FILE.FILE_TYPE;              -- log file type
+
+------------------------------------------------------------------------------------------------------
+
+
+--'*----------------------------------------------------------------------------
+--'* forward declarations of procedures
+--'*----------------------------------------------------------------------------
+
+PROCEDURE P_DISPLAY_INIT;
+PROCEDURE P_DISPLAY_ROW;
+PROCEDURE P_WRITE_ROW;
+PROCEDURE P_EXCEPTIONS;
+------------------------------------------------------------------------------------------------------
+
+
+PROCEDURE P_INIT
+IS
+
+--'+***************************************************************************
+--'+ PROCEDURE:     P_INIT
+--'+---------------------------------------------------------------------------
+--'+ PURPOSE:       initialize global run-time variables
+--'+---------------------------------------------------------------------------
+--'+ INPUTS:        none
+--'+ RETURNS:       none
+--'+***************************************************************************
+
+BEGIN
+  DBMS_OUTPUT.DISABLE;
+  DBMS_OUTPUT.ENABLE(10000000);
+  SELECT name INTO gc_db FROM v$database;
+  gc_day_of_week       := to_char(sysdate, 'FMDAY');
+  gn_time_of_day       := to_number(to_char(sysdate, 'HH24'));
+  gn_mins_of_hour      := to_number(to_char(sysdate, 'MI'));
+--
+  SELECT ltrim(rtrim(substr(banner,instr(banner,'Release',1)+8,9)))
+    INTO gc_ora_ver
+    FROM v$version
+   WHERE rownum < 2;
+--
+  SELECT max(name)
+    INTO gc_file_name
+    FROM v$controlfile;
+--
+  IF    instr(gc_file_name, '\') != 0 THEN
+        gc_os_type               := 'NT';
+  ELSIF instr(gc_file_name, '/') != 0 THEN
+        gc_os_type               := 'UNIX';
+  ELSE
+        gc_os_type               := 'Unknown-OS';
+  END IF;
+--
+  IF    gc_os_type       = 'NT'   THEN
+        gc_log_dir_name := 'C:\TEMP';
+        gc_slash        := '\';
+  ELSIF gc_os_type       = 'UNIX' THEN
+        gc_log_dir_name := '/tmp';
+        gc_slash        := '/';
+  ELSE
+        gc_log_dir_name := '/tmp';
+        gc_slash        := '/';
+  END IF;
+--
+  gc_log_file_name_pkg := gc_db||'-PERFsysPKG.log';
+  gc_log_file_name_sql := gc_db||'-PERFsysSQL.log';
+  gf_log_file          := UTL_FILE.FOPEN(gc_log_dir_name, gc_log_file_name_pkg, 'w');
+  UTL_FILE.FCLOSE(gf_log_file);
+EXCEPTION WHEN OTHERS THEN
+  P_EXCEPTIONS;
+END; -- PROCEDURE P_INIT
+-------------------------------------------------------------------------------
+
+
+PROCEDURE P_EXCEPTIONS
+IS
+
+--'+***************************************************************************
+--'+ PROCEDURE:     P_EXCEPTIONS
+--'+---------------------------------------------------------------------------
+--'+ PURPOSE:       if exceptions, display error code and message
+--'+---------------------------------------------------------------------------
+--'+ INPUTS:        none
+--'+ RETURNS:       none
+--'+***************************************************************************
+
+BEGIN
+  P_DISPLAY_INIT;
+  gc_display_01 := 'EXCEPTION IN: '||gc_module;
+  P_DISPLAY_ROW;
+  P_WRITE_ROW;
+  gc_message := SUBSTR(SQLERRM(SQLCODE),1,240);
+  gc_display_01 := gc_message;
+  P_DISPLAY_ROW;
+  P_WRITE_ROW;
+  SELECT nvl(count(*),0) INTO gn_session_num FROM perfsys_hist;
+  UPDATE perfsys_hist
+     SET start_time = sysdate,
+         message = gc_message
+   WHERE perfsys_hist.session_num = gn_session_num;
+  COMMIT;
+END; -- PROCEDURE P_EXCEPTIONS
+-------------------------------------------------------------------------------
+
+
+PROCEDURE P_DISPLAY_INIT
+IS
+
+--'+***************************************************************************
+--'+ PROCEDURE:     P_DISPLAY_INIT
+--'+---------------------------------------------------------------------------
+--'+ PURPOSE:       initialize display parameters -- set them to NULL
+--'+---------------------------------------------------------------------------
+--'+ INPUTS:        none
+--'+ RETURNS:       none
+--'+***************************************************************************
+
+BEGIN
+  gc_display_01 := NULL;
+  gc_display_02 := NULL;
+  gc_display_03 := NULL;
+  gc_display_04 := NULL;
+  gc_display_05 := NULL;
+  gc_display_06 := NULL;
+  gc_display_07 := NULL;
+  gc_display_08 := NULL;
+  gc_display_09 := NULL;
+  gc_display_10 := NULL;
+  gc_display_11 := NULL;
+  gc_display_12 := NULL;
+  gc_display_13 := NULL;
+  gc_display_14 := NULL;
+  gc_display_15 := NULL;
+  gc_display_16 := NULL;
+END; -- PROCEDURE P_DISPLAY_INIT
+-------------------------------------------------------------------------------
+
+
+PROCEDURE P_DISPLAY_START
+IS
+
+--'+***************************************************************************
+--'+ PROCEDURE:     P_DISPLAY_START
+--'+---------------------------------------------------------------------------
+--'+ PURPOSE:       display header -- display modules, useful for manual runs
+--'+---------------------------------------------------------------------------
+--'+ INPUTS:        none
+--'+ RETURNS:       none
+--'+***************************************************************************
+
+BEGIN
+  DBMS_OUTPUT.PUT_LINE(' ');
+  DBMS_OUTPUT.PUT_LINE(cc_single_line);
+  DBMS_OUTPUT.PUT_LINE('DB: '||gc_db||' - START: '||gc_module||
+                       ' - '||to_char(sysdate, 'DD-MON-YY HH24:MI'));
+  DBMS_OUTPUT.PUT_LINE('COMMENTS: '||gc_comment);
+  DBMS_OUTPUT.PUT_LINE(cc_single_line);
+  DBMS_OUTPUT.PUT_LINE(' ');
+END; -- PROCEDURE P_DISPLAY_START
+-------------------------------------------------------------------------------
+
+
+PROCEDURE P_DISPLAY_END
+IS
+
+--'+***************************************************************************
+--'+ PROCEDURE:     P_DISPLAY_END
+--'+---------------------------------------------------------------------------
+--'+ PURPOSE:       display footer
+--'+---------------------------------------------------------------------------
+--'+ INPUTS:        none
+--'+ RETURNS:       none
+--'+***************************************************************************
+
+BEGIN
+  DBMS_OUTPUT.PUT_LINE(' ');
+  DBMS_OUTPUT.PUT_LINE(cc_single_line);
+  DBMS_OUTPUT.PUT_LINE('DB: '||gc_db||' - END: '||gc_module||
+                       ' - '||to_char(sysdate, 'DD-MON-YY HH24:MI'));
+  DBMS_OUTPUT.PUT_LINE(cc_double_line);
+  DBMS_OUTPUT.PUT_LINE(' ');
+END; -- PROCEDURE P_DISPLAY_END
+-------------------------------------------------------------------------------
+
+
+PROCEDURE P_DISPLAY_ROW
+IS
+
+--'+***************************************************************************
+--'+ PROCEDURE:     P_DISPLAY_ROW
+--'+---------------------------------------------------------------------------
+--'+ PURPOSE:       display current row -- use to display details
+--'+---------------------------------------------------------------------------
+--'+ INPUTS:        none
+--'+ RETURNS:       none
+--'+***************************************************************************
+
+BEGIN
+  DBMS_OUTPUT.PUT_LINE(gc_display_01||gc_display_02||gc_display_03||gc_display_04||
+                       gc_display_05||gc_display_06||gc_display_07||gc_display_08);
+END; -- PROCEDURE P_DISPLAY_ROW
+-------------------------------------------------------------------------------
+
+
+PROCEDURE P_DISPLAY_COLUMNS
+IS
+
+--'+***************************************************************************
+--'+ PROCEDURE:     P_DISPLAY_COLUMNS
+--'+---------------------------------------------------------------------------
+--'+ PURPOSE:       display parameters in column format for summary reports
+--'+---------------------------------------------------------------------------
+--'+ INPUTS:        none
+--'+ RETURNS:       none
+--'+***************************************************************************
+
+BEGIN
+  DBMS_OUTPUT.PUT_LINE(' ');
+  DBMS_OUTPUT.PUT_LINE(gc_display_01);
+  DBMS_OUTPUT.PUT_LINE(gc_display_02);
+  DBMS_OUTPUT.PUT_LINE(gc_display_03);
+  DBMS_OUTPUT.PUT_LINE(gc_display_04);
+  DBMS_OUTPUT.PUT_LINE(gc_display_05);
+  DBMS_OUTPUT.PUT_LINE(gc_display_06);
+  DBMS_OUTPUT.PUT_LINE(gc_display_07);
+  DBMS_OUTPUT.PUT_LINE(gc_display_08);
+  DBMS_OUTPUT.PUT_LINE(gc_display_09);
+  DBMS_OUTPUT.PUT_LINE(gc_display_10);
+  DBMS_OUTPUT.PUT_LINE(gc_display_11);
+  DBMS_OUTPUT.PUT_LINE(gc_display_12);
+  DBMS_OUTPUT.PUT_LINE(gc_display_13);
+  DBMS_OUTPUT.PUT_LINE(gc_display_14);
+  DBMS_OUTPUT.PUT_LINE(gc_display_15);
+  DBMS_OUTPUT.PUT_LINE(gc_display_16);
+  DBMS_OUTPUT.PUT_LINE(' ');
+END; -- PROCEDURE P_DISPLAY_COLUMNS
+-------------------------------------------------------------------------------
+
+
+PROCEDURE P_WRITE_START
+IS
+
+--'+***************************************************************************
+--'+ PROCEDURE:     P_WRITE_START
+--'+---------------------------------------------------------------------------
+--'+ PURPOSE:       write header to file
+--'+---------------------------------------------------------------------------
+--'+ INPUTS:        none
+--'+ RETURNS:       none
+--'+***************************************************************************
+
+BEGIN
+  gf_log_file := UTL_FILE.FOPEN(gc_log_dir_name, gc_log_file_name_pkg, 'a');
+  UTL_FILE.PUT_LINE(gf_log_file, ' ');
+  UTL_FILE.PUT_LINE(gf_log_file, cc_single_line);
+  UTL_FILE.PUT_LINE(gf_log_file, 'DB: '||gc_db||' - START: '||gc_module||
+                                 ' - '||to_char(sysdate, 'DD-MON-YY HH24:MI'));
+  UTL_FILE.PUT_LINE(gf_log_file, 'COMMENTS: '||gc_comment);
+  UTL_FILE.PUT_LINE(gf_log_file, cc_single_line);
+  UTL_FILE.PUT_LINE(gf_log_file, ' ');
+  UTL_FILE.FCLOSE(gf_log_file);
+END; -- PROCEDURE P_WRITE_START
+-------------------------------------------------------------------------------
+
+
+PROCEDURE P_WRITE_END
+IS
+
+--'+***************************************************************************
+--'+ PROCEDURE:     P_WRITE_END
+--'+---------------------------------------------------------------------------
+--'+ PURPOSE:       write footer to file
+--'+---------------------------------------------------------------------------
+--'+ INPUTS:        none
+--'+ RETURNS:       none
+--'+***************************************************************************
+
+BEGIN
+  gf_log_file := UTL_FILE.FOPEN(gc_log_dir_name, gc_log_file_name_pkg, 'a');
+  UTL_FILE.PUT_LINE(gf_log_file, ' ');
+  UTL_FILE.PUT_LINE(gf_log_file, cc_single_line);
+  UTL_FILE.PUT_LINE(gf_log_file, 'DB: '||gc_db||' - END: '||gc_module||
+                                 ' - '||to_char(sysdate, 'DD-MON-YY HH24:MI'));
+  UTL_FILE.PUT_LINE(gf_log_file, cc_double_line);
+  UTL_FILE.PUT_LINE(gf_log_file, ' ');
+  UTL_FILE.FCLOSE(gf_log_file);
+END; -- PROCEDURE P_WRITE_END
+-------------------------------------------------------------------------------
+
+
+PROCEDURE P_WRITE_ROW
+IS
+
+--'+***************************************************************************
+--'+ PROCEDURE:     P_WRITE_ROW
+--'+---------------------------------------------------------------------------
+--'+ PURPOSE:       write current row to file -- use to display details
+--'+---------------------------------------------------------------------------
+--'+ INPUTS:        none
+--'+ RETURNS:       none
+--'+***************************************************************************
+
+BEGIN
+  gf_log_file := UTL_FILE.FOPEN(gc_log_dir_name, gc_log_file_name_pkg, 'a');
+  UTL_FILE.PUT_LINE(gf_log_file, gc_display_01||gc_display_02||gc_display_03||gc_display_04||
+                                 gc_display_05||gc_display_06||gc_display_07||gc_display_08);
+  UTL_FILE.FCLOSE(gf_log_file);
+END; -- PROCEDURE P_WRITE_ROW
+-------------------------------------------------------------------------------
+
+
+PROCEDURE P_WRITE_COLUMNS
+IS
+
+--'+***************************************************************************
+--'+ PROCEDURE:     P_WRITE_COLUMNS
+--'+---------------------------------------------------------------------------
+--'+ PURPOSE:       write parameters to file in columns for summary reports
+--'+---------------------------------------------------------------------------
+--'+ INPUTS:        none
+--'+ RETURNS:       none
+--'+***************************************************************************
+
+BEGIN
+  gf_log_file := UTL_FILE.FOPEN(gc_log_dir_name, gc_log_file_name_pkg, 'a');
+  UTL_FILE.PUT_LINE(gf_log_file, ' ');
+  UTL_FILE.PUT_LINE(gf_log_file, gc_display_01);
+  UTL_FILE.PUT_LINE(gf_log_file, gc_display_02);
+  UTL_FILE.PUT_LINE(gf_log_file, gc_display_03);
+  UTL_FILE.PUT_LINE(gf_log_file, gc_display_04);
+  UTL_FILE.PUT_LINE(gf_log_file, gc_display_05);
+  UTL_FILE.PUT_LINE(gf_log_file, gc_display_06);
+  UTL_FILE.PUT_LINE(gf_log_file, gc_display_07);
+  UTL_FILE.PUT_LINE(gf_log_file, gc_display_08);
+  UTL_FILE.PUT_LINE(gf_log_file, gc_display_09);
+  UTL_FILE.PUT_LINE(gf_log_file, gc_display_10);
+  UTL_FILE.PUT_LINE(gf_log_file, gc_display_11);
+  UTL_FILE.PUT_LINE(gf_log_file, gc_display_12);
+  UTL_FILE.PUT_LINE(gf_log_file, gc_display_13);
+  UTL_FILE.PUT_LINE(gf_log_file, gc_display_14);
+  UTL_FILE.PUT_LINE(gf_log_file, gc_display_15);
+  UTL_FILE.PUT_LINE(gf_log_file, gc_display_16);
+  UTL_FILE.PUT_LINE(gf_log_file, ' ');
+  UTL_FILE.FCLOSE(gf_log_file);
+END; -- PROCEDURE P_WRITE_COLUMNS
+-------------------------------------------------------------------------------
+
+
+FUNCTION F_BAD_TIME RETURN BOOLEAN
+IS
+
+--'+***************************************************************************
+--'+ FUNCTION:      F_BAD_TIME
+--'+---------------------------------------------------------------------------
+--'+ PURPOSE:       is it a bad time/day for session?
+--'+---------------------------------------------------------------------------
+--'+ INPUTS:        none
+--'+ RETURNS:       lb_bad_time BOOLEAN
+--'+***************************************************************************
+
+lb_bad_time BOOLEAN;
+
+BEGIN
+  gc_day_of_week  := to_char(sysdate, 'FMDAY');
+  gn_time_of_day  := to_number(to_char(sysdate, 'HH24'));
+  gn_mins_of_hour := to_number(to_char(sysdate, 'MI'));
+--
+  IF      gc_day_of_week IN     (cc_bad_week_day_1,
+                                 cc_bad_week_day_2,
+                                 cc_bad_week_day_3,
+                                 cc_bad_week_day_4,
+                                 cc_bad_week_day_5,
+                                 cc_bad_week_day_6,
+                                 cc_bad_week_day_7) THEN
+          lb_bad_time := TRUE;
+--
+  ELSIF ((cn_time_of_day_start < cn_time_of_day_stop)
+  AND    (gn_time_of_day NOT BETWEEN cn_time_of_day_start AND cn_time_of_day_stop)) THEN
+          lb_bad_time := TRUE;
+--
+  ELSIF ((cn_time_of_day_stop < cn_time_of_day_start)
+  AND    (gn_time_of_day BETWEEN cn_time_of_day_stop AND cn_time_of_day_start)) THEN
+          lb_bad_time := TRUE;
+--
+  ELSE
+          lb_bad_time := FALSE;
+  END IF;
+  RETURN  lb_bad_time;
+EXCEPTION WHEN OTHERS THEN
+  P_EXCEPTIONS;
+END; -- FUNCTION F_BAD_TIME
+-------------------------------------------------------------------------------
+
+
+PROCEDURE P_BAD_TIME
+IS
+
+--'+***************************************************************************
+--'+ PROCEDURE:     P_BAD_TIME
+--'+---------------------------------------------------------------------------
+--'+ PURPOSE:       display this is a bad time to do processing
+--'+---------------------------------------------------------------------------
+--'+ INPUTS:        none
+--'+ RETURNS:       none
+--'+***************************************************************************
+
+BEGIN
+  gc_module  := cc_package_name||'.BAD_TIME';
+  gc_comment := 'Display message: THIS IS A BAD TIME TO DO PROCESSING';
+  P_DISPLAY_START;
+  P_WRITE_START;
+  P_DISPLAY_INIT;
+  gc_display_01 := cc_star_line;
+  P_DISPLAY_ROW;
+  P_WRITE_ROW;
+  gc_display_01 := '***************  BAD TIME TO DO PROCESSING - PACKAGE CANNOT RUN  *************** ';
+  P_DISPLAY_ROW;
+  P_WRITE_ROW;
+  gc_display_01 := cc_star_line;
+  P_DISPLAY_ROW;
+  P_WRITE_ROW;
+  P_DISPLAY_END;
+  P_WRITE_END;
+END; -- PROCEDURE P_BAD_TIME
+-------------------------------------------------------------------------------
+
+
+PROCEDURE P_CALC_INDICATORS
+IS
+
+--'+***************************************************************************
+--'+ PROCEDURE:     P_CALC_INDICATORS
+--'+---------------------------------------------------------------------------
+--'+ PURPOSE:       calculate tuning indicators
+--'+---------------------------------------------------------------------------
+--'+ INPUTS:        none
+--'+ RETURNS:       none
+--'+***************************************************************************
+
+BEGIN
+  gc_module  := cc_package_name||'.P_CALC_INDICATORS';
+  P_DISPLAY_INIT;
+--
+--'*---------------------------------------------------------------------------------------------------
+--'* DICTIONARY CACHE HIT RATIO                       > 99%
+--'* else increase in INIT.ORA:                         SHARED_POOL_SIZE
+--'*---------------------------------------------------------------------------------------------------
+  BEGIN
+    SELECT (1-sum(getmisses)/sum(gets+0.0001))*100
+      INTO gn_dictcache_hitratio
+      FROM v$rowcache;
+  EXCEPTION WHEN OTHERS THEN
+    P_EXCEPTIONS;
+  END;
+--
+--'*---------------------------------------------------------------------------------------------------
+--'* LIBRARY CACHE HIT RATIO                          > 99%
+--'* else increase in INIT.ORA:                         SHARED_POOL_SIZE, OPEN_CURSORS
+--'*---------------------------------------------------------------------------------------------------
+  BEGIN
+    SELECT (1-sum(reloads)/sum(pins+0.0001))*100
+      INTO gn_libcache_hitratio
+      FROM v$librarycache;
+  EXCEPTION WHEN OTHERS THEN
+    P_EXCEPTIONS;
+  END;
+--
+--'*---------------------------------------------------------------------------------------------------
+--'* LIBRARY CACHE GET HIT RATIO                      > 70%
+--'* LIBRARY CACHE PIN HIT RATIO                      > 70%
+--'* else increase in INIT.ORA:                         SHARED_POOL_SIZE
+--'*---------------------------------------------------------------------------------------------------
+  BEGIN
+    SELECT min(gethitratio)*100, min(pinhitratio)*100
+      INTO gn_libcache_gethit_ratio, gn_libcache_pinhit_ratio
+      FROM v$librarycache
+     WHERE namespace IN ('SQL AREA', 'TABLE/PROCEDURE', 'BODY', 'TRIGGER');
+  EXCEPTION WHEN OTHERS THEN
+    P_EXCEPTIONS;
+  END;
+--
+--'*---------------------------------------------------------------------------------------------------
+--'* DB BUFFER CACHE HIT RATIO                        > 80%
+--'* else increase in INIT.ORA:                         DB_BLOCK_BUFFERS
+--'*---------------------------------------------------------------------------------------------------
+  BEGIN
+    SELECT (1-c.value/(a.value+b.value+0.0001))*100
+      INTO gn_db_buffercache_hitratio
+      FROM v$sysstat a, v$sysstat b, v$sysstat c, v$sysstat d
+     WHERE a.name = 'db block gets'   -- a+b = 'logical_reads' = 'db block gets' + 'consistent gets'
+       AND b.name = 'consistent gets'
+       AND c.name = 'physical reads'
+       AND d.name = 'physical writes';
+  EXCEPTION WHEN OTHERS THEN
+    P_EXCEPTIONS;
+  END;
+--
+--'*---------------------------------------------------------------------------------------------------
+--'* REDO BUFFER ALLOCATION RETRIES RATIO             < 1%
+--'* else increase in INIT.ORA:                         LOG_BUFFER
+--'*---------------------------------------------------------------------------------------------------
+  BEGIN
+    SELECT a.value/(b.value+0.0001)*100
+      INTO gn_redobuf_allocretries_ratio
+      FROM v$sysstat a, v$sysstat b
+     WHERE a.name = 'redo buffer allocation retries'
+       AND b.name = 'redo writes';
+  EXCEPTION WHEN OTHERS THEN
+    P_EXCEPTIONS;
+  END;
+--
+--'*---------------------------------------------------------------------------------------------------
+--'* REDO BUFFER SPACE REQUEST RATIO                  < 0.02%
+--'* else increase in INIT.ORA:                         LOG_BUFFER
+--'*---------------------------------------------------------------------------------------------------
+  BEGIN
+    SELECT a.value/(b.value+0.0001)*100
+      INTO gn_redobuf_spacerequest_ratio
+      FROM v$sysstat a, v$sysstat b
+     WHERE a.name = 'redo log space requests'
+       AND b.name = 'redo entries';
+  EXCEPTION WHEN OTHERS THEN
+    P_EXCEPTIONS;
+  END;
+--
+--'*---------------------------------------------------------------------------------------------------
+--'* FREE_MEMORY/SHARED_POOL RATIO                    < 1%
+--'* else decrease in INIT.ORA:                         SHARED_POOL_SIZE
+--'*---------------------------------------------------------------------------------------------------
+  BEGIN
+    SELECT min(least((b.bytes/(c.value+0.0001)),1)*100)
+      INTO gn_freemem_to_shpl_ratio
+      FROM v$sgastat b, v$parameter c
+     WHERE b.name = 'free memory'      -- sometimes 'free memory' shows all RAM
+       AND c.name = 'shared_pool_size';
+  EXCEPTION WHEN OTHERS THEN
+    P_EXCEPTIONS;
+  END;
+--
+--'*---------------------------------------------------------------------------------------------------
+--'* FREE_MEMORY/SHARED_POOL_RESERVED RATIO           < 50%
+--'* else decrease in INIT.ORA:                         SHARED_POOL_RESERVED_SIZE, SHARED_POOL_RESERVED_MIN_ALLOC
+--'*---------------------------------------------------------------------------------------------------
+  BEGIN
+    SELECT min(least((b.bytes/(c.value+0.0001)),1)*100)
+      INTO gn_freemem_to_shplres_ratio
+      FROM v$sgastat b, v$parameter c
+     WHERE b.name = 'free memory'      -- sometimes 'free memory' shows all RAM
+       AND c.name = 'shared_pool_reserved_size';
+  EXCEPTION WHEN OTHERS THEN
+    P_EXCEPTIONS;
+  END;
+--
+--'*---------------------------------------------------------------------------------------------------
+--'* SHARED_POOL_RES/SHARED_POOL RATIO                < 10%
+--'* else decrease in INIT.ORA:                         SHARED_POOL_RESERVED_SIZE, SHARED_POOL_RESERVED_MIN_ALLOC
+--'*---------------------------------------------------------------------------------------------------
+  BEGIN
+    SELECT (b.value/(a.value+0.0001))*100
+      INTO gn_shplres_to_shpl_ratio
+      FROM v$parameter a, v$parameter b
+     WHERE a.name = 'shared_pool_size'
+       AND b.name = 'shared_pool_reserved_size';
+  EXCEPTION WHEN OTHERS THEN
+    P_EXCEPTIONS;
+  END;
+--
+--'*---------------------------------------------------------------------------------------------------
+--'* SHARED_POOL_RES_MIN_ALLOC/SHARED_POOL_RES RATIO  < 1%
+--'* else decrease in INIT.ORA:                         SHARED_POOL_RESERVED_SIZE, SHARED_POOL_RESERVED_MIN_ALLOC
+--'*---------------------------------------------------------------------------------------------------
+  BEGIN
+    IF gc_ora_ver <= '8.1' THEN
+       SELECT (to_number(replace(c.value,'K','000'))/(b.value+1000))*100
+         INTO gn_shplmin_to_shplres_ratio
+         FROM v$parameter b, v$parameter c
+        WHERE b.name = 'shared_pool_reserved_size'
+          AND c.name = 'shared_pool_reserved_min_alloc';
+     ELSE
+       gn_shplmin_to_shplres_ratio := 0;
+     END IF;
+  EXCEPTION WHEN OTHERS THEN
+    P_EXCEPTIONS;
+  END;
+--
+--'*---------------------------------------------------------------------------------------------------
+--'* SHARED POOL REQUESTS MISS RATIO                  < 1%
+--'* SHARED POOL REQUESTS FAIL RATIO                  < 1%
+--'* else increase in INIT.ORA:                         SHARED_POOL_RESERVED_SIZE, SHARED_POOL_RESERVED_MIN_ALLOC
+--'*---------------------------------------------------------------------------------------------------
+  BEGIN
+    SELECT (request_misses/(requests+0.0001))*100,
+           (request_failures/(requests+0.0001))*100
+      INTO gn_shplres_request_miss_ratio, gn_shplres_request_fail_ratio
+      FROM v$shared_pool_reserved;
+  EXCEPTION WHEN OTHERS THEN
+    P_EXCEPTIONS;
+  END;
+--
+--'*---------------------------------------------------------------------------------------------------
+--'* SHARED_POOL_RESERVED_MINALLOC/LAST_FAIL RATIO    < 99%
+--'* SHARED_POOL_RESERVED_MINALLOC/AVG_FREE RATIO     < 99%
+--'* else increase in INIT.ORA:                         SHARED_POOL_RESERVED_SIZE, SHARED_POOL_RESERVED_MIN_ALLOC
+--'*---------------------------------------------------------------------------------------------------
+  BEGIN
+    IF gc_ora_ver <= '8.1' THEN
+       SELECT (to_number(replace(a.value,'K','000'))
+                /greatest(b.max_used_size,b.last_failure_size,(to_number(replace(a.value,'K','000')))))*100,
+              (to_number(replace(a.value,'K','000'))
+                /greatest(b.avg_free_size,(to_number(replace(a.value,'K','000')))))*100
+         INTO gn_shplmin_to_lastfail_ratio, gn_shplmin_to_avgfree_ratio
+         FROM v$parameter a, v$shared_pool_reserved b
+        WHERE a.name = 'shared_pool_reserved_min_alloc';
+     ELSE
+       gn_shplmin_to_lastfail_ratio := 0;
+       gn_shplmin_to_avgfree_ratio  := 0;
+     END IF;
+  EXCEPTION WHEN OTHERS THEN
+    P_EXCEPTIONS;
+  END;
+--
+--'*---------------------------------------------------------------------------------------------------
+--'* SORT_AREA_SIZE/SHARED_POOL_SIZE RATIO            < 50%
+--'* SORT_AREA_RETAINED_SIZE/SORT_AREA_SIZE RATIO     < 50%
+--'* else decrease in INIT.ORA:                         SORT_AREA_SIZE, SORT_AREA_RETAINED_SIZE
+--'*---------------------------------------------------------------------------------------------------
+  BEGIN
+    SELECT (b.value/(a.value+0.0001))*100,
+           (c.value/(b.value+0.0001))*100
+      INTO gn_sortarea_to_shpl, gn_saretained_to_sortarea
+      FROM v$parameter a, v$parameter b, v$parameter c
+     WHERE a.name = 'shared_pool_size'
+       AND b.name = 'sort_area_size'
+       AND c.name = 'sort_area_retained_size';
+  EXCEPTION WHEN OTHERS THEN
+    P_EXCEPTIONS;
+  END;
+--
+--'*---------------------------------------------------------------------------------------------------
+--'* SORTS_IN_MEMORY/TOTAL_SORTS RATIO                > 99%
+--'* else increase in INIT.ORA:                         SORT_AREA_SIZE, SORT_AREA_RETAINED_SIZE
+--'*---------------------------------------------------------------------------------------------------
+  BEGIN
+    SELECT (a.value/(a.value+b.value+0.0001))*100
+      INTO gn_sortsinmem_to_totalsorts
+      FROM v$sysstat a, v$sysstat b
+     WHERE a.name = 'sorts (memory)'
+       AND b.name = 'sorts (disk)';
+  EXCEPTION WHEN OTHERS THEN
+    P_EXCEPTIONS;
+  END;
+--
+--'*---------------------------------------------------------------------------------------------------
+--'* CPU TIME WAIT RATIO                              < 1%
+--'* else increase in INIT.ORA:                         SESSION_CACHED_CURSORS, DB_BLOCK_BUFFERS
+--'*---------------------------------------------------------------------------------------------------
+  BEGIN
+    SELECT (a.value-b.value)/(c.value+0.0001)*100
+      INTO gn_cputime_waitratio
+      FROM v$sysstat a, v$sysstat b, v$sysstat c
+     WHERE a.name = 'parse time elapsed'
+       AND b.name = 'parse time cpu'
+       AND c.name IN ('parse count', 'parse count (total)');
+  EXCEPTION WHEN OTHERS THEN
+    P_EXCEPTIONS;
+  END;
+--
+--'*---------------------------------------------------------------------------------------------------
+--'* RBS PERFORMANCE HIT RATIO                        > 99%
+--'* else more RBS are needed
+--'*---------------------------------------------------------------------------------------------------
+  BEGIN
+    SELECT (1-max(w.count/sum(s.value+0.0001)))*100
+      INTO gn_rbsperformance_hitratio
+      FROM v$waitstat w, v$sysstat s
+     WHERE w.class IN ('system undo header',
+                       'system undo block',
+                       'undo header',
+                       'undo block')
+       AND s.name IN  ('db block gets', 'consistent gets') -- "Total Number of Requests for Data"
+     GROUP BY w.count;
+  EXCEPTION WHEN OTHERS THEN
+    P_EXCEPTIONS;
+  END;
+--
+--'*---------------------------------------------------------------------------------------------------
+--'* RBS SEGMENT CONTENTION RATIO                     < 1%
+--'* else more RBS are needed
+--'*---------------------------------------------------------------------------------------------------
+  BEGIN
+    SELECT max(waits/gets+0.0001)*100
+      INTO gn_rbs_segmcontention_ratio
+      FROM v$rollstat;
+  EXCEPTION WHEN OTHERS THEN
+    P_EXCEPTIONS;
+  END;
+--
+--'*---------------------------------------------------------------------------------------------------
+--'* FREELIST CONTENTION RATIO                        < 1%
+--'* else recreate table with increased freelists
+--'*---------------------------------------------------------------------------------------------------
+  BEGIN
+    SELECT w.count/sum(s.value+0.0001)*100
+      INTO gn_freelist_contentionratio
+      FROM v$waitstat w, v$sysstat s
+     WHERE w.class IN ('free list')
+       AND s.name IN  ('db block gets', 'consistent gets') -- "Total Number of Requests for Data"
+     GROUP BY w.count;
+  EXCEPTION WHEN OTHERS THEN
+    P_EXCEPTIONS;
+  END;
+--
+--'*---------------------------------------------------------------------------------------------------
+--'* LATCH WILLING TO WAIT MISS RATIO                 < 1%
+--'* LATCH IMMEDIATE MISS RATIO                       < 1%
+--'* else decrease in INIT.ORA:                         LOG_SMALL_ENTRY_MAX_SIZE
+--'*---------------------------------------------------------------------------------------------------
+  BEGIN
+    SELECT max((l.misses/(l.gets+l.misses+0.0001))*100),
+           max((l.immediate_misses/(l.immediate_gets+l.immediate_misses+0.0001))*100)
+      INTO gn_latch_w2wmiss_ratio, gn_latch_immedmiss_ratio
+      FROM v$latch l;
+  EXCEPTION WHEN OTHERS THEN
+    P_EXCEPTIONS;
+  END;
+--
+--'*---------------------------------------------------------------------------------------------------
+--'* MAX SESSION EVENT AVERAGE WAIT                   = 0
+--'* else contention exists
+--'*---------------------------------------------------------------------------------------------------
+  BEGIN
+    SELECT max(average_wait)
+      INTO gn_max_sessevent_avgwait
+      FROM v$session_event;
+  EXCEPTION WHEN OTHERS THEN
+    P_EXCEPTIONS;
+  END;
+--
+--'*---------------------------------------------------------------------------------------------------
+--'* MTS DISPATCHER BUSY RATE RATIO                   < 50%
+--'* else increase in INIT.ORA:                         MTS_MAX_DISPATCHERS
+--'*---------------------------------------------------------------------------------------------------
+  BEGIN
+    SELECT NVL(sum(busy)/sum(busy+idle+0.0001),0)*100
+      INTO gn_mtsdispatch_busyrate_ratio
+      FROM v$dispatcher;
+  EXCEPTION WHEN OTHERS THEN
+    P_EXCEPTIONS;
+  END;
+--
+--'*---------------------------------------------------------------------------------------------------
+--'* MTS DISPATCHER TIME WAIT RATIO                   < 1%
+--'* else increase in INIT.ORA:                         MTS_MAX_DISPATCHERS
+--'*---------------------------------------------------------------------------------------------------
+  BEGIN
+    SELECT NVL(sum(q.wait)/sum(q.totalq+0.0001),0)*100
+      INTO gn_mtsdispatch_timewait_ratio
+      FROM v$queue q, v$dispatcher d
+     WHERE q.type IN ('DISPATCHER', 'COMMON')
+       AND q.paddr = d.paddr;
+  EXCEPTION WHEN OTHERS THEN
+    P_EXCEPTIONS;
+  END;
+--
+--'*---------------------------------------------------------------------------------------------------
+--'* I/O BALANCE - FILESYSTEM SIZE RATIO              < 100%
+--'* I/O BALANCE - PHYSICAL READS RATIO               < 100%
+--'* I/O BALANCE - PHYSICAL WRITES RATIO              < 100%
+--'* else re-locate datafiles
+--'* this ratio is a standard deviation from the mean
+--'*---------------------------------------------------------------------------------------------------
+  BEGIN
+    SELECT stddev(sum(a.bytes))/avg(sum(a.bytes))*100,
+           stddev(sum(b.phyrds))/avg(sum(b.phyrds))*100,
+           stddev(sum(b.phywrts))/avg(sum(b.phywrts))*100
+      INTO gn_filesystem_size_ratio, gn_physical_reads_ratio, gn_physical_writes_ratio
+      FROM v$datafile a, v$filestat b
+     WHERE a.file# = b.file#
+     GROUP BY substr(name,1,instr(name,gc_slash,-1));
+  EXCEPTION WHEN OTHERS THEN
+    P_EXCEPTIONS;
+  END;
+--
+EXCEPTION WHEN OTHERS THEN
+  P_EXCEPTIONS;
+END; -- PROCEDURE P_CALC_INDICATORS
+-------------------------------------------------------------------------------
+
+
+PROCEDURE P_RUN_SESSION
+IS
+
+--'+***************************************************************************
+--'+ PROCEDURE:     P_RUN_SESSION
+--'+---------------------------------------------------------------------------
+--'+ PURPOSE:       simulate a large transaction
+--'+---------------------------------------------------------------------------
+--'+ INPUTS:        none
+--'+ RETURNS:       none
+--'+***************************************************************************
+
+  ln_cursor             NUMBER(12)    := 0;      -- cursor ID
+  ln_dummy              INTEGER       := 0;      -- row fetch return variable
+  lc_sql_string         VARCHAR2(999) := NULL;   -- SQL statement holder
+  ln_cnt                INTEGER       := 0;      -- loop counter
+
+BEGIN
+  gc_module  := cc_package_name||'.P_RUN_SESSION';
+  SELECT nvl(count(*),0) INTO gn_session_num FROM perfsys_hist;
+  gn_session_num := gn_session_num + 1;
+  gd_start_time := sysdate;
+--
+  ln_cursor := DBMS_SQL.OPEN_CURSOR;
+  lc_sql_string := 'TRUNCATE TABLE PERFSYS_LIST';
+  DBMS_SQL.PARSE(ln_cursor, lc_sql_string, DBMS_SQL.V7);
+  ln_dummy := DBMS_SQL.EXECUTE(ln_cursor);
+  DBMS_SQL.CLOSE_CURSOR(ln_cursor);
+--
+  WHILE  (ln_cnt < cn_insert_num_rows) LOOP
+    ln_cnt := ln_cnt + 1;
+    INSERT INTO perfsys_list (column1, column2, column3, column4, column5)
+           VALUES (ln_cnt, ln_cnt, ln_cnt, ln_cnt, ln_cnt);
+    COMMIT;
+  END LOOP;
+--
+  UPDATE perfsys_list
+     SET column2 = 2,
+         column3 = 3,
+         column4 = 4,
+         column5 = 5;
+  COMMIT;
+--
+  gn_exec_time_secs := (sysdate - gd_start_time) * (24 * 60 * 60);
+--
+  P_CALC_INDICATORS;
+--
+  INSERT INTO perfsys_hist
+        (
+         session_num,
+         start_time,
+         exec_time_secs,
+         dictcache_hitratio,
+         libcache_hitratio,
+         libcache_gethit_ratio,
+         libcache_pinhit_ratio,
+         db_buffercache_hitratio,
+         redobuf_allocretries_ratio,
+         redobuf_spacerequest_ratio,
+         freemem_to_shpl_ratio,
+         freemem_to_shplres_ratio,
+         shplres_to_shpl_ratio,
+         shplmin_to_shplres_ratio,
+         shplres_request_miss_ratio,
+         shplres_request_fail_ratio,
+         shplmin_to_lastfail_ratio,
+         shplmin_to_avgfree_ratio,
+         sortarea_to_shpl,
+         saretained_to_sortarea,
+         sortsinmem_to_totalsorts,
+         cputime_waitratio,
+         rbsperformance_hitratio,
+         rbs_segmcontention_ratio,
+         freelist_contentionratio,
+         latch_w2wmiss_ratio,
+         latch_immedmiss_ratio,
+         max_sessevent_avgwait,
+         mtsdispatch_busyrate_ratio,
+         mtsdispatch_timewait_ratio,
+         filesystem_size_ratio,
+         physical_reads_ratio,
+         physical_writes_ratio,
+         message
+        )
+  VALUES
+        (
+         gn_session_num,
+         gd_start_time,
+         gn_exec_time_secs,
+         gn_dictcache_hitratio,
+         gn_libcache_hitratio,
+         gn_libcache_gethit_ratio,
+         gn_libcache_pinhit_ratio,
+         gn_db_buffercache_hitratio,
+         gn_redobuf_allocretries_ratio,
+         gn_redobuf_spacerequest_ratio,
+         gn_freemem_to_shpl_ratio,
+         gn_freemem_to_shplres_ratio,
+         gn_shplres_to_shpl_ratio,
+         gn_shplmin_to_shplres_ratio,
+         gn_shplres_request_miss_ratio,
+         gn_shplres_request_fail_ratio,
+         gn_shplmin_to_lastfail_ratio,
+         gn_shplmin_to_avgfree_ratio,
+         gn_sortarea_to_shpl,
+         gn_saretained_to_sortarea,
+         gn_sortsinmem_to_totalsorts,
+         gn_cputime_waitratio,
+         gn_rbsperformance_hitratio,
+         gn_rbs_segmcontention_ratio,
+         gn_freelist_contentionratio,
+         gn_latch_w2wmiss_ratio,
+         gn_latch_immedmiss_ratio,
+         gn_max_sessevent_avgwait,
+         gn_mtsdispatch_busyrate_ratio,
+         gn_mtsdispatch_timewait_ratio,
+         gn_filesystem_size_ratio,
+         gn_physical_reads_ratio,
+         gn_physical_writes_ratio,
+         NULL
+        );
+  COMMIT;
+--
+  DELETE FROM perfsys_hist
+   WHERE start_time < (sysdate - cn_max_days_in_hist);
+--
+EXCEPTION WHEN OTHERS THEN
+  DBMS_SQL.CLOSE_CURSOR(ln_cursor);
+  P_EXCEPTIONS;
+END; -- PROCEDURE P_RUN_SESSION
+-------------------------------------------------------------------------------
+
+
+PROCEDURE P_DISPLAY_STATS
+IS
+
+--'+***************************************************************************
+--'+ PROCEDURE:     P_DISPLAY_STATS
+--'+---------------------------------------------------------------------------
+--'+ PURPOSE:       displays statistics
+--'+---------------------------------------------------------------------------
+--'+ INPUTS:        none
+--'+ RETURNS:       none
+--'+***************************************************************************
+
+ln_num_of_sessions    INTEGER       := 0;        -- number of sessions run so far
+ln_max_sess_secs      INTEGER       := 0;        -- (old) max overall session duration
+gn_new_max_sess       INTEGER       := 0;        -- (new) max overall session duration
+
+BEGIN
+  gc_module  := cc_package_name||'.P_DISPLAY_STATS';
+  SELECT nvl(count(*),0)             INTO ln_num_of_sessions  FROM perfsys_hist;
+  SELECT nvl(max(exec_time_secs),0)  INTO ln_max_sess_secs    FROM perfsys_hist;
+  IF     gn_exec_time_secs =  ln_max_sess_secs                THEN
+         gn_new_max_sess   := gn_exec_time_secs;
+  ELSE   gn_new_max_sess   := NULL;
+  END IF;
+--
+  gd_period_end   := sysdate;
+  gd_period_start := gd_period_end - cn_period_days;
+  SELECT nvl(avg(exec_time_secs),0), nvl(max(exec_time_secs),0), nvl(min(exec_time_secs),0)
+    INTO gn_av_dur_secs, gn_hi_dur_secs, gn_lo_dur_secs
+    FROM perfsys_hist
+   WHERE start_time BETWEEN gd_period_start AND gd_period_end;
+--
+  P_DISPLAY_INIT;
+  gc_display_01 := 'PACKAGE NAME                          - '||cc_package_name;
+  gc_display_02 := 'CURRENT OS, ORACLE VERSION, DATABASE  - '||gc_os_type||' - ORACLE '||gc_ora_ver||' - '||gc_db;
+  gc_display_03 := 'DAY - DATE - TIME                     - '||to_char(sysdate, 'FMDAY - DD-MON-YYYY - HH24:MI');
+  gc_display_04 := NULL;
+  gc_display_05 := 'NUMBER OF SESSIONS  - IN LOG          - '||ln_num_of_sessions;
+  gc_display_06 := 'DURATION OF SESSION - LAST RUN        - '||gn_exec_time_secs;
+  gc_display_07 := NULL;
+  gc_display_08 := 'EXECUTION TIME      - OLD MAX         - '||ln_max_sess_secs;
+  gc_display_09 := 'EXECUTION TIME      - NEW MAX         - '||gn_new_max_sess;
+  gc_display_10 := NULL;
+  gc_display_11 := 'EXEC TIME - AVERAGE - LAST 30 DAYS    - '||gn_av_dur_secs;
+  gc_display_12 := 'EXEC TIME - HIGHEST - LAST 30 DAYS    - '||gn_hi_dur_secs;
+  gc_display_13 := 'EXEC TIME - LOWEST  - LAST 30 DAYS    - '||gn_lo_dur_secs;
+  gc_display_14 := NULL;
+  gc_display_15 := 'PL/SQL PACKAGE LOG  - BASIC INFO      - '||gc_log_dir_name||gc_slash||gc_log_file_name_pkg;
+  gc_display_16 := 'SHELL/SQL*PLUS LOG  - DETAILED INFO   - '||gc_log_dir_name||gc_slash||gc_log_file_name_sql;
+  P_DISPLAY_COLUMNS;
+  P_WRITE_COLUMNS;
+--
+EXCEPTION WHEN OTHERS THEN
+  P_EXCEPTIONS;
+END; -- PROCEDURE P_DISPLAY_STATS
+-------------------------------------------------------------------------------
+
+
+PROCEDURE P_DISPLAY_ERRORS
+IS
+
+--'+***************************************************************************
+--'+ PROCEDURE:     P_DISPLAY_ERRORS
+--'+---------------------------------------------------------------------------
+--'+ PURPOSE:       displays errors
+--'+                select sessions with error messages in the last 24 hours
+--'+---------------------------------------------------------------------------
+--'+ INPUTS:        none
+--'+ RETURNS:       none
+--'+***************************************************************************
+
+  CURSOR cur_perfsys_hist_err
+  IS
+  SELECT * FROM perfsys_hist
+   WHERE message IS NOT NULL
+     AND start_time > (sysdate - 1)
+   ORDER BY session_num;
+
+BEGIN
+  gc_module  := cc_package_name||'.P_DISPLAY_ERRORS';
+--
+  P_DISPLAY_INIT;
+  gc_message := NULL;
+  FOR c1 in cur_perfsys_hist_err
+  LOOP
+    gc_message     := c1.message;
+    gc_display_01 := 'ERRORS IN THE LAST 24 HOURS: '||gc_message;
+    P_DISPLAY_ROW;
+    P_WRITE_ROW;
+  END LOOP;
+gc_display_01 := NULL;
+P_DISPLAY_ROW;
+P_WRITE_ROW;
+--
+EXCEPTION WHEN OTHERS THEN
+  P_EXCEPTIONS;
+END; -- PROCEDURE P_DISPLAY_ERRORS
+-------------------------------------------------------------------------------
+
+
+PROCEDURE P_ASSESS_TUNING  (p_tuning_param_name     IN VARCHAR2,
+                            p_tuning_param_value    IN NUMBER,
+                            p_tuning_param_sign     IN VARCHAR2,
+                            p_tuning_param_limit    IN NUMBER,
+                            p_tuning_param_message  IN VARCHAR2)
+IS
+
+--'+***************************************************************************
+--'+ PROCEDURE:     P_ASSESS_TUNING
+--'+---------------------------------------------------------------------------
+--'+ PURPOSE:       assess tuning indicators
+--'+                if change higher than limit, display row
+--'+
+--'+ ('G') or ('>') = greater than ...
+--'+ ('L') or ('<') = less than ...
+--'+ ('E') or ('=') = equals ...
+--'+
+--'+---------------------------------------------------------------------------
+--'+ INPUTS:        p_tuning_param_name     VARCHAR2
+--'+                p_tuning_param_value    NUMBER
+--'+                p_tuning_param_sign     VARCHAR2
+--'+                p_tuning_param_limit    NUMBER
+--'+                p_tuning_param_message  VARCHAR2
+--'+
+--'+ RETURNS:       none - displays/writes messages
+--'+***************************************************************************
+
+ln_param_diff         NUMBER(15,4) := 0;
+ln_param_change       NUMBER(15,4) := 0;
+ln_tuning_param_limit NUMBER(15,4) := 0;
+
+BEGIN
+  gc_module  := cc_package_name||'.P_ASSESS_TUNING';
+  P_DISPLAY_INIT;
+  IF  p_tuning_param_limit   = 0  THEN
+      ln_tuning_param_limit := 1;
+  ELSE
+      ln_tuning_param_limit := p_tuning_param_limit;
+  END IF;
+  ln_param_diff   := abs(p_tuning_param_value - p_tuning_param_limit);
+  ln_param_change := ln_param_diff / ln_tuning_param_limit * 100;
+--
+  IF    p_tuning_param_value < p_tuning_param_limit AND
+        p_tuning_param_sign  = '>'                  AND
+        ln_param_change      > cn_big_change        THEN
+        gc_display_01       := p_tuning_param_name||
+                               ' = '||p_tuning_param_value;
+        P_DISPLAY_ROW;
+        P_WRITE_ROW;
+        gc_display_01       := ' - should be > '||p_tuning_param_limit;
+        P_DISPLAY_ROW;
+        P_WRITE_ROW;
+        gc_display_01       := ' - '||p_tuning_param_message;
+        P_DISPLAY_ROW;
+        P_WRITE_ROW;
+        gc_display_01       := NULL;
+        P_DISPLAY_ROW;
+        P_WRITE_ROW;
+  ELSIF p_tuning_param_value > p_tuning_param_limit AND
+        p_tuning_param_sign  = '<'                  AND
+        ln_param_change      > cn_big_change        THEN
+        gc_display_01       := p_tuning_param_name||
+                               ' = '||p_tuning_param_value;
+        P_DISPLAY_ROW;
+        P_WRITE_ROW;
+        gc_display_01       := ' - should be < '||p_tuning_param_limit;
+        P_DISPLAY_ROW;
+        P_WRITE_ROW;
+        gc_display_01       := ' - '||p_tuning_param_message;
+        P_DISPLAY_ROW;
+        P_WRITE_ROW;
+        gc_display_01       := NULL;
+        P_DISPLAY_ROW;
+        P_WRITE_ROW;
+  ELSIF p_tuning_param_value != p_tuning_param_limit AND
+        p_tuning_param_sign   = '='                  AND
+        ln_param_change       > cn_big_change        THEN
+        gc_display_01       := p_tuning_param_name||
+                               ' = '||p_tuning_param_value;
+        P_DISPLAY_ROW;
+        P_WRITE_ROW;
+        gc_display_01       := ' - should be = '||p_tuning_param_limit;
+        P_DISPLAY_ROW;
+        P_WRITE_ROW;
+        gc_display_01       := ' - '||p_tuning_param_message;
+        P_DISPLAY_ROW;
+        P_WRITE_ROW;
+        gc_display_01       := NULL;
+        P_DISPLAY_ROW;
+        P_WRITE_ROW;
+  END IF;
+--
+EXCEPTION WHEN OTHERS THEN
+  P_EXCEPTIONS;
+END; -- PROCEDURE P_ASSESS_TUNING
+-------------------------------------------------------------------------------
+
+
+PROCEDURE P_CALC_CHANGES
+IS
+
+--'+***************************************************************************
+--'+ PROCEDURE:     P_CALC_CHANGES
+--'+---------------------------------------------------------------------------
+--'+ PURPOSE:       calculate statistics changes
+--'+                compare last 30 days with previous 30 day periods
+--'+                if change higher than limit, display row
+--'+---------------------------------------------------------------------------
+--'+ INPUTS:        none
+--'+ RETURNS:       none
+--'+***************************************************************************
+
+ln_av_period_secs     INTEGER       := 0;        -- average session duration in a period
+ln_hi_period_secs     INTEGER       := 0;        -- highest session duration in a period
+ln_lo_period_secs     INTEGER       := 0;        -- lowest  session duration in a period
+
+ln_chng_av_secs       INTEGER       := 0;        -- change in average session duration in percent
+ln_chng_hi_secs       INTEGER       := 0;        -- change in highest session duration in percent
+ln_chng_lo_secs       INTEGER       := 0;        -- change in lowest  session duration in percent
+
+BEGIN
+  gc_module  := cc_package_name||'.P_CALC_CHANGES';
+  P_DISPLAY_INIT;
+--
+  WHILE  (sysdate - gd_period_start < cn_max_days_in_hist + 2 * cn_period_days)
+  LOOP
+    SELECT nvl(avg(exec_time_secs),0), nvl(max(exec_time_secs),0), nvl(min(exec_time_secs),0)
+      INTO ln_av_period_secs, ln_hi_period_secs, ln_lo_period_secs
+      FROM perfsys_hist
+     WHERE start_time BETWEEN gd_period_start AND gd_period_end;
+--
+    IF  gn_av_dur_secs    != 0 AND
+        ln_av_period_secs != 0 THEN
+        ln_chng_av_secs   := ((gn_av_dur_secs - ln_av_period_secs) / ln_av_period_secs) * 100;
+    ELSE
+        ln_chng_av_secs   := 0;
+    END IF;
+    IF  gn_hi_dur_secs    != 0 AND
+        ln_hi_period_secs != 0 THEN
+        ln_chng_hi_secs   := ((gn_hi_dur_secs - ln_hi_period_secs) / ln_hi_period_secs) * 100;
+    ELSE
+        ln_chng_hi_secs   := 0;
+    END IF;
+    IF  gn_lo_dur_secs    != 0 AND
+        ln_lo_period_secs != 0 THEN
+        ln_chng_lo_secs   := ((gn_lo_dur_secs - ln_lo_period_secs) / ln_lo_period_secs) * 100;
+    ELSE
+        ln_chng_lo_secs   := 0;
+    END IF;
+--
+    IF  ln_chng_av_secs   >= cn_big_change THEN
+        gc_display_01     := 'NOW vs. period '||gd_period_start||'...'||gd_period_end||
+                             ' - CHANGE IN AVERAGE EXEC TIME - '||ln_chng_av_secs||'%';
+        P_DISPLAY_ROW;
+        P_WRITE_ROW;
+    END IF;
+    IF  ln_chng_hi_secs   >= cn_big_change THEN
+        gc_display_01     := 'NOW vs. period '||gd_period_start||'...'||gd_period_end||
+                             ' - CHANGE IN HIGHEST EXEC TIME - '||ln_chng_hi_secs||'%';
+        P_DISPLAY_ROW;
+        P_WRITE_ROW;
+    END IF;
+    IF  ln_chng_lo_secs   >= cn_big_change THEN
+        gc_display_01     := 'NOW vs. period '||gd_period_start||'...'||gd_period_end||
+                             ' - CHANGE IN LOWEST  EXEC TIME - '||ln_chng_lo_secs||'%';
+        P_DISPLAY_ROW;
+        P_WRITE_ROW;
+    END IF;
+--
+    gd_period_end   := gd_period_end - cn_period_days;
+    gd_period_start := gd_period_end - cn_period_days;
+  END LOOP;
+--
+  P_DISPLAY_INIT;
+  P_DISPLAY_ROW;
+  P_WRITE_ROW;
+  P_DISPLAY_ROW;
+  P_WRITE_ROW;
+--
+  P_ASSESS_TUNING ('DICTIONARY CACHE HIT RATIO',
+                    gn_dictcache_hitratio, '>', cn_dictcache_hitratio,
+                   'increase SHARED_POOL_SIZE');
+--
+  P_ASSESS_TUNING ('LIBRARY CACHE HIT RATIO',
+                    gn_libcache_hitratio, '>', cn_libcache_hitratio,
+                   'increase SHARED_POOL_SIZE, OPEN_CURSORS');
+--
+  P_ASSESS_TUNING ('LIBRARY CACHE GET HIT RATIO',
+                    gn_libcache_gethit_ratio, '>', cn_libcache_gethit_ratio,
+                   'increase SHARED_POOL_SIZE');
+--
+  P_ASSESS_TUNING ('LIBRARY CACHE PIN HIT RATIO',
+                    gn_libcache_pinhit_ratio, '>', cn_libcache_pinhit_ratio,
+                   'increase SHARED_POOL_SIZE');
+--
+  P_ASSESS_TUNING ('DB BUFFER CACHE HIT RATIO',
+                    gn_db_buffercache_hitratio, '>', cn_db_buffercache_hitratio,
+                   'increase DB_BLOCK_BUFFERS');
+--
+  P_ASSESS_TUNING ('REDO BUFFER ALLOCATION RETRIES RATIO',
+                    gn_redobuf_allocretries_ratio, '<', cn_redobuf_allocretries_ratio,
+                   'increase LOG_BUFFER');
+--
+  P_ASSESS_TUNING ('REDO BUFFER SPACE REQUEST RATIO',
+                    gn_redobuf_spacerequest_ratio, '<', cn_redobuf_spacerequest_ratio,
+                   'increase LOG_BUFFER');
+--
+  P_ASSESS_TUNING ('FREE_MEMORY/SHARED_POOL RATIO',
+                    gn_freemem_to_shpl_ratio, '<', cn_freemem_to_shpl_ratio,
+                   'decrease SHARED_POOL_SIZE');
+--
+  P_ASSESS_TUNING ('FREE_MEMORY/SHARED_POOL_RESERVED RATIO',
+                    gn_freemem_to_shplres_ratio, '<', cn_freemem_to_shplres_ratio,
+                   'decrease SHARED_POOL_RESERVED_SIZE, SHARED_POOL_RESERVED_MIN_ALLOC');
+--
+  P_ASSESS_TUNING ('SHARED_POOL_RES/SHARED_POOL RATIO',
+                    gn_shplres_to_shpl_ratio, '<', cn_shplres_to_shpl_ratio,
+                   'decrease SHARED_POOL_RESERVED_SIZE, SHARED_POOL_RESERVED_MIN_ALLOC');
+--
+  P_ASSESS_TUNING ('SHARED_POOL_RES_MIN_ALLOC/SHARED_POOL_RES RATIO',
+                    gn_shplmin_to_shplres_ratio, '<', cn_shplmin_to_shplres_ratio,
+                   'decrease SHARED_POOL_RESERVED_SIZE, SHARED_POOL_RESERVED_MIN_ALLOC');
+--
+  P_ASSESS_TUNING ('SHARED POOL REQUESTS MISS RATIO',
+                    gn_shplres_request_miss_ratio, '<', cn_shplres_request_miss_ratio,
+                   'increase SHARED_POOL_RESERVED_SIZE, SHARED_POOL_RESERVED_MIN_ALLOC');
+--
+  P_ASSESS_TUNING ('SHARED POOL REQUESTS FAIL RATIO',
+                    gn_shplres_request_fail_ratio, '<', cn_shplres_request_fail_ratio,
+                   'increase SHARED_POOL_RESERVED_SIZE, SHARED_POOL_RESERVED_MIN_ALLOC');
+--
+  P_ASSESS_TUNING ('SHARED_POOL_RESERVED_MINALLOC/LAST_FAIL RATIO',
+                    gn_shplmin_to_lastfail_ratio, '<', cn_shplmin_to_lastfail_ratio,
+                   'increase SHARED_POOL_RESERVED_SIZE, SHARED_POOL_RESERVED_MIN_ALLOC');
+--
+  P_ASSESS_TUNING ('SHARED_POOL_RESERVED_MINALLOC/AVG_FREE RATIO',
+                    gn_shplmin_to_avgfree_ratio, '<', cn_shplmin_to_avgfree_ratio,
+                   'increase SHARED_POOL_RESERVED_SIZE, SHARED_POOL_RESERVED_MIN_ALLOC');
+--
+  P_ASSESS_TUNING ('SORT_AREA_SIZE/SHARED_POOL_SIZE RATIO',
+                    gn_sortarea_to_shpl, '<', cn_sortarea_to_shpl,
+                   'decrease SORT_AREA_SIZE, SORT_AREA_RETAINED_SIZE');
+--
+  P_ASSESS_TUNING ('SORT_AREA_RETAINED_SIZE/SORT_AREA_SIZE RATIO',
+                    gn_saretained_to_sortarea, '<', cn_saretained_to_sortarea,
+                   'decrease SORT_AREA_SIZE, SORT_AREA_RETAINED_SIZE');
+--
+  P_ASSESS_TUNING ('SORTS_IN_MEMORY/TOTAL_SORTS RATIO',
+                    gn_sortsinmem_to_totalsorts, '>', cn_sortsinmem_to_totalsorts,
+                   'increase SORT_AREA_SIZE, SORT_AREA_RETAINED_SIZE');
+--
+  P_ASSESS_TUNING ('CPU TIME WAIT RATIO',
+                    gn_cputime_waitratio, '<', cn_cputime_waitratio,
+                   'increase SESSION_CACHED_CURSORS, DB_BLOCK_BUFFERS');
+--
+  P_ASSESS_TUNING ('RBS PERFORMANCE HIT RATIO',
+                    gn_rbsperformance_hitratio, '>', cn_rbsperformance_hitratio,
+                   'more RBS are needed');
+--
+  P_ASSESS_TUNING ('RBS SEGMENT CONTENTION RATIO',
+                    gn_rbs_segmcontention_ratio, '<', cn_rbs_segmcontention_ratio,
+                   'more RBS are needed');
+--
+  P_ASSESS_TUNING ('FREELIST CONTENTION RATIO',
+                    gn_freelist_contentionratio, '<', cn_freelist_contentionratio,
+                   'recreate table with increased freelists');
+--
+  P_ASSESS_TUNING ('LATCH WILLING TO WAIT MISS RATIO',
+                    gn_latch_w2wmiss_ratio, '<', cn_latch_w2wmiss_ratio,
+                   'decrease LOG_SMALL_ENTRY_MAX_SIZE');
+--
+  P_ASSESS_TUNING ('LATCH IMMEDIATE MISS RATIO',
+                    gn_latch_immedmiss_ratio, '<', cn_latch_immedmiss_ratio,
+                   'decrease LOG_SMALL_ENTRY_MAX_SIZE');
+--
+  P_ASSESS_TUNING ('MAX SESSION EVENT AVERAGE WAIT',
+                    gn_max_sessevent_avgwait, '=', cn_max_sessevent_avgwait,
+                   'contention exists');
+--
+  P_ASSESS_TUNING ('MTS DISPATCHER BUSY RATE RATIO',
+                    gn_mtsdispatch_busyrate_ratio, '<', cn_mtsdispatch_busyrate_ratio,
+                   'increase MTS_MAX_DISPATCHERS');
+--
+  P_ASSESS_TUNING ('MTS DISPATCHER TIME WAIT RATIO',
+                    gn_mtsdispatch_timewait_ratio, '<', cn_mtsdispatch_timewait_ratio,
+                   'increase MTS_MAX_DISPATCHERS');
+--
+  P_ASSESS_TUNING ('I/O BALANCE - FILESYSTEM SIZE RATIO',
+                    gn_filesystem_size_ratio, '<', cn_filesystem_size_ratio,
+                   're-locate datafiles');
+--
+  P_ASSESS_TUNING ('I/O BALANCE - PHYSICAL READS RATIO',
+                    gn_physical_reads_ratio, '<', cn_physical_reads_ratio,
+                   're-locate datafiles');
+--
+  P_ASSESS_TUNING ('I/O BALANCE - PHYSICAL WRITES RATIO',
+                    gn_physical_writes_ratio, '<', cn_physical_writes_ratio,
+                   're-locate datafiles');
+--
+EXCEPTION WHEN OTHERS THEN
+  P_EXCEPTIONS;
+END; -- PROCEDURE P_CALC_CHANGES
+-------------------------------------------------------------------------------
+
+
+PROCEDURE P_MAIN
+IS
+
+--'+***************************************************************************
+--'+ PROCEDURE:     P_MAIN
+--'+---------------------------------------------------------------------------
+--'+ PURPOSE:       start execution of package
+--'+                decide what modules to run
+--'+                check status after processing today`s session completed
+--'+---------------------------------------------------------------------------
+--'+ INPUTS:        none
+--'+ RETURNS:       none
+--'+***************************************************************************
+
+BEGIN
+  P_INIT;
+--
+  gc_module  := cc_package_name||'.P_MAIN';
+  gc_comment := 'started execution of package';
+  P_DISPLAY_START;
+  P_WRITE_START;
+--
+  IF    F_BAD_TIME        THEN
+        P_BAD_TIME;
+  ELSE
+        P_RUN_SESSION;
+  END IF;
+--
+  P_DISPLAY_STATS;
+  P_DISPLAY_ERRORS;
+  P_CALC_CHANGES;
+--
+  gc_module  := cc_package_name||'.P_MAIN';
+  gc_comment := 'completed execution of package';
+  P_DISPLAY_END;
+  P_WRITE_END;
+EXCEPTION WHEN OTHERS THEN
+  P_EXCEPTIONS;
+END; -- PROCEDURE P_MAIN
+-------------------------------------------------------------------------------
+-- PACKAGE BODY PKG_PERFSYS
+END;
+/
+
+
+
+spool off 
+-------------------------------------------------------------------------------
+

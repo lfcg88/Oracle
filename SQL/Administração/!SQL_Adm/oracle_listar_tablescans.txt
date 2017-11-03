@@ -1,0 +1,20 @@
+select	name, value
+	from	v$sysstat
+	where	name like '%table scan%';
+
+
+
+	select 	SID, ELAPSED_SECONDS as el_sec,
+		lpad( to_char( trunc(TIME_REMAINING/60) ) ,4,' ') || 'm '
+			|| lpad( '(' || to_char(TIME_REMAINING), 6, ' ') || 's)'
+			as TIME_REMAINING,
+		substr( MESSAGE,1,85 ) as message,
+		substr( USERNAME,1,10 ) as username,
+		START_TIME, SOFAR, TOTALWORK,
+		substr( OPNAME||' '||TARGET||' '||TARGET_DESC,1,40) as oper,
+		substr(UNITS,1,10) as units
+	from 	v$session_longops vl
+	where 	totalwork > sofar
+	and 	exists( select 1 from v$session s where sid = vl.sid
+			and (select spid from v$process where addr = s.paddr) is not null )
+	order 	by 3 desc, 1;

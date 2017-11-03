@@ -1,0 +1,65 @@
+
+Recovery Manager: Release 9.2.0.4.0 - Production
+
+Copyright (c) 1995, 2002, Oracle Corporation.  All rights reserved.
+
+RMAN> CONNECT TARGET sys/dontknow; 
+2> CONNECT CATALOG rman/rman@metdb01;
+3> 
+4> startup force nomount;
+5> 
+6> run
+7> {
+8> allocate channel ch1 type DISK;
+9> restore validate check logical controlfile;
+10> restore validate check logical database;
+11> #restore validate check logical archivelog all;
+12> restore validate check logical spfile to '/oracle/product/9.2/dbs/spfileteste.ora';
+13> release channel ch1;
+14> }
+15> 
+connected to target database: GRPLAN (not mounted)
+
+connected to recovery catalog database
+
+Oracle instance started
+
+Total System Global Area     236000356 bytes
+
+Fixed Size                      451684 bytes
+Variable Size                201326592 bytes
+Database Buffers              33554432 bytes
+Redo Buffers                    667648 bytes
+
+allocated channel: ch1
+channel ch1: sid=13 devtype=DISK
+
+Starting restore at 05-JAN-04
+
+channel ch1: starting validation of datafile backupset
+channel ch1: restored backup piece 1
+piece handle=/oracle/backup/diario/db_GRPLAN_514645991_43_1_20040105 tag=FULL DIARIO params=NULL
+channel ch1: validation complete
+Finished restore at 05-JAN-04
+
+Starting restore at 05-JAN-04
+
+datafile 5 not processed because file is offline
+datafile 13 not processed because file is offline
+channel ch1: starting validation of datafile backupset
+channel ch1: restored backup piece 1
+piece handle=/oracle/backup/diario/db_GRPLAN_514645991_43_1_20040105 tag=FULL DIARIO params=NULL
+channel ch1: validation complete
+Finished restore at 05-JAN-04
+
+Starting restore at 05-JAN-04
+
+channel ch1: starting validation of datafile backupset
+channel ch1: restored backup piece 1
+piece handle=/oracle/backup/diario/db_GRPLAN_514645991_43_1_20040105 tag=FULL DIARIO params=NULL
+channel ch1: validation complete
+Finished restore at 05-JAN-04
+
+released channel: ch1
+
+Recovery Manager complete.

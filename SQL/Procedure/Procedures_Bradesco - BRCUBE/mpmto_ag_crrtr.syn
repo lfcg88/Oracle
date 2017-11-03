@@ -1,0 +1,3 @@
+create or replace synonym SGPB_PROC.MPMTO_AG_CRRTR
+  for SGPB.MPMTO_AG_CRRTR;
+

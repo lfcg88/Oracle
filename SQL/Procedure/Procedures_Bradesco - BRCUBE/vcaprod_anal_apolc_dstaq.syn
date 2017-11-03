@@ -1,0 +1,3 @@
+create or replace synonym SGPB_PROC.VCAPROD_ANAL_APOLC_DSTAQ
+  for SGPB.VCAPROD_ANAL_APOLC_DSTAQ;
+

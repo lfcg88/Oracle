@@ -1,0 +1,95 @@
+
+Recovery Manager: Release 9.2.0.4.0 - Production
+
+Copyright (c) 1995, 2002, Oracle Corporation.  All rights reserved.
+
+RMAN> CONNECT TARGET sys/dontknow; 
+2> CONNECT CATALOG rman/rman@metdb01;
+3> 
+4> crosscheck archivelog all;
+5> 
+6> run
+7> {
+8> allocate channel ch1 type DISK format '/oracle/backup/tmp/db_%d_%t_%s_%p_%T'; 
+9> backup incremental 
+10> level 0 
+11> cumulative 
+12> TAG "Full Diario" 
+13> (database  setsize 3145728 include current controlfile channel ch1); 
+14> # arquiva log corrente 
+15> sql 'alter system archive log current'; 
+16> release channel ch1; 
+17> allocate channel ch1 type DISK format '/oracle/backup/tmp/al_%d_%t_%s_%p_%T'; 
+18> backup 
+19> (archivelog all delete input setsize 3145728 channel ch1); 
+20> release channel ch1; 
+21> }
+22> 
+connected to target database: GRPLAN (DBID=3880388427)
+
+connected to recovery catalog database
+
+allocated channel: ORA_DISK_1
+channel ORA_DISK_1: sid=21 devtype=DISK
+allocated channel: ORA_DISK_2
+channel ORA_DISK_2: sid=12 devtype=DISK
+allocated channel: ORA_DISK_3
+channel ORA_DISK_3: sid=25 devtype=DISK
+specification does not match any archive log in the recovery catalog
+
+released channel: ORA_DISK_1
+released channel: ORA_DISK_2
+released channel: ORA_DISK_3
+allocated channel: ch1
+channel ch1: sid=21 devtype=DISK
+
+Starting backup at 27-MAR-04
+channel ch1: starting incremental level 0 datafile backupset
+channel ch1: specifying datafile(s) in backupset
+including current SPFILE in backupset
+including current controlfile in backupset
+input datafile fno=00001 name=/oracle/oradata/GRPLAN/system01.dbf
+input datafile fno=00002 name=/oracle/oradata/GRPLAN/undotbs01.dbf
+input datafile fno=00005 name=/oracle/oradata/GRPLAN/example01.dbf
+input datafile fno=00012 name=/oracle/oradata/GRPLAN/pcorp_tmp/PCORP_TMPv2.dbf
+input datafile fno=00010 name=/oracle/oradata/GRPLAN/xdb01.dbf
+input datafile fno=00011 name=/oracle/oradata/GRPLAN/pcorp_prd/pcorp_prd.dbf
+input datafile fno=00006 name=/oracle/oradata/GRPLAN/indx01.dbf
+input datafile fno=00009 name=/oracle/oradata/GRPLAN/users01.dbf
+input datafile fno=00003 name=/oracle/oradata/GRPLAN/cwmlite01.dbf
+input datafile fno=00004 name=/oracle/oradata/GRPLAN/drsys01.dbf
+input datafile fno=00007 name=/oracle/oradata/GRPLAN/odm01.dbf
+input datafile fno=00014 name=/oracle/oradata/GRPLAN/catalog/catalog.dbf
+input datafile fno=00008 name=/oracle/oradata/GRPLAN/tools01.dbf
+input datafile fno=00013 name=/oracle/oradata/GRPLAN/example02.dbf
+channel ch1: starting piece 1 at 27-MAR-04
+channel ch1: finished piece 1 at 27-MAR-04
+piece handle=/oracle/backup/tmp/db_GRPLAN_521921155_200_1_20040327 comment=NONE
+channel ch1: backup set complete, elapsed time: 00:01:57
+Finished backup at 27-MAR-04
+
+sql statement: alter system archive log current
+
+released channel: ch1
+
+allocated channel: ch1
+channel ch1: sid=21 devtype=DISK
+
+Starting backup at 27-MAR-04
+current log archived
+channel ch1: starting archive log backupset
+channel ch1: specifying archive log(s) in backup set
+input archive log thread=1 sequence=417 recid=417 stamp=521921274
+input archive log thread=1 sequence=418 recid=418 stamp=521921276
+channel ch1: starting piece 1 at 27-MAR-04
+channel ch1: finished piece 1 at 27-MAR-04
+piece handle=/oracle/backup/tmp/al_GRPLAN_521921277_201_1_20040327 comment=NONE
+channel ch1: backup set complete, elapsed time: 00:00:02
+channel ch1: deleting archive log(s)
+archive log filename=/oracle/oradata/GRPLAN/archive/1_417.dbf recid=417 stamp=521921274
+archive log filename=/oracle/oradata/GRPLAN/archive/1_418.dbf recid=418 stamp=521921276
+Finished backup at 27-MAR-04
+
+released channel: ch1
+
+Recovery Manager complete.

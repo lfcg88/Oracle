@@ -1,0 +1,312 @@
+
+Recovery Manager: Release 9.2.0.1.0 - Production
+
+Copyright (c) 1995, 2002, Oracle Corporation.  All rights reserved.
+
+RMAN> connect target /@tst1;
+2> connect catalog rman/senha@tst1;
+3> connect auxiliary /@tst2;
+4> 
+5> run { 
+6> # Horário máximo
+7> #   set until time '09/07/2003 22:00:00';
+8>        #Allocate the channel for the duplicate work   
+9>       Allocate auxiliary channel ch1 type disk;  
+10>       Allocate auxiliary channel ch2 type disk;  
+11>       Allocate auxiliary channel ch3 type disk;  
+12> #set the new file names and locations for all datafiles  
+13> set newname for datafile 'C:\ORACLE\ORADATA\TST1\SYSTEM01.DBF' to 'C:\ORACLE\ORADATA\TST2\SYSTEM01.DBF';
+14> set newname for datafile 'C:\ORACLE\ORADATA\TST1\UNDOTBS01.DBF' to 'C:\ORACLE\ORADATA\TST2\UNDOTB01';
+15> set newname for datafile 'C:\ORACLE\ORADATA\TST1\DRSYS01.DBF' to 'C:\ORACLE\ORADATA\TST2\DRSYS01.DBF';
+16> set newname for datafile 'C:\ORACLE\ORADATA\TST1\EXAMPLE01.DBF' to 'C:\ORACLE\ORADATA\TST2\EXAMPLE01.DBF';
+17> set newname for datafile 'C:\ORACLE\ORADATA\TST1\INDX01.DBF' to 'C:\ORACLE\ORADATA\TST2\INDX01.DBF';
+18> set newname for datafile 'C:\ORACLE\ORADATA\TST1\ODM01.DBF' to 'C:\ORACLE\ORADATA\TST2\ODM01.DBF';
+19> set newname for datafile 'C:\ORACLE\ORADATA\TST1\TOOLS01.DBF' to 'C:\ORACLE\ORADATA\TST2\TOOLS01.DBF';
+20> set newname for datafile 'C:\ORACLE\ORADATA\TST1\USERS01.DBF' to 'C:\ORACLE\ORADATA\TST2\USERS01.DBF';
+21> set newname for datafile 'C:\ORACLE\ORADATA\TST1\XDB01.DBF' to 'C:\ORACLE\ORADATA\TST2\XDB01.DBF';
+22> set newname for datafile 'C:\ORACLE\ORADATA\TST1\DF_RMAN_01_01.DBF' to 'C:\ORACLE\ORADATA\TST2\DF_RMAN_01_01.DBF';
+23> 
+24> #Duplicate the database 
+25> DUPLICATE TARGET DATABASE TO TST2
+26>      #Create three redo logs for the duplicated database 
+27>         LOGFILE
+28>          GROUP 1 ('C:\ORACLE\ORADATA\TST2\REDO01.LOG') SIZE 1024K,   
+29>          GROUP 2 ('C:\ORACLE\ORADATA\TST2\REDO02.LOG') SIZE 1024K,   
+30>          GROUP 3 ('C:\ORACLE\ORADATA\TST2\REDO03.LOG') SIZE 1024K;
+31>   }  
+32> 
+conectado ao banco de dados de destino: TST1 (DBID=634890407)
+
+conectado ao banco de dados do catálogo de recuperação
+
+conectado ao banco de dados auxiliar: TST2 (não montado)
+
+canal alocado: ch1
+canal ch1: sid=13 devtype=DISK
+
+canal alocado: ch2
+canal ch2: sid=14 devtype=DISK
+
+canal alocado: ch3
+canal ch3: sid=15 devtype=DISK
+
+executando comando: SET NEWNAME
+
+executando comando: SET NEWNAME
+
+executando comando: SET NEWNAME
+
+executando comando: SET NEWNAME
+
+executando comando: SET NEWNAME
+
+executando comando: SET NEWNAME
+
+executando comando: SET NEWNAME
+
+executando comando: SET NEWNAME
+
+executando comando: SET NEWNAME
+
+executando comando: SET NEWNAME
+
+Iniciando Duplicate Db em 12/11/2003 23:39:52
+
+imprimindo script armazenado: Memory Script
+{
+   set until scn  195001;
+   set newname for datafile  1 to 
+ "C:\ORACLE\ORADATA\TST2\SYSTEM01.DBF";
+   set newname for datafile  2 to 
+ "C:\ORACLE\ORADATA\TST2\UNDOTB01";
+   set newname for datafile  3 to 
+ "C:\ORACLE\ORADATA\TST2\DRSYS01.DBF";
+   set newname for datafile  4 to 
+ "C:\ORACLE\ORADATA\TST2\EXAMPLE01.DBF";
+   set newname for datafile  5 to 
+ "C:\ORACLE\ORADATA\TST2\INDX01.DBF";
+   set newname for datafile  6 to 
+ "C:\ORACLE\ORADATA\TST2\ODM01.DBF";
+   set newname for datafile  7 to 
+ "C:\ORACLE\ORADATA\TST2\TOOLS01.DBF";
+   set newname for datafile  8 to 
+ "C:\ORACLE\ORADATA\TST2\USERS01.DBF";
+   set newname for datafile  9 to 
+ "C:\ORACLE\ORADATA\TST2\XDB01.DBF";
+   set newname for datafile  10 to 
+ "C:\ORACLE\ORADATA\TST2\DF_RMAN_01_01.DBF";
+   restore
+   check readonly
+   clone database
+   ;
+}
+executando script: Memory Script
+
+executando comando: SET until clause
+
+executando comando: SET NEWNAME
+
+executando comando: SET NEWNAME
+
+executando comando: SET NEWNAME
+
+executando comando: SET NEWNAME
+
+executando comando: SET NEWNAME
+
+executando comando: SET NEWNAME
+
+executando comando: SET NEWNAME
+
+executando comando: SET NEWNAME
+
+executando comando: SET NEWNAME
+
+executando comando: SET NEWNAME
+
+Iniciando restore em 12/11/2003 23:40:16
+
+canal ch1: iniciando restauração de conjunto de backups de arquivo de dados
+canal ch1: especificando arquivo(s) de dados para restauração a partir do conjunto de backups
+restaurando arquivo de dados 00001 para C:\ORACLE\ORADATA\TST2\SYSTEM01.DBF
+restaurando arquivo de dados 00002 para C:\ORACLE\ORADATA\TST2\UNDOTB01
+restaurando arquivo de dados 00003 para C:\ORACLE\ORADATA\TST2\DRSYS01.DBF
+restaurando arquivo de dados 00004 para C:\ORACLE\ORADATA\TST2\EXAMPLE01.DBF
+restaurando arquivo de dados 00005 para C:\ORACLE\ORADATA\TST2\INDX01.DBF
+restaurando arquivo de dados 00006 para C:\ORACLE\ORADATA\TST2\ODM01.DBF
+restaurando arquivo de dados 00007 para C:\ORACLE\ORADATA\TST2\TOOLS01.DBF
+restaurando arquivo de dados 00008 para C:\ORACLE\ORADATA\TST2\USERS01.DBF
+restaurando arquivo de dados 00009 para C:\ORACLE\ORADATA\TST2\XDB01.DBF
+restaurando arquivo de dados 00010 para C:\ORACLE\ORADATA\TST2\DF_RMAN_01_01.DBF
+canal ch1: restaurada a parte de backup 1
+handle de componente=C:\ORACLE\BACKUP\TST1\D0_TST1_2_1.BAK tag=20031210_214800 parâms=NULL
+canal ch1: restaurar inteiro
+Finalizado restore em 12/11/2003 23:42:43
+instrução sql: CREATE CONTROLFILE REUSE SET DATABASE "TST2" RESETLOGS ARCHIVELOG 
+  MAXLOGFILES     50
+  MAXLOGMEMBERS      5
+  MAXDATAFILES      100
+  MAXINSTANCES     1
+  MAXLOGHISTORY      113
+ LOGFILE
+  GROUP  1 ( 'C:\ORACLE\ORADATA\TST2\REDO01.LOG' ) SIZE    1048576 ,
+  GROUP  2 ( 'C:\ORACLE\ORADATA\TST2\REDO02.LOG' ) SIZE    1048576 ,
+  GROUP  3 ( 'C:\ORACLE\ORADATA\TST2\REDO03.LOG' ) SIZE    1048576 
+ DATAFILE
+  'C:\ORACLE\ORADATA\TST2\SYSTEM01.DBF'
+ CHARACTER SET WE8MSWIN1252
+
+
+imprimindo script armazenado: Memory Script
+{
+   switch clone datafile all;
+}
+executando script: Memory Script
+
+arquivo de dados 2 alternado para a cópia do arquivo de dados
+cópia do arquivo de dados de entrada id reg.=1 marcação=512523765 nome do arquivo=C:\ORACLE\ORADATA\TST2\UNDOTB01
+arquivo de dados 3 alternado para a cópia do arquivo de dados
+cópia do arquivo de dados de entrada id reg.=2 marcação=512523765 nome do arquivo=C:\ORACLE\ORADATA\TST2\DRSYS01.DBF
+arquivo de dados 4 alternado para a cópia do arquivo de dados
+cópia do arquivo de dados de entrada id reg.=3 marcação=512523765 nome do arquivo=C:\ORACLE\ORADATA\TST2\EXAMPLE01.DBF
+arquivo de dados 5 alternado para a cópia do arquivo de dados
+cópia do arquivo de dados de entrada id reg.=4 marcação=512523765 nome do arquivo=C:\ORACLE\ORADATA\TST2\INDX01.DBF
+arquivo de dados 6 alternado para a cópia do arquivo de dados
+cópia do arquivo de dados de entrada id reg.=5 marcação=512523766 nome do arquivo=C:\ORACLE\ORADATA\TST2\ODM01.DBF
+arquivo de dados 7 alternado para a cópia do arquivo de dados
+cópia do arquivo de dados de entrada id reg.=6 marcação=512523767 nome do arquivo=C:\ORACLE\ORADATA\TST2\TOOLS01.DBF
+arquivo de dados 8 alternado para a cópia do arquivo de dados
+cópia do arquivo de dados de entrada id reg.=7 marcação=512523767 nome do arquivo=C:\ORACLE\ORADATA\TST2\USERS01.DBF
+arquivo de dados 9 alternado para a cópia do arquivo de dados
+cópia do arquivo de dados de entrada id reg.=8 marcação=512523767 nome do arquivo=C:\ORACLE\ORADATA\TST2\XDB01.DBF
+arquivo de dados 10 alternado para a cópia do arquivo de dados
+cópia do arquivo de dados de entrada id reg.=9 marcação=512523767 nome do arquivo=C:\ORACLE\ORADATA\TST2\DF_RMAN_01_01.DBF
+
+imprimindo script armazenado: Memory Script
+{
+   set until scn  195001;
+   recover
+   clone database
+    delete archivelog
+   ;
+}
+executando script: Memory Script
+
+executando comando: SET until clause
+
+Iniciando recover em 12/11/2003 23:42:52
+
+iniciar recuperação de mídia
+
+log de arquivamento thread 1 seqüência 6 já está no disco como arquivo C:\ORACLE\ORADATA\TST1\ARCHIVE\TST1001001S00006.ARC
+log de arquivamento thread 1 seqüência 7 já está no disco como arquivo C:\ORACLE\ORADATA\TST1\ARCHIVE\TST1001001S00007.ARC
+nome do arquivo de log de arquivamento=C:\ORACLE\ORADATA\TST1\ARCHIVE\TST1001001S00006.ARC thread=1 seqüência=6
+nome do arquivo de log de arquivamento=C:\ORACLE\ORADATA\TST1\ARCHIVE\TST1001001S00007.ARC thread=1 seqüência=7
+recuperação de mídia concluída
+Finalizado recover em 12/11/2003 23:43:08
+
+imprimindo script armazenado: Memory Script
+{
+   shutdown clone;
+   startup clone nomount ;
+}
+executando script: Memory Script
+
+banco de dados desmontado
+encerramento de instância Oracle
+
+conectado ao banco de dados auxiliar (não iniciado)
+instância Oracle iniciada
+
+Total da Área Global do Sistema     118561572 bytes
+
+Fixed Size                      453412 bytes
+Variable Size                 83886080 bytes
+Database Buffers              33554432 bytes
+Redo Buffers                    667648 bytes
+instrução sql: CREATE CONTROLFILE REUSE SET DATABASE "TST2" RESETLOGS ARCHIVELOG 
+  MAXLOGFILES     50
+  MAXLOGMEMBERS      5
+  MAXDATAFILES      100
+  MAXINSTANCES     1
+  MAXLOGHISTORY      113
+ LOGFILE
+  GROUP  1 ( 'C:\ORACLE\ORADATA\TST2\REDO01.LOG' ) SIZE    1048576 ,
+  GROUP  2 ( 'C:\ORACLE\ORADATA\TST2\REDO02.LOG' ) SIZE    1048576 ,
+  GROUP  3 ( 'C:\ORACLE\ORADATA\TST2\REDO03.LOG' ) SIZE    1048576 
+ DATAFILE
+  'C:\ORACLE\ORADATA\TST2\SYSTEM01.DBF'
+ CHARACTER SET WE8MSWIN1252
+
+
+imprimindo script armazenado: Memory Script
+{
+   catalog clone datafilecopy  "C:\ORACLE\ORADATA\TST2\UNDOTB01";
+   catalog clone datafilecopy  "C:\ORACLE\ORADATA\TST2\DRSYS01.DBF";
+   catalog clone datafilecopy  "C:\ORACLE\ORADATA\TST2\EXAMPLE01.DBF";
+   catalog clone datafilecopy  "C:\ORACLE\ORADATA\TST2\INDX01.DBF";
+   catalog clone datafilecopy  "C:\ORACLE\ORADATA\TST2\ODM01.DBF";
+   catalog clone datafilecopy  "C:\ORACLE\ORADATA\TST2\TOOLS01.DBF";
+   catalog clone datafilecopy  "C:\ORACLE\ORADATA\TST2\USERS01.DBF";
+   catalog clone datafilecopy  "C:\ORACLE\ORADATA\TST2\XDB01.DBF";
+   catalog clone datafilecopy  "C:\ORACLE\ORADATA\TST2\DF_RMAN_01_01.DBF";
+   switch clone datafile all;
+}
+executando script: Memory Script
+
+cópia do arquivo de dados catalogado
+copiar arquivo de dados nome do arquivo=C:\ORACLE\ORADATA\TST2\UNDOTB01 id reg.=1 marcação=512523810
+
+cópia do arquivo de dados catalogado
+copiar arquivo de dados nome do arquivo=C:\ORACLE\ORADATA\TST2\DRSYS01.DBF id reg.=2 marcação=512523811
+
+cópia do arquivo de dados catalogado
+copiar arquivo de dados nome do arquivo=C:\ORACLE\ORADATA\TST2\EXAMPLE01.DBF id reg.=3 marcação=512523811
+
+cópia do arquivo de dados catalogado
+copiar arquivo de dados nome do arquivo=C:\ORACLE\ORADATA\TST2\INDX01.DBF id reg.=4 marcação=512523812
+
+cópia do arquivo de dados catalogado
+copiar arquivo de dados nome do arquivo=C:\ORACLE\ORADATA\TST2\ODM01.DBF id reg.=5 marcação=512523812
+
+cópia do arquivo de dados catalogado
+copiar arquivo de dados nome do arquivo=C:\ORACLE\ORADATA\TST2\TOOLS01.DBF id reg.=6 marcação=512523812
+
+cópia do arquivo de dados catalogado
+copiar arquivo de dados nome do arquivo=C:\ORACLE\ORADATA\TST2\USERS01.DBF id reg.=7 marcação=512523813
+
+cópia do arquivo de dados catalogado
+copiar arquivo de dados nome do arquivo=C:\ORACLE\ORADATA\TST2\XDB01.DBF id reg.=8 marcação=512523813
+
+cópia do arquivo de dados catalogado
+copiar arquivo de dados nome do arquivo=C:\ORACLE\ORADATA\TST2\DF_RMAN_01_01.DBF id reg.=9 marcação=512523814
+
+arquivo de dados 2 alternado para a cópia do arquivo de dados
+cópia do arquivo de dados de entrada id reg.=1 marcação=512523810 nome do arquivo=C:\ORACLE\ORADATA\TST2\UNDOTB01
+arquivo de dados 3 alternado para a cópia do arquivo de dados
+cópia do arquivo de dados de entrada id reg.=2 marcação=512523811 nome do arquivo=C:\ORACLE\ORADATA\TST2\DRSYS01.DBF
+arquivo de dados 4 alternado para a cópia do arquivo de dados
+cópia do arquivo de dados de entrada id reg.=3 marcação=512523811 nome do arquivo=C:\ORACLE\ORADATA\TST2\EXAMPLE01.DBF
+arquivo de dados 5 alternado para a cópia do arquivo de dados
+cópia do arquivo de dados de entrada id reg.=4 marcação=512523812 nome do arquivo=C:\ORACLE\ORADATA\TST2\INDX01.DBF
+arquivo de dados 6 alternado para a cópia do arquivo de dados
+cópia do arquivo de dados de entrada id reg.=5 marcação=512523812 nome do arquivo=C:\ORACLE\ORADATA\TST2\ODM01.DBF
+arquivo de dados 7 alternado para a cópia do arquivo de dados
+cópia do arquivo de dados de entrada id reg.=6 marcação=512523812 nome do arquivo=C:\ORACLE\ORADATA\TST2\TOOLS01.DBF
+arquivo de dados 8 alternado para a cópia do arquivo de dados
+cópia do arquivo de dados de entrada id reg.=7 marcação=512523813 nome do arquivo=C:\ORACLE\ORADATA\TST2\USERS01.DBF
+arquivo de dados 9 alternado para a cópia do arquivo de dados
+cópia do arquivo de dados de entrada id reg.=8 marcação=512523813 nome do arquivo=C:\ORACLE\ORADATA\TST2\XDB01.DBF
+arquivo de dados 10 alternado para a cópia do arquivo de dados
+cópia do arquivo de dados de entrada id reg.=9 marcação=512523814 nome do arquivo=C:\ORACLE\ORADATA\TST2\DF_RMAN_01_01.DBF
+
+imprimindo script armazenado: Memory Script
+{
+   Alter clone database open resetlogs;
+}
+executando script: Memory Script
+
+banco de dados aberto
+Finalizado Duplicate Db em 12/11/2003 23:43:51
+
+Recovery Manager completo.

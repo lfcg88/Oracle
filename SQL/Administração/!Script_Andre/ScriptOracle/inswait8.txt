@@ -1,0 +1,37 @@
+rem     along with this program; if not, write to the Free Software
+rem     Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+rem
+rem     Adapted for Oracle8 by Vladimir Begun
+rem 
+rem =========================================================================
+rem
+rem # View required to monitor waits - Oracle8
+rem
+rem ------------------------------------------------------------------------
+rem
+set pause off
+set echo off
+set verify off
+set pagesize 0
+set feedback off
+set recsep off
+set termout off
+whenever sqlerror exit 1
+spool /tmp/become$$.sql
+select 'alter user ' || u.name || chr(10) ||
+       'identified by values ''' || u.password || ''';'
+from sys.user$ u
+where u.name = 'SYS'
+/
+spool off
+alter user SYS identified by uhzsdfsdzefljmkze;
+connect SYS/uhzsdfsdzefljmkze
+@/tmp/become$$
+! rm /tmp/become$$.sql 2>/dev/null
+set FEEDBACK on
+whenever sqlerror continue none 
+set termout on
+create or replace view wait_info$(class, dbafil, dbablk)
+as select class, file# dbafil, dbablk from x$bh
+/
+

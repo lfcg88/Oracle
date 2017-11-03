@@ -1,0 +1,119 @@
+startup nomount pfile=d:\app\oracle\product\11.2.0\dbhome_1\dbs\initorcl.ora
+restore controlfile from 'D:\Restore\RMAN_ORCL_Tue_08_11_2015\ORA_CFC-1301561016-20150811-01';
+
+catalog start with 'D:\Restore\RMAN_ORCL_Tue_08_11_2015';
+reset database to incarnation 2;
+
+
+SET NEWNAME FOR DATAFILE 1 TO 'd:\oracle\oradata\ORCL\SYSTEM01.DBF';
+SET NEWNAME FOR DATAFILE 2 TO 'd:\oracle\oradata\ORCL\SYSAUX01.DBF';
+SET NEWNAME FOR DATAFILE 4 TO 'd:\oracle\oradata\ORCL\USERS01.DAT';
+SET NEWNAME FOR DATAFILE 5 TO 'd:\oracle\oradata\ORCL\UNDOTBSNEW01.DBF';
+SET NEWNAME FOR DATAFILE 7 TO 'd:\oracle\oradata\ORCL\TS_IPAS_DATA_01.DAT';
+SET NEWNAME FOR DATAFILE 8 TO 'd:\oracle\oradata\ORCL\TS_IPAS_INDEX_01.DAT';
+SET NEWNAME FOR DATAFILE 9 TO 'd:\oracle\oradata\ORCL\TS_IPAS_DATA_02.DAT';
+SET NEWNAME FOR DATAFILE 10 TO 'd:\oracle\oradata\ORCL\TS_IPAS_AUX_01.DAT';
+SET NEWNAME FOR DATAFILE 11 TO 'd:\oracle\oradata\ORCL\TS_IPAS_INDEX_02.DAT';
+SET NEWNAME FOR DATAFILE 14 TO 'd:\oracle\oradata\ORCL\TS_IPAS_DATA_03.DAT';
+SET NEWNAME FOR DATAFILE 15 TO 'd:\oracle\oradata\ORCL\TS_IPAS_DATA_04.DAT';
+SET NEWNAME FOR DATAFILE 16 TO 'd:\oracle\oradata\ORCL\TS_IPAS_INDEX_03.DAT';
+SET NEWNAME FOR TEMPFILE 1 TO 'd:\app\oracle\oradata\ORCL\TEMP01.DBF';
+
+
+
+
+run
+{
+allocate channel c1 device type disk;
+allocate channel c2 device type disk;
+allocate channel c3 device type disk;
+SET NEWNAME FOR DATAFILE 1 TO 'd:\oracle\oradata\ORCL\SYSTEM01.DBF';
+SET NEWNAME FOR DATAFILE 2 TO 'd:\oracle\oradata\ORCL\SYSAUX01.DBF';
+SET NEWNAME FOR DATAFILE 4 TO 'd:\oracle\oradata\ORCL\USERS01.DAT';
+SET NEWNAME FOR DATAFILE 5 TO 'd:\oracle\oradata\ORCL\UNDOTBSNEW01.DBF';
+SET NEWNAME FOR DATAFILE 7 TO 'd:\oracle\oradata\ORCL\TS_IPAS_DATA_01.DAT';
+SET NEWNAME FOR DATAFILE 8 TO 'd:\oracle\oradata\ORCL\TS_IPAS_INDEX_01.DAT';
+SET NEWNAME FOR DATAFILE 9 TO 'd:\oracle\oradata\ORCL\TS_IPAS_DATA_02.DAT';
+SET NEWNAME FOR DATAFILE 10 TO 'd:\oracle\oradata\ORCL\TS_IPAS_AUX_01.DAT';
+SET NEWNAME FOR DATAFILE 11 TO 'd:\oracle\oradata\ORCL\TS_IPAS_INDEX_02.DAT';
+SET NEWNAME FOR DATAFILE 14 TO 'd:\oracle\oradata\ORCL\TS_IPAS_DATA_03.DAT';
+SET NEWNAME FOR DATAFILE 15 TO 'd:\oracle\oradata\ORCL\TS_IPAS_DATA_04.DAT';
+SET NEWNAME FOR DATAFILE 16 TO 'd:\oracle\oradata\ORCL\TS_IPAS_INDEX_03.DAT';
+SET NEWNAME FOR TEMPFILE 1 TO 'd:\app\oracle\oradata\ORCL\TEMP01.DBF';
+RESTORE DATABASE until scn 9123796547;
+SWITCH DATAFILE ALL;
+SWITCH TEMPFILE ALL;
+}
+
+
+RECOVER DATABASE preview;
+RECOVER DATABASE until scn 9123796547;
+
+
+#################################################
+Abrir o banco e resetar os logs e criar o spfile
+#################################################
+
+alter database open resetlogs;
+
+create spfile from pfile;
+
+SHUTDOWN IMMEDIATE;
+
+#startup mount PFILE='D:\app\oracle\product\11.2.0\dbhome_1\dbs\initorcl.ora'
+
+#CREATE SPFILE FROM PFILE=’D:\app\oracle\product\11.2.0\dbhome_1\dbs\initorcl.ora’
+
+
+
+####################################
+Recriar o catalogo do banco de dados
+Obs: usando o sqlplus
+####################################
+
+
+STARTUP UPGRADE
+
+@D:\app\oracle\product\11.2.0\dbhome_1\RDBMS\ADMIN\catupgrd.sql
+
+SHUTDOWN IMMEDIATE
+
+STARTUP
+
+########################################
+Verificar se existem objetos invalidos
+########################################
+
+select count(*) 
+  from dba_objects
+ where status = 'INVALID';
+
+#############################################
+Caso exista, recompilar os objetos inválidos
+#############################################
+
+@D:\app\oracle\product\11.2.0\dbhome_1\RDBMS\ADMIN\utlrp.sql
+
+select count(*) 
+  from dba_objects
+ where status = 'INVALID';
+
+#########################################
+FIM - Executar um backup full do banco de dados
+#########################################
+
+
+
+
+show parameter log_archive_dest_1
+
+
+alter system set LOG_ARCHIVE_DEST_1='LOCATION=D:\ARCH' scope=memory;
+
+
+show parameter recovery
+
+
+
+
+

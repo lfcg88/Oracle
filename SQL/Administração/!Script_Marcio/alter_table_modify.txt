@@ -1,0 +1,2 @@
+alter table table_name modify (
+	coluna varchar2(100) not null );

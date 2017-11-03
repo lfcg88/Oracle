@@ -1,0 +1,341 @@
+#!/usr/bin/perl
+####################################################################
+# trace2perl.pl
+#
+# Converts Oracle trace file text to a perl DBI/DBD script
+#
+# Adapted from James Morle's tclconv.awk (trace -> dbaman)
+#
+# Copyright (c) 2000, George Schlossnagle <george@omniti.com>.
+# All rights reserved.
+#
+####################################################################
+
+####################################################################
+# Usage
+####################################################################
+# trace2perl takes an oracle generated trace file and generates a 
+# Perl DBI/DBD::Oracle script whihc will 'replay' the tracefile.
+# It supports regex matching so that, for example, only SELECTs will
+# be played back.
+#	
+#	
+#        ./trace2perl [-d] -f <trace file> [-u user]
+#        [-t] [-h] [-m <regex>]
+#
+#        -d              show debugging information.
+#        -f <trace file> trace file to read.
+#        -u <user>       db user to connect as.
+#        -t              show time statistics information.
+#        -h              show this message.
+#        -m <regex>      regex to match to match queries against
+#                        for inclusion in the genrated script.
+####################################################################
+
+# Register includes and parse run-time options.
+use Getopt::Std;
+
+getopts('dhtu:p:f:m:', \%opts);
+
+####################################################################
+#    Use this section to specify things like your Oracle connect
+#    string, etc.
+####################################################################
+
+$connstr = "dbi:Oracle";
+$user_def = "user\@db";
+$user = (exists $opts{u} ? $opts{u} : $user_def);
+$passwd_def = "passwd";
+$timeflg = (exists $opts{t} ? 1 : 0);
+$user = (exists $opts{p} ? $opts{p} : $passwd_def);
+$args = "{ RaiseError => 1, AutoCommit => 1 }";
+$debug = (exists $opts{d} ? 1 : 0); 
+$trace_file = $opts{f};
+$match = $opts{m};
+if(exists $opts{h}) {
+	&usage();
+}
+if(!(-f $trace_file)) {
+	print STDERR "tracefile does not exist.\n";
+	&usage();
+}
+
+#####################################################################
+# Connect section:
+#    Here we prepare the header for the auto-generated script to come.
+#####################################################################
+
+print "\#!/usr/bin/perl\n";
+print '#' x 70,"\n";
+print "\# This is an automatically generated script, replicating session\n";
+print "\# information extracted from $trace_file.\n";
+print '#' x 70,"\n\n";
+
+
+
+
+print "use DBI\;\n";
+print "\$| = 1;\n";
+printf("\$connstr = \"%s\"\;\n", $connstr);
+printf("\$user = \"%s\"\;\n", $user);
+printf("\$passwd = \"%s\"\;\n", $passwd);
+printf("\%args = %s\;\n", $args);
+print "\$dbh = DBI->connect(\$connstr,\$user,\$passwd, \\\%args)\;\n";
+my $in_bind = -1;
+my $bind_pos = -1;
+my $nbinds = 0;
+my $in_match = 0;
+
+#####################################################################
+#	Main loop.
+#####################################################################
+
+open TRC, "<$trace_file";
+while(<TRC>) {
+
+
+  chomp;
+#####################################################################
+# Read in PARSE calls and format prepares.  Prepare the sql_text
+# variable for that cursor.
+#####################################################################
+
+  my @line_array = split;
+  if (/dep=0/ && /PARSING IN CURSOR \#(\d+).*hv=(\S+) ad=(\S+)/) {
+    $new_curs=1;
+    $current = $1;
+		$sql_hash_value = $2;
+		$sql_address = $3;
+		if ($timeflg) {
+			if(/tim=(\d+)/) {
+				$basetime = $1 unless $basetime;
+				$time = $1 - $basetime;
+			}
+		}
+    if(exists($cursor_address{$current})) {
+      delete $cursor_address{$current};
+      printf("\$sth{%d}->finish()\; \#time = %d\n", $current, $time) if $in_match{$current};
+    }
+    
+    $cursor_address{$current} = sprintf("%s_%s",
+				  $sql_hash_value,
+				  $sql_address);
+    $actflg[$current]=0;
+    $parseflg[$current]=0;
+    next;
+  }	
+  if ( !(/dep=0/) && /PARSING IN CURSOR \#(\d+).*hv=(\S+) ad=\'(\S+)\'/) {
+    $temp_current = $1;
+		$sql_hash_value = $2;
+		$sql_address = $3;
+    if ($timeflg) {
+      if(/tim=(\d+)/) {
+      	$basetime = $1 unless $basetime;
+      	$time = $1 - $basetime;
+			}
+    }
+    if (exists($cursor_address{$temp_current})) {
+      delete $cursor_address{$temp_current};
+      printf("\$sth{%d}->finish()\; \#time = %d\n",$temp_current,$time); # add match criterion
+      $actflg[$temp_current] = 0;
+      $parseflg[$temp_current] = 0;
+    }
+    next;
+  }
+
+############################################################################
+# new_curs flag is raised when we see 'PARSING IN CURSOR'. When we see
+# 'END OF STMT', we can turn it off again - no more SQL text for this cursor.
+############################################################################
+
+  if (/END OF STMT/) {
+    $new_curs = 0;
+    next;
+  }
+  
+#############################################################################
+# We loop through the text in the STMT block, building out the sql_text in 
+# preparation to parse.  Note that we are not picky about possibly adding an 
+# additional space between words.
+#############################################################################
+  if ($new_curs != 0) {
+   if(substr($sql_text{$cursor_address{$current}},1, length) eq $_ ) {
+      $new_curs=0;
+      next;
+    }
+    else {
+			$in_match{$current} = 0;
+      if(/$match/o) {
+      	$sql_text{$cursor_address{$current}} = sprintf("%s %s", 
+					$sql_text{$cursor_address{$current}}, $_);
+				$in_match{$current} = 1;
+      	next;
+			}
+    }
+  }
+  
+#############################################################################
+# The explicit PARSE call.  We DBI::prepare() the sql_text from above.
+#############################################################################
+  
+  if (/dep=0/ && /^PARSE \#(\d+)/ && $in_match{$current}) {
+    $cnum = $1;
+    if ($timeflg) {
+      if(/tim=(\d+)/) {
+      	$basetime = $1 unless $basetime;
+      	$time = $1 - $basetime;
+			}
+    }
+    if ($actflg[$cnum] == 1) {
+      printf("\$sth{%d}->finish()\; \# time = %d\n",$cnum,$time);
+    }
+    $parseflg[$cnum] = 1;
+    #may need tofold cursor_address here
+		printf("\n\# Parsing cursor %d\n", $cnum);
+    printf("\$sth{$cnum} = \$dbh->prepare(\"%s\")\; \# time = %d\n", substr($sql_text{$cursor_address{$cnum}},1), $time);
+  }
+  if ( ($in_bind >= 0) && !(/^\s/) && $in_match{$current}) {
+    $in_bind = -1;
+    $bind_pos = -1;
+    $nbinds = 0;
+  }
+  
+############################################################################
+# The EXEC section.   If the statement is not yet parsed, we do so here.  If
+# the cursor is currently active, we manually DBI::finish() it to close out
+# the cursor/statement handle.  A comment line is also inserted.
+############################################################################
+  
+  if ( /dep=0/ && /^EXEC \#(\d+)/ && $in_match{$current}) {
+    $cnum = $1;
+    if ($timeflg) {
+      if(/tim=(\d+)/) {
+      	$basetime = $1 unless $basetime;
+      	$time = $1 - $basetime;
+			}
+    }
+    if ($parseflg[$cnum] != 1) {
+			printf("# Parsing cursor %d\n", $cnum);
+      printf("\$sth{$cnum} = \$dbh->prepare(\"%s\")\; \# time = %d\n", substr($sql_text{$cursor_address{$cnum}},1), $time);
+      $parseflg[$cnum] = 1;
+    }
+    printf("\$sth{%d}->finish()\; \# time = %d\n",$cnum,$time) if ( $actflg[$cnum] == 1 );
+		if(length($sql_text{$cursor_address{$cnum}}) <71) {
+			printf("print \"Executing %s\\n\"\;\n", 
+						substr($sql_text{$cursor_address{$cnum}},1,71));
+		}
+		else {
+			printf("print \"Executing %s....\\n\"\;\n",
+            substr($sql_text{$cursor_address{$cnum}},1,71));
+    }
+
+    printf("\$sth{$cnum}->execute()\; \# time = %d\n", $time);
+    $actflg[$cnum] = 1;
+  }
+  
+############################################################################
+# The FETCH section. 
+# Pulls out the number of rows and makes a call to fetch that number.  In
+# perl we implement this as a looped call to DBI::fetch()
+############################################################################
+  
+  if (/dep=0/ && /^FETCH \#(\d+):.*,r=(\d+)/ && $in_match{$current}) {
+    $cnum = $1;
+    $rows = ($2 < 1) ? 1 : $2 ;
+    if ($timeflg) {
+      if(/tim=(\d+)/) {
+      	$basetime = $1 unless $basetime;
+      	$time = $1 - $basetime;
+			}
+    }
+		printf ("while(\$i < $rows) { \# time = %d\n",$time);
+		printf("\t\$sth{%d}->fetch()\;\n", $cnum);
+		printf ("\t\$i++\;\n");
+		printf ("}\n");
+  }
+  
+############################################################################
+# Found a null bind (avl=0). Pop the correct bind call from the stack.
+############################################################################
+  
+  if ( ($in_bind >= 0) && ($bind_pos >= 0 ) && ($line_array[2] eq "avl=00") &&
+						$in_match{$current}{current}) {
+    printf("%s", pop(@stack));
+  }	
+  
+############################################################################
+# Found a bind variable value. Check to see if it looks like an internal format
+# date string and if so, send the -date flag with the string so that it gets
+# presented properly.
+############################################################################
+
+  if ( $in_bind >= 0 && $bind_pos >= 0 && $line_array[0] =~ /value=\"([^\"]+)/ && $in_match{$current}) {
+		$value = $1;
+		$value =~ s/^/\'/;
+		$value =~ s/$/\'/;
+    if ($timeflg) {
+      if(/tim=(\d+)/) {
+      	$basetime = $1 unless $basetime;
+      	$time = $1 - $basetime;
+			}
+    }
+    printf("\$sth{%d}->bind_param(%d, %s)\; \# time = %d\n",$cnum, $bind_pos+1,
+	   $value, $time);
+  }
+  
+############################################################################
+# Enter a bind variable definition section. Looks like this cursor really does
+# have bind variables, so we pop the required DBI calls off the stack.
+# Pushes the correct NULL bind_param onto stack in order to protect future 
+# bindings without a reparse to change the datatype.  
+############################################################################
+
+  if ( ($in_bind >= 0) && ($line_array[0] eq "bind") && $in_match{$current}) {
+    $bind_pos = substr($line_array[1],0,-1);
+    if ((++$nbinds) == 0) {
+      printf("%s", pop(@stack));
+    }
+    if (substr($line_array[2],4)  == "12")	{
+			push @stack, sprintf("\$sth{%d}->bind_param(%d,\'NULL\')\;\n",
+										$cnum, $bind_pos+1);
+         }
+    else {
+      push @stack, sprintf("\$sth{%d}->bind_param(%d,\'NULL\')\;\n",$cnum, $bind_pos+1);
+    }
+  }
+  if (/^BINDS \#(\d+)/ && $in_match{$current}) {
+    $cnum = $1;
+    if ($timeflg) {
+      if(/tim=(\d+)/){
+      	$basetime = $1 unless $basetime;
+      	$time = $1 - $basetime;
+			}
+    }
+    if (exists($cursor_address{$cnum})) {
+      $in_bind= $cnum;
+      if($actflg[$cnum] == 1) {
+	push @stack,  sprintf("\$sth{%d}->finish()\; \# time = %d",$cnum, $time);
+      }
+      else {
+      }
+    }
+  }
+}
+close TRC;
+printf("\$dbh->disconnect()\;\n");
+
+sub usage {
+	print "\t./trace2perl [-d] -f <trace file> [-u user]\n";
+	print "\t[-t] [-h] [-m <regex>]\n"; 
+	print "\n";
+	print "\t-d\t\tshow debugging information.\n";
+	print "\t-f <trace file>\ttrace file to read.\n";
+	print "\t-u <user>\tdb user to connect as.\n";
+	print "\t-t\t\tshow time statistics information.\n";
+	print "\t-h\t\tshow this message.\n";
+	print "\t-m <regex>\tregex to match to match queries against\n";
+	print "\t\t\tfor inclusion in the genrated script.\n";
+
+	exit;
+}
+		

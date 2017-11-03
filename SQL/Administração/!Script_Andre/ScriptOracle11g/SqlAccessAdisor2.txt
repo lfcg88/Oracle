@@ -1,0 +1,130 @@
+
+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+links the current SQL Access Advisor task and a SQL tuning set.
+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+DBMS_ADVISOR.ADD_STS_REF(
+task_name IN VARCHAR2 NOT NULL,
+sts_owner IN VARCHAR2,
+sts_name IN VARCHAR2 NOT NULL);
+
+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ remove the link between the current SQL Access Advisor task and a SQL tuning set.
+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+DBMS_ADVISOR.DELETE_STS_REF (
+task_name IN VARCHAR2 NOT NULL,
+sts_owner IN VARCHAR2,
+sts_name IN VARCHAR2 NOT NULL);
+
+
+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+The SQL Access Advisor invokes the DBMS_REDEFINITION package to implement its partition recommendations online.
+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+DBMS_REDEFINITION
+
+
+
+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+Here’s an example that shows you how to use the CREATE_TASK procedure to create a new SQL Access Advisor task:
+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+SQL> exec dbms_advisor.create_task(
+advisor_name => 'SQL Access Advisor',
+task_name => 'test_task1');
+
+
+
+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+create an empty STS to hold the SQL workload that you want to pass to the SQL Access Advisor task as input for its analysis:
+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+SQL> exec dbms_sqltune.create_sqlset (sqlset_name => 'test_sts1', description => 'Test STS for Access Advisor');
+
+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+use the COPY_SQLWKLD_TO_STS procedure to copy the workload to an STS. Here’s an example:
+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+SQL> exec dbms_advisor.copy_sqlwkld_to_sts('test_workload', 'test_sts1','new');
+
+
+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+the LOAD_SQLSET procedure will load only new statements to the STS, but you can also update existing statements in the STS if you want.
+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+SQL> declare
+2 mycursor dbms_sqltune.sqlset_cursor;
+3 begin
+4 open mycursoror
+5 select value(p)
+6 from table (
+7 dbms_sqltune.select_cursor_cache(
+8 'parsing_schema_NAME <> ''SYS''',NULL,NULL,NULL,NULL,1,
+NULL,'ALL')) p;
+9 dbms_sqltune.load_sqlset(sqlset_name => 'test_sts1',
+populate_cursor => mycursor);
+10* end;
+
+++++++++++++++++++++++++++++++++++++++++++++++
+Linking the Advisor Task and the Workload
++++++++++++++++++++++++++++++++++++++++++++++++
+
+SQL> exec dbms_advisor.add_sts_ref (
+task_name => 'test_task1',
+sts_owner => 'SH',
+sts_name =>'test_sts1');
+
++++++++++++++++++++++++++++++++++++++++++++++
+Setting the Task Parameters
+++++++++++++++++++++++++++++++++++++++++++++++
+
+SQL> exec dbms_advisor.set_task_parameter ('test_task1','valid_table_list','SH.SALES,SH.CUSTOMERS);'
+
+SQL> exec dbms_advisor.set_task_parameter ('test_task1','mode', 'comprehensive');
+
+SQL> exec dbms_advisor.set_task_parameter ('test_task1','journaling',4);
+
+SQL> exec dbms_advisor.set_task_parameter ('test_task1','analysis_scope','all');
+
++++++++++++++++++++++++++++++++++++++++++++++++++++++
+Execute the task by issuing the following command:
++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+SQL> exec dbms_advisor.execute_task (task_name => 'test_task1');
+
+
+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+The SQL Access Advisor links each of its recommendations to a specific SQL statement from the workload.
+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+
+SQL> exec DBMS_ADVISOR.GET_TASK_REPORT (
+task_name IN VARCHAR2,
+type IN VARCHAR2 := 'TEXT',
+level IN VARCHAR2 := 'TYPICAL',
+section IN VARCHAR2 := 'ALL',
+owner_name IN VARCHAR2 := NULL,
+execution_name IN VARCHAR2 := NULL,
+object_id IN NUMBER := NULL)
+RETURN CLOB;
+
+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+Use the INTERRUPT_TASK procedure to terminate an advisor task before it reaches its end. You can still get any recommendation that has been created up to that point. 
+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+exec dbms_advisor.interrupt_task ('test_task1');
+
+
+
++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+You can view the SQL script that the advisor creates to implement its recommendations
+by executing the GET_TASK_REPORT procedure, which will save the script
++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+SQL> create directory access_adv_rslts as '/u01/app/oracle/access';
+
+SQL> execute dbms_advisor.create_file (dbms_advisor.get_task_script ('test_task1'),'access_adv_rslts', 'testscript1.sql');
+
+
+

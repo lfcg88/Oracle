@@ -1,0 +1,65 @@
+-- Primeiramente, verificamos se a facilidade OMF (Oracle-Managed Files) est· ativa:
+show parameter db_create_online_log_dest
+
+-- Para facilitar a gerÍncia e multiplexaÁ„o de arquivos, preenchemos os par‚metros:
+ALTER SYSTEM SET db_create_online_log_dest_1 = '/u01/app/oracle/oradata/onlinelog1' scope = both;
+ALTER SYSTEM SET db_create_online_log_dest_2 = '/u01/app/oracle/oradata/onlinelog2' scope = both;
+ALTER SYSTEM SET db_create_online_log_dest_3 = '/u01/app/oracle/oradata/onlinelog3' scope = both;
+
+
+-- Acrescentando um novo grupo j· multiplexado:
+ALTER database ADD logfile;
+ALTER database ADD logfile GROUP 4 SIZE 50M;
+ALTER database ADD logfile group 4 ('/u01/app/oracle/oradata/onlinelog1/audit/redo04a.log',
+				    '/u01/app/oracle/oradata/onlinelog1/audit/redo04b.blog') size 50M;
+
+-- Removendo um grupo
+ALTER database DROP logfile group 4;
+
+-- Caso o grupo a ser dropado esteja com o status CURRENT ser· necess·rio executar o switch e o checkpoint
+-- Log Switch
+
+	-- Antes:
+	SELECT group#, status FROM V$LOG;
+	-- OperaÁ„o
+	ALTER SYSTEM SWITCH LOGFILE;
+	ALTER SYSTEM CHECKPOINT;
+	-- Depois
+	SELECT group#, status FROM V$LOG;
+	
+-- Adiconando um membro em um grupo
+ALTER database add logfile member '/u01/oracle/oradata/redo01a.log' TO GROUP 1; 
+
+-- Removendo um membro de um grupo
+ALTER database DROP member '/u01/oracle/oradata/redo01a.log';
+
+
+
+ALTER database ADD logfile group 2 ('/u01/app/oracle/oradata/DB11G/redo02.log') size 50M;
+
+----------------------------------------------------------------------------------------------
+
+ALTER SYSTEM SWITCH LOGFILE;
+ALTER SYSTEM CHECKPOINT;
+select * from v$log;
+select * from v$logfile;
+
+ALTER DATABASE CLEAR LOGFILE GROUP 4;
+
+ALTER DATABASE DROP LOGFILE GROUP 4;
+ALTER DATABASE ADD LOGFILE GROUP 4 ('D:\ORACLE\ORADATA\MIAFIS\REDO\REDO04a.LOG', 'C:\ORACLE\ORADATA\MIAFIS\REDO\REDO04b.LOG') SIZE 200M reuse;
+
+
+SQL> ALTER DATABASE OPEN RESETLOGS;
+ALTER DATABASE OPEN RESETLOGS
+*
+
+
+CASO RECEBA O ERRO ABAIXO AO ABRIR O BANCO DE DADOS EXECUTAR O CLEAR DO GRUPO:
+ERRO na linha 1:
+ORA-00392: o log 9 do thread 1 estﬂ sendo removido; opera˛“o n“o permitida
+ORA-00312: thread 9 do log 1 on-line: 'C:\APP\ORACLE\ORADATA\ORCL\REDO09A'
+ORA-00312: thread 9 do log 1 on-line: 'C:\APP\ORACLE\ORADATA\ORCL\REDO09B'
+ORA-00312: thread 9 do log 1 on-line: 'C:\APP\ORACLE\ORADATA\ORCL\REDO09C'
+
+ALTER DATABASE CLEAR LOGFILE GROUP 9;

@@ -1,0 +1,92 @@
+--
+-- Hit do dictionary cache
+--
+set serveroutput on size 1000000
+accept vDataInicio prompt 'Informe a Data Inicial (dd/mm/yyyy) =>  ';
+accept vDataFim    prompt 'Informe a Data Final   (dd/mm/yyyy) =>  ';
+accept vIntervalo NUMBER FORMAT '99' DEFAULT '0' prompt 'Intervalo em Horas             (HH) =>  ';
+DECLARE
+Cursor c_periodo_hn (pinicio varchar2,pfim varchar2) IS
+  SELECT snap_id,snap_time
+  FROM 
+     stats$snapshot   
+  WHERE 
+     snap_time >= to_date(pinicio,'dd/mm/yyyy') and  snap_time < (to_date(pfim,'dd/mm/yyyy')+1/12)
+  ORDER BY snap_time;  
+--
+ bsnap_id number;
+ bsnap_time date;
+ vsnap_id number;
+ vsnap_time date;
+ vasnap_id number;
+ vasnap_time date;
+--
+--
+--
+Function Cal_Hit_Dic_Cache(fim_snap_id number, inicio_snap_id number) 
+ Return number Is
+   cursor LH (i_snap_id number) is
+            select sum(gets), sum(getmisses)
+              from stats$rowcache_summary
+             where snap_id         = i_snap_id;
+--               and dbid            = p_dbid
+--               and instance_number = p_instance_number;
+   bgets number;
+   bgetmisses number;
+   egets number;
+   egetmisses number;
+   vresult number;
+   begin
+      if not LH%ISOPEN then open LH (inicio_snap_id); end if;
+      fetch LH into bgets, bgetmisses;
+      if LH%NOTFOUND then
+        raise_application_error(-20100,'Missing start value ');
+      end if; close LH;
+      if not LH%ISOPEN then open LH (fim_snap_id); end if;
+      fetch LH into egets, egetmisses;
+      if LH%NOTFOUND then
+         raise_application_error(-20100,'Missing end value ');
+      end if; close LH;
+      vresult := (1 - ( (egetmisses-bgetmisses) / ((egets-bgets) + (egetmisses-bgetmisses))))*100;
+return (round(vresult,2));
+end;
+--
+--
+Procedure Imprime_Statisticas(pinicio_snap_time date,pfim_snap_time date,pinicio_snap_id number ,pfim_snap_id number) 
+Is 
+-- vQuantDisk number;
+-- vQuantMemo number;
+ vHitDicCache number;
+Begin
+--
+    vHitDicCache :=  Cal_Hit_Dic_Cache(pfim_snap_id, pinicio_snap_id);
+    Dbms_Output.Put_Line(To_char(pinicio_snap_time,'dd/mm/yy hh24:mi')||' A '||To_char(pfim_snap_time,'dd/mm/yy hh24:mi')||'  '||vHitDicCache );
+End; 
+
+--
+-- 
+-- vHitLibCache number;
+-- bsnap_id   number;
+-- bsnap_time date;
+--
+Begin
+If not c_periodo_hn%ISOPEN then open c_periodo_hn('&vDataInicio','&vDataFim'); end if;
+fetch c_periodo_hn into bsnap_id, bsnap_time;
+while true Loop
+  Fetch c_periodo_hn Into vsnap_id, vsnap_time;
+  If c_periodo_hn%NOTFOUND then
+     close c_periodo_hn;
+     exit;
+  End if;
+--  If to_char(vsnap_time,'dd/mm/yyyy:hh24mi') <= to_char(bsnap_time+(12/24),'dd/mm/yyyy:hh24mi') Then
+    If to_char(vsnap_time,'dd/mm/yyyy:hh24mi') >= to_char(bsnap_time+(&vIntervalo/24),'dd/mm/yyyy:hh24mi') Then
+      Imprime_Statisticas(bsnap_time,vsnap_time,bsnap_id,vsnap_id);
+--    Imprime_Statisticas(bsnap_time,vasnap_time,bsnap_id,vasnap_id);
+    bsnap_time := vsnap_time;
+    bsnap_id   := vsnap_id;
+  End If;
+End Loop;
+--    
+-- End If;
+End ;
+/

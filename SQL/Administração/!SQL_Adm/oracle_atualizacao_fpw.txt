@@ -1,0 +1,178 @@
+-- Desabilitar as triggers
+
+-- Instancia ORAHOM
+
+--select 'alter trigger fpw.'||trigger_name||' disable;'
+--from all_triggers
+--where owner = 'FPW';
+
+
+alter trigger fpw.TG_OCO_ALT_FORPONTO disable;
+alter trigger fpw.TR_CALENDAR_IUD disable;
+alter trigger fpw.TG_OCO_INS_FORPONTO disable;
+alter trigger fpw.TG_OCO_DEL_FORPONTO disable;
+alter trigger fpw.TG_ORG_ALT_FORPONTO disable;
+alter trigger fpw.TG_TAB_INS_FORPONTO disable;
+alter trigger fpw.TG_TAB_ALT_FORPONTO disable;
+alter trigger fpw.TG_FU_INS_FORPONTO disable;
+alter trigger fpw.TG_FU_ALT_FORPONTO disable;
+
+
+
+
+
+
+-- Instancia HCM9HOM
+
+
+--select 'alter trigger sysadm.'||trigger_name||' disable;'
+--from all_triggers
+--where owner = 'SYSADM';
+
+
+alter trigger sysadm.TG_SIMPLE_BENEFIT disable;
+alter trigger sysadm.TG_DISABILITY_BRA disable;
+alter trigger sysadm.TG_DEP_BEN_NAME disable;
+alter trigger sysadm.TG_DEPT_TBL disable;
+alter trigger sysadm.TG_PERS_DATA_BRA disable;
+alter trigger sysadm.TG_GC_BEN_TRANS_VT disable;
+alter trigger sysadm.TG_COMPANY_TBL disable;
+alter trigger sysadm.TG_DEP_BEN disable;
+alter trigger sysadm.TG_GC_DEP_BEN_BRA disable;
+alter trigger sysadm.TG_CNT_PROBATION disable;
+alter trigger sysadm.TG_BANK_ACCOUNT disable;
+alter trigger sysadm.TG_BANK_BRANCH_TBL disable;
+alter trigger sysadm.TG_DEP_BEN_EFF disable;
+alter trigger sysadm.TG_BANK_EC_TBL disable;
+alter trigger sysadm.TG_GC_CCUSTO_TBL disable;
+alter trigger sysadm.TG_BENEF_PLAN_TBL disable;
+alter trigger sysadm.TG_CODE_CITY_BRA disable;
+alter trigger sysadm.TG_DRIVER_LTYP disable;
+alter trigger sysadm.TG_EMAIL_ADDRESSES disable;
+alter trigger sysadm.TG_DEP_BENEF_NID disable;
+alter trigger sysadm.TG_GC_BEN_TRANS_CO disable;
+alter trigger sysadm.TG_GPBR_PAYEE_PARM disable;
+alter trigger sysadm.TG_PERS_NID disable;
+alter trigger sysadm.TG_PERSON_BRA disable;
+alter trigger sysadm.TG_GC_PERSON_BRA disable;
+alter trigger sysadm.TG_GC_BENEF_TRANS disable;
+alter trigger sysadm.TG_PERSONAL_DATA disable;
+alter trigger sysadm.TG_GC_AUDIT_JOB disable;
+alter trigger sysadm.TG_LIFE_ADD_BEN disable;
+alter trigger sysadm.TG_UNION_TBL disable;
+alter trigger sysadm.TG_GC_DEP_BEN_EFF disable;
+alter trigger sysadm.TG_DEP_BEN_EFF_BRA disable;
+alter trigger sysadm.TG_GC_GPBR_PAYPARM disable;
+alter trigger sysadm.TG_GC_JOBHOR_TBL disable;
+alter trigger sysadm.TG_GC_DEP_SALFAM disable;
+alter trigger sysadm.TG_PERSONAL_PHONE disable;
+alter trigger sysadm.TG_VISA_PMT_DATA disable;
+alter trigger sysadm.TG_JOBCODE_TBL disable;
+alter trigger sysadm.TG_DEP_BENEF_BRA disable;
+alter trigger sysadm.TG_JOBCODE_TBL_BRA disable;
+alter trigger sysadm.TG_GC_CBO_TBL disable;
+alter trigger sysadm.TG_ESTAB_TBL disable;
+alter trigger sysadm.TG_NAMES disable;
+alter trigger sysadm.TG_DRIVERS_LIC disable;
+alter trigger sysadm.TG_GC_PLAN_VALOR disable;
+alter trigger sysadm.TG_UNION_TBL_BRA disable;
+alter trigger sysadm.TG_ESTAB_ID_BRA disable;
+alter trigger sysadm.TG_HEALTH_BENEFIT disable;
+alter trigger sysadm.TG_HEALTH_DEPENDNT disable;
+
+
+
+
+
+
+-- Rodar o exp
+
+exp 'operador@orahom' owner=fpw statistics=none file=c:\temp\fpw_orahom_1108.dmp log=c:\temp\fpw_orahom_1108.log
+
+
+
+
+
+-- Apos a atualizacao habilitar as triggers
+
+
+
+-- Instancia ORAHOM
+
+--select 'alter trigger fpw.'||trigger_name||' enable;'
+--from all_triggers
+--where owner = 'FPW';
+
+
+alter trigger fpw.TG_OCO_ALT_FORPONTO enable;
+alter trigger fpw.TR_CALENDAR_IUD enable;
+alter trigger fpw.TG_OCO_INS_FORPONTO enable;
+alter trigger fpw.TG_OCO_DEL_FORPONTO enable;
+alter trigger fpw.TG_ORG_ALT_FORPONTO enable;
+alter trigger fpw.TG_TAB_INS_FORPONTO enable;
+alter trigger fpw.TG_TAB_ALT_FORPONTO enable;
+alter trigger fpw.TG_FU_INS_FORPONTO enable;
+alter trigger fpw.TG_FU_ALT_FORPONTO enable;
+
+
+
+
+
+
+-- Instancia HCM9HOM
+
+
+--select 'alter trigger sysadm.'||trigger_name||' enable;'
+--from all_triggers
+--where owner = 'SYSADM';
+
+
+alter trigger sysadm.TG_SIMPLE_BENEFIT enable;
+alter trigger sysadm.TG_DISABILITY_BRA enable;
+alter trigger sysadm.TG_DEP_BEN_NAME enable;
+alter trigger sysadm.TG_DEPT_TBL enable;
+alter trigger sysadm.TG_PERS_DATA_BRA enable;
+alter trigger sysadm.TG_GC_BEN_TRANS_VT enable;
+alter trigger sysadm.TG_COMPANY_TBL enable;
+alter trigger sysadm.TG_DEP_BEN enable;
+alter trigger sysadm.TG_GC_DEP_BEN_BRA enable;
+alter trigger sysadm.TG_CNT_PROBATION enable;
+alter trigger sysadm.TG_BANK_ACCOUNT enable;
+alter trigger sysadm.TG_BANK_BRANCH_TBL enable;
+alter trigger sysadm.TG_DEP_BEN_EFF enable;
+alter trigger sysadm.TG_BANK_EC_TBL enable;
+alter trigger sysadm.TG_GC_CCUSTO_TBL enable;
+alter trigger sysadm.TG_BENEF_PLAN_TBL enable;
+alter trigger sysadm.TG_CODE_CITY_BRA enable;
+alter trigger sysadm.TG_DRIVER_LTYP enable;
+alter trigger sysadm.TG_EMAIL_ADDRESSES enable;
+alter trigger sysadm.TG_DEP_BENEF_NID enable;
+alter trigger sysadm.TG_GC_BEN_TRANS_CO enable;
+alter trigger sysadm.TG_GPBR_PAYEE_PARM enable;
+alter trigger sysadm.TG_PERS_NID enable;
+alter trigger sysadm.TG_PERSON_BRA enable;
+alter trigger sysadm.TG_GC_PERSON_BRA enable;
+alter trigger sysadm.TG_GC_BENEF_TRANS enable;
+alter trigger sysadm.TG_PERSONAL_DATA enable;
+alter trigger sysadm.TG_GC_AUDIT_JOB enable;
+alter trigger sysadm.TG_LIFE_ADD_BEN enable;
+alter trigger sysadm.TG_UNION_TBL enable;
+alter trigger sysadm.TG_GC_DEP_BEN_EFF enable;
+alter trigger sysadm.TG_DEP_BEN_EFF_BRA enable;
+alter trigger sysadm.TG_GC_GPBR_PAYPARM enable;
+alter trigger sysadm.TG_GC_JOBHOR_TBL enable;
+alter trigger sysadm.TG_GC_DEP_SALFAM enable;
+alter trigger sysadm.TG_PERSONAL_PHONE enable;
+alter trigger sysadm.TG_VISA_PMT_DATA enable;
+alter trigger sysadm.TG_JOBCODE_TBL enable;
+alter trigger sysadm.TG_DEP_BENEF_BRA enable;
+alter trigger sysadm.TG_JOBCODE_TBL_BRA enable;
+alter trigger sysadm.TG_GC_CBO_TBL enable;
+alter trigger sysadm.TG_ESTAB_TBL enable;
+alter trigger sysadm.TG_NAMES enable;
+alter trigger sysadm.TG_DRIVERS_LIC enable;
+alter trigger sysadm.TG_GC_PLAN_VALOR enable;
+alter trigger sysadm.TG_UNION_TBL_BRA enable;
+alter trigger sysadm.TG_ESTAB_ID_BRA enable;
+alter trigger sysadm.TG_HEALTH_BENEFIT enable;
+alter trigger sysadm.TG_HEALTH_DEPENDNT enable;

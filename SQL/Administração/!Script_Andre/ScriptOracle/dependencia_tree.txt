@@ -1,0 +1,314 @@
+-- Script: deps_report.sql
+-- Type: SQL+ Script
+--
+-- Purpose: Object-dependencies in ORACLE are shown via the user/all/dba_dependencies-views.
+--          This one could be seen as the intersection table resulting out of the
+--          n:m-relationship between objects.
+--          Starting from the specified object this script visualizes the two 
+--          dependencies-trees: 
+--             1) object A references object B which references object C ...
+--             2) object is referenced by object D which is referenced by object E ...
+--
+-- Input: the script prompts for the name of the object to start from
+--
+-- Output: the dependency-trees are print to screen 
+--         and written to a file deps_tree_<object_name>.txt
+--
+-- Author  : Marc Blum (marc@marcblum.de)
+-- Date    : 13.02.2000
+--
+-- Version : 1.0 initial revision
+-- Version : 1.1 bugfix in procedure upwards: objects on lowest level weren't recognized as ROOT-object
+-- Version : 1.2 (in work) enhancements: check for existance of root-object, check for cyclical depedencies
+--
+-- Known problems: any recursive dependency inside the tree will terminate the
+--                 output with an error
+--
+set termout off feed off head off pages 0
+--
+-- Wrap a view around all_dependencies to
+-- eleminate the disturbing (Package body -> Package) dependency  
+--
+DROP VIEW v_all_dep;
+CREATE OR REPLACE VIEW v_all_dep
+AS 
+SELECT owner,                  
+       name,                   
+       REPLACE(type,'PACKAGE BODY','PACKAGE') AS type,                   
+       referenced_owner                       AS r_owner,       
+       referenced_name                        AS r_name,        
+       referenced_type                        AS r_type,        
+       referenced_link_name                   AS r_link,
+       dependency_type         
+  FROM all_dependencies
+ WHERE NOT (name            = referenced_name  AND
+            owner           = referenced_owner AND
+            type            = 'PACKAGE BODY'   AND
+            referenced_type = 'PACKAGE'           ) 
+   AND referenced_owner    != 'SYS';
+--
+-- Table for downward-search ( a referencing b)
+--
+-- is necessary to use the hierarchical query
+-- later on
+--
+DROP TABLE t_referencing;
+CREATE TABLE t_referencing
+(lvl     NUMBER,        -- downwards-Level; the ROOT-object has 1
+ name    VARCHAR2(30),  -- the referencing object (level 1: none
+ owner   VARCHAR2(30),  --                         level 2: ROOT-object)  
+ type    VARCHAR2(12),
+ r_name  VARCHAR2(30), -- the referenced object (level 1: the ROOT-object
+ r_owner VARCHAR2(30), --                        level 2: objects directly referenced by the ROOT-Object) 
+ r_type  VARCHAR2(12));
+--
+-- Package to pull information
+-- out of all_dependencies
+--
+CREATE OR REPLACE PACKAGE make_deps_tree
+AS
+   PROCEDURE downwards(i_name IN VARCHAR2);
+   --
+   PROCEDURE upwards (i_name IN VARCHAR2);
+   --
+END make_deps_tree;
+/
+show errors
+--
+CREATE OR REPLACE PACKAGE BODY make_deps_tree
+AS
+   -- Constants and Exceptions
+   object_missing EXCEPTION;
+   --
+   -- Procedure cleanup: provides a clean environment
+   --                    to build dependeny tree
+   PROCEDURE cleanup
+   IS
+   BEGIN
+      DELETE t_referencing;
+   END cleanup;
+   --
+   -- Procedure check_exists: checks, wether the root object exists
+   --                         in current schema
+   --
+   PROCEDURE check_exists (i_object IN VARCHAR2)
+   IS    
+      CURSOR obj_cur
+      IS
+      SELECT 1 As dummy
+        FROM user_objects
+       WHERE object_name = i_object;
+      --
+      obj_rec obj_cur%ROWTYPE;
+      --
+   BEGIN
+      OPEN obj_cur;
+      FETCH obj_cur INTO obj_rec;
+      CLOSE obj_cur;
+      --
+      IF obj_rec.dummy IS NULL THEN
+         DBMS_OUTPUT.PUT_LINE('Analysis aborted:');
+         DBMS_OUTPUT.PUT_LINE('-> Object '||i_object||' does not exist in schema '||USER||'!');
+         RAISE object_missing;
+         --
+      ELSE
+         NULL;
+      END IF;
+      --
+   END check_exists;
+   --
+   PROCEDURE check_for_cycles
+   IS
+   BEGIN
+      NULL;
+   END check_for_cycles;
+   --
+   PROCEDURE downwards(i_name IN VARCHAR2)
+   IS
+      l_lvl      t_referencing.lvl%TYPE := 1 ;
+      l_root     VARCHAR2(30);
+      --
+   BEGIN
+      l_root := REPLACE(UPPER(i_name),' ');
+      --
+      cleanup;
+      -- 
+      check_exists(l_root);
+      --
+      -- ...Was machen, wenn das Objekt keine weiteren Objekte benutzt?
+      --
+      -- ROOT-Objekt to start dependency-tree
+      --
+      INSERT INTO t_referencing
+      SELECT DISTINCT
+             l_lvl,
+             NULL,
+             NULL,
+             NULL,
+             name,
+             owner,
+             type
+        FROM v_all_dep
+       WHERE name  = l_root
+         AND owner = USER;
+      --
+      -- incremental build of dependency-tree
+      --
+      LOOP
+         l_lvl := l_lvl + 1;  
+         --
+         INSERT INTO t_referencing
+         SELECT DISTINCT
+                l_lvl,              -- bestimme die Child-Objekte
+                name,
+                owner,
+                type,
+                r_name,
+                r_owner,
+                r_type
+           FROM v_all_dep
+          WHERE (name,owner,type) IN (SELECT r_name,r_owner,r_type  -- zu jedem Objekt eine Ebene höher
+                                        FROM t_referencing
+                                       WHERE lvl = l_lvl - 1
+                                      MINUS
+                                      SELECT r_name,r_owner,r_type  -- das nicht schon vorher aufgelöst wurde
+                                        FROM t_referencing
+                                       WHERE lvl < l_lvl-1);
+         --
+         EXIT WHEN SQL%ROWCOUNT = 0;
+         --
+      END LOOP;
+      --
+      check_for_cycles;
+      --
+   EXCEPTION
+      WHEN object_missing THEN
+         NULL;
+      WHEN OTHERS THEN
+         RAISE;
+   END downwards;
+   --
+   PROCEDURE upwards (i_name IN VARCHAR2)
+   IS
+      l_lvl      t_referencing.lvl%TYPE := 1 ;
+      l_root     VARCHAR2(30);
+      --
+   BEGIN
+      l_root := REPLACE(UPPER(i_name),' ');
+      --
+      cleanup;
+      --
+      check_exists(l_root);
+      --
+      -- ...Was machen, wenn das Objekt keine weiteren Objekte benutzt?
+      --
+      -- ROOT-Objekt to start dependency-tree
+      --
+      INSERT INTO t_referencing
+      SELECT DISTINCT
+             l_lvl,
+             r_name,
+             r_owner,
+             r_type,
+             NULL,
+             NULL,
+             NULL
+        FROM v_all_dep
+       WHERE r_name  = l_root
+         AND r_owner = USER;
+      --
+      -- incremental build of dependency-tree
+      --
+      LOOP
+         l_lvl := l_lvl + 1;  
+         --
+         INSERT INTO t_referencing
+         SELECT DISTINCT
+                l_lvl,              -- bestimme die Child-Objekte
+                name,
+                owner,
+                type,
+                r_name,
+                r_owner,
+                r_type
+           FROM v_all_dep
+          WHERE (r_name,r_owner,r_type) IN (SELECT name,owner,type  -- zu jedem Objekt eine Ebene höher
+                                              FROM t_referencing
+                                             WHERE lvl = l_lvl - 1
+                                            MINUS
+                                            SELECT name,owner,type  -- das nicht schon vorher aufgelöst wurde
+                                              FROM t_referencing
+                                             WHERE lvl < l_lvl-1);
+         --
+         EXIT WHEN SQL%ROWCOUNT = 0;
+         --
+      END LOOP;
+      --
+      check_for_cycles;
+      --
+   EXCEPTION
+      WHEN object_missing THEN
+         NULL;
+      WHEN OTHERS THEN
+         RAISE;
+   END upwards;
+   --
+END make_deps_tree;
+/
+show errors
+--
+set termout on verify off pages 100 serveroutput on
+--
+PROMPT
+PROMPT name of object:
+ACCEPT name
+-- ...Leerzeichen aus name filtern
+PROMPT
+spool deps_tree_&name..txt
+PROMPT DEPENDENCY TREES WITH RESPECT TO &name
+PROMPT
+PROMPT
+SELECT 'OBJECTS BEING REFERENCED BY '||'&name'||CHR(10)
+       ||RPAD('=',LENGTH('OBJECTS BEING REFERENCED BY '||'&name'),'=') FROM DUAL;
+PROMPT
+exec make_deps_tree.downwards('&name')
+-- ...kann man innerhalb eines Levels sortieren?
+--
+-- ...dynamische festlegung der Breite der Object-Spalte
+--
+set head on
+--
+column lvl heading "Lvl" format 999
+--
+select LEVEL                                      AS lvl,
+       SUBSTR(LPAD(' ',3*(LEVEL-1))||r_name,1,50) AS "Object",
+       r_type                                     AS "Type"
+  from t_referencing
+ start with (r_name = REPLACE(UPPER('&name'),' ') AND name IS NULL)
+connect by prior r_name = name;
+-- 
+set head off
+PROMPT
+PROMPT
+SELECT 'OBJECTS REFERENCING '||'&name'||CHR(10)
+       ||RPAD('=',LENGTH('OBJECTS REFERENCING '||'&name'),'=') FROM DUAL;
+PROMPT
+exec make_deps_tree.upwards('&name')
+-- ...kann man innerhalb eines Levels sortieren?
+set head on
+--
+select LEVEL                                    AS lvl,
+       SUBSTR(LPAD(' ',3*(LEVEL-1))||name,1,50) AS "Object",
+       type                                     AS "Type"
+  from t_referencing
+ start with (name = REPLACE(UPPER('&name'),' ') AND r_name IS NULL)
+connect by prior name = r_name;
+--
+PROMPT
+spool off
+-- cleanup temporary objects
+drop package make_deps_tree;
+drop table t_referencing;
+drop view v_all_dep;
+UNDEFINE name
+set verify on feed on pages 100 head on

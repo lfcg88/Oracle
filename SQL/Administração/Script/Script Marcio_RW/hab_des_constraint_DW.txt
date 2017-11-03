@@ -1,0 +1,31 @@
+select 'alter table dwsinistro.'||table_name|| ' disable constraint ' ||constraint_name||';' 
+from dba_constraints where r_constraint_name='PK_GUIA_AMBULATORIAL';
+
+select 'alter table dwsinistro.'||table_name|| ' enable constraint ' ||constraint_name||';' 
+from dba_constraints where r_constraint_name='PK_GUIA_AMBULATORIAL';
+
+
+alter table dwsinistro.SINISTRO_PEQ_ATEND_PROCED disable constraint FK_PEQ_ATEND_PROCED_GUIA;
+alter table dwsinistro.SINISTRO_TRAT_ODONTOLOGICO disable constraint FK_TRAT_ODONT_GUIA;
+alter table dwsinistro.SINISTRO_EXAME_PROCEDIMENTO disable constraint FK_EXAME_PROCED_GUIA;
+alter table dwsinistro.SINISTRO_EXAME_PROFISSIONAL disable constraint FKPROFISSIONAL_GUIA;
+alter table dwsinistro.SINISTRO_GUIA_PROCED_SERIADO disable constraint FK_SERIADO_GUIA_GUIA;
+alter table dwsinistro.SINISTRO_PEQUENO_ATENDIMENTO disable constraint FK_PEQ_ATEND_GUIA;
+alter table dwsinistro.SINISTRO_PROCEDIMENTO_SERIADO disable constraint FK_SERIADO_PROCED_GUIA;
+alter table dwsinistro.SINISTRO_REMOCAO disable constraint FK_REMOCAO_GUIA;
+alter table dwsinistro.SINISTRO_CONSULTA disable constraint FK_CONSULTA_GUIA;
+alter table dwsinistro.SINISTRO_EXAME disable constraint FK_EXAME_GUIA_GUIA;
+alter table dwsinistro.SINISTRO_EXAME_EMPRESA disable constraint FK_EXAME_EMP_GUIA;
+
+
+alter table dwsinistro.SINISTRO_PEQ_ATEND_PROCED enable novalidate constraint FK_PEQ_ATEND_PROCED_GUIA;
+alter table dwsinistro.SINISTRO_TRAT_ODONTOLOGICO enable novalidate constraint FK_TRAT_ODONT_GUIA;
+alter table dwsinistro.SINISTRO_EXAME_PROCEDIMENTO enable novalidate constraint FK_EXAME_PROCED_GUIA;
+alter table dwsinistro.SINISTRO_EXAME_PROFISSIONAL enable novalidate constraint FKPROFISSIONAL_GUIA;
+alter table dwsinistro.SINISTRO_GUIA_PROCED_SERIADO enable novalidate constraint FK_SERIADO_GUIA_GUIA;
+alter table dwsinistro.SINISTRO_PEQUENO_ATENDIMENTO enable novalidate constraint FK_PEQ_ATEND_GUIA;
+alter table dwsinistro.SINISTRO_PROCEDIMENTO_SERIADO enable novalidate constraint FK_SERIADO_PROCED_GUIA;
+alter table dwsinistro.SINISTRO_REMOCAO enable novalidate constraint FK_REMOCAO_GUIA;
+alter table dwsinistro.SINISTRO_CONSULTA enable novalidate constraint FK_CONSULTA_GUIA;
+alter table dwsinistro.SINISTRO_EXAME enable novalidate constraint FK_EXAME_GUIA_GUIA;
+alter table dwsinistro.SINISTRO_EXAME_EMPRESA enable novalidate constraint FK_EXAME_EMP_GUIA;

@@ -1,0 +1,430 @@
+1) monitorando swap
+=======================
+
+a) vmstat -S 5 9
+
+  a coluna  w indica o numero de runnable  processes que esta tendo
+  swap (escrita para o disco ). Se o valor e diferente de zero isto
+  indica que swap esta ocorrendo e seu sistema esta tendo serios
+  problemas de memoria.
+
+  a coluna si e so indica o numero de swap-in e swap-outs por segundo
+
+
+b) sar -w 5 9
+
+
+2) Monitorando paging
+========================
+
+a) sar -p 10 10
+
+b) vmstat -S
+
+paging pode nao apresentar serios problemas como swap. Uma quantidade
+pequena de pages-out pode nao afetar notavelmente a performace de seu 
+sistema, porem a performace pode degradar rapidamente com o aumento
+da atividade de page-outs
+
+
+se voce tem SUM,IBM AIX entao atividade de pagincao significante e normal
+
+
+3) Monitorando memoria compartilhada do unix
+==============================================
+
+   a) tsthm
+
+   b) ipcs -m
+
+4) Monitorando disco
+======================
+
+   a) iostat 5 4
+
+   b) sar -d 5 10   <---- MUITO BOM
+
+   c) vmstat 1 3
+     
+    
+5) Monitorando large disk request queues
+
+A request queue indica quanto a requisicao de I/O para um particular disk device
+deve esperar para ser realizada. Pode ser causado por intensivo I/O 
+sobre um disco ou tempo medai de seek alto
+
+comando a ser usado
+
+a) sar -d
+  a coluna avque indica o numero medio de requests outstanding duranteesete 
+   tempo
+
+Uma fila de rquisicao pequena nao necessariamente significa que o disco
+nao esteja ocupado
+
+voce precisa ver as colunas avque e %busy ( 60-70% ou mais para busy
+indica atividade de disco muito alta
+
+com a intenção  de interpretar a saida do sar ou iostat, voce precisa descobrir
+o processamento do disco instalado em seu sistema. Ou voce olha no manual ou executa
+o seguinte comando
+
+time dd if=/dev/rdisk1 of=/dev/rdisk2 bs=4096
+
+
+este comando ira retornar o numero de blocos transferdios e o tempo para
+rodar o comando
+
+
+6) Monitorando CPU
+
+a) sar -u 1 5       <----- muito bom
+
+       %usr porcetengaem de uso para processos dos usuarios
+       %sys porcetengaem de uso para processos do sistema
+       %wio pocentagem gasta esperando uma requisicao de I/O
+       %idle porcentagem que o procesador ficou ocioso
+
+b) mpstat 1 3
+
+c) sar -q 1 5 ( fila de espera para processamento )   <------ muito bom
+
+    runq-sz tamanho da fila de execução
+    %runocc  porcentagem do tempo ocupada 
+    swpq-sz  numero de processos que tenha sido swapped out mas
+             agora estao pronto para rodar
+    %swpocc porcentagem de tempo ocupado
+
+e)  prstat ( sun )
+    
+7) Monitorando processos
+
+a) Lista inforamções sobre os processos, inclusive uso de memoria em pagina
+
+ps -efl 
+
+b) verifica o que o processo esta fazendo a nivel de sistema operacional
+
+truss -p nro
+
+Onde:
+
+nro: numero do PID
+
+
+c) mostra a porcentagem de uso de memoria e cpu por processos
+
+ps -ef -o pcpu -o pmem -o pid -o comm | sort -rn | more
+
+
+d) copia arquivos mais recentes 
+
+
+Ex.: Copiar os arquivos do diretorio oracle.old para oracle.new:
+
+/usr/app/oracle.old> find . -print | cpio -pdvm /usr/app/oracle.new
+
+
+8) Informações sobre semaforos e memoria compartilhada
+
+ipcs  ====> lista semaforos
+
+
+9) encontra a palavra dentro do qrquivo e mostra o nome do arquivo
+
+find . -print | xargs grep -i <palavra>
+
+ls <arquivo> | xargs grep WAIT | grep -v SQL
+
+ls *.prf | xargs grep total |  sort -rn +5 -6 | more
+
+
+10) mostra os vg associados aos discos  ( volume group )
+
+lspv
+
+11) tail -f alert_hmg2.log 
+
+
+12) EXTRAI LINHAS DENTRO DE U ARQUIVO BUSCANDO POR UMA PALAVRA
+
+grep <palavra> <arquivo>
+
+
+13) remocao de arquivos antigos. Remove os arquivos (*.old) que tem mais de 15 dias
+
+	find . -name "*.trc" -mtime +0 -exec rm {} \;
+
+        find . -name "*.trc" -mtime +0 -ok rm {} \;
+        
+        find . \( -name a.out -o -name '*.trc' \)  -mtime +8 -exec rm {} \;   
+
+                         
+
+Use the following command to find a file older than 10 days
+
+find . -mtime +10
+
+To cound all the files older than 10 days
+
+find . -mtime +10 |wc -l
+
+To move all these files into a different dir (in our case /tmp)
+
+find . -mtime +10 -exec mv {} /tmp \; -print
+
+To delete all these files
+
+find . -mtime +10 -exec rm {} \; -print
+      
+
+find . -name "*.trc" -mtime +10 -exec mv {} /u00/app/oracle/admin/prd5/udump/AnaliseSIR082009 \; -print
+
+
+14) quantidade de memoria (RAM) da maquina
+
+       diretorio :  /usr/platform/sun4u/sbin    
+
+       comando   :  prtdiag | grep Memory  
+
+ou
+
+      /usr/sbin/prtconf | grep size
+
+
+15) Patch instalados
+
+showrev -p 
+
+
+
+15)  Canhao
+
+kill -9  `ps -ef | grep  'oracledsv8 (LOCAL=NO)' | grep -v grep | awk '{print $2}'` 
+
+
+16) Limitacoes do SO
+
+unlimit -a
+
+
+17) Bloco do sistema operacional
+
+
+I read that to find out, run: df -g 
+This revealed an 8K block size! 
+/home19/oradata/...(/dev/vx/dsk/...: 8192 block size 1024 frag size 
+
+
+18) comando para diferentes sistema operacional
+
+
+19) lista aonde estão instalados os pacotes sistema operacional instladso pelo pkgadd (SUN)
+
+	cat  /var/sadm/install/contents
+
+
+	grep oracle /var/sadm/install/contents
+
+
+
+20) copia um cd para o dh
+
+
+
+comando para copiar  conteudo de um CD para um Diretorio
+
+
+O comando é para ser dado do cdrom "/media/cdrecorder"
+
+O diretorio desteino é /u01/cd3
+
+ 
+
+tar -cvf - ./* | ( cd /u01/cd4 ; tar -xvf - )
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+OS SPECIFIC COMMANDS 
+----------------------------------------- 
+
+
+To Find Swap, RAM, and OS Version
+
+  OS
+ SWAP
+ RAM
+ OS VERSION
+ 
+AIX
+ /usr/sbin/lsps -a
+  /usr/sbin/lsattr -HE -l sys0 -a realmem
+ oslevel
+ 
+HP
+ swapinfo -q
+ dmesg | grep -i mem 
+ uname -a
+ 
+Tru64
+ swapon -s
+ vmstat -P 
+ /usr/sbin/sizer -v
+ 
+Solaris
+ swap -s
+ /usr/sbin/prtconf | grep -i memory
+ uname -r
+ 
+Linux
+ free
+ free
+ uname -a
+ 
+
+
+To Determine the Unix Kernel Parameters 
+
+OS
+ LOCATION
+ COMMAND TO SEARCH
+ 
+AIX
+ automatically configured
+  do 'env' for LINK_CNTRL, 
+To determine if AIX is 64 bit enabled do 'genkex | grep 64' or 'genkex | grep call' (see <Note:1019106.102>)
+ 
+HP
+ /stand/system
+ /etc/sysdef or /usr/sbin/kmtune 
+ 
+Tru64
+ /etc/sysconfigtab
+ /sbin/sysconfig -q ipc or /sbin/sysconfig -q vm or /sbin/sysconfig -q proc
+ 
+Solaris 
+ /etc/system
+ "/etc/sysdef | grep SHM" or "/etc/sysdef | grep SEM"
+ 
+Linux
+ /usr/src/linux/include/asm/shmparam.h 
+/usr/src/linux/include/linux/sem.h 
+/proc/sys/kernel/sem 
+/proc/sys/kernel/shmall 
+/proc/sys/kernel/shmmax 
+/proc/sys/kernel/shmmni  ipcs -lms
+ 
+
+
+O/S Software Installed Packages and Patches 
+
+OS
+ COMMAND FOR PACKAGES
+ COMMAND FOR PATCHES
+ 
+AIX
+ lslpp -w | grep -i "software title" (applies to APARs and PTFs)
+ /usr/sbin/instfix -ia -ivk patch number
+ 
+HP
+ /usr/sbin/swlist -l fileset | grep -i "software title" 
+ /usr/sbin/swlist -l fileset | grep -i
+ 
+Solaris
+ /bin/pkginfo -l | grep -i "software title"
+ /bin/showrev -p
+ 
+Tru64
+ /usr/sbin/setld -i | grep -i "software title"
+ /usr/sbin/setld -i | more
+For patchkits:
+/usr/sbin/dupatch -track -type kit
+ 
+Linux rpm -qa   
+
+
+To Check if an OS is 64 bit Capable or not 
+
+OS COMMAND RESULTS 
+Aix
+ lslpp -L | grep 64bit It should return "bos.64bit" 
+HP getconf KERNEL_BITS It should return "64" 
+Solaris /bin/isainfo -kv If the isainfo command does not exist it is not 64-bit. It should return "64-bit sparcv9 kernel modules" 
+
+
+To Check version of Compiler 
+
+COMPILER COMMAND 
+C/C++
+ do a "which cc", then cd to the directory it is in, then do a "what cc" 
+except for Linux, on Linux do a "rpm -qa | grep egcs 
+COBOL cd $COBDIR and do "more cobver" 
+Fortran do a "which f77", then cd to directory it is in, then do a "what f77" 
+
+
+
+19) usando o top
+================
+
+
+-- legal mostra quantidade de processo zumbi e outros
+
+ top -s1 -d1 -n20000 -f resultado.top
+
+
+
+20) Determining Disk Throughput - (Sun)  
+
+
+by Jeff Hunter, Sr. Database Administrator 
+
+Overview 
+
+
+This document provides several example on how to test and determine disk throughput. 
+Write Example #1 
+
+
+Here is an easy solution to determine the time (and throughput) on how long it would 
+take to write 1GB of data to a file. Keep in mind that you will also want to perform 
+(and time) a sync after the write has completed: 
+
+# rm -f /u07/app/test/gigfile
+
+# sync; time dd ibs=1048576 obs=1048576 count=1024 if=/dev/zero of=/u07/app/test/gigfile
+1024+0 records in
+1024+0 records out
+
+real    0m36.41s
+user    0m13.36s
+sys     0m17.73s
+
+# time sync
+real    0m0.15s
+user    0m0.00s
+sys     0m0.04s
+From the above, we can estimate that I am getting roughly 28.01 MB/sec. 
+1024 MB / (36.41 + 0.15) (s) = 28.01 MB/sec.
+
+
+
+

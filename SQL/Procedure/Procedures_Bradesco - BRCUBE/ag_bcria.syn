@@ -1,0 +1,3 @@
+create or replace synonym SGPB_PROC.AG_BCRIA
+  for CPVO.AG_BCRIA;
+

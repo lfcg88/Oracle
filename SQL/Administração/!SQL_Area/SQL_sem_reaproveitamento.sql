@@ -1,0 +1,1 @@
+select sql_text,executions,buffer_gets from v$sqlarea where executions = 1 order by executions,sql_text 

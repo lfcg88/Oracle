@@ -1,0 +1,21 @@
+exp 'operador@crmoprd' owner=pluscep statistics=none file=/backup/crmoprd/pluscep_2605.dmp log=/backup/crmoprd/pluscep_2605.log
+exp 'operador@crmoprd' owner=plusoftcrm statistics=none file=/backup/crmoprd/plusoftcrm_2605.dmp log=/backup/crmoprd/plusoftcrm_2605.log
+exp 'operador@crmoprd' owner=plusinfo statistics=none file=/backup/crmoprd/plusinfo_2605.dmp log=/backup/crmoprd/plusinfo_2605.log
+
+imp 'operador@crmoprd' file=/backup/crmoprd/pluscep_2605.dmp log=/backup/crmoprd/imp_pluscep_2605.log fromuser=pluscep touser=pluscep ignore=y
+imp 'operador@crmoprd' file=/backup/crmoprd/plusoftcrm_2605.dmp log=/backup/crmoprd/imp_plusoftcrm_2605.log fromuser=plusoftcrm touser=plusoftcrm ignore=y
+imp 'operador@crmoprd' file=/backup/crmoprd/plusinfo_2605.dmp log=/backup/crmoprd/imp_plusinfo_2605.log fromuser=plusinfo touser=plusinfo ignore=y
+
+
+
+	begin
+dbms_stats.gather_schema_stats(ownname=> 'PLUSCEP' , cascade=> TRUE);
+end;
+
+	begin
+dbms_stats.gather_schema_stats(ownname=> 'PLUSINFO' , cascade=> TRUE);
+end;
+
+	begin
+dbms_stats.gather_schema_stats(ownname=> 'PLUSOFTCRM' , cascade=> TRUE);
+end;

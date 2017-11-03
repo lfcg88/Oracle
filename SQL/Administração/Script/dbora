@@ -1,0 +1,63 @@
+#!/bin/sh
+#
+# /etc/rc.d/init.d/Dbora
+# Description: Starts and stops the Oracle database and listeners
+# See how we were called.
+case "$1" in
+  start)
+        echo -n "Starting Oracle Databases: "
+        echo "----------------------------------------------------" >> /var/log/oracle
+        date +"! %T %a %D : Starting Oracle Databases as part of system up." >>
+/var/log/oracle
+        echo "----------------------------------------------------" >> /var/log/oracle
+        su - oracle -c /users/oracle/9.0.1/bin/dbstart >> /var/log/oracle
+        echo "Done."
+        echo -n "Starting Oracle Listeners: "
+        su - oracle -c "/users/oracle/9.0.1/bin/lsnrctl start" >> /var/log/oracle
+        echo "Done."
+        echo ""
+        echo "----------------------------------------------------" >> /var/log/oracle
+        date +"! %T %a %D : Finished." >> /var/log/oracle
+        echo "----------------------------------------------------" >> /var/log/oracle
+        touch /var/lock/subsys/oracle
+        ;;
+  stop)
+        echo -n "Shutting Down Oracle Listeners: "
+        echo "----------------------------------------------------" >> /var/log/oracle
+        date +"! %T %a %D : Shutting Down Oracle Databases as part of system down." >>
+/var/log/oracle
+        echo "----------------------------------------------------" >> /var/log/oracle
+        su - oracle -c "/users/oracle/9.0.1/bin/lsnrctl stop" >> /var/log/oracle
+        echo "Done."
+        rm -f /var/lock/subsys/oracle
+        echo -n "Shutting Down Oracle Databases: "
+        su - oracle -c /users/oracle/9.0.1/bin/dbshut >> /var/log/oracle
+        echo "Done."
+        echo ""
+        echo "----------------------------------------------------" >> /var/log/oracle
+        date +"! %T %a %D : Finished." >> /var/log/oracle
+        echo "----------------------------------------------------" >> /var/log/oracle
+        ;;
+  restart)
+        echo -n "Restarting Oracle Databases: "
+        echo "----------------------------------------------------" >> /var/log/oracle
+        date +"! %T %a %D : Restarting Oracle Databases as part of system up." >>
+/var/log/oracle
+        echo "----------------------------------------------------" >> /var/log/oracle
+        su - oracle -c /user/oracle/9.0.1/bin/dbshut >> /var/log/oracle
+        su - oracle -c /user/oracle/9.0.1/bin/dbstart >> /var/log/oracle
+        echo "Done."
+        echo -n "Restarting Oracle Listeners: "
+        su - oracle -c "/user/oracle/9.0.1/bin/lsnrctl stop" >> /var/log/oracle
+        su - oracle -c "/user/oracle/9.0.1/bin/lsnrctl start" >> /var/log/oracle
+        echo "Done."
+        echo ""
+        echo "----------------------------------------------------" >> /var/log/oracle
+        date +"! %T %a %D : Finished." >> /var/log/oracle
+        echo "----------------------------------------------------" >> /var/log/oracle
+        touch /var/lock/subsys/oracle
+        ;;
+  *)
+        echo "Usage: oracle {start|stop|restart}"
+        exit 1
+esac

@@ -1,0 +1,65 @@
+prompt ==================================
+prompt SNAPSHOTS
+prompt ==================================
+prompt
+prompt
+prompt
+set linesize 99
+set pagesize 999
+column name heading "Snap Name" format a10;
+column owner heading "Snap Owner" format a10;
+column table_name heading "Base Table" format a10;
+column can_use_log heading "Log?" format a3;
+column master_view heading "Mstr View" format a10;
+column master_owner heading "Mstr Owner" format a10;
+column master heading "Mstr Table" format a10;
+column master_link heading "Mstr Link" format a10;
+column update_trig heading "Update Trig" format a11;
+column lf heading "Last Refresh" format a18;
+column sw heading "Start With" format a18;
+column next heading "Next" format a50;
+column type heading "Refresh|Type" format a8;
+SELECT name,owner,table_name,can_use_log,master_view,master_owner,master,master_link,
+       update_trig,TO_CHAR(last_refresh,'dd/mm/yy hh24:mi:ss') lf,TO_CHAR(start_with,'dd/mm/yy hh24:mi:ss') sw,next,type
+FROM dba_snapshots
+ORDER BY 1,2; 
+prompt
+prompt
+prompt
+prompt ==================================
+prompt SNAPSHOTS - mASTER LINK
+prompt ==================================
+col owner format a10
+col master_link format a50
+select owner, master_link, count(*) 
+ from dba_snapshots
+  group by owner,master_link
+  order by master_link;
+prompt
+prompt
+prompt
+prompt ==================================
+prompt SNAPSHOTS - Db Link
+prompt ==================================
+prompt
+prompt
+set linesize 99
+col owner format a20 heading 'Link Owner';
+col db_link format a15 heading 'DB Link Name';
+col username format a20 heading 'User Name';
+col host format a20 heading 'Host';
+col created heading 'Date|Created';
+break on owner;
+select owner, db_link,username,host,created
+from dba_db_links a
+where exists
+       (select * 
+        from dba_snapshots
+        where replace(master_link,'@','') = a.db_link
+          );
+clear columns;
+clear breaks;
+prompt
+prompt
+prompt
+prompt

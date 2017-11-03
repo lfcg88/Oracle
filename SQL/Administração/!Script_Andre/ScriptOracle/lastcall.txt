@@ -1,0 +1,9 @@
+
+
+column Data_Call format a20
+
+  SELECT username,sid,to_char(sysdate-(last_call_et/60/60/24) , 'Dy HH24:MI:SS') "Data_Call" ,round(last_call_et/60) " Minutos Executando"
+  FROM v$session
+  where username is not null and status='ACTIVE'  
+  order by last_call_et/60 desc
+/

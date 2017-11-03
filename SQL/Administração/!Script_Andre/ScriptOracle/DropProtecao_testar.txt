@@ -1,0 +1,66 @@
+-- ORACLE DATABASE ADMINISTRATOR
+-- Protect tables from getting dropped by mistake
+-- Ravinder Bhalla
+-- 19 Aug 2003
+-- Rating: -4.25- (out of 5)
+
+-- Corrected September 30, 2003
+
+-- Oracle provides a mechanism to track down database system events like LOGON and 
+-- SHUTDOWN. Whenever a trigger is fired, event-specfic attributes or functions could be used 
+-- within the trigger as a literal or variable; i.e., ora_dict_obj_name or ora_dict_obj_type. With the 
+-- help of event-specfic attributes, you can protect tables from getting dropped in production environments.
+--  This script works in 8.1.6, 8.1.7 and 9i. 
+
+-- Prequisites: You need to create a table in sys schema that holds the name of all protected tables. 
+
+-- sqlplus '/as sysdba'
+ 
+CREATE TABLE security AS SELECT object_name, owner FROM dba_objects WHERE object_type='TABLE' ;
+ 
+CREATE OR REPLACE TRIGGER trg_security BEFORE DROP ON DATABASE
+DECLARE
+ v_object_name char(128); 
+ v_owner varchar2(128);
+BEGIN
+ SELECT object_name INTO v_object_name FROM security WHERE UPPER(object_name) = ora_dict_obj_name and owner = login_user; 
+ IF SQL%FOUND THEN 
+  RAISE_APPLICATION_ERROR(-20001,'Cannot drop protected table'); 
+ END IF;
+EXCEPTION 
+ WHEN NO_DATA_FOUND THEN
+    NULL; -- Allows to drop that table
+ WHEN TOO_MANY_ROWS THEN
+    RAISE_APPLICATION_ERROR(-20002, 'Remove Duplicate entry from security table');
+END;
+/
+
+-- To test this login as an another user:
+
+-- $ sqlplus scott/tiger
+-- SQL> drop table emp;
+
+-- ERROR at line 1:
+-- ORA-00604: error occurred at recursive SQL level 1
+-- ORA-20001: Cannot drop protected table
+-- ORA-06512: at line 6
+-- 
+-- As long as you have an entry of that table in the security table, your table is protected. So 
+-- in order to drop that table, delete an entry from the security table.
+-- 
+-- The following trigger will insert an entry into the securty table automatically when you create 
+-- a table. Thus, NO manual task is required to add a record in the security table after the creation of a new table.
+-- 
+CREATE OR REPLACE TRIGGER trg_security_refresh AFTER CREATE ON DATABASE
+DECLARE
+ v_object_name char(128); 
+ v_owner varchar2(128);
+BEGIN
+ IF ora_dict_obj_type = 'TABLE' then
+  INSERT INTO security values (ora_dict_obj_name, login_user); 
+ END IF;
+END;
+/
+
+-- This can be futher modified for different object types such as VIEW, SYNONYMS, PROCDEURE, FUNCTION or INDEX. 
+ 

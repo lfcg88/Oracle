@@ -1,0 +1,21 @@
+set pages 0 feed off veri off lines 500
+
+
+accept newname prompt "Enter user name: " 
+
+
+
+
+-- Grant Table Privs...
+select 'grant '||privilege||' on '||owner||'.'||table_name||' to '||grantee||';'
+from   sys.dba_tab_privs
+where  owner = upper('&&newname');  
+
+-- Grant Column Privs...
+select 'grant '||privilege||' on '||owner||'.'||table_name||
+       '('||column_name||') to '||grantee||';'
+from   sys.dba_col_privs
+where  owner = upper('&&newname');  
+
+
+

@@ -1,0 +1,528 @@
+
+
+
+
+Workload Repository Views
+
+The following workload repository views are available:
+•V$ACTIVE_SESSION_HISTORY - Displays the active session history (ASH) sampled every second.
+•V$METRIC - Displays metric information.
+•V$METRICNAME - Displays the metrics associated with each metric group.
+•V$METRIC_HISTORY - Displays historical metrics.
+•V$METRICGROUP - Displays all metrics groups.
+•DBA_HIST_ACTIVE_SESS_HISTORY - Displays the history contents of the active session history.
+•DBA_HIST_BASELINE - Displays baseline information.
+•DBA_HIST_DATABASE_INSTANCE - Displays database environment information.
+•DBA_HIST_SNAPSHOT - Displays snapshot information.
+•DBA_HIST_SQL_PLAN - Displays SQL execution plans.
+•DBA_HIST_WR_CONTROL - Displays AWR settings.
+
+
+
+
+select   distinct e.SESSION_ID,e.USER_ID,to_char(e.SQL_EXEC_START,'DD/MM/YYYY HH24:MI:SS') execucao,e.event,
+e.SESSION_STATE,e.TIME_WAITED,d.SESSION_ID bloqueador, d.username
+from (
+
+select  a.SESSION_ID,a.USER_ID,c.username,to_char(a.SQL_EXEC_START,'DD/MM/YYYY HH24:MI:SS') execucao,a.event,
+a.SESSION_STATE,a.TIME_WAITED,
+--a.BLOCKING_SESSION_STATUS,        
+a.BLOCKING_SESSION,               
+a.BLOCKING_SESSION_SERIAL# ,
+b.sql_text         
+from dba_hist_active_sess_history a,DBA_HIST_SQLTEXT b, dba_users c
+where SQL_EXEC_START > TO_DATE('01/08/2011 09:45','DD/MM/YYYY HH24:MI') AND 
+SQL_EXEC_START < TO_DATE('01/08/2011 10:00','DD/MM/YYYY HH24:MI')
+and a.sql_id=b.sql_id
+and a.USER_ID=c.USER_ID and a.SESSION_ID =424
+
+) d, dba_hist_active_sess_history e
+
+where e.session_id = d.blocking_session 
+and e.SQL_EXEC_START > TO_DATE('01/08/2011 09:45','DD/MM/YYYY HH24:MI') AND 
+e.SQL_EXEC_START < TO_DATE('01/08/2011 10:00','DD/MM/YYYY HH24:MI')
+
+
+
+
+
+
+
+
+
+Although not essential to estimating AAS, the query below also distinguishes between sessions in a wait state from those that think they are on the CPU. This additional diagnostic detail is often helpful, but is not necessary.
+
+column sample_time format a25
+
+select
+   sample_id,
+   sample_time,
+   sum(decode(session_state, 'ON CPU', 1, 0))  as on_cpu,
+   sum(decode(session_state, 'WAITING', 1, 0)) as waiting,
+   count(*) as active_sessions
+from
+   v$active_session_history
+where
+   -- last 15 seconds
+   sample_time > sysdate - (0.25/1440)
+group by
+   sample_id,
+   sample_time
+order by
+   sample_id
+;
+
+ SAMPLE_ID SAMPLE_TIME                   ON_CPU    WAITING ACTIVE_SESSIONS
+---------- ------------------------- ---------- ---------- ---------------
+  50667633 24-JUL-08 08.56.03.078 PM          3          9              12
+  50667634 24-JUL-08 08.56.04.085 PM          1          6               7
+  50667635 24-JUL-08 08.56.05.095 PM          0          4               4
+  50667636 24-JUL-08 08.56.06.105 PM          1          2               3
+  50667637 24-JUL-08 08.56.07.115 PM          0          3               3
+  50667638 24-JUL-08 08.56.08.125 PM          0          2               2
+  50667639 24-JUL-08 08.56.09.135 PM          3          1               4
+  50667640 24-JUL-08 08.56.10.155 PM          0          4               4
+  50667641 24-JUL-08 08.56.11.165 PM          1          2               3
+  50667642 24-JUL-08 08.56.12.175 PM          0          4               4
+  50667643 24-JUL-08 08.56.13.185 PM          1          2               3
+  50667644 24-JUL-08 08.56.14.195 PM          1          3               4
+  50667645 24-JUL-08 08.56.15.205 PM          1          4               5
+  50667646 24-JUL-08 08.56.16.215 PM          1          2               3
+  50667647 24-JUL-08 08.56.17.225 PM          0          2               2
+  50667648 24-JUL-08 08.56.18.235 PM          0          2               2
+
+16 rows selected.
+
+
+column sample_time format a19
+
+select
+   to_char(min(sub1.sample_time), 'YYYY-MM-DD HH24:MI:SS') as sample_time,
+   round(avg(sub1.on_cpu),1) as cpu_avg,
+   round(avg(sub1.waiting),1) as wait_avg,
+   round(avg(sub1.active_sessions),1) as act_avg
+from
+   ( -- sub1: one row per second, the resolution of SAMPLE_TIME
+     select
+        sample_id,
+        sample_time,
+        sum(decode(session_state, 'ON CPU', 1, 0))  as on_cpu,
+        sum(decode(session_state, 'WAITING', 1, 0)) as waiting,
+        count(*) as active_sessions
+     from
+        v$active_session_history
+     where
+        sample_time > sysdate - (0.25/1440)
+     group by
+        sample_id,
+        sample_time
+   ) sub1
+;
+
+SAMPLE_TIME            CPU_AVG   WAIT_AVG    ACT_AVG
+------------------- ---------- ---------- ----------
+2008-07-24 20:56:03         .8        3.3        4.1
+
+1 row selected.
+
+
+
+
+
+To the above "Step 3" query, I have added both variance and the ratio of variance to mean. This allows us to use the techniques championed by Robyn Sands to find skew (as described above). A "high" ratio indicates skew.
+
+select
+   to_char(min(sub1.sample_time), 'YYYY-MM-DD HH24:MI:SS') as sample_time,
+   round(avg(sub1.on_cpu),1) as cpu_avg,
+   round(avg(sub1.waiting),1) as wait_avg,
+   round(avg(sub1.active_sessions),1) as act_avg,
+   round(variance(sub1.active_sessions),1) as act_var,
+   round( (variance(sub1.active_sessions)/avg(sub1.active_sessions)),1) as act_var_mean
+from
+   ( -- sub1: one row per second, the resolution of SAMPLE_TIME
+     select
+        sample_id,
+        sample_time,
+        sum(decode(session_state, 'ON CPU', 1, 0))  as on_cpu,
+        sum(decode(session_state, 'WAITING', 1, 0)) as waiting,
+        count(*) as active_sessions
+     from
+        v$active_session_history
+     where
+        sample_time > sysdate - (0.25/1440)
+     group by
+        sample_id,
+        sample_time
+   ) sub1
+;
+
+SAMPLE_TIME            CPU_AVG   WAIT_AVG    ACT_AVG    ACT_VAR ACT_VAR_MEAN
+------------------- ---------- ---------- ---------- ---------- ------------
+2008-07-24 20:56:03         .8        3.3        4.1        6.1          1.5
+
+
+
+
+
+
+
+column sample_minute format a20
+
+select
+   to_char(round(sub1.sample_time, 'MI'), 'YYYY-MM-DD HH24:MI:SS') as sample_minute,
+   round(avg(sub1.on_cpu),1) as cpu_avg,
+   round(avg(sub1.waiting),1) as wait_avg,
+   round(avg(sub1.active_sessions),1) as act_avg,
+   round( (variance(sub1.active_sessions)/avg(sub1.active_sessions)),1) as act_var_mean
+from
+   ( -- sub1: one row per second, the resolution of SAMPLE_TIME
+     select
+        sample_id,
+        sample_time,
+        sum(decode(session_state, 'ON CPU', 1, 0))  as on_cpu,
+        sum(decode(session_state, 'WAITING', 1, 0)) as waiting,
+        count(*) as active_sessions
+     from
+        v$active_session_history
+     where
+        sample_time > sysdate - (&minutes/1440)
+     group by
+        sample_id,
+        sample_time
+   ) sub1
+group by
+   round(sub1.sample_time, 'MI')
+order by
+   round(sub1.sample_time, 'MI')
+;
+
+old  18:         sample_time > sysdate - (&minutes/1440)
+new  18:         sample_time > sysdate - (10/1440)
+
+SAMPLE_MINUTE           CPU_AVG   WAIT_AVG    ACT_AVG ACT_VAR_MEAN
+-------------------- ---------- ---------- ---------- ------------
+2008-07-25 19:05:00         1.7        3.2        4.9           .4
+2008-07-25 19:06:00           1        3.4        4.4           .3
+2008-07-25 19:07:00          .7        2.9        3.5           .2
+2008-07-25 19:08:00           1        3.6        4.6           .4
+2008-07-25 19:09:00          .8        3.3        4.2           .3
+2008-07-25 19:10:00          .8        3.4        4.2           .3
+2008-07-25 19:11:00           1        2.6        3.6           .3
+2008-07-25 19:12:00          .5        1.9        2.4           .3
+2008-07-25 19:13:00           1         .9        1.9           .6
+2008-07-25 19:14:00          .8        1.8        2.6           .8
+2008-07-25 19:15:00          .6        1.4          2           .4
+
+
+
+
+
+column sample_hour format a17
+
+select
+   to_char(round(sub1.sample_time, 'HH24'), 'YYYY-MM-DD HH24:MI') as sample_hour,
+   round(avg(sub1.on_cpu),1) as cpu_avg,
+   round(avg(sub1.waiting),1) as wait_avg,
+   round(avg(sub1.active_sessions),1) as act_avg,
+   round( (variance(sub1.active_sessions)/avg(sub1.active_sessions)),1) as act_var_mean
+from
+   ( -- sub1: one row per second, the resolution of SAMPLE_TIME
+     select
+        sample_id,
+        sample_time,
+        sum(decode(session_state, 'ON CPU', 1, 0))  as on_cpu,
+        sum(decode(session_state, 'WAITING', 1, 0)) as waiting,
+        count(*) as active_sessions
+     from
+        dba_hist_active_sess_history
+     where
+        sample_time > sysdate - (&hours/24)
+     group by
+        sample_id,
+        sample_time
+   ) sub1
+group by
+   round(sub1.sample_time, 'HH24')
+order by
+   round(sub1.sample_time, 'HH24')
+;
+
+
+
+
+Scripts
+Find time ranges of load spikes: Average Active Sessions (AAS)
+aas-per-hour.sql (AWR)
+See also the AAS example above.
+
+column sample_hour format a16
+select
+   to_char(round(sub1.sample_time, 'HH24'), 'YYYY-MM-DD HH24:MI') as sample_hour,
+   round(avg(sub1.on_cpu),1) as cpu_avg,
+   round(avg(sub1.waiting),1) as wait_avg,
+   round(avg(sub1.active_sessions),1) as act_avg,
+   round( (variance(sub1.active_sessions)/avg(sub1.active_sessions)),1) as act_var_mean
+from
+   ( -- sub1: one row per second, the resolution of SAMPLE_TIME
+     select
+        sample_id,
+        sample_time,
+        sum(decode(session_state, 'ON CPU', 1, 0))  as on_cpu,
+        sum(decode(session_state, 'WAITING', 1, 0)) as waiting,
+        count(*) as active_sessions
+     from
+        dba_hist_active_sess_history
+     where
+        sample_time > sysdate - (&hours/24)
+     group by
+        sample_id,
+        sample_time
+   ) sub1
+group by
+   round(sub1.sample_time, 'HH24')
+order by
+   round(sub1.sample_time, 'HH24')
+;
+
+aas-per-min.sql (ASH)
+See also the AAS example above.
+
+column sample_minute format a16
+select
+   to_char(round(sub1.sample_time, 'MI'), 'YYYY-MM-DD HH24:MI') as sample_minute,
+   round(avg(sub1.on_cpu),1) as cpu_avg,
+   round(avg(sub1.waiting),1) as wait_avg,
+   round(avg(sub1.active_sessions),1) as act_avg,
+   round( (variance(sub1.active_sessions)/avg(sub1.active_sessions)),1) as act_var_mean
+from
+   ( -- sub1: one row per second, the resolution of SAMPLE_TIME
+     select
+        sample_id,
+        sample_time,
+        sum(decode(session_state, 'ON CPU', 1, 0))  as on_cpu,
+        sum(decode(session_state, 'WAITING', 1, 0)) as waiting,
+        count(*) as active_sessions
+     from
+        v$active_session_history
+     where
+        sample_time > sysdate - (&minutes/1440)
+     group by
+        sample_id,
+        sample_time
+   ) sub1
+group by
+   round(sub1.sample_time, 'MI')
+order by
+   round(sub1.sample_time, 'MI')
+;
+
+aas-per-min-awr.sql (AWR)
+See also the AAS example above.
+
+column sample_minute format a16
+select
+   to_char(round(sub1.sample_time, 'MI'), 'YYYY-MM-DD HH24:MI') as sample_minute,
+   round(avg(sub1.on_cpu),1) as cpu_avg,
+   round(avg(sub1.waiting),1) as wait_avg,
+   round(avg(sub1.active_sessions),1) as act_avg,
+   round( (variance(sub1.active_sessions)/avg(sub1.active_sessions)),1) as act_var_mean
+from
+   ( -- sub1: one row per sampled ASH observation second
+     select
+        sample_id,
+        sample_time,
+        sum(decode(session_state, 'ON CPU', 1, 0))  as on_cpu,
+        sum(decode(session_state, 'WAITING', 1, 0)) as waiting,
+        count(*) as active_sessions
+     from
+        dba_hist_active_sess_history
+     where
+        sample_time > sysdate - (&minutes/1440)
+     group by
+        sample_id,
+        sample_time
+   ) sub1
+group by
+   round(sub1.sample_time, 'MI')
+order by
+   round(sub1.sample_time, 'MI')
+;
+
+aas-exact.sql (AWR)
+column BEGIN_HOUR format a16
+select
+   stat_start.snap_id,
+   to_char(snap.begin_interval_time,'YYYY-MM-DD HH24:MI') as begin_hour,
+   -- DB time is in units of centiseconds in DBA_HIST_SYSSTAT.VALUE
+   round( (stat_end.value - stat_start.value)/100 , 0) as seconds_per_hour,
+   -- also assumes hourly snapshots, hence divided by 3600
+   round( (stat_end.value - stat_start.value)/(100*3600) , 1) as aas
+from
+   dba_hist_sysstat stat_start,
+   dba_hist_sysstat stat_end,
+   dba_hist_snapshot snap
+where
+   -- assumes the snap_id at the end of the interval is 
+   -- one greater than the snap_id at teh start ofthe interval
+   --
+   stat_end.snap_id = stat_start.snap_id + 1
+and
+   -- otherwise, we join stat_end and stat_start
+   -- on exact matches of the remaining PK columns
+   --
+   ( stat_end.dbid = stat_start.dbid
+     and
+     stat_end.instance_number = stat_start.instance_number
+     and
+     stat_end.stat_name = stat_start.stat_name
+   )
+and
+   -- filter for the statistic we are interested in
+   --
+   stat_end.stat_name = 'DB time'
+and
+   -- join stat_start to snap on FK
+   -- 
+   ( stat_start.snap_id = snap.snap_id
+     and
+     stat_start.dbid = snap.dbid
+     and
+     stat_start.instance_number = snap.instance_number
+   )
+order by
+   stat_start.snap_id
+;
+Find specific problem SQLs: Sort by aggregated statistics
+find-expensive.sql (AWR)
+See also the aggregate example above. 
+
+This script looks at three metrics only, but it is easy to use 
+other metrics stored by the DBA_HIST_SQLSTAT table. For the order-by clause, 
+I suggest using the numeric column position style so that it is easy 
+to change interactively.
+
+-- gets most expensive queries 
+-- (by time spent, change "order by" to use another metric)
+-- after a specific date
+select
+   sub.sql_id,
+   sub.seconds_since_date,
+   sub.execs_since_date,
+   sub.gets_since_date
+from
+   ( -- sub to sort before rownum
+     select
+        sql_id,
+        round(sum(elapsed_time_delta)/1000000) as seconds_since_date,
+        sum(executions_delta) as execs_since_date,
+        sum(buffer_gets_delta) as gets_since_date
+     from
+        dba_hist_snapshot natural join dba_hist_sqlstat
+     where
+        begin_interval_time > to_date('&&start_YYYYMMDD','YYYY-MM-DD')
+     group by
+        sql_id
+     order by
+        2 desc
+   ) sub
+where
+   rownum < 30
+;
+Find specific problem SQLs: Non-uniform statistics
+high-var-sql.sql (AWR)
+See also the high-variance example above.
+
+-- high-var-sql.sql
+undefine days_back
+select
+   sub1.sql_id,
+   round( avg(sub1.seconds_per_hour) ) as avg_seconds_per_hour,
+   round( variance(sub1.seconds_per_hour)/avg(sub1.seconds_per_hour) ) as var_over_mean,
+   count(*) as ct
+from
+   ( -- sub1
+     select
+        snap_id,
+        sql_id,
+        elapsed_time_delta/1000000 as seconds_per_hour
+     from
+        dba_hist_snapshot natural join dba_hist_sqlstat
+     where
+        -- look at recent history only
+        begin_interval_time > sysdate - &&days_back;
+     and
+        -- must have executions to be interesting
+        executions_delta > 0
+   ) sub1
+group by 
+   sub1.sql_id
+having 
+   -- only queries that consume 10 seconds per hour on the average
+   avg(sub1.seconds_per_hour) > 10
+and 
+   -- only queries that run 50% of the time
+   -- assumes hourly snapshots too
+   count(*) > ( &&days_back * 24) * 0.50
+order by
+   3
+;
+undefine days_back
+Characterize a problem SQL's behavior over time
+sql-stat-hist.sql (AWR)
+See also example scenarios 1, 2, 3, and 4 above.
+
+-- gets basic DBA_HIST_SQLSTAT data for a single sql_id
+-- assumes that each AWR snap is one-hour (used in names, not math)
+column BEGIN_HOUR format a16
+
+select
+   snap_id,
+   to_char(begin_interval_time,'YYYY-MM-DD HH24:MI') as begin_hour,
+   executions_delta as execs_per_hour,
+   buffer_gets_delta as gets_per_hour,
+   round(buffer_gets_delta/executions_delta) as gets_per_exec,
+   round(elapsed_time_delta/1000000) as seconds_per_hour
+from
+   dba_hist_snapshot natural join dba_hist_sqlstat
+where
+   begin_interval_time between to_date('&start_hour', 'YYYY-MM-DD HH24:MI')
+                           and to_date('&end_hour',   'YYYY-MM-DD HH24:MI')
+and
+   sql_id = '&sql_id'
+and
+   executions_delta > 0
+order by
+   snap_id
+;
+
+
+
+If a session that is experiencing delays or hangs has been identified and the goal is to 
+identify the SQL statement(s) the session is issuing, along with the wait events 
+being experienced for a particular time period, a query similar to this one can be issued: 
+
+ 
+
+SELECT  C.SQL_TEXT,
+        B.NAME,
+        COUNT(*),
+        SUM(TIME_WAITED)
+FROM    v$ACTIVE_SESSION_HISTORY A,
+        v$EVENT_NAME B,
+        v$SQLAREA C
+WHERE   A.SAMPLE_TIME BETWEEN '10-JUL-04 09:57:00 PM' AND 
+                              '10-JUL-04 09:59:00 PM' AND
+        A.EVENT# = B.EVENT# AND
+        A.SESSION_ID= 123 AND
+        A.SQL_ID = C.SQL_ID
+GROUP BY C.SQL_TEXT, B.NAME
+
+
+
+
+
+
+
+
+
+

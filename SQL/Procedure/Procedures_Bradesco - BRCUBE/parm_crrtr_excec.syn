@@ -1,0 +1,3 @@
+create or replace synonym SGPB_PROC.PARM_CRRTR_EXCEC
+  for SGPB.PARM_CRRTR_EXCEC;
+

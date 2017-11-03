@@ -1,0 +1,3 @@
+set autotrace traceonly explain--> gera o somente plano de acesso.
+
+set autotrace on --> gera os dados seguido do plano de acesso.

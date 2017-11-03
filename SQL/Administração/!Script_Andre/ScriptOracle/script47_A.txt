@@ -1,0 +1,275 @@
+---------------------------------
+-- tabela PRODUTO_ITEM_USUARIO
+---------------------------------
+create table BASE_PCC.PRODUTO_ITEM_USUARIO
+(
+  CD_PRODCC               VARCHAR2(10) not null,
+  CD_ITELEM               NUMBER(6) not null,
+  CD_USUARIO              NUMBER(5) not null,
+  CD_SISTEMA              VARCHAR2(10) not null,
+  CD_SUBSISTEMA           NUMBER(3) not null,
+  DT_INCL                 DATE,
+  CD_USU_INCL             NUMBER(5),
+  DT_ULT_ALT              DATE,
+  CD_USU_ALT              NUMBER(5),
+  CD_USUARIO_SUBST        NUMBER(5),
+  CD_SISTEMA_USU_SUBST    VARCHAR2(10),
+  CD_SUBSISTEMA_USU_SUBST NUMBER(3),
+  DT_VALID_USU_SUBST      DATE
+)
+tablespace BASE_PCC_DAT1
+  pctfree 10
+  initrans 1
+  maxtrans 255
+  storage
+  (
+    initial 10M
+    next 10M
+    minextents 1
+    maxextents unlimited
+  );
+
+-- Create/Recreate primary, unique and foreign key constraints 
+alter table BASE_PCC.PRODUTO_ITEM_USUARIO
+  add constraint PK_PRODUTO_ITEM_USUARIO  primary key (CD_PRODCC, CD_ITELEM)
+  using index 
+  tablespace BASE_PCC_IDX1
+  pctfree 10
+  initrans 2
+  maxtrans 255
+  storage
+  (
+    initial 5M
+    next 5M
+    minextents 1
+    maxextents unlimited
+  );
+
+alter table BASE_PCC.PRODUTO_ITEM_USUARIO
+  add constraint FK1_PRODUTO_ITEM_USUARIO foreign key (CD_USUARIO, CD_SISTEMA, CD_SUBSISTEMA)
+  references BASE_ACESSO.CAUSUARIO_SUBSISTEMA (CD_USUARIO, CD_SISTEMA, CD_SUBSISTEMA);
+
+alter table BASE_PCC.PRODUTO_ITEM_USUARIO
+  add constraint FK2_PRODUTO_ITEM_USUARIO foreign key (CD_PRODCC)
+  references PRODUTO_CUSTO (CD_PRODCC);
+
+alter table BASE_PCC.PRODUTO_ITEM_USUARIO
+  add constraint FK4_PRODUTO_ITEM_USUARIO foreign key (CD_USUARIO_SUBST, CD_SISTEMA_USU_SUBST, CD_SUBSISTEMA_USU_SUBST)
+  references BASE_ACESSO.CAUSUARIO_SUBSISTEMA (CD_USUARIO, CD_SISTEMA, CD_SUBSISTEMA);
+
+alter table BASE_PCC.PRODUTO_ITEM_USUARIO
+  add constraint FK3_PRODUTO_ITEM_USUARIO_USU foreign key (CD_ITELEM)
+  references ITEM_ELEMENTAR (CD_ITELEM);
+
+-- Grant/Revoke object privileges 
+create  public synonym PRODUTO_ITEM_USUARIO for BASE_PCC.PRODUTO_ITEM_USUARIO;
+
+grant select, insert, update, delete on PRODUTO_ITEM_USUARIO to JOAOLUIS;
+grant select, insert, update, delete on PRODUTO_ITEM_USUARIO to RL_PCC_MANUT;
+grant select, insert, update, delete on PRODUTO_ITEM_USUARIO to W_PCC;
+
+-------------------------
+--PRODUTO_FUNCAO_USUARIO
+-------------------------
+
+-- Create table
+create table BASE_PCC.PRODUTO_FUNCAO_USUARIO
+(
+  CD_PRODCC     VARCHAR2(10) not null,
+  CD_USUARIO    NUMBER(5) not null,
+  CD_SISTEMA    VARCHAR2(10) not null,
+  CD_SUBSISTEMA NUMBER(3) not null,
+  CD_FUNCAO     VARCHAR2(1) not null,
+  DT_INCL       DATE,
+  CD_USU_INCL   NUMBER(5),
+  DT_ULT_ALT    DATE,
+  CD_USU_ALT    NUMBER(5)
+)
+tablespace BASE_PCC_DAT1
+  pctfree 10
+  initrans 1
+  maxtrans 255
+  storage
+  (
+    initial 10M
+    next 10M
+    minextents 1
+    maxextents unlimited
+  );
+
+
+-- Create/Recreate primary, unique and foreign key constraints 
+alter table BASE_PCC.PRODUTO_FUNCAO_USUARIO
+  add constraint PK_PROD_FUNC_USU primary key (CD_PRODCC, CD_USUARIO, CD_SISTEMA, CD_SUBSISTEMA)
+  using index 
+  tablespace BASE_PCC_IDX1
+  pctfree 10
+  initrans 2
+  maxtrans 255
+  storage
+  (
+    initial 5M
+    next 5M
+    minextents 1
+    maxextents unlimited
+  );
+
+alter table BASE_PCC.PRODUTO_FUNCAO_USUARIO
+  add constraint FK2_PRODUTO_FUNCAO foreign key (CD_PRODCC)
+  references PRODUTO_CUSTO (CD_PRODCC);
+
+alter table BASE_PCC.PRODUTO_FUNCAO_USUARIO
+  add constraint FK1_PRODUTO_FUNCAO_USUARIO foreign key (CD_USUARIO, CD_SISTEMA, CD_SUBSISTEMA)
+  references BASE_ACESSO.CAUSUARIO_SUBSISTEMA (CD_USUARIO, CD_SISTEMA, CD_SUBSISTEMA);
+
+-- Create/Recreate check constraints 
+alter table BASE_PCC.PRODUTO_FUNCAO_USUARIO
+  add constraint CHK_PROD_FUNC_USU
+  check (CD_FUNCAO IN
+      ('A','C'));
+
+-- Grant/Revoke object privileges 
+
+create  public synonym PRODUTO_FUNCAO_USUARIO for BASE_PCC.PRODUTO_FUNCAO_USUARIO;
+
+
+grant select on PRODUTO_FUNCAO_USUARIO to JOAOLUIS;
+grant select, insert, update, delete on PRODUTO_FUNCAO_USUARIO to RL_PCC_MANUT;
+grant select, insert, update, delete on PRODUTO_FUNCAO_USUARIO to W_PCC;
+
+
+-------------------------------
+CONTROLE_BUSCA_ITEM_USUARIO
+--------------------------------
+-- Create table
+create table BASE_PCC.CONTROLE_BUSCA_ITEM_USUARIO
+(
+  CD_PRODCC             VARCHAR2(10) not null,
+  CD_ITELEM             NUMBER(6) not null,
+  CD_USUARIO            NUMBER(5) not null,
+  CD_SISTEMA            VARCHAR2(10) not null,
+  CD_SUBSISTEMA         NUMBER(3) not null,
+  FG_BUSCA_SELECIONADO  CHAR(1),
+  FG_BUSCA_LIBERADO     CHAR(1),
+  FG_BUSCA_EM_ANDAMENTO CHAR(1),
+  DT_INCL               DATE,
+  CD_USU_INCL           NUMBER(5),
+  DT_ULT_ALT            DATE,
+  CD_USU_ALT            NUMBER(5)
+)
+tablespace BASE_PCC_DAT1
+  pctfree 10
+  initrans 1
+  maxtrans 255
+  storage
+  (
+    initial 10M
+    next 10M
+    minextents 1
+    maxextents unlimited
+  );
+
+
+-- Create/Recreate primary, unique and foreign key constraints 
+alter table BASE_PCC.CONTROLE_BUSCA_ITEM_USUARIO
+  add constraint PK_CONTROLE_BUSCA_ITEM_USUARIO  primary key (CD_PRODCC, CD_ITELEM)
+  using index 
+  tablespace BASE_PCC_IDX1
+  pctfree 10
+  initrans 2
+  maxtrans 255
+  storage
+  (
+    initial 5M
+    next 5M
+    minextents 1
+    maxextents unlimited
+  );
+
+alter table BASE_PCC.CONTROLE_BUSCA_ITEM_USUARIO
+  add constraint FK1_CONTROLE_BUSCA_ITEM_USU foreign key (CD_PRODCC, CD_ITELEM)
+  references PRODUTO_ITEM_USUARIO (CD_PRODCC, CD_ITELEM);
+
+-- Create/Recreate check constraints 
+alter table BASE_PCC.CONTROLE_BUSCA_ITEM_USUARIO
+  add constraint CONTROLE_BUSCA_ITEM_USU_CK1
+  check (FG_BUSCA_SELECIONADO IN ('S', 'N'));
+
+alter table BASE_PCC.CONTROLE_BUSCA_ITEM_USUARIO
+  add constraint CONTROLE_BUSCA_ITEM_USU_CK2
+  check (FG_BUSCA_LIBERADO IN ('S', 'N'));
+
+alter table BASE_PCC.CONTROLE_BUSCA_ITEM_USUARIO
+  add constraint CONTROLE_BUSCA_ITEM_USU_CK3
+  check (FG_BUSCA_EM_ANDAMENTO IN ('S', 'N'));
+
+-- Grant/Revoke object privileges 
+create  public synonym CONTROLE_BUSCA_ITEM_USUARIO for BASE_PCC.CONTROLE_BUSCA_ITEM_USUARIO;
+
+grant select, insert, update, delete on CONTROLE_BUSCA_ITEM_USUARIO to RL_PCC_MANUT;
+grant select, insert, update, delete on CONTROLE_BUSCA_ITEM_USUARIO to W_PCC;
+
+----------------------------------------
+--- CONTROLE_PERFIL 
+-----------------------------------------
+
+ALTER TABLE BASE_PCC.CONTROLE_PERFIL ADD COLUMN dt_ult_execucao_busca DATE;
+
+
+----------------------------------------------------
+-- diversos 
+----------------------------------------------------
+-----------
+BASE_ACESSO
+-----------
+grant select on base_acesso.usuario to rl_pcc_manut;
+grant select on base_acesso.usuario to W_pcc;
+
+-----------
+BASE_IBRE
+----------
+grant select on base_ibre.CASUBSISTEMA_SFPC to rl_pcc_manut;
+grant select on base_ibre.CASUBSISTEMA_SFPC to base_pcc;
+grant select on base_ibre.CAUSUARIO_SUBSISTEMA to rl_pcc_manut;
+grant select on base_ibre.CAUSUARIO_SUBSISTEMA to base_pcc;
+
+GRANT DELETE,INSERT,SELECT,UPDATE ON base_pcc.produto_funcao_usuario TO rl_pcc_manut;
+ 
+GRANT DELETE,INSERT,SELECT,UPDATE ON base_pcc.produto_funcao_usuario TO w_pcc;
+
+GRANT DELETE,INSERT,SELECT,UPDATE ON base_pcc.produto_item_usuario TO rl_pcc_manut;
+ 
+GRANT DELETE,INSERT,SELECT,UPDATE ON base_pcc.produto_item_usuario TO w_pcc;
+
+GRANT DELETE,INSERT,SELECT,UPDATE ON base_pcc.controle_busca_item_usuario TO rl_pcc_manut;
+ 
+GRANT DELETE,INSERT,SELECT,UPDATE ON base_pcc.controle_busca_item_usuario TO w_pcc;
+
+CREATE OR REPLACE
+VIEW CTLPER_V
+AS
+SELECT CD_PRODCC                      ,
+CD_ESPHIE                      ,
+CD_NIV_HIERAR                  ,
+CD_ITELEM                      ,
+VL_QTDCOMPRA_CTLPER            ,
+CD_BUSCA_CTLPER                ,
+CD_OCOR_BUS_CTLPER             ,
+CD_ERR_CRIT_CTLPER             ,
+CD_CALC_CTLPER                 ,
+CD_APROV_ITEM_CTLPER           ,
+CD_NUM_RDZ_INFPRE_CTLPER,
+CD_INT_CONF_CTLPER       ,      
+CD_EMIT_NOTA_PESQ_CTLPER,
+CD_OUTR_PERIOD_BUSCA     ,      
+VL_QTD_PRC_CONTRATO       ,     
+CD_LIB_PERIOD_BUSCA        ,    
+DS_JUSTIF_NUM_RDZ           ,   
+DT_ULT_EXECUCAO_BUSCA          
+FROM CONTROLE_PERFIL
+;
+
+
+ 
+
+

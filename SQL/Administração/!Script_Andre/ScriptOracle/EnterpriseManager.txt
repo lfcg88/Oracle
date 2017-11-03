@@ -1,0 +1,26 @@
+
+
+01) confirms that OMS is up and running.
+
+$<OMS_HOME>/bin/emctl status oms
+
+
+02) confirms that the Management Agent is up and running.
+
+$<AGENT_HOME>/bin/emctl status agent
+
+
+03) see a message that confirms that EMD upload completed successfully.
+
+$<AGENT_HOME>/bin/emctl upload agent
+
+
+04) Stop the OMS:
+<OMS_HOME>/bin/emctl stop oms -all
+
+
+05) Restart the OMS:
+<OMS_HOME>/bin/emctl start oms
+
+
+Oracle-Enterprise-Manager-Cloud-Control-Administrator-Guide-12c

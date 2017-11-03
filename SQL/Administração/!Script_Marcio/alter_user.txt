@@ -1,0 +1,4 @@
+alter user SCAM_DSNV4 temporary tablespace TSTEMP;
+alter user USUARIO default tablespace TABLESPACE;
+alter user USUARIO identyfied by SENHA;
+

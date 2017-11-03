@@ -1,0 +1,68 @@
+--
+-- Extrai fonte de sequences
+--
+Declare
+-- Information on all sequences
+        v_seq_sequence_name sys.all_sequences.sequence_name%TYPE;
+        v_seq_min_value sys.all_sequences.min_value%TYPE;
+        v_seq_max_value sys.all_sequences.max_value%TYPE;
+        v_seq_increment_by sys.all_sequences.increment_by%TYPE; 
+        v_seq_cycle_flag sys.all_sequences.cycle_flag%TYPE;
+        v_seq_order_flag sys.all_sequences.order_flag%TYPE;
+        v_seq_cache_size sys.all_sequences.cache_size%TYPE;
+        v_seq_last_number sys.all_sequences.last_number%TYPE;
+  outfile utl_file.file_type; 
+   vowner  varchar2(30);
+   varq  varchar2(50);
+   vDir  varchar2(200);
+--        
+--
+        cursor c_sequence(pusername varchar2) is
+        select sequence_name, min_value, max_value, increment_by, cycle_flag, 
+              order_flag, cache_size, last_number
+        from sys.all_sequences where sequence_owner=pusername;
+--   
+--   outfile utl_file.file_type; 
+--   vowner := varchar2(30);
+--   varq := varchar2(50);
+--   vDir := varchar2(200);
+--   
+Begin
+   vowner :='OWNRECUP';
+   vdir:='/u00/app/oracle/admin/prd5/utl_file';
+--
+   open c_sequence(vowner);
+      loop
+      fetch c_sequence into v_seq_sequence_name, v_seq_min_value, v_seq_max_value, v_seq_increment_by,
+            v_seq_cycle_flag, v_seq_order_flag, v_seq_cache_size, v_seq_last_number;
+      exit when c_sequence%NOTFOUND;
+ --     varq := vowner||'.'||v_seq_sequence_name||'.seq';
+      varq := v_seq_sequence_name||'.txt';
+--                       
+      outfile := Utl_File.Fopen(vdir,varq,'W');
+--      utl_file.putf(outfile, 'CREATE SEQUENCE %s.%s\n', vowner, v_seq_sequence_name);
+      utl_file.putf(outfile, 'CREATE SEQUENCE %s\n', v_seq_sequence_name);
+      utl_file.putf(outfile, ' INCREMENT BY %s\n', v_seq_increment_by);
+      utl_file.putf(outfile, ' START WITH %s\n', v_seq_last_number);
+      utl_file.putf(outfile, ' MINVALUE %s\n', v_seq_min_value);
+      utl_file.putf(outfile, ' MAXVALUE %s\n', v_seq_max_value);
+      if v_seq_cycle_flag = 'Y' then
+         utl_file.putf(outfile, ' CYCLE\n');
+      else
+         utl_file.putf(outfile, ' NOCYCLE\n');
+      end if;
+      if v_seq_order_flag = 'Y' then
+          utl_file.putf(outfile, ' ORDER\n');
+      else
+          utl_file.putf(outfile, ' NOORDER\n');
+      end if;
+      if v_seq_cache_size = 0 then
+          utl_file.putf(outfile, ' NOCACHE;\n');
+      else
+          utl_file.putf(outfile, ' CACHE %s;\n', v_seq_cache_size);
+      end if;
+      utl_file.fclose(outfile);
+    end loop;
+close c_sequence;
+End;
+/

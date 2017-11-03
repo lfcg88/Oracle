@@ -1,0 +1,43 @@
+desc dba_objects
+
+
+select * from dba_objects
+where owner = 'GOLDENCROSS'
+and object_type = 'VIEW'
+and status = 'INVALID'
+
+select * from dba_objects
+where owner = 'GOLDENCROSS'
+and object_type = 'PROCEDURE'
+and status = 'INVALID'
+
+select * from dba_objects
+where owner = 'GOLDENCROSS'
+and object_type = 'TRIGGER'
+and status = 'INVALID'
+
+select * from dba_objects
+where owner = 'GOLDENCROSS'
+and object_type = 'FUNCTION'
+and status = 'INVALID'
+
+select * from dba_objects
+where owner = 'GOLDENCROSS'
+and object_type = 'PACKAGE'
+and status = 'INVALID'
+
+select * from dba_objects
+where owner = 'GOLDENCROSS'
+and object_type = 'PACKAGE BODY'
+and status = 'INVALID'
+
+
+
+select object_name, object_type, status from dba_objects
+where owner = 'SYSADM'
+and object_type = 'VIEW'
+and status = 'INVALID'
+
+select object_name, object_type, status from dba_objects
+where owner = 'SYSADM'
+and status = 'INVALID'

@@ -1,0 +1,157 @@
+-- PL/SQL script to get PLAN of running SQL
+-- Dilbagh Singh
+-- 10 Sep 2002
+-- Rating: --- (out of 5)
+-- 
+-- The purpose of this script is to extract the SQL and PLAN for SQL executing in a running session. This 
+-- is useful when you need to quickly look at the PLAN on a running SQL session without asking the user or 
+-- cutting/pasting/formatting, etc. The script joins on dictionary tables and extracts SQL, then extracts 
+-- PLAN by providing the SID and the serial number of the session. 
+-- 
+-- However, it has pre-requisites: a function FOLD_STR and a temp table. FOLD_STR has been posted seperately. 
+-- The script has been tested on Oracle 8.1.7.3 Enterprise edition.
+-- 
+-- 
+-- Notes: 1) Make sure the session is ACTIVE and executing while this script is executing, 2) Unexpected 
+-- results may occur if there are two or more simultaneous executions of this script, 3) Script for same 
+-- database and schema that is due to hard coded STATEMENT_ID, and 4) For pre-requisites, read the comments
+--  in the script. 
+-- 
+-- Temp table DDL 
+-- create table GET_PLAN_4_SESS (sid number,serial# number,sql_text varchar2(4000)) tablespace USERS 
+-- 
+
+accept SID prompt 'Session ID: ' 
+accept Serial_Number prompt 'Serial#: ' 
+set serveroutput on 
+set serveroutput on size 10000000 
+
+delete from GET_PLAN_4_SESS where Sid = &SID and Serial# = &Serial_Number; 
+delete from plan_table where statement_id = 'XXXXXXXX'; 
+commit; 
+
+declare 
+    dummy       varchar2(4000); 
+    v_sqltext   varchar2(4000); 
+    v_tab_ddl   varchar2(255); 
+    v_sid       NUMBER; 
+    v_first     NUMBER; 
+    v_num       NUMBER; 
+    v_counter   NUMBER; 
+    v_label     varchar2(20); 
+    v_hostname varchar2(20); 
+    v_database varchar2(20); 
+--    file_handle UTL_FILE.FILE_TYPE; 
+    mycursor2 integer; 
+    ret integer; 
+
+    CURSOR MYCURSOR IS 
+        Select  b.sid 
+                ,b.serial# 
+                ,spid 
+                ,b.username 
+                ,b.osuser 
+                ,b.machine 
+                ,client_info 
+                ,logon_time 
+                ,status 
+                ,c.address 
+                ,c.command_type 
+                ,d.executions 
+                ,c.sql_text 
+        From v$process a, v$session b, v$sqltext c,v$sqlarea d 
+        Where   b.sid = &SID 
+                and b.serial# = &Serial_number 
+                and status = 'ACTIVE' 
+                and a.addr = b.paddr 
+                and osuser is not null 
+                and b.SQL_ADDRESS = c.ADDRESS 
+                and b.SQL_HASH_VALUE = c.HASH_VALUE 
+                and c.address = d.address 
+                order by sid,piece,client_info,logon_time; 
+     MYREC      MYCURSOR%ROWTYPE; 
+begin 
+
+--      file_handle := UTL_FILE.FOPEN('/tmp','plan.txt','A'); 
+        v_counter := 0; 
+        
+        FOR MYREC in MYCURSOR Loop 
+                v_sqltext := v_sqltext||MYREC.sql_text; 
+                v_counter := v_counter + 1; 
+        END LOOP; 
+                dbms_output.put_line(v_counter); 
+-- 
+-- 
+-- 
+        dummy:='EXPLAIN PLAN SET STATEMENT_ID=' ; 
+        dummy:=dummy||'''XXXXXXXX'' FOR '||FOLD_STR(v_sqltext,60); 
+--      UTL_FILE.PUT_LINE(file_handle,'=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-='); 
+--      UTL_FILE.PUT_LINE(file_handle,'Session ID: '||&SID||'     Serial#: '||&Serial_Number); 
+--      UTL_FILE.PUT_LINE(file_handle,dummy); 
+--      UTL_FILE.fclose(file_handle); 
+        insert into GET_PLAN_4_SESS (SID,SERIAL#,SQL_TEXT) values(&SID,&Serial_Number,dummy); 
+        commit; 
+
+        mycursor2 :=dbms_sql.open_cursor; 
+        dbms_sql.parse(mycursor2,dummy,dbms_sql.native); 
+        ret:= dbms_sql.execute(mycursor2); 
+        dbms_sql.close_cursor(mycursor2); 
+        commit; 
+-- 
+-- 
+-- 
+end; 
+/ 
+
+SET ECHO OFF 
+set long 10000 
+set arraysize 1 
+set pagesize 50 
+set linesize 160 
+
+col operation format a45 
+col options format a20 
+col object_name format a20 
+col obj format a25 
+col object_node format a9 
+col other format a30 
+COL CARD FOR 9999999 
+col pos format 99999 
+col optimizer format a10 
+col ID:PID for A5 
+col SQL_TEXT FOR A100 
+col Session for A10 
+
+select  SID||','||Serial# "Session" 
+        ,substr(sql_text,46) "SQL_TEXT" 
+        from GET_PLAN_4_SESS 
+        where sid = &SID and Serial# = &Serial_Number; 
+
+select id||':'||parent_id "ID:PID" 
+,lpad(' ',2*(level-1))||operation "Operation" 
+,options 
+,object_name 
+,optimizer 
+--,object_node 
+,position "pos" 
+--,other 
+,cost 
+,CARDINALITY "CARD" 
+from plan_table 
+start with id=0 and statement_id='XXXXXXXX' 
+connect by prior id=parent_id and statement_id='XXXXXXXX'; 
+
+
+
+col operation format a15 
+
+select operation 
+, options 
+, object_name 
+, num_rows 
+, last_analyzed 
+from user_tables a,plan_table b 
+where operation = 'TABLE ACCESS' 
+and statement_id= 'XXXXXXXX' 
+and object_name = table_name;
+ 

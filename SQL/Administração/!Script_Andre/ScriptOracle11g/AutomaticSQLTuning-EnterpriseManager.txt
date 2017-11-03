@@ -1,0 +1,11 @@
+You can configure various Automatic SQL Tuning task parameters easily by using the
+Enterprise Manager. To configure using Database Control, you use the Automatic SQL
+Tuning Settings page, which you can access by clicking the Configure button on the
+Automated Maintenance tasks page. This takes you to the Automated Maintenance
+Tasks Configuration page, where you’ll see all the predefined maintenance windows.
+SQL Tuning Advisor will run in all these predefined maintenance windows by default,
+but you can disable it from any window you like. You can click the Edit Window Group
+button to edit the windows.
+You can specify all the Automatic SQL Tuning parameters just discussed on the
+Automatic SQL Tuning Settings page. Note that by default, automatic implementation
+of SQL profiles is deactivated.

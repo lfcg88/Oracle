@@ -1,0 +1,144 @@
+#VERIFICANDO HARDWARE E SOFTWARE 
+#-------------------------------
+free
+df -h /tmp
+df -h
+grep "model name" /proc/cpuinfo
+cat /proc/version
+uname -r
+
+#CRIANDO GRUPOS DO SO
+#-------------------------------
+grep oinstall /etc/group
+usr/sbin/groupadd oinstall
+grep dba /etc/group
+usr/sbin/groupadd dba
+
+#CRIANDO USUARIOS
+#------------------------------- 
+id oracle
+/usr/sbin/useradd -g oinstall -G dba oracle
+passwd oracle
+id nobody
+/usr/sbin/useradd nobody
+
+#EDITANDO PARAMETROS DO KERNELL
+#-------------------------------
+/sbin/sysctl -a|grep sem
+/sbin/sysctl -a|grep shm
+/sbin/sysctl -a|grep file-max
+/sbin/sysctl -a|grep ip_local_port_range
+/sbin/sysctl -a|grep rmem_default
+/sbin/sysctl -a|grep rmem_max
+/sbin/sysctl -a|grep wmem_default
+/sbin/sysctl -a|grep wmem_max
+cd /etc
+vi sysctl.conf
+kernell.shmall = valor  
+kernell.shmmax = valor
+kernell.shmmni = valor 
+kernell.sem = valor		valor	valor	valor
+fs.file-max = valor
+net.core.ip_local_port_range = valor	valor
+net.core.rmem_default = valor
+net.core.rmem_max = valor
+net.core.wmem_default = valor 
+net.core.wmem_max = valor 
+:wq
+shutdown -r now  --sysctl -p sysctl.conf 
+
+#CONFIGURANDO LIMITES SHELL
+#-------------------------------
+cd /etc/security
+vi limits.conf
+oracle      soft      nproc     valor
+oracle      hard      nproc     valor
+oracle      soft      nofile    valor
+oracle      hard      nofile    valor
+:wq
+cd ..
+cd pam.d
+vi login
+session    required    pam_limits.so
+:wq
+cd ..
+vi profile 
+if [$USER = "oracle"];then
+	if [$SHELL = "/bin/ksh"];then
+		ulimit -p valor
+		ulimit -n valor
+	else
+		ulimit -u valor -n valor 
+	fi
+fi
+:wq
+
+#CRIAR DIRETORIOS
+#------------------------------
+mkdir /u01/app/oracle
+chown -R oracle:oinstall /u01/app/oracle
+chmod -R 775 /u01/app/oracle
+mkdir /u01/oradata
+chown -R oracle:oinstall /u01/app/oradata
+chmod -R 775 /u01/app/oradata
+mkdir /u01/app/flash_recovery_area
+chown -R oracle:oinstall /u01/app/flash_recovery_area
+chmod -R 775 /u01/app/flash_recovery_area
+mkdir /u01/tmp
+chmod a+rw /u01/tmp
+
+#CONFIGURAR AMBIENTE DO USUARIO ORACLE
+#------------------------------
+su - oracle
+vi .bash_profile
+umask 022
+export TEMP=/u01/tmp
+export TMPDIR=/u01/tmp
+export ORACLE_BASE=/u01/app/oracle
+export ORACLE_SID=teste
+:wq
+. ./.bash_profile
+unset ORACLE_HOME
+unset TNS_ADMIN
+umask
+env|more
+
+#DESCOMPACTAR O ARQUIVO DE INSTALAÇÃO
+#--------------------------------
+gunzip xxxxxxxxxx.cpio.gzip
+cpio -id < xxxxxxxxxxx.cpio
+unzip xxxxxxxxxxxx.zip
+
+#EXECUTAR O ARQUIVO DESCOMPACTADO
+#--------------------------------
+
+./runInstaller -ignoreSysPrereqs
+
+
+#DESCOMPACTAR O ARQUIVO COM O PACOTE DE ATUALIZAÇÃO
+#--------------------------------
+gunzip xxxxxxxxxx.cpio.gzip
+cpio -id < xxxxxxxxxxx.cpio
+unzip xxxxxxxxxxxx.zip
+
+#EXECUTAR O ARQUIVO DESCOMPACTADO
+#--------------------------------
+
+./runInstaller -ignoreSysPrereqs
+
+#EXECUTAR O DBCA PARA CRIAÇÃO DO BANCO UTILIZANDO O ASSISTENTE
+#--------------------------------
+
+DBCA
+
+#EXECUTAR O NETCA PARA CONFIGURAÇÃO DO BANCO EM REDE 
+#UTILIZANDO O ASSISTENTE PARA CONFIGURAR O LISTENER
+#--------------------------------
+
+NETCA
+
+O URL do iSQL*Plus é:
+http://rwteste.rightway.com.br:5560/isqlplus
+
+O URL do iSQL*Plus DBA é:
+http://rwteste.rightway.com.br:5560/isqlplus/dba

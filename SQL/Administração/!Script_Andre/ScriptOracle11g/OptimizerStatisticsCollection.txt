@@ -1,0 +1,147 @@
++++++++++++++++++++++++++++++++++++++
+importante => "New Sampling Technique"
++++++++++++++++++++++++++++++++++++++
+
+
+Oracle Database 11g provides the best of both the worlds, by providing a rowsampling technique that uses a small sample such as 1 or 5 percent of the data but provides results that are as accurate as those from a full table scan. Simply let the estimate_percent option remain at its default value of auto_sample_ size. Oracle recommends this option when collecting statistics.
+
+
+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+view the current settings for statistics preferences 
++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+select * from DBA_TAB_STAT_PREFS;
+
+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+If a statistics gathering job fails, you can continuar de ond eparou usando
+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+ RESUME_GATHER_STATS procedure
+
+
+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+tells you whether the database will automatically publish optimizer statistics or not.
+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+SQL> select dbms_stats.get_prefs('PUBLISH') publish from dual;
+PUBLISH
+--------
+TRUE
+
+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+determine the publishing mode for a single table 
+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+
+SQL> select dbms_stats.get_prefs('PUBLISH','stats','test_table')
+from dual;
+
+
+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ change the publishing setting of the EMPLOYEES table in the HR schema 
+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+SQL> exec dbms_stats.set_table_prefs ('HR','EMPLOYEES','PUBLISH','FALSE');
+
+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+In order to make pending statistics available to the optimizer
+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+set the new initialization parameter optimizer_use_pending_statistics to TRUE. 
+
+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+In order for the session to switch to using the new pending statistics
+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+SQL> alter session set optimizer_use_pending_statistics=TRUE
+
+
+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+change the status of all pending statistics in the database to current statistics
+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+exec dbms_stats.publish_pending_stats (NULL,NULL);
+
+
+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+You can also publish the pending statistics for only a single table in the following manner:
+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+SQL> exec dbms_stats.publish_pending_stats('HR','EMPLOYEES');
+
+
++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+delete the pending statistics by executing the DELETE_PENDING_STATS procedure, as shown here:
++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+SQL> exec dbms_stats.delete_pending_stats('HR','EMPLOYEES');
+
++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+Exporting the pending statistics to another database 
++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+SQL> exec dbms_stats.export_pending_stats('HR', 'EMPLOYEES');
+
++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+Here’s the structure of the CREATE_EXTENDED_STATS function:
++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+declare
+cg_name varchar2(30);
+begin
+cg_name := dbms_stats.create_extended_stats(null,'customers',
+'(cust_state_province',country_id)');
+end;
+/
+
+
++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+DBA_STAT_EXTENSIONS view:
++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+SQL> select extension_name, extension
+from dba_stat_extensions
+where table_name='CUSTOMERS';
+EXTENSION_NAME EXTENSION
+
+
++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+You can drop a column group from a table by using the DROP_EXTENDED_STATS procedure:
++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+SQL> exec dbms_stats.drop_extended_stats('sh','customers','
+(cust_state_province, country_id)');
+
+
++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+As with multicolumn statistics (column groups), you can use the CREATE_
+EXTENDED_STATS function to create statistics on a column expression, as shown in this example:
++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+SQL> select
+dbms_stats.create_extended_stats(null,'customers',
+'(lower(cust_state_province))')
+from dual;
+
+
++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+You can also create expression statistics by using the for columns clause in
+the GATHER_TABLE_STATS procedure, as shown here:
++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+SQL> exec dbms_stats.gather_table_stats(null,'customers',
+method_opt =>'for all columns size skewonly
+for columns (lower(cust_state_province)) skewonly');
+
+
++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+You can view the DBA_STAT_EXTENSIONS view to make sure your expression
+statistics have been created successfully, as shown here:
++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+SQL> select extension_name, extension
+from DBA_STAT_EXTENSIONS
+where table_name='CUSTOMERS';
+
+EXTENSION_NAME EXTENSION
+------------------------------ ------------------------------
+SYS_STUBPHJSBRKOIK9O2YV3W8HOUE (LOWER("CUST_STATE_PROVINCE"))

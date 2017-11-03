@@ -1,0 +1,420 @@
+==================
+CRIAÇÃO DE ROLES
+==================
+=======================
+LISTA DE ROLES CRIADAS
+=======================
+RL_SAP_PROD_IG_S
+RL_SAP_PROD_IG_SU
+RL_SAP_PROD_IG_SIU
+RL_SAP_HOMOLOG_IG_S
+RL_SAP_HOMOLOG_IG_SU
+RL_SAP_HOMOLOG_IG_SIU
+RL_SAP_PROD_COM_S
+RL_SAP_PROD_COM_SU
+RL_SAP_PROD_COM_SIU
+RL_SAP_HOMOLOG_COM_S
+RL_SAP_HOMOLOG_COM_SU
+RL_SAP_HOMOLOG_COM_SIU
+RL_VETORH_PROD_S
+RL_VETORH_PROD_SIU
+RL_VETORH_HOMOLOG_S
+RL_VETORH_HOMOLOG_SIU
+RL_ACESSO
+===============================
+ABREVIAÇÕES
+===============================
+S - SELECT
+SU - SELECT, UPDATE
+SIU - SELECT, INSERT, UPDATE
+===============================
+
+
+============
+SAP_PROD_IG
+============
+
+CREATE ROLE RL_SAP_PROD_IG_S;
+
+declare
+i number;
+
+begin
+  for i in (select table_name from all_tables where OWNER = 'SAP_PROD_IG') loop
+    execute immediate 'GRANT SELECT ON SAP_PROD_IG.'||I.TABLE_NAME||' TO RL_SAP_PROD_IG_S';
+  end loop;
+end;
+
+declare
+i number;
+
+begin
+  for i in (select VIEW_NAME from all_views where OWNER = 'SAP_PROD_IG') loop
+    execute immediate 'GRANT SELECT ON SAP_PROD_IG.'||I.VIEW_NAME||' TO RL_SAP_PROD_IG_S';
+  end loop;
+end;
+
+CREATE ROLE RL_SAP_PROD_IG_SU;
+
+declare
+i number;
+
+begin
+  for i in (select table_name from all_tables where OWNER = 'SAP_PROD_IG') loop
+    execute immediate 'GRANT SELECT, UPDATE ON SAP_PROD_IG.'||I.TABLE_NAME||' TO RL_SAP_PROD_IG_SU';
+  end loop;
+end;
+
+CREATE ROLE RL_SAP_PROD_IG_SIU;
+
+declare
+i number;
+
+begin
+  for i in (select table_name from all_tables where OWNER = 'SAP_PROD_IG') loop
+    execute immediate 'GRANT SELECT, INSERT, UPDATE ON SAP_PROD_IG.'||I.TABLE_NAME||' TO RL_SAP_PROD_IG_SIU';
+  end loop;
+end;
+
+===============
+SAP_HOMOLOG_IG 
+===============
+
+CREATE ROLE RL_SAP_HOMOLOG_IG_S;
+
+declare
+i number;
+
+begin
+  for i in (select table_name from all_tables where OWNER = 'SAP_HOMOLOG_IG') loop
+    execute immediate 'GRANT SELECT ON SAP_HOMOLOG_IG.'||I.TABLE_NAME||' TO RL_SAP_HOMOLOG_IG_S';
+  end loop;
+end;
+
+declare
+i number;
+begin
+  for i in (select VIEW_NAME from all_views where OWNER = 'SAP_HOMOLOG_IG') loop
+    execute immediate 'GRANT SELECT ON SAP_HOMOLOG_IG.'||I.VIEW_NAME||' TO RL_SAP_HOMOLOG_IG_S';
+  end loop;
+end;
+
+CREATE ROLE RL_SAP_HOMOLOG_IG_SU;
+
+declare
+i number;
+
+begin
+  for i in (select table_name from all_tables where OWNER = 'SAP_HOMOLOG_IG') loop
+    execute immediate 'GRANT SELECT, UPDATE ON SAP_HOMOLOG_IG.'||I.TABLE_NAME||' TO RL_SAP_HOMOLOG_IG_SU';
+  end loop;
+end;
+
+CREATE ROLE RL_SAP_HOMOLOG_IG_SIU;
+
+declare
+i number;
+
+begin
+  for i in (select table_name from all_tables where OWNER = 'SAP_HOMOLOG_IG') loop
+    execute immediate 'GRANT SELECT, INSERT, UPDATE ON SAP_HOMOLOG_IG.'||I.TABLE_NAME||' TO RL_SAP_HOMOLOG_IG_SIU';
+  end loop;
+end;
+
+=============
+SAP_PROD_COM
+=============
+
+CREATE ROLE RL_SAP_PROD_COM_S;
+
+declare
+i number;
+
+begin
+  for i in (select table_name from all_tables where OWNER = 'SAP_PROD_COM') loop
+    execute immediate 'GRANT SELECT ON SAP_PROD_COM.'||I.TABLE_NAME||' TO RL_SAP_PROD_COM_S';
+  end loop;
+end;
+
+declare
+i number;
+
+begin
+  for i in (select VIEW_NAME from all_views where OWNER = 'SAP_PROD_COM') loop
+    execute immediate 'GRANT SELECT ON SAP_PROD_COM.'||I.VIEW_NAME||' TO RL_SAP_PROD_COM_S';
+  end loop;
+end;
+
+CREATE ROLE RL_SAP_PROD_COM_SU;
+
+declare
+i number;
+
+begin
+  for i in (select table_name from all_tables where OWNER = 'SAP_PROD_COM') loop
+    execute immediate 'GRANT SELECT, UPDATE ON SAP_PROD_COM.'||I.TABLE_NAME||' TO RL_SAP_PROD_COM_SU';
+  end loop;
+end;
+
+CREATE ROLE RL_SAP_PROD_COM_SIU;
+
+declare
+i number;
+
+begin
+  for i in (select table_name from all_tables where OWNER = 'SAP_PROD_COM') loop
+    execute immediate 'GRANT SELECT, INSERT, UPDATE ON SAP_PROD_COM.'||I.TABLE_NAME||' TO RL_SAP_PROD_COM_SIU';
+  end loop;
+end;
+
+================
+SAP_HOMOLOG_COM
+================
+
+CREATE ROLE RL_SAP_HOMOLOG_COM_S;
+
+declare
+i number;
+
+begin
+  for i in (select table_name from all_tables where OWNER = 'SAP_HOMOLOG_COM') loop
+    execute immediate 'GRANT SELECT ON SAP_HOMOLOG_COM.'||I.TABLE_NAME||' TO RL_SAP_HOMOLOG_COM_S';
+  end loop;
+end;
+
+declare
+i number;
+
+begin
+  for i in (select VIEW_NAME from all_views where OWNER = 'SAP_HOMOLOG_COM') loop
+    execute immediate 'GRANT SELECT ON SAP_HOMOLOG_COM.'||I.VIEW_NAME||' TO RL_SAP_HOMOLOG_COM_S';
+  end loop;
+end;
+
+CREATE ROLE RL_SAP_HOMOLOG_COM_SU;
+
+declare
+i number;
+
+begin
+  for i in (select table_name from all_tables where OWNER = 'SAP_HOMOLOG_COM') loop
+    execute immediate 'GRANT SELECT, UPDATE ON SAP_HOMOLOG_COM.'||I.TABLE_NAME||' TO RL_SAP_HOMOLOG_COM_SU';
+  end loop;
+end;
+
+CREATE ROLE RL_SAP_HOMOLOG_COM_SIU;
+
+declare
+i number;
+
+begin
+  for i in (select table_name from all_tables where OWNER = 'SAP_HOMOLOG_COM') loop
+    execute immediate 'GRANT SELECT, INSERT, UPDATE ON SAP_HOMOLOG_COM.'||I.TABLE_NAME||' TO RL_SAP_HOMOLOG_COM_SIU';
+  end loop;
+end;
+
+=======
+VETORH
+=======
+
+CREATE ROLE RL_VETORH_PROD_S;
+
+declare
+i number;
+
+begin
+  for i in (select table_name from all_tables where OWNER = 'VETORH') loop
+    execute immediate 'GRANT SELECT ON VETORH.'||I.TABLE_NAME||' TO RL_VETORH_PROD_S';
+  end loop;
+end;
+
+declare
+i number;
+
+begin
+  for i in (select VIEW_NAME from all_views where OWNER = 'VETORH') loop
+    execute immediate 'GRANT SELECT ON VETORH.'||I.VIEW_NAME||' TO RL_VETORH_PROD_S';
+  end loop;
+end;
+
+CREATE ROLE RL_VETORH_PROD_SIU;
+
+declare
+i number;
+
+begin
+  for i in (select table_name from all_tables where OWNER = 'VETORH') loop
+    execute immediate 'GRANT SELECT, INSERT, UPDATE ON VETORH.'||I.TABLE_NAME||' TO RL_VETORH_PROD_SIU';
+  end loop;
+end;
+
+===============
+VETORH_HOMOLOG
+===============
+
+CREATE ROLE RL_VETORH_HOMOLOG_S;
+
+declare
+i number;
+
+begin
+  for i in (select table_name from all_tables where OWNER = 'VETORH_HOMOLOG') loop
+    execute immediate 'GRANT SELECT ON VETORH_HOMOLOG.'||I.TABLE_NAME||' TO RL_VETORH_HOMOLOG_S';
+  end loop;
+end;
+
+declare
+i number;
+
+begin
+  for i in (select VIEW_NAME from all_views where OWNER = 'VETORH_HOMOLOG') loop
+    execute immediate 'GRANT SELECT ON VETORH_HOMOLOG.'||I.VIEW_NAME||' TO RL_VETORH_HOMOLOG_S';
+  end loop;
+end;
+
+CREATE ROLE RL_VETORH_HOMOLOG_SIU;
+
+declare
+i number;
+
+begin
+  for i in (select table_name from all_tables where OWNER = 'VETORH_HOMOLOG') loop
+    execute immediate 'GRANT SELECT, INSERT, UPDATE ON VETORH_HOMOLOG.'||I.TABLE_NAME||' TO RL_VETORH_HOMOLOG_SIU';
+  end loop;
+end;
+
+CREATE ROLE RL_ACESSO;
+GRANT CONNECT, SELECT ANY DICTIONARY TO RL_ACESSO;
+
+
+
+==============================================================================================
+USUÁRIOS PARA ACESSAR OS ESQUEMAS SAP_PROD_IG, SAP_HOMOLOG_IG, SAP_PROD_COM, SAP_HOMOLOG_COM
+==============================================================================================
+
+CREATE USER ALEX_COELHO IDENTIFIED BY ALEX; – permissão para INSERT, SELECT  e UPDATE
+
+GRANT RL_SAP_PROD_IG_SIU TO ALEX_COELHO;
+GRANT RL_SAP_HOMOLOG_IG_SIU TO ALEX_COELHO;
+GRANT RL_SAP_PROD_COM_SIU TO ALEX_COELHO;
+GRANT RL_SAP_HOMOLOG_COM_SIU TO ALEX_COELHO;
+GRANT RL_ACESSO TO ALEX_COELHO;
+
+CREATE USER CONSULTOR_SAPIENS IDENTIFIED BY CONSULTOR;- permissão para INSERT, SELECT  e UPDATE
+
+GRANT RL_SAP_PROD_IG_SIU TO CONSULTOR_SAPIENS;
+GRANT RL_SAP_HOMOLOG_IG_SIU TO CONSULTOR_SAPIENS;
+GRANT RL_SAP_PROD_COM_SIU TO CONSULTOR_SAPIENS;
+GRANT RL_SAP_HOMOLOG_COM_SIU TO CONSULTOR_SAPIENS;
+GRANT RL_ACESSO TO CONSULTOR_SAPIENS;
+
+CREATE USER ANDERSON_TOSO IDENTIFIED BY ANDERSON; – permissão para SELECT e UPDATE.
+
+GRANT RL_SAP_PROD_IG_SU TO ANDERSON_TOSO;
+GRANT RL_SAP_HOMOLOG_IG_SU TO ANDERSON_TOSO;
+GRANT RL_SAP_PROD_COM_SU TO ANDERSON_TOSO;
+GRANT RL_SAP_HOMOLOG_COM_SU TO ANDERSON_TOSO;
+GRANT RL_ACESSO TO ANDERSON_TOSO;
+
+CREATE USER FABIO_CESAR IDENTIFIED BY FABIO; – permissão para SELECT.
+
+GRANT RL_SAP_PROD_IG_S TO FABIO_CESAR;
+GRANT RL_SAP_HOMOLOG_IG_S TO FABIO_CESAR;
+GRANT RL_SAP_PROD_COM_S TO FABIO_CESAR;
+GRANT RL_SAP_HOMOLOG_COM_S TO FABIO_CESAR;
+GRANT RL_ACESSO TO FABIO_CESAR;
+
+CREATE USER ALEXANDRE_AMORIM IDENFIED BY ALEXANDRE; – permissão para SELECT.
+
+GRANT RL_SAP_PROD_IG_S TO ALEXANDRE_AMORIM;
+GRANT RL_SAP_HOMOLOG_IG_S TO ALEXANDRE_AMORIM;
+GRANT RL_SAP_PROD_COM_S TO ALEXANDRE_AMORIM;
+GRANT RL_SAP_HOMOLOG_COM_S TO ALEXANDRE_AMORIM;
+GRANT RL_ACESSO TO ALEXANDRE_AMORIM;
+
+CREATE USER RENAN_FIGUEIREDO IDENTIFIED BY RENAN;– permissão para SELECT.
+
+GRANT RL_SAP_PROD_IG_S TO RENAN_FIGUEIREDO;
+GRANT RL_SAP_HOMOLOG_IG_S TO RENAN_FIGUEIREDO;
+GRANT RL_SAP_PROD_COM_S TO RENAN_FIGUEIREDO;
+GRANT RL_SAP_HOMOLOG_COM_S TO RENAN_FIGUEIREDO;
+GRANT RL_ACESSO TO RENAN_FIGUEIREDO;
+
+==========================================================
+USUÁRIOS PARA ACESSAR OS ESQUEMAS VETORH, VETORH_HOMOLOG
+==========================================================
+
+JA CRIADO ANTERIORMENTE
+
+ALEX_COELHO – permissão para INSERT, SELECT  e UPDATE
+
+GRANT RL_VETORH_PROD_SIU TO ALEX_COELHO;
+GRANT RL_VETORH_HOMOLOG_SIU TO ALEX_COELHO;
+
+CREATE USER CONSULTOR_VETORH IDENTIFIED BY CONSULTOR; - permissão para INSERT, SELECT  e UPDATE
+
+GRANT RL_VETORH_PROD_SIU TO CONSULTOR_VETORH;
+GRANT RL_VETORH_HOMOLOG_SIU TO CONSULTOR_VETORH;
+GRANT RL_ACESSO TO CONSULTOR_VETORH;
+
+CREATE USER DAVIDSON_CLEM IDENTIFIED BY DAVIDSON; – permissão para SELECT.
+
+GRANT RL_VETORH_PROD_S TO DAVIDSON_CLEM;
+GRANT RL_VETORH_HOMOLOG_S TO DAVIDSON_CLEM;
+GRANT RL_ACESSO TO DAVIDSON_CLEM;
+
+========================================
+USUÁRIOS PARA ACESSAR TODOS OS ESQUEMAS 
+========================================
+
+CREATE USER ROBSON_RIBEIRO IDENTIFIED BY ROBSON;
+
+GRANT RL_SAP_PROD_IG_SIU TO ROBSON_RIBEIRO;
+GRANT RL_SAP_HOMOLOG_IG_SIU TO ROBSON_RIBEIRO;
+GRANT RL_SAP_PROD_COM_SIU TO ROBSON_RIBEIRO;
+GRANT RL_SAP_HOMOLOG_COM_SIU TO ROBSON_RIBEIRO;
+GRANT CONNECT TO ROBSON_RIBEIRO;
+GRANT RL_VETORH_PROD_SIU TO ROBSON_RIBEIRO;
+GRANT RL_VETORH_HOMOLOG_SIU TO ROBSON_RIBEIRO;
+GRANT RL_ACESSO TO ROBSON_RIBEIRO;
+
+CREATE USER CARLOS_BONFIM IDENTIFIED BY CARLOS;
+
+GRANT RL_SAP_PROD_IG_SIU TO CARLOS_BONFIM;
+GRANT RL_SAP_HOMOLOG_IG_SIU TO CARLOS_BONFIM;
+GRANT RL_SAP_PROD_COM_SIU TO CARLOS_BONFIM;
+GRANT RL_SAP_HOMOLOG_COM_SIU TO CARLOS_BONFIM;
+GRANT CONNECT TO CARLOS_BONFIM;
+GRANT RL_VETORH_PROD_SIU TO CARLOS_BONFIM;
+GRANT RL_VETORH_HOMOLOG_SIU TO CARLOS_BONFIM;
+GRANT RL_ACESSO TO CARLOS_BONFIM;
+
+CREATE USER LUCIANO_FERREIRA IDENTIFIED BY LUCIANO;
+
+GRANT RL_SAP_PROD_IG_S TO LUCIANO_FERREIRA;
+GRANT RL_SAP_HOMOLOG_IG_S TO LUCIANO_FERREIRA;
+GRANT RL_SAP_PROD_COM_S TO LUCIANO_FERREIRA;
+GRANT RL_SAP_HOMOLOG_COM_S TO LUCIANO_FERREIRA;
+GRANT RL_VETORH_PROD_S TO LUCIANO_FERREIRA;
+GRANT RL_VETORH_HOMOLOG_S TO LUCIANO_FERREIRA;
+GRANT RL_ACESSO TO LUCIANO_FERREIRA;
+
+CREATE USER LILIAN_LUANA IDENTIFIED BY LILIAN;
+
+GRANT RL_SAP_PROD_IG_S TO LILIAN_LUANA;
+GRANT RL_SAP_HOMOLOG_IG_S TO LILIAN_LUANA;
+GRANT RL_SAP_PROD_COM_S TO LILIAN_LUANA;
+GRANT RL_SAP_HOMOLOG_COM_S TO LILIAN_LUANA;
+GRANT RL_VETORH_PROD_S TO LILIAN_LUANA;
+GRANT RL_VETORH_HOMOLOG_S TO LILIAN_LUANA;
+GRANT RL_ACESSO TO LILIAN_LUANA;
+
+CREATE USER WALDINEY_ROMERO IDENTIFIED BY WALDINEY;
+
+GRANT RL_SAP_PROD_IG_S TO WALDINEY_ROMERO;
+GRANT RL_SAP_HOMOLOG_IG_S TO WALDINEY_ROMERO;
+GRANT RL_SAP_PROD_COM_S TO WALDINEY_ROMERO;
+GRANT RL_SAP_HOMOLOG_COM_S TO WALDINEY_ROMERO;
+GRANT RL_VETORH_PROD_S TO WALDINEY_ROMERO;
+GRANT RL_VETORH_HOMOLOG_S TO WALDINEY_ROMERO;
+GRANT RL_ACESSO TO WALDINEY_ROMERO;

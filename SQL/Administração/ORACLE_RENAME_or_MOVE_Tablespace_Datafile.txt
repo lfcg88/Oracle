@@ -1,0 +1,38 @@
+How to Rename or Move Oracle Tablespace Datafile to Another Location
+
+Oracle database does not provide an easy user interface to rename a datafile of tablespace, nor database administrator
+ can easily move or relocate the datafile to another location or directory that different from original location on
+ creation of database. The rename or move place task has to be performed via Oracle SQLPlus command line interface.
+However, if the operation is performed when the tablespace which owns the datefile is online, error will occur.
+
+The error message may include the following:
+
+ORA-01511: error in renaming log/data files
+ORA-01121: cannot rename database file <string> – file is in use or recovery
+ORA-01110: data file <string>: ‘datafile.dbf’
+
+To properly move the datafile around or rename the datafile, follow this guide:
+
+Login to SQLPlus. 
+Connect as SYS DBA with CONNECT / AS SYSDBA command. 
+Shutdown the database instance with SHUTDOWN command. 
+Rename or/and move the datafiles at operating system level. 
+Start Oracle database in mount state with STARTUP MOUNT command. 
+Modify the name or location of datafiles in Oracle data dictionary using following command syntax: 
+ALTER DATABASE RENAME FILE ‘<fully qualified path to original data file name>’ 
+TO ‘<new or original fully qualified path to new or original data file name>’;
+
+Open Oracle database instance completely with ALTER DATABASE OPEN command. 
+
+If the datafiles that need to be changed or moved do not belong to SYSTEM tablespaces, and do not contain active
+rollback segments or temporary segments, there is another workaround that does not require database instance to 
+be shutdown. Instead, only the particular tablespace that contains the date files is taken offline.
+
+Login to SQLPlus. 
+Connect as SYS DBA with CONNECT / AS SYSDBA command. 
+Make offline the affected tablespace with ALTER TABLESPACE <tablespace name> OFFLINE; command. 
+Modify the name or location of datafiles in Oracle data dictionary using following command syntax: 
+ALTER TABLESPACE <tablespace name> RENAME DATAFILE ‘<fully qualified path to original data file name>’ 
+TO ‘<new or original fully qualified path to new or original data file name>’;
+
+Bring the tablespace online again with ALTER TABLESPACE alter tablespace <tablespace name> ONLINE; command. 

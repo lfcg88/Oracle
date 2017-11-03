@@ -1,0 +1,1 @@
+tkprof tracefile.trc Saida.txt explain=login/password@servico sort=exeqry record=listadequeries.txt

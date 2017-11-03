@@ -1,0 +1,109 @@
+
+
+
+drop table logonaudittable
+/
+
+CREATE TABLE logonaudittable 
+( 
+event1 VARCHAR2(10), 
+event2 VARCHAR2(10), 
+sid NUMBER, 
+serial# NUMBER, 
+timestamp_entrada DATE, 
+timestamp_saida DATE, 
+username VARCHAR2(30), 
+osuserid VARCHAR2(30), 
+machinename VARCHAR2(64) 
+) 
+/ 
+
+
+grant select,insert,update,delete on logonaudittable to sys
+/
+
+
+-- Generated 6-jan-2005 12:26:37 from AGENT@dsv8n.world
+
+CREATE OR REPLACE TRIGGER tr_trace_logon
+AFTER LOGON
+ON DATABASE
+begin 
+ 	IF ora_login_user IN ('OWNRECUP5') THEN
+        SYS.DBMS_SUPPORT.START_TRACE(TRUE,TRUE); 
+    END IF;
+ end;
+/
+
+
+CREATE OR REPLACE TRIGGER sys.tr_trace_logon
+AFTER LOGON ON DATABASE
+DECLARE 
+  v_machinename VARCHAR2(64); 
+  v_osuserid VARCHAR2(30); 
+  v_sid NUMBER(10); 
+  v_serial NUMBER(10); 
+CURSOR c1 IS 
+  SELECT sid, serial#, osuser, machine FROM v$session WHERE audsid = userenv('sessionid'); 
+BEGIN 
+    IF ora_login_user IN ('OWNRECUP5') THEN
+        SYS.DBMS_SUPPORT.START_TRACE(TRUE,TRUE); 
+    END IF;
+    IF ora_login_user IN ('MESSAGUSR') THEN
+       OPEN c1; 
+       FETCH c1 INTO v_sid, v_serial, v_osuserid, v_machinename; 
+       INSERT INTO agent.logonaudittable (event1,sid ,serial#,timestamp_entrada,username,osuserid,machinename)  
+                        VALUES ( 'LOGON', v_sid, v_serial, sysdate,ora_login_user, v_osuserid, v_machinename ); 
+       
+       CLOSE c1; 
+    END IF;
+ end;
+
+
+
+
+
+
+3. Create LOGOFF trigger 
+
+CREATE OR REPLACE TRIGGER SYS.logoffauditing 
+BEFORE LOGOFF ON database 
+DECLARE 
+  v_machinename VARCHAR2(64); 
+  v_osuserid VARCHAR2(30); 
+  v_sid NUMBER(10); 
+  v_serial NUMBER(10); 
+CURSOR c1 IS 
+  SELECT sid, serial#, osuser,username machine FROM v$session WHERE audsid = userenv('sessionid'); 
+BEGIN 
+   IF ora_login_user IN ('MESSAGUSR') THEN
+       OPEN c1; 
+       FETCH c1 INTO v_sid, v_serial, v_osuserid, v_machinename; 
+       update agent.logonaudittable set event2 = 'LOGOFF', timestamp_saida = sysdate
+            where sid=v_sid and serial#=v_serial; 
+       CLOSE c1; 
+    END IF;
+END; 
+/ 
+
+select ora_login_user into log_user from dual;
+
+
+
+CREATE OR REPLACE TRIGGER logoffauditing 
+BEFORE LOGOFF ON database 
+DECLARE 
+machinename VARCHAR2(64); 
+osuserid VARCHAR2(30); 
+v_sid NUMBER(10); 
+v_serial NUMBER(10); 
+CURSOR c1 IS 
+SELECT sid, serial#, osuser, machine 
+FROM v$session WHERE audsid = userenv('sessionid'); 
+BEGIN 
+OPEN c1; 
+FETCH c1 INTO v_sid, v_serial, osuserid, machinename; 
+INSERT INTO logonaudittable VALUES ( 'LOGOFF', v_sid, v_serial, sysdate, 
+user, osuserid, machinename ); 
+CLOSE c1; 
+END; 

@@ -1,0 +1,629 @@
+﻿<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<!-- saved from url=(0065)http://www.oracle.com/technology/oramag/code/tips2004/032204.html -->
+<HTML dir=ltr><HEAD><TITLE>Deleting Duplicate SYS Constraints</TITLE><LINK 
+href="ConstraintSysRepetidaRemocao_arquivos/WOCPROD.wwv_setting[1]" 
+type=text/css rel=Stylesheet>
+<META content="Deleting Duplicate SYS Constraints" name=title>
+<META content="Code Tip: Deleting Duplicate SYS Constriants Fast" 
+name=description>
+<META content="Oracle9i, Devanshi Parikh, constraints" name=keywords>
+<META content="" name=author>
+<META http-equiv=Content-Type content="text/html; charset=utf-8"><LINK 
+href="ConstraintSysRepetidaRemocao_arquivos/otn_new.css" type=text/css 
+rel=stylesheet>
+<META content="MSHTML 6.00.2800.1458" name=GENERATOR></HEAD>
+<BODY class=PageBG text=#000000 vLink=#000000 aLink=#000000 link=#000000 
+bgColor=#ffffff leftMargin=0 topMargin=0 rightMargin=0 marginwidth="0" 
+marginheight="0">
+<SCRIPT type=text/javascript>
+<!-- Comment out script for old browsers
+function propertysheet(thingid,masterthingid,cornerid,siteid,settingssetid,settingssiteid) { popupWin = window.open("http://www.oracle.com/pls/wocprod/WOCPROD.wwv_thinghtml.showpropertysheet?p_thingid="+thingid+"&p_masterthingid="+masterthingid+"&p_cornerid="+cornerid+"&p_siteid="+siteid+"&p_settingssetid="+settingssetid+"&p_settingssiteid="+settingssiteid,"Property_Sheet","statusbar=Y,resizable,scrollbars,width=450,height=450"); popupWin.focus(); }
+//-->
+</SCRIPT>
+
+<SCRIPT type=text/javascript>
+<!-- Comment out script for old browsers
+function folderpropertysheet(cornerid,siteid,settingssetid,settingssiteid) { popupWin = window.open("http://www.oracle.com/pls/wocprod/WOCPROD.wwpob_page.propertysheet?p_cornerid="+cornerid+"&p_siteid="+siteid+"&p_settingssetid="+settingssetid+"&p_settingssiteid="+settingssiteid,"Property_Sheet","statusbar=Y,resizable,scrollbars,width=450,height=450"); popupWin.focus(); }
+//-->
+</SCRIPT>
+
+<SCRIPT type=text/javascript>
+function show_task_help() {
+   newWindow = window.open("http://www.oracle.com/wocportal/page?_pageid=5,1&_dad=wocprod&_schema=WOCPROD", "Help", "menubar=1,toolbar=yes,scrollbars=1,resizable=1,width=700,height=500");
+}
+</SCRIPT>
+
+<TABLE cellSpacing=0 cellPadding=0 width="100%" 
+background=ConstraintSysRepetidaRemocao_arquivos/pobtrans.gif border=0>
+  <TBODY>
+  <TR align=left>
+    <TD vAlign=top width="100%">
+      <TABLE class=RegionNoBorder cellSpacing=0 cellPadding=0 width="100%" 
+      border=0>
+        <TBODY>
+        <TR>
+          <TD class=RegionHeaderColor width="100%">
+            <TABLE cellSpacing=0 cellPadding=0 width="100%" 
+            background=ConstraintSysRepetidaRemocao_arquivos/pobtrans.gif 
+            border=0>
+              <TBODY>
+              <TR align=left>
+                <TD vAlign=top width="100%">&nbsp;<BR><FONT 
+                  class=inplacedisplayid1siteid0>
+                  <SCRIPT language=Javascript 
+                  src="ConstraintSysRepetidaRemocao_arquivos/portal_lib.js"></SCRIPT>
+
+                  <SCRIPT language=Javascript 
+                  src="ConstraintSysRepetidaRemocao_arquivos/lib.js"></SCRIPT>
+                  <NOSCRIPT></NOSCRIPT>
+                  <TABLE cellSpacing=0 cellPadding=0 width="100%" border=0>
+                    <TBODY>
+                    <TR>
+                      <TD width=10 rowSpan=4><IMG alt="" 
+                        src="ConstraintSysRepetidaRemocao_arquivos/hp_spacer.gif" 
+                        width=10 border=0></TD>
+                      <TD colSpan=2 height=1></TD>
+                      <TD width=10 rowSpan=4><IMG alt="" 
+                        src="ConstraintSysRepetidaRemocao_arquivos/hp_spacer.gif" 
+                        width=10 border=0></TD></TR>
+                    <TR>
+                      <TD vAlign=bottom align=left><A 
+                        href="http://www.oracle.com/technology/index.html"><IMG 
+                        alt="Oracle Corporation" 
+                        src="ConstraintSysRepetidaRemocao_arquivos/otn_logo_small.gif" 
+                        border=0></A></TD>
+                      <TD align=right>
+                        <SCRIPT language=JavaScript type=text/javascript>printWelcome()</SCRIPT>
+                      </TD></TR>
+                    <TR>
+                      <TD colSpan=2 height=6></TD></TR>
+                    <TR>
+                      <TD vAlign=bottom align=left>
+                        <TABLE cellSpacing=0 cellPadding=0 border=0>
+                          <TBODY>
+                          <TR>
+                            <TD bgColor=#666666><IMG height=22 alt="" 
+                              src="D:\script\ConstraintSysRepetidaRemocao_arquivos\hp_spacer(1).gif" 
+                              width=1 border=0></TD>
+                            <TD vAlign=top height=22><SPAN 
+                              class=textA>&nbsp;&nbsp;</SPAN><A class=textA 
+                              href="http://www.oracle.com/index.html">ORACLE.COM</A><SPAN 
+                              class=textA>&nbsp;&nbsp;</SPAN></TD>
+                            <TD bgColor=#666666><IMG height=22 alt="" 
+                              src="D:\script\ConstraintSysRepetidaRemocao_arquivos\hp_spacer(1).gif" 
+                              width=1 border=0></TD>
+                            <TD vAlign=top height=22><SPAN 
+                              class=textA>&nbsp;&nbsp;</SPAN><A class=textA 
+                              href="http://oraclepartnernetwork.oracle.com/">PARTNERS</A><SPAN 
+                              class=textA>&nbsp;&nbsp;</SPAN></TD>
+                            <TD bgColor=#666666><IMG height=22 alt="" 
+                              src="D:\script\ConstraintSysRepetidaRemocao_arquivos\hp_spacer(1).gif" 
+                              width=1 border=0></TD>
+                            <TD vAlign=top height=22><SPAN 
+                              class=textA>&nbsp;&nbsp;</SPAN><A class=textA 
+                              href="http://www.oracle.com/products/buy/index.html">BUY</A><SPAN 
+                              class=textA>&nbsp;&nbsp;</SPAN></TD>
+                            <TD bgColor=#666666><IMG height=22 alt="" 
+                              src="D:\script\ConstraintSysRepetidaRemocao_arquivos\hp_spacer(1).gif" 
+                              width=1 border=0></TD>
+                            <TD vAlign=top height=22><SPAN 
+                              class=textA>&nbsp;&nbsp;</SPAN><A class=textA 
+                              href="http://www.oracle.com/technology/software/index.html">DOWNLOAD</A><SPAN 
+                              class=textA>&nbsp;&nbsp;</SPAN></TD>
+                            <TD bgColor=#666666><IMG height=22 alt="" 
+                              src="D:\script\ConstraintSysRepetidaRemocao_arquivos\hp_spacer(1).gif" 
+                              width=1 border=0></TD>
+                            <TD vAlign=top height=22><SPAN 
+                              class=textA>&nbsp;&nbsp;</SPAN><A class=textA 
+                              href="http://www.oracle.com/support/index.html">SUPPORT</A><SPAN 
+                              class=textA>&nbsp;&nbsp;</SPAN></TD>
+                            <TD bgColor=#666666><IMG height=22 alt="" 
+                              src="D:\script\ConstraintSysRepetidaRemocao_arquivos\hp_spacer(1).gif" 
+                              width=1 border=0></TD>
+                            <TD vAlign=top height=22><SPAN 
+                              class=textA>&nbsp;&nbsp;</SPAN><A class=textA 
+                              href="http://www.oracle.com/corporate/contact/index.html">CONTACT 
+                              US </A><SPAN class=textA>&nbsp;&nbsp;</SPAN></TD>
+                            <TD vAlign=top align=right 
+                        height=22></TD></TR></TBODY></TABLE></TD>
+                      <TD vAlign=top align=right height=22>
+                        <TABLE height=22 cellSpacing=0 cellPadding=1 border=0>
+                          <TBODY>
+                          <TR>
+                            <FORM name=queryform 
+                            action=/ultrasearch/wwws_otn/searchotn.jsp 
+                            method=get><INPUT type=hidden value=Search 
+                            name=p_Action> 
+                            <TD vAlign=bottom noWrap align=right><INPUT 
+                              class=legalese id=Search size=25 name=p_Query 
+                              valign="middle"> </TD>
+                            <TD width=3><IMG height=22 alt="" 
+                              src="D:\script\ConstraintSysRepetidaRemocao_arquivos\hp_spacer(1).gif" 
+                              width=3 border=0></TD>
+                            <TD vAlign=center><A class=textA 
+                              href="javascript:document.queryform.submit()">SEARCH</A></TD></FORM>
+                            <FORM>
+                            <TD vAlign=bottom align=right><LABEL 
+                              for="Select Country"><IMG height=1 
+                              alt="Select Country" 
+                              src="ConstraintSysRepetidaRemocao_arquivos/hp_spacer.gif" 
+                              width=1><SPAN class=textA> <SELECT class=textA 
+                              id="Select Country" 
+                              onchange=location.href=this.options[selectedIndex].value 
+                              size=1 name="Select Country"> <OPTION 
+                                selected>SELECT COUNTRY</OPTION> <OPTION 
+                                value=http://otn.oracle.com/global/cn/>China</OPTION> 
+                                <OPTION 
+                                value=http://otn.oracle.co.jp/>Japan</OPTION> 
+                                <OPTION 
+                                value=http://www.oracle.com/technology/global/kr/>Korea</OPTION></SELECT> 
+                              </SPAN></LABEL></TD></FORM></TR>
+                          <TR>
+                            <TD height=3><IMG height=3 alt="" 
+                              src="D:\script\ConstraintSysRepetidaRemocao_arquivos\hp_spacer(1).gif" 
+                              border=0></TD></TR></TBODY></TABLE></TD></TR>
+                    <TR>
+                      <TD vAlign=top width=20 height=1><IMG height=1 alt="" 
+                        src="D:\script\ConstraintSysRepetidaRemocao_arquivos\hp_spacer(1).gif" 
+                        width=20 border=0></TD>
+                      <TD vAlign=top width="100%" bgColor=#666666 colSpan=3 
+                      height=1><IMG height=1 alt="" 
+                        src="D:\script\ConstraintSysRepetidaRemocao_arquivos\hp_spacer(1).gif" 
+                        border=0></TD></TR></TBODY></TABLE></FONT></TD></TR></TBODY></TABLE></TD></TR></TBODY></TABLE></TD></TR></TBODY></TABLE>
+<TABLE height=5 cellSpacing=0 cellPadding=0 width="100%" 
+background=ConstraintSysRepetidaRemocao_arquivos/pobtrans.gif border=0>
+  <TBODY></TBODY></TABLE>
+<TABLE cellSpacing=0 cellPadding=0 width="100%" border=0>
+  <TBODY>
+  <TR>
+    <TD vAlign=top width=20>
+      <TABLE cellSpacing=0 cellPadding=0 width="100%" 
+      background=ConstraintSysRepetidaRemocao_arquivos/pobtrans.gif border=0>
+        <TBODY>
+        <TR align=left>
+          <TD vAlign=top width="100%">&nbsp;<BR><FONT 
+            class=inplacedisplayid1siteid0><IMG 
+            src="ConstraintSysRepetidaRemocao_arquivos/spacer.gif" width=20 
+            border=0></FONT> </TD></TR></TBODY></TABLE></TD>
+    <TD vAlign=top width=188>
+      <TABLE cellSpacing=0 cellPadding=0 width="100%" 
+      background=ConstraintSysRepetidaRemocao_arquivos/pobtrans.gif border=0>
+        <TBODY>
+        <TR align=left>
+          <TD vAlign=top width="100%">
+            <TABLE class=RegionNoBorder cellSpacing=0 cellPadding=0 width="100%" 
+            border=0>
+              <TBODY>
+              <TR>
+                <TD class=RegionHeaderColor width="100%">
+                  <TABLE class=Bodyid1siteid0 cellSpacing=0 cellPadding=0 
+                  width="100%" border=0>
+                    <TBODY>
+                    <TR align=left>
+                      <TD vAlign=top width="100%"><FONT 
+                        class=inplacedisplayid1siteid0>
+                        <TABLE cellSpacing=0 cellPadding=0 width="100%" 
+                        bgColor=#dddddd border=0>
+                          <TBODY>
+                          <TR>
+                            <TD vAlign=center height=16><SPAN 
+                              class=textB>&nbsp;&nbsp;</SPAN><A class=textBnav 
+                              href="http://www.oracle.com/technology/products/index.html">PRODUCT 
+                              CENTERS</A></TD></TR>
+                          <TR>
+                            <TD bgColor=#ffffff height=1><IMG height=1 alt="" 
+                              src="D:\script\ConstraintSysRepetidaRemocao_arquivos\hp_spacer(1).gif" 
+                              border=0></TD></TR>
+                          <TR>
+                            <TD vAlign=center bgColor=#ffffff height=16><SPAN 
+                              class=textB>&nbsp;&nbsp;</SPAN><A class=textBnav 
+                              href="http://www.oracle.com/technology/tech/index.html">TECHNOLOGY 
+                              CENTERS</A></TD></TR>
+                          <TR>
+                            <TD bgColor=#ffffff height=1><IMG height=1 alt="" 
+                              src="D:\script\ConstraintSysRepetidaRemocao_arquivos\hp_spacer(1).gif" 
+                              border=0></TD></TR>
+                          <TR>
+                            <TD vAlign=center height=16><SPAN 
+                              class=textB>&nbsp;&nbsp;</SPAN><A class=textBnav 
+                              href="http://www.oracle.com/technology/community/index.html">COMMUNITY</A></TD></TR>
+                          <TR>
+                            <TD bgColor=#ffffff height=1><IMG height=1 alt="" 
+                              src="D:\script\ConstraintSysRepetidaRemocao_arquivos\hp_spacer(1).gif" 
+                              border=0></TD></TR></TBODY></TABLE></FONT></TD></TR></TBODY></TABLE></TD></TR></TBODY></TABLE></TD></TR>
+        <TR align=left>
+          <TD vAlign=top width="100%">
+            <TABLE class=RegionNoBorder cellSpacing=0 cellPadding=0 width="100%" 
+            border=0>
+              <TBODY>
+              <TR>
+                <TD class=RegionHeaderColor width="100%">
+                  <TABLE cellSpacing=0 cellPadding=0 width="100%" 
+                  background=ConstraintSysRepetidaRemocao_arquivos/pobtrans.gif 
+                  border=0>
+                    <TBODY>
+                    <TR align=left>
+                      <TD vAlign=top width="100%">
+                        <TABLE class=RegionNoBorder cellSpacing=0 cellPadding=0 
+                        width="100%" border=0>
+                          <TBODY>
+                          <TR>
+                            <TD class=RegionHeaderColor width="100%"><LINK 
+                              href="ConstraintSysRepetidaRemocao_arquivos/otn_new.css" 
+                              type=text/css rel=stylesheet>
+                              <SCRIPT language=JavaScript 
+                              src="ConstraintSysRepetidaRemocao_arquivos/navtree.js"></SCRIPT>
+
+                              <SCRIPT language=JavaScript 
+                              src="ConstraintSysRepetidaRemocao_arquivos/otn_nodes.js"></SCRIPT>
+
+                              <SCRIPT language=JavaScript 
+                              src="ConstraintSysRepetidaRemocao_arquivos/ocom_format.js"></SCRIPT>
+
+                              <SCRIPT language=JavaScript>
+    var treeName = "Tree1";
+    var tree = new COOLjsTreePRO (treeName, OTN_ARTICLES_NODES, TREE_FORMAT);
+</SCRIPT>
+
+                              <TABLE cellSpacing=0 cellPadding=0 width=180 
+                              bgColor=#dddddd border=0>
+                                <TBODY>
+                                <TR>
+                                <TD class=gradient vAlign=top>
+                                <SCRIPT language=JavaScript>
+    tree.init();
+</SCRIPT>
+                                </TD></TR></TBODY></TABLE></TD></TR></TBODY></TABLE></TD></TR></TBODY></TABLE></TD></TR></TBODY></TABLE></TD></TR></TBODY></TABLE></TD>
+    <TD vAlign=top width="100%">
+      <TABLE cellSpacing=0 cellPadding=0 width="100%" 
+      background=ConstraintSysRepetidaRemocao_arquivos/pobtrans.gif border=0>
+        <TBODY>
+        <TR>
+          <TD width="100%" colSpan=3><IMG height=10 alt="" 
+            src="ConstraintSysRepetidaRemocao_arquivos/pobtrans.gif" 
+        border=0></TD></TR>
+        <TR align=left>
+          <TD width=10><IMG height=1 alt="" 
+            src="ConstraintSysRepetidaRemocao_arquivos/pobtrans.gif" width=10 
+            border=0></TD>
+          <TD vAlign=top width="100%">
+            <TABLE cellSpacing=0 cellPadding=29 width=600 border=0>
+              <TBODY>
+              <TR>
+                <TD>
+                  <P><SPAN class=topstoryhead>Tip of the Week</SPAN><BR><SPAN 
+                  class=parahead1>Tip for Week of March 22, 2004</SPAN>
+                  <P><SPAN class=parahead1>Deleting Duplicate SYS 
+                  Constraints</SPAN>
+                  <P><SPAN class=bodycopy>This tip comes from </SPAN><A 
+                  href="mailto:devanshi.parikh@ey.com"><SPAN 
+                  class=bodylink>Devanshi Parikh</SPAN></A><SPAN 
+                  class=bodycopy>, Sr. DBA, Ernst and Young LLP in Lyndhurst, 
+                  New Jersey. </SPAN></P><SPAN class=bodycopy>System generated 
+                  (redundant) check constraints can really drain the performance 
+                  of a database. But sometimes, such as when using third party 
+                  tools with Oracle, it becomes impossible to avoid them. I have 
+                  developed a script, which is actually a UNIX Korn shell 
+                  script, that retrives information from the Oracle dictionary 
+                  tables, and then formats the output to generate SQL statements 
+                  that can be executed in the database. Also, the script puts 
+                  you in more control since, because you decide which and how 
+                  many tables you are interested in.</SPAN> 
+                  <P></P>
+                  <P><SPAN class=bodycopy>To run the script, first create a text 
+                  file with one column, and one or more entries in the form 
+                  <TT>tablename( Uppercase )</TT>. The file can include any 
+                  number of table names. The script accepts this text file's 
+                  name as the input argument. Each table listed in the input 
+                  file is read and passed to Oracle Database to retrive the 
+                  relevent information.</SPAN></P>
+                  <P><SPAN class=bodycopy>Note that I have used hard coded the 
+                  schema name and password in the script, which you can edit. 
+                  </P>
+                  <P><SPAN class=bodycopy>For each table three files in the 
+                  format _.tmp, _.txt and _.sql are generated by the script in 
+                  the working directory. The .tmp and .txt files are 
+                  intermidiate files while the .sql files contain the actual 
+                  drop constraint statements. The script leaves out the 
+                  originally created check constraints; it generates statements 
+                  for the constraints that are genuine duplicates.</SPAN> </P>
+                  <P><SPAN class=bodycopy>The script assumes that each column 
+                  originally did not have more than 2 distinct SEARCH_CONDITION 
+                  values. (This is true in most cases, because the columns end 
+                  up having a NOT NULL and a LENGTH condition in the 
+                  SEARCH_CONDITION.) In this kind of a scenerio, if data 
+                  migrations occur between databases, with the CONSTRAINTS=N 
+                  clause missing, you end up with lots of duplicate check 
+                  constraints.</SPAN> </P>
+                  <P><SPAN class=bodycopy>Run the script, search.sh, from the 
+                  UNIX prompt:</SPAN> </P>
+                  <P><PRE>#!/us! r/bin/ksh
+
+#
+
+# search.sh 
+
+# Name of the file containing table names.
+
+#
+
+# First Written : 02/12/04 Devanshi Parikh
+
+#
+
+
+
+INFILE=$1
+
+
+
+infile=`cat ${INFILE}`
+
+for TAB_NAME in ${infile}
+
+do
+
+rm ${TAB_NAME}_${ORACLE_SID}.txt
+
+rm ${TAB_NAME}_${ORACLE_SID}.tmp
+
+rm ${TAB_NAME}_${ORACLE_SID}.sql
+
+sqlplus -s sysadm/config &lt;&lt;-!
+
+spool ${TAB_NAME}_${ORACLE_SID}.tmp
+
+set head off
+
+select '${TAB_NAME}' from dual;
+
+whenever sqlerror exit 1
+
+column search_condition format a35
+
+column constraint_name format a20
+
+column column_name format a22
+
+
+
+select a.constraint_name,b.column_name,search_condition
+
+from user_constraints a,user_cons_columns b
+
+where a.table_name=b.table_name and
+
+a.constraint_type='C' and a.constraint_name=b.constraint_name
+
+and a.table_name = '${TAB_NAME}'
+
+order by b.column_name,last_change;
+
+spool off
+
+exit
+
+!
+
+cat ${TAB_NAME}_${ORACLE_SID}.tmp | grep -v "IS NOT NULL" |\
+
+sed '/^$/d' &gt; ${TAB_NAME}_${ORACLE_SID}.txt
+
+table_name=`grep -v "^SYS_" ${TAB_NAME}_${ORACLE_SID}.txt | grep -v
+
+rows`
+
+column_name='aa'
+
+constraint_name='aa'
+
+
+
+grep "^SYS_" ${TAB_NAME}_${ORACLE_SID}.txt | \
+
+while read cons_line
+
+do
+
+constraint_name_next=`echo $cons_line |cut -d " " -f 1`
+
+column_name_next=`echo $cons_line |cut -d " " -f 2`
+
+
+
+if [ ${column_name_next} = ${column_name} ]
+
+then
+
+echo "ALTER TABLE SYSADM.${table_name} DROP CONSTRAINT
+
+${constraint_name_n
+
+ext};" &gt;&gt; ${TAB_NAME}_${ORACLE_SID}.sql
+
+fi
+
+column_name=${column_name_next}
+
+constraint_name=${constraint_name_next}
+
+done
+
+done
+
+exit
+
+</PRE></SPAN></TD></TD></TR></TBODY></TABLE></TD>
+          <TD width=10><IMG height=1 alt="" 
+            src="ConstraintSysRepetidaRemocao_arquivos/pobtrans.gif" width=10 
+            border=0></TD></TR>
+        <TR>
+          <TD width="100%" colSpan=3><IMG height=10 alt="" 
+            src="ConstraintSysRepetidaRemocao_arquivos/pobtrans.gif" 
+        border=0></TD></TR></TBODY></TABLE></TD>
+    <TD vAlign=top width=20>
+      <TABLE cellSpacing=0 cellPadding=0 width="100%" 
+      background=ConstraintSysRepetidaRemocao_arquivos/pobtrans.gif border=0>
+        <TBODY>
+        <TR align=left>
+          <TD vAlign=top width="100%"><FONT 
+            class=inplacedisplayid1siteid0><IMG 
+            src="ConstraintSysRepetidaRemocao_arquivos/spacer.gif" width=20 
+            border=0></FONT> </TD></TR></TBODY></TABLE></TD></TR></TBODY></TABLE>
+<TABLE cellSpacing=0 cellPadding=0 width="100%" 
+background=ConstraintSysRepetidaRemocao_arquivos/pobtrans.gif border=0>
+  <TBODY>
+  <TR align=left>
+    <TD vAlign=top width="100%">
+      <TABLE class=RegionNoBorder cellSpacing=0 cellPadding=0 width="100%" 
+      border=0>
+        <TBODY>
+        <TR>
+          <TD class=RegionHeaderColor width="100%">
+            <TABLE cellSpacing=0 cellPadding=0 width="100%" border=0>
+              <TBODY>
+              <TR>
+                <TD vAlign=top width=20>
+                  <TABLE cellSpacing=0 cellPadding=0 width="100%" 
+                  background=ConstraintSysRepetidaRemocao_arquivos/pobtrans.gif 
+                  border=0>
+                    <TBODY>
+                    <TR align=left>
+                      <TD vAlign=top width="100%"><FONT 
+                        class=inplacedisplayid1siteid0><IMG 
+                        src="ConstraintSysRepetidaRemocao_arquivos/pobtrans.gif" 
+                        width=20 border=0></FONT> </TD></TR></TBODY></TABLE></TD>
+                <TD vAlign=top width="100%">
+                  <TABLE cellSpacing=0 cellPadding=0 width="100%" 
+                  background=ConstraintSysRepetidaRemocao_arquivos/pobtrans.gif 
+                  border=0>
+                    <TBODY>
+                    <TR align=left>
+                      <TD vAlign=top width="100%"><FONT 
+                        class=inplacedisplayid1siteid0>
+                        <TABLE align=right>
+                          <TBODY>
+                          <TR>
+                            <TD>
+                              <SCRIPT type=text/javascript>
+function printerFriendly(template) {
+    top.location = location.protocol 
+      + '//' + location.host 
+      + location.pathname 
+      + '?_template=' + template;
+}
+</SCRIPT>
+                              <A 
+                              href="javascript:%20printerFriendly('/ocom/technology/content/print')" 
+                              target=""><IMG height=15 alt="Printer View" 
+                              src="ConstraintSysRepetidaRemocao_arquivos/print_17x15.gif" 
+                              width=17 border=0></A> <A class=navlink 
+                              href="javascript:%20printerFriendly('/ocom/technology/content/print')" 
+                              target="">Printer View</A> 
+                        </TD></TR></TBODY></TABLE></FONT></TD></TR></TBODY></TABLE>
+                  <TABLE cellSpacing=0 cellPadding=0 width="100%" 
+                  background=ConstraintSysRepetidaRemocao_arquivos/pobtrans.gif 
+                  border=0>
+                    <TBODY>
+                    <TR align=left>
+                      <TD vAlign=top width="100%"><FONT 
+                        class=inplacedisplayid1siteid0><!-- SiteCatalyst code version: G.7.
+
+Copyright 1997-2004 Omniture, Inc. More info available at
+
+http://www.omniture.com -->
+                        <SCRIPT language=JavaScript><!--
+
+/* You may give each page an identifying name, server, and channel on
+
+the next lines. */
+
+var s_pageName=""
+var s_server=""
+var s_channel=""
+var s_pageType=""
+var s_prop1=""
+var s_prop2=""
+var s_prop3=""
+var s_prop4=""
+var s_prop5=""
+var s_prop6=""
+var s_prop7=""
+var s_prop8=""
+var s_prop9=""
+var s_prop10=""
+/* E-commerce Variables */
+var s_campaign=""
+var s_state=""
+var s_zip=""
+var s_events=""
+var s_products=""
+var s_purchaseID=""
+var s_eVar1=""
+var s_eVar2=""
+var s_eVar3=""
+var s_eVar4=""
+var s_eVar5=""
+var s_eVar6=""
+var s_eVar7=""
+var s_eVar8=""
+var s_eVar9=""
+var s_eVar10=""
+/********* INSERT THE DOMAIN AND PATH TO YOUR CODE BELOW ************/
+
+//--></SCRIPT>
+
+                        <SCRIPT language=JavaScript 
+                        src="ConstraintSysRepetidaRemocao_arquivos/s_code_remote.js"></SCRIPT>
+<!-- End SiteCatalyst code version: G.7. -->
+                        <TABLE cellSpacing=0 cellPadding=0 width="100%" 
+border=0>
+                          <TBODY>
+                          <TR>
+                            <TD width="100%" colSpan=2>
+                              <HR 
+                              style="BORDER-RIGHT: 0px; BORDER-TOP: 0px; BORDER-LEFT: 0px; COLOR: #dddddd; BORDER-BOTTOM: 0px; HEIGHT: 1px; BACKGROUND-COLOR: #dddddd" 
+                              color=#dddddd SIZE=1>
+                            </TD></TR>
+                          <TR>
+                            <TD width="50%"><SPAN class=legalese>Copyright © 
+                              1999-2005, Oracle Corporation. All Rights 
+                              Reserved.</SPAN></TD>
+                            <TD width="50%">
+                              <P align=right><A class=legalese 
+                              href="http://www.oracle.com/technology/contact/welcome.html">About 
+                              OTN</A> <SPAN class=legalese>I</SPAN> <A 
+                              class=legalese 
+                              href="http://www.oracle.com/corporate/contact/index.html">Contact 
+                              Us</A> <SPAN class=legalese>I</SPAN> <A 
+                              class=legalese 
+                              href="http://www.oracle.com/corporate/index.html">About 
+                              Oracle</A> <SPAN class=legalese>I</SPAN> <A 
+                              class=legalese 
+                              href="http://www.oracle.com/html/copyright.html">Legal 
+                              Notices and Terms of Use</A> <SPAN 
+                              class=legalese>I</SPAN> <A class=legalese 
+                              href="http://www.oracle.com/html/privacy.html">Privacy 
+                              Statement</A></P></TD></TR>
+                          <TR>
+                            <TD width="50%"></TD>
+                            <TD width="50%">
+                              <P align=right><SPAN class=legalese>Powered by 
+                              Oracle Application Server Portal</SPAN></P></TD></TR>
+                          <TR>
+                            <TD>
+                              <SCRIPT language=JavaScript>
+    RedrawAllTrees();
+</SCRIPT>
+                            </TD></TR></TBODY></TABLE></FONT></TD></TR></TBODY></TABLE></TD>
+                <TD vAlign=top width=20>
+                  <TABLE cellSpacing=0 cellPadding=0 width="100%" 
+                  background=ConstraintSysRepetidaRemocao_arquivos/pobtrans.gif 
+                  border=0>
+                    <TBODY>
+                    <TR align=left>
+                      <TD vAlign=top width="100%"><FONT 
+                        class=inplacedisplayid1siteid0><IMG 
+                        src="ConstraintSysRepetidaRemocao_arquivos/pobtrans.gif" 
+                        width=20 border=0></FONT> 
+              </TD></TR></TBODY></TABLE></TD></TR></TBODY></TABLE></TD></TR></TBODY></TABLE></TD></TR></TBODY></TABLE><!----- show footer template = 1021417590 -----><!-- Page Metadata Cached On: 02-FEB-2005:09:15:12pm for User:   Time Taken: 590 msecs --></BODY></HTML>

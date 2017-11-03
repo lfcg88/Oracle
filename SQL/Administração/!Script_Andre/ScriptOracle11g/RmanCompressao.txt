@@ -1,0 +1,31 @@
+
+
+
+
+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+shows the differences between the two compression algorithms you can choose from:
+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+SQL> select algorithm_name,algorithm_description, is_default
+2 from v$rman_compression_algorithm;
+
+
+ALGORITHM 	ALGORITHM DESCRIPTION 				IS_DEFAULT
+--------- 	---------------------------------------- ---------
+ZLIB 		fast but little worse compression ratio 	YES
+BZIP2 		good compression ratio but little slower 	NO
+SQL>
+
+
+
+
+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+You can choose the configuration algorithm you want to use by executing the configure
+command, as shown here:
+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+
+RMAN> configure compression algorithm 'bzip2';
+new RMAN configuration parameters:
+CONFIGURE COMPRESSION ALGORITHM 'bzip2';
+new RMAN configuration parameters are successfully stored

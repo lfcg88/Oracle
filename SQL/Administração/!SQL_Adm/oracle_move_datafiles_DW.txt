@@ -1,0 +1,139 @@
+ALTER DATABASE RENAME FILE '/oracle/oradata/DWDES/data2/DWSINISTRO2.ORA' TO '/teste/DWSINISTRO2.ORA';
+
+select  'ALTER DATABASE RENAME FILE '''||substr(file_name,1,70)||''' TO '''||substr(file_name,1,70)||''';' 
+from dba_data_files;
+
+select  'ALTER DATABASE RENAME FILE '''||substr(file_name,1,70)||''' TO '''||substr(file_name,1,70)||''';' 
+from dba_temp_files;
+
+select tablespace_name as TABLESPACE, substr(file_name,1,70) as CAMINHO from dba_data_files
+order by tablespace_name;
+
+
+******************************
+******* MUDANÇA DWPROD *******
+******************************
+
+
+-- AREAS NOVAS:
+
+/oracle/oradata/DWPROD/dados01 - -> 150 Gb
+/oracle/oradata/DWPROD/ind01 - -> 80 Gb
+/oracle/oradata/DWPROD/temp01 - -> 10 Gb
+
+-- PASSO A PASSO
+
+1) shutdown na instancia
+
+2) copiar arquivos para area nova
+
+cp /oracle/oradata/DWPROD/index/segurado_idx.ora /oracle/oradata/DWPROD/ind01/segurado_idx.ora
+cp /oracle/oradata/DWPROD/index/BUILDER_INDEX_TABLE.ORA /oracle/oradata/DWPROD/ind01/BUILDER_INDEX_TABLE.ORA
+cp /oracle/oradata/DWPROD/index/DWIDX1N1.ORA /oracle/oradata/DWPROD/ind01/DWIDX1N1.ORA
+cp /oracle/oradata/DWPROD/index/DWIDX2A.ORA /oracle/oradata/DWPROD/ind01/DWIDX2A.ORA
+cp /oracle/oradata/DWPROD/index/DWIDX2.ORA /oracle/oradata/DWPROD/ind01/DWIDX2.ORA
+cp /oracle/oradata/DWPROD/index/DWIDX1N.ORA /oracle/oradata/DWPROD/ind01/DWIDX1N.ORA
+cp /oracle/oradata/DWPROD/index/DWIDX.ORA /oracle/oradata/DWPROD/ind01/DWIDX.ORA
+cp /oracle/oradata/DWPROD/index/dwdiscoverer_idx.ora /oracle/oradata/DWPROD/ind01/dwdiscoverer_idx.ora
+cp /oracle/oradata/DWPROD/index/DWIDX01.ORA.dbf /oracle/oradata/DWPROD/ind01/DWIDX01.ORA.dbf
+cp /oracle/oradata/DWPROD/index/RUNTIME_INDEX.ORA /oracle/oradata/DWPROD/ind01/RUNTIME_INDEX.ORA
+cp /oracle/oradata/DWPROD/index/SINISTRO_EXAME_PROCED_IDX01.ora /oracle/oradata/DWPROD/ind01/SINISTRO_EXAME_PROCED_IDX01.ora
+cp /oracle/oradata/DWPROD/index/SINISTRO_EXAME_PROCED_IDX02.ora /oracle/oradata/DWPROD/ind01/SINISTRO_EXAME_PROCED_IDX02.ora
+cp /oracle/oradata/DWPROD/index/SINISTRO_EXAME_PROCED_IDX03.ora /oracle/oradata/DWPROD/ind01/SINISTRO_EXAME_PROCED_IDX03.ora
+cp /oracle/oradata/DWPROD/idx/SINISTRO_EXAME_PROCED_IDX04.ora /oracle/oradata/DWPROD/ind01/SINISTRO_EXAME_PROCED_IDX04.ora
+cp /oracle/oradata/DWPROD/index/QUADRO_SOCIAL_IDX01.ORA /oracle/oradata/DWPROD/ind01/QUADRO_SOCIAL_IDX01.ORA
+cp /oracle/oradata/DWPROD/index/DWRUNTIME_MPE_IND.dbf /oracle/oradata/DWPROD/ind01/DWRUNTIME_MPE_IND.dbf
+cp /oracle/oradata/DWPROD/index/DWSINISTRO_MPE_IND.dbf /oracle/oradata/DWPROD/ind01/DWSINISTRO_MPE_IND.dbf
+cp /oracle/oradata/DWPROD/idx/DWIDX1N2.ORA /oracle/oradata/DWPROD/ind01/DWIDX1N2.ORA
+cp /oracle/oradata/DWPROD/idx/QUADRO_SOCIAL_IDX02.ORA /oracle/oradata/DWPROD/ind01/QUADRO_SOCIAL_IDX02.ORA
+cp /oracle/oradata/DWPROD/idx/DWIDX2B.ORA /oracle/oradata/DWPROD/ind01/DWIDX2B.ORA
+
+cp /oracle/oradata/DWPROD/dados/segurado_dat.ora /oracle/oradata/DWPROD/dados01/segurado_dat.ora
+cp /oracle/oradata/DWPROD/dados/RUNTIME_DATA01.ORA /oracle/oradata/DWPROD/dados01/RUNTIME_DATA01.ORA
+cp /oracle/oradata/DWPROD/dados02/users01.dbf /oracle/oradata/DWPROD/dados01/users01.dbf
+cp /oracle/oradata/DWPROD/dados/sysaux01.dbf /oracle/oradata/DWPROD/dados01/sysaux01.dbf
+cp /oracle/oradata/DWPROD/dados/BUILDER_DATA_TABLE.ORA /oracle/oradata/DWPROD/dados01/BUILDER_DATA_TABLE.ORA
+cp /oracle/oradata/DWPROD/dados/system01.dbf /oracle/oradata/DWPROD/dados01/system01.dbf
+cp /oracle/oradata/DWPROD/dados/SINISTRO_EXAME_PROCED_DAT01.ora /oracle/oradata/DWPROD/dados01/SINISTRO_EXAME_PROCED_DAT01.ora
+cp /oracle/oradata/DWPROD/dados02/QUADRO_SOCIAL_DAT02.ORA /oracle/oradata/DWPROD/dados01/QUADRO_SOCIAL_DAT02.ORA
+cp /oracle/oradata/DWPROD/dados/RUNTIME_DATA.ORA /oracle/oradata/DWPROD/dados01/RUNTIME_DATA.ORA
+cp /oracle/oradata/DWPROD/dados/DISCOVERER_DATA_TABLE.ORA /oracle/oradata/DWPROD/dados01/DISCOVERER_DATA_TABLE.ORA
+cp /oracle/oradata/DWPROD/dados/DRSYS.ORA /oracle/oradata/DWPROD/dados01/DRSYS.ORA
+cp /oracle/oradata/DWPROD/dados/DWSINISTRO.ORA /oracle/oradata/DWPROD/dados01/DWSINISTRO.ORA
+cp /oracle/oradata/DWPROD/dados/SINISTRO_EXAME_PROCED_DAT02.ora /oracle/oradata/DWPROD/dados01/SINISTRO_EXAME_PROCED_DAT02.ora
+cp /oracle/oradata/DWPROD/dados/DWSINISTRO1.DBF /oracle/oradata/DWPROD/dados01/DWSINISTRO1.DBF
+cp /oracle/oradata/DWPROD/dados/DWSINISTRO2.ORA /oracle/oradata/DWPROD/dados01/DWSINISTRO2.ORA
+cp /oracle/oradata/DWPROD/dados/SINISTRO_EXAME_PROCED_DAT03.ora /oracle/oradata/DWPROD/dados01/SINISTRO_EXAME_PROCED_DAT03.ora
+cp /oracle/oradata/DWPROD/dados02/DWSINISTRO01.ORA /oracle/oradata/DWPROD/dados01/DWSINISTRO01.ORA
+cp /oracle/oradata/DWPROD/dados02/DWSINISTRO2.DBF /oracle/oradata/DWPROD/dados01/DWSINISTRO2.DBF
+cp /oracle/oradata/DWPROD/dados02/SINISTRO_EXAME_PROCED_DAT04.ora /oracle/oradata/DWPROD/dados01/SINISTRO_EXAME_PROCED_DAT04.ora
+cp /oracle/oradata/DWPROD/dados/QUADRO_SOCIAL_DAT01.ORA /oracle/oradata/DWPROD/dados01/QUADRO_SOCIAL_DAT01.ORA
+cp /oracle/oradata/DWPROD/dados02/DWSINISTRO_MPE_DAT.dbf /oracle/oradata/DWPROD/dados01/DWSINISTRO_MPE_DAT.dbf
+cp /oracle/oradata/DWPROD/dados02/DWRUNTIME_MPE_DAT.dbf /oracle/oradata/DWPROD/dados01/DWRUNTIME_MPE_DAT.dbf
+cp /oracle/oradata/DWPROD/dados03/DWSINISTRO02.ORA /oracle/oradata/DWPROD/dados01/DWSINISTRO02.ORA
+cp /oracle/oradata/DWPROD/dados03/DWSINISTRO1_3.ORA /oracle/oradata/DWPROD/dados01/DWSINISTRO1_3.ORA
+cp /oracle/oradata/DWPROD/dados03/SINISTRO_EXAME_PROCED_DAT05.ora /oracle/oradata/DWPROD/dados01/SINISTRO_EXAME_PROCED_DAT05.ora
+cp /oracle/oradata/DWPROD/dados03/RUNTIME_DATA02.ORA /oracle/oradata/DWPROD/dados01/RUNTIME_DATA02.ORA
+cp /oracle/oradata/DWPROD/dados03/segurado_dat01.ora /oracle/oradata/DWPROD/dados01/segurado_dat01.ora
+cp /oracle/oradata/DWPROD/index/undotbs01.dbf /oracle/oradata/DWPROD/dados01/undotbs01.dbf
+cp /oracle/oradata/DWPROD/TEMPORARIO.dbf /oracle/oradata/DWPROD/dados01/TEMPORARIO.dbf
+
+cp /oracle/oradata/DWPROD/dados02/TEMP.dbf /oracle/oradata/DWPROD/temp01/TEMP.dbf
+
+3) iniciar a instancia em status mount
+
+4) alterar caminho dos datafiles
+
+ALTER DATABASE RENAME FILE '/oracle/oradata/DWPROD/index/segurado_idx.ora' TO '/oracle/oradata/DWPROD/ind01/segurado_idx.ora';
+ALTER DATABASE RENAME FILE '/oracle/oradata/DWPROD/dados/segurado_dat.ora' TO '/oracle/oradata/DWPROD/dados01/segurado_dat.ora';
+ALTER DATABASE RENAME FILE '/oracle/oradata/DWPROD/dados/RUNTIME_DATA01.ORA' TO '/oracle/oradata/DWPROD/dados01/RUNTIME_DATA01.ORA';
+ALTER DATABASE RENAME FILE '/oracle/oradata/DWPROD/dados02/users01.dbf' TO '/oracle/oradata/DWPROD/dados01/users01.dbf';
+ALTER DATABASE RENAME FILE '/oracle/oradata/DWPROD/dados/sysaux01.dbf' TO '/oracle/oradata/DWPROD/dados01/sysaux01.dbf';
+ALTER DATABASE RENAME FILE '/oracle/oradata/DWPROD/dados/BUILDER_DATA_TABLE.ORA' TO '/oracle/oradata/DWPROD/dados01/BUILDER_DATA_TABLE.ORA';
+ALTER DATABASE RENAME FILE '/oracle/oradata/DWPROD/dados/system01.dbf' TO '/oracle/oradata/DWPROD/dados01/system01.dbf';
+ALTER DATABASE RENAME FILE '/oracle/oradata/DWPROD/TEMPORARIO.dbf' TO '/oracle/oradata/DWPROD/dados01/TEMPORARIO.dbf';
+ALTER DATABASE RENAME FILE '/oracle/oradata/DWPROD/index/undotbs01.dbf' TO '/oracle/oradata/DWPROD/dados01/undotbs01.dbf';
+ALTER DATABASE RENAME FILE '/oracle/oradata/DWPROD/index/BUILDER_INDEX_TABLE.ORA' TO '/oracle/oradata/DWPROD/ind01/BUILDER_INDEX_TABLE.ORA';
+ALTER DATABASE RENAME FILE '/oracle/oradata/DWPROD/dados/SINISTRO_EXAME_PROCED_DAT01.ora' TO '/oracle/oradata/DWPROD/dados01/SINISTRO_EXAME_PROCED_DAT01.ora';
+ALTER DATABASE RENAME FILE '/oracle/oradata/DWPROD/index/DWIDX1N1.ORA' TO '/oracle/oradata/DWPROD/ind01/DWIDX1N1.ORA';
+ALTER DATABASE RENAME FILE '/oracle/oradata/DWPROD/dados02/QUADRO_SOCIAL_DAT02.ORA' TO '/oracle/oradata/DWPROD/dados01/QUADRO_SOCIAL_DAT02.ORA';
+ALTER DATABASE RENAME FILE '/oracle/oradata/DWPROD/dados/RUNTIME_DATA.ORA' TO '/oracle/oradata/DWPROD/dados01/RUNTIME_DATA.ORA';
+ALTER DATABASE RENAME FILE '/oracle/oradata/DWPROD/dados/DISCOVERER_DATA_TABLE.ORA' TO '/oracle/oradata/DWPROD/dados01/DISCOVERER_DATA_TABLE.ORA';
+ALTER DATABASE RENAME FILE '/oracle/oradata/DWPROD/dados/DRSYS.ORA' TO '/oracle/oradata/DWPROD/dados01/DRSYS.ORA';
+ALTER DATABASE RENAME FILE '/oracle/oradata/DWPROD/dados/DWSINISTRO.ORA' TO '/oracle/oradata/DWPROD/dados01/DWSINISTRO.ORA';
+ALTER DATABASE RENAME FILE '/oracle/oradata/DWPROD/dados/SINISTRO_EXAME_PROCED_DAT02.ora' TO '/oracle/oradata/DWPROD/dados01/SINISTRO_EXAME_PROCED_DAT02.ora';
+ALTER DATABASE RENAME FILE '/oracle/oradata/DWPROD/dados/DWSINISTRO1.DBF' TO '/oracle/oradata/DWPROD/dados01/DWSINISTRO1.DBF';
+ALTER DATABASE RENAME FILE '/oracle/oradata/DWPROD/index/DWIDX2A.ORA' TO '/oracle/oradata/DWPROD/ind01/DWIDX2A.ORA';
+ALTER DATABASE RENAME FILE '/oracle/oradata/DWPROD/dados/DWSINISTRO2.ORA' TO '/oracle/oradata/DWPROD/dados01/DWSINISTRO2.ORA';
+ALTER DATABASE RENAME FILE '/oracle/oradata/DWPROD/dados/SINISTRO_EXAME_PROCED_DAT03.ora' TO '/oracle/oradata/DWPROD/dados01/SINISTRO_EXAME_PROCED_DAT03.ora';
+ALTER DATABASE RENAME FILE '/oracle/oradata/DWPROD/dados02/DWSINISTRO01.ORA' TO '/oracle/oradata/DWPROD/dados01/DWSINISTRO01.ORA';
+ALTER DATABASE RENAME FILE '/oracle/oradata/DWPROD/index/DWIDX2.ORA' TO '/oracle/oradata/DWPROD/ind01/DWIDX2.ORA';
+ALTER DATABASE RENAME FILE '/oracle/oradata/DWPROD/index/DWIDX1N.ORA' TO '/oracle/oradata/DWPROD/ind01/DWIDX1N.ORA';
+ALTER DATABASE RENAME FILE '/oracle/oradata/DWPROD/index/DWIDX.ORA' TO '/oracle/oradata/DWPROD/ind01/DWIDX.ORA';
+ALTER DATABASE RENAME FILE '/oracle/oradata/DWPROD/index/DWIDX01.ORA.dbf' TO '/oracle/oradata/DWPROD/ind01/DWIDX01.ORA.dbf';
+ALTER DATABASE RENAME FILE '/oracle/oradata/DWPROD/index/RUNTIME_INDEX.ORA' TO '/oracle/oradata/DWPROD/ind01/RUNTIME_INDEX.ORA';
+ALTER DATABASE RENAME FILE '/oracle/oradata/DWPROD/dados02/DWSINISTRO2.DBF' TO '/oracle/oradata/DWPROD/dados01/DWSINISTRO2.DBF';
+ALTER DATABASE RENAME FILE '/oracle/oradata/DWPROD/dados02/SINISTRO_EXAME_PROCED_DAT04.ora' TO '/oracle/oradata/DWPROD/dados01/SINISTRO_EXAME_PROCED_DAT04.ora';
+ALTER DATABASE RENAME FILE '/oracle/oradata/DWPROD/index/SINISTRO_EXAME_PROCED_IDX01.ora' TO '/oracle/oradata/DWPROD/ind01/SINISTRO_EXAME_PROCED_IDX01.ora';
+ALTER DATABASE RENAME FILE '/oracle/oradata/DWPROD/index/SINISTRO_EXAME_PROCED_IDX02.ora' TO '/oracle/oradata/DWPROD/ind01/SINISTRO_EXAME_PROCED_IDX02.ora';
+ALTER DATABASE RENAME FILE '/oracle/oradata/DWPROD/index/SINISTRO_EXAME_PROCED_IDX03.ora' TO '/oracle/oradata/DWPROD/ind01/SINISTRO_EXAME_PROCED_IDX03.ora';
+ALTER DATABASE RENAME FILE '/oracle/oradata/DWPROD/idx/SINISTRO_EXAME_PROCED_IDX04.ora' TO '/oracle/oradata/DWPROD/ind01/SINISTRO_EXAME_PROCED_IDX04.ora';
+ALTER DATABASE RENAME FILE '/oracle/oradata/DWPROD/index/QUADRO_SOCIAL_IDX01.ORA' TO '/oracle/oradata/DWPROD/ind01/QUADRO_SOCIAL_IDX01.ORA';
+ALTER DATABASE RENAME FILE '/oracle/oradata/DWPROD/dados/QUADRO_SOCIAL_DAT01.ORA' TO '/oracle/oradata/DWPROD/dados01/QUADRO_SOCIAL_DAT01.ORA';
+ALTER DATABASE RENAME FILE '/oracle/oradata/DWPROD/dados02/DWSINISTRO_MPE_DAT.dbf' TO '/oracle/oradata/DWPROD/dados01/DWSINISTRO_MPE_DAT.dbf';
+ALTER DATABASE RENAME FILE '/oracle/oradata/DWPROD/dados02/DWRUNTIME_MPE_DAT.dbf' TO '/oracle/oradata/DWPROD/dados01/DWRUNTIME_MPE_DAT.dbf';
+ALTER DATABASE RENAME FILE '/oracle/oradata/DWPROD/index/DWRUNTIME_MPE_IND.dbf' TO '/oracle/oradata/DWPROD/ind01/DWRUNTIME_MPE_IND.dbf';
+ALTER DATABASE RENAME FILE '/oracle/oradata/DWPROD/index/DWSINISTRO_MPE_IND.dbf' TO '/oracle/oradata/DWPROD/ind01/DWSINISTRO_MPE_IND.dbf';
+ALTER DATABASE RENAME FILE '/oracle/oradata/DWPROD/dados03/DWSINISTRO02.ORA' TO '/oracle/oradata/DWPROD/dados01/DWSINISTRO02.ORA';
+ALTER DATABASE RENAME FILE '/oracle/oradata/DWPROD/dados03/DWSINISTRO1_3.ORA' TO '/oracle/oradata/DWPROD/dados01/DWSINISTRO1_3.ORA';
+ALTER DATABASE RENAME FILE '/oracle/oradata/DWPROD/dados03/SINISTRO_EXAME_PROCED_DAT05.ora' TO '/oracle/oradata/DWPROD/dados01/SINISTRO_EXAME_PROCED_DAT05.ora';
+ALTER DATABASE RENAME FILE '/oracle/oradata/DWPROD/idx/DWIDX1N2.ORA' TO '/oracle/oradata/DWPROD/ind01/DWIDX1N2.ORA';
+ALTER DATABASE RENAME FILE '/oracle/oradata/DWPROD/idx/QUADRO_SOCIAL_IDX02.ORA' TO '/oracle/oradata/DWPROD/ind01/QUADRO_SOCIAL_IDX02.ORA';
+ALTER DATABASE RENAME FILE '/oracle/oradata/DWPROD/dados03/RUNTIME_DATA02.ORA' TO '/oracle/oradata/DWPROD/dados01/RUNTIME_DATA02.ORA';
+ALTER DATABASE RENAME FILE '/oracle/oradata/DWPROD/idx/DWIDX2B.ORA' TO '/oracle/oradata/DWPROD/ind01/DWIDX2B.ORA';
+ALTER DATABASE RENAME FILE '/oracle/oradata/DWPROD/dados03/segurado_dat01.ora' TO '/oracle/oradata/DWPROD/dados01/segurado_dat01.ora';
+ALTER DATABASE RENAME FILE '/oracle/oradata/DWPROD/index/dwdiscoverer_idx.ora' TO '/oracle/oradata/DWPROD/ind01/dwdiscoverer_idx.ora';
+
+5) abrir a instancia
+
+6) testar conectividade

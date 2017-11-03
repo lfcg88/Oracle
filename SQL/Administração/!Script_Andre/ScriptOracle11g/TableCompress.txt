@@ -1,0 +1,36 @@
+
+
+
+++++++++++++++++++++++++++++++++++++++++++
+Monitoring Table Compression Use the columns COMPRESSION and
+COMPRESS_FOR in the DBA_TABLES view to find out information about
+whether compression is enabled for a table and, if so, the type of compression.
+++++++++++++++++++++++++++++++++++++++++++
+
+
+SQL> select table_name, compression, compress_for
+from dba_tables;
+
+
++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+To enable the compress 
++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+
+SQL> create table sales_history ( ... )
+compress;
+
+
++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+To enable the  compress for direct_load operations 
++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+SQL> create table sales_history
+( ... ) compress for direct_load operations;
+
++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+To enable the new compression for DML operations
++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+SQL> create table sales_history ( ... )
+compress for all operations;

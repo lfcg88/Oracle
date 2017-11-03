@@ -1,0 +1,4 @@
+CONNECT TARGET sys/dontknow; 
+CONNECT CATALOG rman/rman@rcvcat;
+
+resync catalog;

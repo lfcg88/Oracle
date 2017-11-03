@@ -1,0 +1,168 @@
+UNKNOWN {
+	FONT-SIZE: 11px; COLOR: #000000; FONT-FAMILY: Arial, Helvetica, sans-serif; TEXT-DECORATION: none
+}
+.bodylink {
+	FONT-SIZE: 12px; COLOR: #000000; LINE-HEIGHT: 14px; FONT-FAMILY: Arial, Helvetica, sans-serif
+}
+A.bodylink:visited {
+	COLOR: #999999; TEXT-DECORATION: underline
+}
+A.bodylink:hover {
+	COLOR: #ff0000; TEXT-DECORATION: underline
+}
+A.bodylink:link {
+	COLOR: black; TEXT-DECORATION: underline
+}
+.boldbodylink {
+	FONT-WEIGHT: bold; FONT-SIZE: 12px; COLOR: #000000; LINE-HEIGHT: 14px; FONT-FAMILY: Arial, Helvetica, sans-serif
+}
+A.boldbodylink:visited {
+	COLOR: #999999; TEXT-DECORATION: underline
+}
+A.boldbodylink:hover {
+	COLOR: #ff0000; TEXT-DECORATION: underline
+}
+A.boldbodylink:link {
+	COLOR: black; TEXT-DECORATION: underline
+}
+.bodycopy {
+	FONT-SIZE: 12px; COLOR: #000000; LINE-HEIGHT: 14px; FONT-FAMILY: Arial, Helvetica, sans-serif; TEXT-DECORATION: none; visited: #000000
+}
+.boldbodycopy {
+	FONT-WEIGHT: bold; FONT-SIZE: 12px; COLOR: #000000; LINE-HEIGHT: 14px; FONT-FAMILY: Arial, Helvetica, sans-serif; TEXT-DECORATION: none; visited: #000000
+}
+.boldbodycopy2 {
+	FONT-WEIGHT: bold; FONT-SIZE: 12px; COLOR: #999999; LINE-HEIGHT: 14px; FONT-FAMILY: Arial, Helvetica, sans-serif; TEXT-DECORATION: none; visited: #999999
+}
+.boldbodycopy3 {
+	FONT-WEIGHT: bold; FONT-SIZE: 12px; COLOR: #666666; LINE-HEIGHT: 14px; FONT-FAMILY: Arial, Helvetica, sans-serif; TEXT-DECORATION: none; visited: #666666
+}
+.directorytext {
+	FONT-SIZE: 12px; COLOR: #000000; LINE-HEIGHT: 17px; FONT-FAMILY: Arial, Helvetica, sans-serif; TEXT-DECORATION: none; visited: #000000
+}
+.gradient {
+	FILTER: progid:DXImageTransform.Microsoft.Gradient(startColorstr='#DDDDDD', endColorstr='#FFFFFF', gradientType='0')
+}
+.headline {
+	FONT-SIZE: 28px; COLOR: #000000; LINE-HEIGHT: 38px; FONT-FAMILY: arial black, impact, arial, verdana, sans-serif; LETTER-SPACING: -1px; TEXT-DECORATION: none; visited: #000000; wrap-option: hard-wrap
+}
+.italicbodycopy {
+	FONT-SIZE: 12px; COLOR: #000000; LINE-HEIGHT: 14px; FONT-STYLE: italic; FONT-FAMILY: Arial, Helvetica, sans-serif; TEXT-DECORATION: none; visited: #000000
+}
+.ITALICiBodycopy {
+	FONT-SIZE: 12px; COLOR: #000000; LINE-HEIGHT: 14px; FONT-STYLE: italic; FONT-FAMILY: Arial, Helvetica, sans-serif; TEXT-DECORATION: none; visited: #000000
+}
+.legalese {
+	FONT-SIZE: 10px; COLOR: #000000; FONT-FAMILY: Arial, Helvetica, sans-serif; TEXT-DECORATION: none; visited: #000000
+}
+.navhead {
+	FONT-WEIGHT: bold; FONT-SIZE: 11px; COLOR: #000000; FONT-STYLE: italic; FONT-FAMILY: Arial, Helvetica, Sans-serif; TEXT-DECORATION: none; visited: #000000
+}
+.navheader {
+	FONT-WEIGHT: bold; FONT-SIZE: 10pt; COLOR: #336699; FONT-FAMILY: Arial, Helvetica, sans-serif
+}
+.navlink {
+	FONT-SIZE: 11px; COLOR: #000000; LINE-HEIGHT: 14px; FONT-FAMILY: Arial, Helvetica, sans-serif
+}
+A.navlink:visited {
+	COLOR: #000000; TEXT-DECORATION: none
+}
+A.navlink:hover {
+	COLOR: #ff0000; TEXT-DECORATION: underline
+}
+A.navlink:link {
+	COLOR: black; TEXT-DECORATION: none
+}
+.parahead1 {
+	FONT-WEIGHT: bold; FONT-SIZE: 16px; COLOR: #000000; FONT-FAMILY: Arial, Helvetica, sans-serif; TEXT-DECORATION: none; visited: #000000
+}
+.parahead1Itali {
+	FONT-WEIGHT: bold; FONT-SIZE: 16px; COLOR: #000000; FONT-STYLE: italic; FONT-FAMILY: Arial, Helvetica, sans-serif; TEXT-DECORATION: none; visited: #000000
+}
+.parahead2 {
+	FONT-WEIGHT: bold; FONT-SIZE: 16px; COLOR: #666666; FONT-FAMILY: Arial, Helvetica, sans-serif; TEXT-DECORATION: none; visited: #666666
+}
+.parahead2Itali {
+	FONT-WEIGHT: bold; FONT-SIZE: 16px; COLOR: #666666; FONT-STYLE: italic; FONT-FAMILY: Arial, Helvetica, sans-serif; TEXT-DECORATION: none; visited: #666666
+}
+.portletTitle {
+	FONT-WEIGHT: bold; FONT-SIZE: 11px; COLOR: #000000; FONT-FAMILY: Arial, Helvetica, Sans-serif; TEXT-DECORATION: none; visited: #000000
+}
+A.portletTitle:visited {
+	COLOR: #000000; TEXT-DECORATION: none
+}
+A.portletTitle:hover {
+	COLOR: #ff0000; TEXT-DECORATION: underline
+}
+A.portletTitle:link {
+	COLOR: black; TEXT-DECORATION: none
+}
+.profile {
+	FONT-SIZE: 10px; COLOR: #999999; FONT-FAMILY: Arial, Helvetica, sans-serif; TEXT-DECORATION: none; visited: #999999
+}
+.tablink {
+	FONT-SIZE: 11px; COLOR: #000000; FONT-FAMILY: Arial, Helvetica, sans-serif; TEXT-DECORATION: none; visited: #000000
+}
+.TD {
+	BACKGROUND-IMAGE: url(/admin/images/ocom/content_background.gif); BACKGROUND-REPEAT: no-repeat
+}
+.textA {
+	FONT-SIZE: 11px; COLOR: #000000; LINE-HEIGHT: 14px; FONT-FAMILY: Arial, Helvetica, sans-serif; TEXT-DECORATION: none; visited: #000000
+}
+A.textA:visited {
+	COLOR: #000000; TEXT-DECORATION: none
+}
+A.textA:hover {
+	COLOR: #ff0000; TEXT-DECORATION: underline
+}
+A.textA:link {
+	COLOR: black; TEXT-DECORATION: none
+}
+.textB {
+	FONT-WEIGHT: bold; FONT-SIZE: 11px; COLOR: #000000; FONT-FAMILY: Arial, Helvetica, Sans-serif; TEXT-DECORATION: none; visited: #000000
+}
+.textC {
+	FONT-WEIGHT: bold; FONT-SIZE: 11px; COLOR: #999999; FONT-FAMILY: Arial, Helvetica, Sans-serif; TEXT-DECORATION: none; visited: #999999
+}
+.topstoryhead {
+	FONT-WEIGHT: bold; FONT-SIZE: 18px; COLOR: #000000; FONT-FAMILY: Arial, Helvetica, sans-serif; TEXT-DECORATION: none; visited: #000000
+}
+.h1 {
+	FONT-SIZE: 12px; COLOR: #ff0000; LINE-HEIGHT: 17px; FONT-FAMILY: Arial, Helvetica, sans-serif
+}
+.directorytext2 {
+	FONT-SIZE: 12px; COLOR: #000000; LINE-HEIGHT: 17px; FONT-FAMILY: Arial, Helvetica, sans-serif
+}
+A.directorytext2:visited {
+	COLOR: #000000; TEXT-DECORATION: none
+}
+A.directorytext2:hover {
+	COLOR: #ff0000; TEXT-DECORATION: underline
+}
+A.directorytext2:link {
+	COLOR: black; TEXT-DECORATION: none
+}
+.textBnav {
+	FONT-WEIGHT: bold; FONT-SIZE: 11px; COLOR: #000000; FONT-FAMILY: Arial, Helvetica, Sans-serif; TEXT-DECORATION: none; visited: #000000
+}
+A.textBnav:visited {
+	COLOR: #000000; TEXT-DECORATION: none
+}
+A.textBnav:hover {
+	COLOR: #ff0000; TEXT-DECORATION: underline
+}
+A.textBnav:link {
+	COLOR: black; TEXT-DECORATION: none
+}
+.textCnav {
+	FONT-WEIGHT: bold; FONT-SIZE: 11px; COLOR: #999999; FONT-FAMILY: Arial, Helvetica, Sans-serif; TEXT-DECORATION: none; visited: #999999
+}
+A.textCnav:visited {
+	COLOR: #999999; TEXT-DECORATION: none
+}
+A.textCnav:hover {
+	COLOR: #ff0000; TEXT-DECORATION: underline
+}
+A.textCnav:link {
+	COLOR: #999999; TEXT-DECORATION: none
+}

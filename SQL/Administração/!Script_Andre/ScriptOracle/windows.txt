@@ -1,0 +1,192 @@
+C:\>echo %DATE%
+14/09/2010
+
+Obviously forward slashes in a log file name are about as much use as
+ashtrays on a motorbike, but Windows provides the following
+functionality to reformat the output:
+
+echo %DATE:~ , % (Note:
+starts counting from zero)
+
+E.g.
+
+To display just the year portion of the output:
+
+C:\>echo %DATE:~6,4%
+2010
+
+To display the month:
+
+C:\>echo %DATE:~3,2%
+07
+
+And the day of the month:
+
+C:\>echo %DATE:~0,2%
+01
+
+======================================
+IF %dow%==Monday set downum=0
+IF %dow%==Tuesday set downum=1
+IF %dow%==Wednesday set downum=2
+IF %dow%==Thursday set downum=3
+IF %dow%==Friday set downum=4
+IF %dow%==Saturday set downum=5
+IF %dow%==Sunday set downum=6
+
+REM print the days number 0-mon,1-tue ... 6-sun
+echo %downum%
+
+REM set a file name using day of week number
+set myfile=%downum%.bak
+
+echo %myfile%
+
+
+=================================================
+
+What would it take to do some real math with dates in batch files: add a couple of days, find out the weekday of 3 months ago, ...?
+
+It would require a way to "linearly" convert any date to a number and back again.
+
+Sounds too complicated?
+As a matter of fact, there already is a method to do that.
+The "number date" is called the Julian date: the interval of time in days and fractions of a day, since January 1, 4713 BC Greenwich noon (WikiPedia).
+The current Julian date would be approximately 2456861 (calculated by the webserver's PHP interpreter, then truncated to an integer value).
+
+Good news: someone has already written the conversion subroutines in NT batch!
+Thanks Ron Bakowski for the following code:
+
+:JDate
+:: Convert date to Julian
+:: Arguments : YYYY MM DD
+:: Returns   : Julian date
+::
+:: First strip leading zeroes
+SET MM=%2
+SET DD=%3
+IF %MM:~0,1% EQU 0 SET MM=%MM:~1%
+IF %DD:~0,1% EQU 0 SET DD=%DD:~1%
+::
+:: Algorithm based on Fliegel-Van Flandern
+:: algorithm from the Astronomical Almanac,
+:: provided by Doctor Fenton on the Math Forum
+:: (http://mathforum.org/library/drmath/view/51907.html),
+:: and converted to batch code by Ron Bakowski.
+SET /A Month1 = ( %MM% - 14 ) / 12
+SET /A Year1  = %1 + 4800
+SET /A JDate  = 1461 * ( %Year1% + %Month1% ) / 4 + 367 * ( %MM% - 2 -12 * %Month1% ) / 12 - ( 3 * ( ( %Year1% + %Month1% + 100 ) / 100 ) ) / 4 + %DD% - 32075
+SET Month1=
+SET Year1=
+GOTO:EOF
+This code tells me today's Julian date is 2456863, which I find not bad at all: keep in mind that the batch file does not correct for time zone offset, and that batch files cannot handle floating point numbers.
+Also keep in mind that on any computer, the errors will more or less even out, so date differences will be calculated correctly.
+
+:GDate
+:: Convert Julian date back to "normal" Gregorian date
+:: Argument : Julian date
+:: Returns  : YYYY MM DD
+::
+:: Algorithm based on Fliegel-Van Flandern
+:: algorithm from the Astronomical Almanac,
+:: provided by Doctor Fenton on the Math Forum
+:: (http://mathforum.org/library/drmath/view/51907.html),
+:: and converted to batch code by Ron Bakowski.
+::
+SET /A P      = %1 + 68569
+SET /A Q      = 4 * %P% / 146097
+SET /A R      = %P% - ( 146097 * %Q% +3 ) / 4
+SET /A S      = 4000 * ( %R% + 1 ) / 1461001
+SET /A T      = %R% - 1461 * %S% / 4 + 31
+SET /A U      = 80 * %T% / 2447
+SET /A V      = %U% / 11
+SET /A GYear  = 100 * ( %Q% - 49 ) + %S% + %V%
+SET /A GMonth = %U% + 2 - 12 * %V%
+SET /A GDay   = %T% - 2447 * %U% / 80
+:: Clean up the mess
+FOR %%A IN (P Q R S T U V) DO SET %%A=
+:: Add leading zeroes
+IF 1%GMonth% LSS 20 SET GMonth=0%GMonth%
+IF 1%GDay%   LSS 20 SET GDay=0%GDay%
+:: Return value
+SET GDate=%GYear% %GMonth% %GDay%
+GOTO:EOF
+This subroutine, when called with today's Julian date 2456863, returns 2014 07 24.
+Not bad at all...
+
+How about some date math? Let's try and find the date of 5 weeks ago (assuming US date format MM/DD/YYYY):
+
+@ECHO OFF
+:: Strip the day of the week from the current date
+FOR %%A IN (%Date%) DO SET Today=%%A
+:: Parse the date, prefix day and month with an extra leading zero
+FOR /F "tokens=1-3 delims=/-" %%A IN ("%Today%") DO (
+	REM For European date format DD-MM-YYYY use SET Day=0%%A and SET Month=0%%B instead
+	SET Day=0%%B
+	SET Month=0%%A
+	SET Year=%%C
+)
+:: Remove excess leading zeroes
+SET Day=%Day:~-2%
+SET Month=%Month:~-2%
+:: Display the results
+SET Day
+SET Month
+SET Year
+:: Convert to Julian date
+CALL :JDate %Year% %Month% %Day%
+:: Display the result
+SET JDate
+:: Subtract 5 weeks
+SET /A JPast = JDate - 5 * 7
+:: Display the result
+SET JPast
+:: Convert back to "normal" date again
+CALL :GDate %JPast%
+:: Display the result
+SET GDate
+GOTO:EOF
+Append the two subroutines to the code, and run it:
+
+Day=22 
+Month=07 
+Year=2014 
+JDate=2456863 
+JPast=2456828 
+GDate=2014 06 19
+Check it, I couldn't catch it making any mistakes so far.
+
+This is what I learned from Ron Bakowski.
+Now I want to show you another neat trick that I learned from Paul Ruggieri — I added the weekday array myself:
+
+:: Delayed variable expansion is required to read the array
+SETLOCAL ENABLEDELAYEDEXPANSION
+	•
+	•
+SET _Weekday.0=Monday
+SET _Weekday.1=Tuesday
+SET _Weekday.2=Wednesday
+SET _Weekday.3=Thursday
+SET _Weekday.4=Friday
+SET _Weekday.5=Saturday
+SET _Weekday.6=Sunday
+
+:: Note: variable JDate must already have been set to a Julian Date
+
+::Calculating day number [Monday = 0 ... sunday = 6]
+SET /A WD = %JDate% %% 7
+:: Display the result
+SET Weekday=!_Weekday.%WD%!
+	•
+	•
+ENDLOCAL
+Sometimes we need to know how many days passed between two dates.
+With Julian dates, that is a piece of cake: subtract the first date from the last one, and you have the number of days.
+
+I was born on August 1, 1958, which is Julian date 2436418.
+Today's Julian date is 2456863.
+The difference, 20445, is my age in days (about 20445 / 365.25 = 55.98 years).
+
+Would you ever have thought this would be possible in batch files?
+
+Thanks again, Ron and Paul

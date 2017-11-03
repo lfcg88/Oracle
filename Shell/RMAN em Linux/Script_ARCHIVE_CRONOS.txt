@@ -1,0 +1,94 @@
+#!/bin/bash
+#export LANG=pt_BR.utf8
+export ORACLE_SID=DBPTN
+export ORACLE_HOME=/u01/app/oracle/product/11.2.0/db_1
+export DIA=$(date +"%a_%d_%m_%Y_%H")
+export DIA_SEMANA=rman_arch_$ORACLE_SID"_"$(date +"%a_%d_%m_%Y_%H")
+export ORACLE_BACKUP=/backup/rman/DBPTN/arch
+export DBA=dba@inpi.gov.br
+
+
+#
+# Dir backup
+destino=$ORACLE_BACKUP
+
+
+
+# Cria o novo diretorio
+
+/bin/mkdir -p $destino/$DIA_SEMANA
+
+export BACKUP_LOG_DIR=$ORACLE_BACKUP/$DIA_SEMANA
+export BACKUP_LOG_FILE=${BACKUP_LOG_DIR}/BACKUP_LOG_$ORACLE_SID_$DIA_SEMANA.log
+
+
+
+
+#
+# Script RMAN
+#
+echo run { > $destino/comando.rcv
+echo CONFIGURE RETENTION POLICY TO REDUNDANCY 1';' >> $destino/comando.rcv
+echo CONFIGURE BACKUP OPTIMIZATION OFF';' >> $destino/comando.rcv
+echo CONFIGURE DEFAULT DEVICE TYPE TO DISK ';' >> $destino/comando.rcv
+echo CONFIGURE CONTROLFILE AUTOBACKUP ON';' >> $destino/comando.rcv
+echo CONFIGURE SNAPSHOT CONTROLFILE NAME TO "'""$ORACLE_BACKUP/$DIA_SEMANA/snapcf_"$ORACLE_SID".f""'" ';' >> $destino/comando.rcv
+echo CONFIGURE CONTROLFILE AUTOBACKUP FORMAT FOR DEVICE TYPE DISK TO "'""$ORACLE_BACKUP/$DIA_SEMANA/copiacontrol%F""'"';' >> $destino/comando.rcv
+echo CONFIGURE DEVICE TYPE DISK PARALLELISM 2';' >> $destino/comando.rcv
+echo CONFIGURE DATAFILE BACKUP COPIES FOR DEVICE TYPE DISK TO 1';' >> $destino/comando.rcv
+echo CONFIGURE ARCHIVELOG BACKUP COPIES FOR DEVICE TYPE DISK TO 1';' >> $destino/comando.rcv
+#echo CONFIGURE CHANNEL DEVICE TYPE DISK FORMAT "'""$ORACLE_BACKUP/$DIA_SEMANA/ora_df_%U""'"';'               >> $destino/comando.rcv
+echo CONFIGURE MAXSETSIZE TO UNLIMITED';'  >> $destino/comando.rcv
+#echo ALLOCATE CHANNEL C1 TYPE DISK FORMAT "'""$ORACLE_BACKUP/$DIA_SEMANA/ora_df_%U""'" ';'                    >> $destino/comando.rcv
+#echo SHOW ALL';' >> $destino/comando.rcv
+echo }  >> $destino/comando.rcv
+echo run { >> $destino/comando.rcv
+echo ALLOCATE CHANNEL C1 TYPE DISK FORMAT "'""$ORACLE_BACKUP/$DIA_SEMANA/ora_df_%U""'" ';' >> $destino/comando.rcv
+echo ALLOCATE CHANNEL C2 TYPE DISK FORMAT "'""$ORACLE_BACKUP/$DIA_SEMANA/ora_df_%U""'" ';' >> $destino/comando.rcv
+echo ALLOCATE CHANNEL C3 TYPE DISK FORMAT "'""$ORACLE_BACKUP/$DIA_SEMANA/ora_df_%U""'" ';' >> $destino/comando.rcv
+echo backup current controlfile format "'""$ORACLE_BACKUP/$DIA_SEMANA/control_"$ORACLE_SID"_"$DIA"_%U.ctl""'" ';'  >> $destino/comando.rcv
+echo sql "'alter system archive log current';" >> $destino/comando.rcv
+echo BACKUP AS COMPRESSED BACKUPSET ARCHIVELOG ALL  format "'""$ORACLE_BACKUP/$DIA_SEMANA/archive_"$ORACLE_SID"_"$DIA"_%U""'" ';'        >> $destino/comando.rcv
+#echo backup as COMPRESSED BACKUPSET database spfile plus archivelog ';'  >> $destino/comando.rcv
+echo SQL '"'"ALTER DATABASE BACKUP CONTROLFILE TO TRACE AS ''$ORACLE_BACKUP/$DIA_SEMANA/control_"$ORACLE_SID"_"$DIA".txt''"'"'';' >> $destino/comando.rcv
+echo backup format "'""$ORACLE_BACKUP/$DIA_SEMANA/spfile_"$ORACLE_SID"_"$DIA".dbf""'" spfile ';'      >> $destino/comando.rcv
+echo CROSSCHECK BACKUP';'>> $destino/comando.rcv
+echo REPORT OBSOLETE';'  >> $destino/comando.rcv
+#echo DELETE FORCE NOPROMPT OBSOLETE';'  >> $destino/comando.rcv
+echo BACKUP AS COMPRESSED BACKUPSET ARCHIVELOG ALL  DELETE ALL INPUT format "'""$ORACLE_BACKUP/$DIA_SEMANA/archive_"$ORACLE_SID"_"$DIA"_%U""'" ';'  >> $destino/comando.rcv
+echo crosscheck archivelog all ';' >>$destino/comando.rcv
+echo Delete noprompt expired archivelog all';' >>$destino/comando.rcv
+echo backup current controlfile format "'""$ORACLE_BACKUP/$DIA_SEMANA/control_"$ORACLE_SID"_"$DIA"_%U.ctl""'" ';'  >> $destino/comando.rcv
+echo } >> $destino/comando.rcv
+
+
+$ORACLE_HOME/bin/rman target / @$destino/comando.rcv > $ORACLE_BACKUP/$DIA_SEMANA/BACKUP_LOG_$ORACLE_SID_$DIA_SEMANA.log
+
+
+
+
+
+if [ -f ${BACKUP_LOG_FILE} ]; then
+egrep '(ERROR|error|Error|RMAN-)' ${BACKUP_LOG_FILE} > /dev/null
+if [ $? = 0 ]; then
+RESULT_MSG="WARNING: Errors occurred during the ${ORACLE_SID} Rman backup ARCHIVE ."
+mail -s "$RESULT_MSG" $DBA < ${BACKUP_LOG_FILE}
+else
+egrep '(Recovery Manager complete)' ${BACKUP_LOG_FILE} > /dev/null
+if [ $? = 0 ]; then
+RESULT_MSG="${ORACLE_SID} RMAN Backup ARCHIVE Completed Successfully."
+mail -s "$RESULT_MSG" $DBA < ${BACKUP_LOG_FILE}
+else
+RESULT_MSG="WARNING: ${ORACLE_SID} RMAN backup ARCHIVE concluí com SUCESSO- RMAN Backup ARCHIVE Completed Successfully."
+echo Backup process was terminated. | mail -s "$RESULT_MSG" $DBA
+fi
+fi
+fi
+
+#mail -s "Oracle ${ORACLE_SID} backup completed" $DBA < ${BACKUP_LOG_FILE}
+
+
+# Exclui o diretorio de backup antigo (maior que sete dias)
+find /backup/rman/DBPTN/arch/rman* -mtime +1 -exec rm -rf {} \;
+
+

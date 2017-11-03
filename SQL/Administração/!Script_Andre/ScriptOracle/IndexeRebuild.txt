@@ -1,0 +1,141 @@
+
+
+
+
+
+
+select 'alter '||SEGMENT_TYPE||' '||OWNER||'.'||SEGMENT_NAME||' rebuild 
+storage ( INITIAL '||SUM(BYTES)||' NEXT '|| SUM(BYTES)/2||' )'||
+'tablespace '||tablespace_name||';'
+FROM DBA_EXTENTS
+WHERE OWNER NOT IN ('SYS','SYSTEM') AND SEGMENT_TYPE = 'INDEX' AND 
+SEGMENT_NAME IN ( select b.segment_name from dba_segments b
+where b.extents > 50 )
+GROUP BY SEGMENT_TYPE,OWNER,SEGMENT_NAME,tablespace_name
+
+
+
+
+
+
+select 'alter '||A.SEGMENT_TYPE||' '||A.OWNER||'.'||A.SEGMENT_NAME||' rebuild 
+storage ( INITIAL '||SUM(A.BYTES)||' NEXT '|| SUM(A.BYTES)/2||' )'||
+'tablespace '||A.tablespace_name||';'
+FROM DBA_EXTENTS A, DBA_SEGMENTS B
+WHERE A.OWNER NOT IN ('SYS','SYSTEM') 
+AND A.SEGMENT_TYPE = 'INDEX' AND 
+A.SEGMENT_NAME = B.SEGMENT_NAME 
+AND B.extents > 50
+AND B.PARTITION_NAME IS NULL
+GROUP BY A.SEGMENT_TYPE,A.OWNER,A.SEGMENT_NAME,A.tablespace_name
+
+
+==> TABLESAPCE LOCAL
+
+
+select 'alter '||A.SEGMENT_TYPE||' '||A.OWNER||'.'||A.SEGMENT_NAME||' rebuild 
+storage ( INITIAL '||SUM(A.BYTES)||' ) tablespace '||A.tablespace_name||';'
+FROM DBA_EXTENTS A, DBA_SEGMENTS B
+WHERE A.OWNER NOT IN ('SYS','SYSTEM') 
+AND A.SEGMENT_TYPE = 'INDEX' AND 
+A.SEGMENT_NAME = B.SEGMENT_NAME 
+AND B.extents > 50
+AND B.PARTITION_NAME IS NULL
+GROUP BY A.SEGMENT_TYPE,A.OWNER,A.SEGMENT_NAME,A.tablespace_name
+
+
+
+
+
+
+select 'alter index '||owner||'.'||segment_name||' rebuild pctfree 1 storage 
+( initial '||(initial_extent+(next_extent* ( extents + 1) ))||' next '||next_extent||' pctincrease 
+0 minextents 1 maxextents 100) TABLESPACE INVT_IDX_01;'
+from dba_segments
+where owner <> 'SYS' AND extents > 50;
+
+
+
+INDEX             TS_INVT_DAT_RW01
+INDEX             TS_INVT_INX_RW01
+TABLE             TS_INVT_DAT_RW01
+
+
+
+
+select 'alter index '||owner||'.'||segment_name||' rebuild pctfree 1 storage 
+( initial '||bytes||' next '||next_extent||' pctincrease 
+0 minextents 1 maxextents 500) TABLESPACE ICONCA_IDX_01;'
+from dba_segments
+where owner='OWNICONCA' AND SEGMENT_TYPE='INDEX' AND TABLESPACE_NAME <> 'ICONCA_IDX_01' ;
+
+
+
+
+
+
+select 'alter index '||owner||'.'||segment_name||' rebuild pctfree 1 tablespace '||tablespace_name||';'
+from dba_segments
+where owner='OWNBMP' AND SEGMENT_TYPE='INDEX' AND segment_name LIKE '%STORE%'
+
+
+
+
+
+
+alter INDEX BASE_SIGA.IX4_MODRESP rebuild
+storage ( INITIAL 252706816 NEXT 126353408 )tablespace SIGI04;
+
+alter INDEX BASE_SIGA.PK_FREQAULA rebuild
+storage ( INITIAL 589299712 NEXT 294649856 )tablespace SIGI04;
+
+alter INDEX BASE_SIGA.PK_HISTACAD rebuild
+storage ( INITIAL 202375168 NEXT 101187584 )tablespace SIGI03;
+
+alter INDEX BASE_SIGA.PK_INTERFACERESPSIGA rebuild
+storage ( INITIAL 93323264 NEXT 46661632 )tablespace SIGI01;
+
+alter INDEX BASE_SIGA.PK_LOGCARGA rebuild
+storage ( INITIAL 84934656 NEXT 42467328 )tablespace SIGI01;
+
+alter INDEX BASE_SIGA.PK_MODRESP rebuild
+storage ( INITIAL 831520768 NEXT 415760384 )tablespace SIGI04;
+
+alter INDEX BASE_SIGA.PK_PLESP rebuild
+storage ( INITIAL 202375168 NEXT 101187584 )tablespace SIGI09;
+
+alter INDEX BASE_SIGA.PK_PLNFINANC rebuild
+storage ( INITIAL 202375168 NEXT 101187584 )tablespace SIGI09;
+
+alter INDEX BASE_SIGA.PK_RESULTADO rebuild
+storage ( INITIAL 294649856 NEXT 147324928 )tablespace SIGI02;
+
+alter INDEX BASE_SIGA.PK_TEMP_RESULTADO rebuild
+storage ( INITIAL 100663296 NEXT 50331648 )tablespace SIGI09;
+
+alter INDEX BASE_SIGA.PL_PLEND rebuild
+storage ( INITIAL 210763776 NEXT 105381888 )tablespace SIGI09;
+
+
+
+select 'alter index '||owner||'.'||segment_name||' rebuild pctfree 1 storage 
+( initial '||bytes||' next '||bytes/2||' pctincrease 0 minextents 1 maxextents 100) TABLESPACE '||tablespace_name||';' 
+from dba_segments
+where owner not in ('SYS','SYSTEM') AND SEGMENT_TYPE='INDEX' AND extents > 1 ;
+
+
+
+
+--------- mais tarde precisa arrumar o substr no nome da tablesapce pois pata aplic funciona corp fica errado -----
+
+select 'alter index '||a.owner||'.'||a.segment_name||' rebuild pctfree 1 storage ( initial '||a.bytes||' next '||a.next_extent||
+' pctincrease 0 minextents 1 maxextents 500) tablespace '||substr(a.tablespace_name,1,12)||'IDX'||substr(a.tablespace_name,16)||';'
+from dba_segments a
+where (segment_name,owner) in (
+select object_name,owner from dba_objects
+where trunc(CREATED) = trunc(sysdate) ) and segment_type='INDEX'
+
+
+
+
+

@@ -1,0 +1,3 @@
+create or replace synonym SGPB_PROC.FT_PRMIO_EMTDO_AT
+  for DWAT.FT_PRMIO_EMTDO_AT;
+

@@ -1,0 +1,12 @@
+It’s very easy to configure baseline metric thresholds from the Enterprise Manager.
+On the Database home page, click the Adaptive Metric Thresholds link in the
+Related Links section. The Baseline Metric Thresholds window appears, as shown in
+Figure 3-1. You can configure thresholds from this page by selecting one of the three
+threshold types: Significance Level, Percentage Of Maximum, or Fixed Values.
+Note that the Perform Recovery page has two sections titled Oracle Advised
+Recovery and User Directed Recovery. To access the Data Recovery Advisor, go to
+the new Oracle Advised Recovery section. In the Oracle Advised Recovery section, the Advise and Recover button is grayed out if the Data Recovery Advisor hasn’t trapped any failures. However, when the DRA detects a failure, you can click the Advise and Recover button.
+Oracle recommends that when dealing with data corruption or other data failures, to access the Data Recovery Advisor through the Support Workbench. From the Support Workbench, you can access the Data Recovery Advisor in either of these ways:
+¦ From the Checker findings subpage on the Support Workbench home page
+¦ From the Problem Details page
+

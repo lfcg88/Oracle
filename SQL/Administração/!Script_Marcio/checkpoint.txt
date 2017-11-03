@@ -1,0 +1,2 @@
+--### FORÇA O CHECKPOITN ###--
+alter system checkpoint;

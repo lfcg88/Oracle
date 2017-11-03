@@ -1,0 +1,1015 @@
+{\rtf1\ansi\ansicpg1252\deff0\deflang1046{\fonttbl{\f0\froman\fcharset0 Times New Roman;}{\f1\fswiss\fcharset0 Courier New;}{\f2\fnil\fcharset0 Calibri;}{\f3\fnil\fcharset2 Symbol;}}
+{\colortbl ;\red0\green0\blue255;}
+{\*\generator Msftedit 5.41.21.2510;}\viewkind4\uc1\pard\keepn\sb100\sa100\b\f0\fs36 A Tour of the AWR Tables\par
+\pard\sb100\sa100\b0\fs24{\field{\*\fldinst{HYPERLINK "mailto:dabercrombie@convio.com"}}{\fldrslt{\cf1\ul Dave Abercrombie}}}\cf0\ulnone\f0\fs24 , Principal Database Architect, {\field{\*\fldinst{HYPERLINK "http://convio.com/"}}{\fldrslt{\cf1\ul Convio}}}\cf0\ulnone\f0\fs24  \line\'a9 2008\line Northern California Oracle Users' Group ({\field{\*\fldinst{HYPERLINK "http://www.nocoug.org/"}}{\fldrslt{\cf1\ul NoCOUG}}}\cf0\ulnone\f0\fs24 ) Summer Conference 2008, August 21 2008\par
+\par
+Introduced in version 10g, Oracle's Automatic Workload Repository (AWR) provides diagnostic information for performance and scalability studies, automatically recording a rich variety of database performance statistics.\par
+What's the best way to leverage this wealth of data? While you can run Oracle-supplied AWR reports, or use Oracle features such as the Automatic Database Diagnostic Monitor (ADDM), each Oracle database presents its own unique tuning challenges. In this paper, you'll learn how to work directly with AWR tables, using customized queries to improve insight into your own particular scalability issues.\par
+Topics include:\par
+\pard{\pntext\f3\'B7\tab}{\*\pn\pnlvlblt\pnf3\pnindent360{\pntxtb\'B7}}\fi-360\li720\sb100\sa100 Important AWR tables, their contents, how to join them, and their quirks and limitations.\par
+{\pntext\f3\'B7\tab}Sample queries that can be easily adapted to focus on your own unique set of problems.\par
+{\pntext\f3\'B7\tab}Estimating the "Average Active Session" metric.\par
+{\pntext\f3\'B7\tab}Simple statistical techniques to find spikes and other types of anomalous behavior.\par
+{\pntext\f3\'B7\tab}A comparison of techniques used for historical scalability studies with those used for real-time performance crisis resolution..\par
+{\pntext\f3\'B7\tab}Use of \f1\fs20 DBMS_APPLICATION_INFO\f0\fs24  and JDBC end-to-end metrics.\par
+{\pntext\f3\'B7\tab}Useful tips on configuring AWR.\par
+\pard\sb100\sa100 This paper also applies some industrial and quality engineering approaches recently described by Robyn Sands to the use of AWR tables. These ideas are also combined with use of the \i DB time\i0  metric championed by Kyle Hailey. I show below the outline for this paper, and a Microsoft PowerPoint version is also available.\par
+\par
+\pard{\pntext\f3\'B7\tab}{\*\pn\pnlvlblt\pnf3\pnindent360{\pntxtb\'B7}}\fi-360\li720\sb100\sa100 AWR Overview \par
+\pard{\pntext\f3\'B7\tab}{\*\pn\pnlvlblt\pnf3\pnindent360{\pntxtb\'B7}}\fi-360\li1440\sb100\sa100{\field{\*\fldinst{HYPERLINK "\\l "awr-what-is-it""}}{\fldrslt{\cf1\ul What}}}\cf0\ulnone\f0\fs24  is AWR? \par
+{\field{\*\fldinst{HYPERLINK "{\pntext\f3\'B7\tab}\\l "awr-why-use-it""}}{\fldrslt{\cf1\ul Why}}}\cf0\ulnone\f0\fs24  use AWR? \par
+{\field{\*\fldinst{HYPERLINK "{\pntext\f3\'B7\tab}\\l "awr-ways-to-use""}}{\fldrslt{\cf1\ul Ways of using}}}\cf0\ulnone\f0\fs24  AWR \par
+{\pntext\f3\'B7\tab}AWR {\field{\*\fldinst{HYPERLINK "\\l "awr-settings""}}{\fldrslt{\cf1\ul settings}}}\cf0\ulnone\f0\fs24  \par
+\pard{\pntext\f3\'B7\tab}{\*\pn\pnlvlblt\pnf3\pnindent360{\pntxtb\'B7}}\fi-360\li720\sb100\sa100 Find {\field{\*\fldinst{HYPERLINK "\\l "find-load-spikes-aas""}}{\fldrslt{\cf1\ul time ranges of load spikes}}}\cf0\ulnone\f0\fs24 : Average Active Sessions (AAS) \par
+\pard{\pntext\f3\'B7\tab}{\*\pn\pnlvlblt\pnf3\pnindent360{\pntxtb\'B7}}\fi-360\li1440\sb100\sa100{\field{\*\fldinst{HYPERLINK "\\l "aas-definition""}}{\fldrslt{\cf1\ul AAS definition}}}\cf0\ulnone\f0\fs24  and usefulness \par
+{\field{\*\fldinst{HYPERLINK "{\pntext\f3\'B7\tab}\\l "aas-denominator""}}{\fldrslt{\cf1\ul Elapsed time denominator}}}\cf0\ulnone\f0\fs24  and non-uniformity (aka "skew") \par
+{\field{\*\fldinst{HYPERLINK "{\pntext\f3\'B7\tab}\\l "aas-exact""}}{\fldrslt{\cf1\ul AAS exact}}}\cf0\ulnone\f0\fs24  calculation (not very useful) \par
+{\field{\*\fldinst{HYPERLINK "{\pntext\f3\'B7\tab}\\l "aas-estimate""}}{\fldrslt{\cf1\ul AAS estimation}}}\cf0\ulnone\f0\fs24  methods (very useful, based on Active Session History - ASH) \par
+{\field{\*\fldinst{HYPERLINK "{\pntext\f3\'B7\tab}\\l "example-aas-1""}}{\fldrslt{\cf1\ul Example}}}\cf0\ulnone\f0\fs24  scenario \par
+\pard{\pntext\f3\'B7\tab}{\*\pn\pnlvlblt\pnf3\pnindent360{\pntxtb\'B7}}\fi-360\li720\sb100\sa100 Find specific problem SQLs: Sort by aggregated statistics \par
+\pard{\pntext\f3\'B7\tab}{\*\pn\pnlvlblt\pnf3\pnindent360{\pntxtb\'B7}}\fi-360\li1440\sb100\sa100{\field{\*\fldinst{HYPERLINK "\\l "example-aggregated-stats""}}{\fldrslt{\cf1\ul Example}}}\cf0\ulnone\f0\fs24  scenario \par
+\pard{\pntext\f3\'B7\tab}{\*\pn\pnlvlblt\pnf3\pnindent360{\pntxtb\'B7}}\fi-360\li720\sb100\sa100 Find specific problem SQLs: Non-uniform statistics \par
+\pard{\pntext\f3\'B7\tab}{\*\pn\pnlvlblt\pnf3\pnindent360{\pntxtb\'B7}}\fi-360\li1440\sb100\sa100{\field{\*\fldinst{HYPERLINK "\\l "example-high-var""}}{\fldrslt{\cf1\ul Example}}}\cf0\ulnone\f0\fs24  scenario \par
+\pard{\pntext\f3\'B7\tab}{\*\pn\pnlvlblt\pnf3\pnindent360{\pntxtb\'B7}}\fi-360\li720\sb100\sa100 Characterize a problem SQL's behavior over time \par
+\pard{\pntext\f3\'B7\tab}{\*\pn\pnlvlblt\pnf3\pnindent360{\pntxtb\'B7}}\fi-360\li1440\sb100\sa100{\field{\*\fldinst{HYPERLINK "\\l "example-time-1""}}{\fldrslt{\cf1\ul Example 1}}}\cf0\ulnone\f0\fs24  scenario \par
+{\field{\*\fldinst{HYPERLINK "{\pntext\f3\'B7\tab}\\l "example-time-2""}}{\fldrslt{\cf1\ul Example 2}}}\cf0\ulnone\f0\fs24  scenario \par
+{\field{\*\fldinst{HYPERLINK "{\pntext\f3\'B7\tab}\\l "example-time-3""}}{\fldrslt{\cf1\ul Example 3}}}\cf0\ulnone\f0\fs24  scenario \par
+{\field{\*\fldinst{HYPERLINK "{\pntext\f3\'B7\tab}\\l "example-time-4""}}{\fldrslt{\cf1\ul Example 4}}}\cf0\ulnone\f0\fs24  scenario \par
+\pard{\pntext\f3\'B7\tab}{\*\pn\pnlvlblt\pnf3\pnindent360{\pntxtb\'B7}}\fi-360\li720\sb100\sa100 Selected AWR tables \par
+\pard{\pntext\f3\'B7\tab}{\*\pn\pnlvlblt\pnf3\pnindent360{\pntxtb\'B7}}\fi-360\li1440\sb100\sa100 DBA_HIST_{\field{\*\fldinst{HYPERLINK "\\l "DBA_HIST_SNAPSHOT""}}{\fldrslt{\cf1\ul SNAPSHOT}}}\cf0\ulnone\f0\fs24  \par
+{\pntext\f3\'B7\tab}DBA_HIST_{\field{\*\fldinst{HYPERLINK "\\l "DBA_HIST_SQLSTAT""}}{\fldrslt{\cf1\ul SQLSTAT}}}\cf0\ulnone\f0\fs24  \par
+{\pntext\f3\'B7\tab}DBA_HIST_{\field{\*\fldinst{HYPERLINK "\\l "DBA_HIST_SYSSTAT""}}{\fldrslt{\cf1\ul SYSSTAT}}}\cf0\ulnone\f0\fs24  \par
+{\pntext\f3\'B7\tab}DBA_HIST_{\field{\*\fldinst{HYPERLINK "\\l "DBA_HIST_SEG_STAT""}}{\fldrslt{\cf1\ul SEG_STAT}}}\cf0\ulnone\f0\fs24  \par
+{\pntext\f3\'B7\tab}DBA_HIST_{\field{\*\fldinst{HYPERLINK "\\l "DBA_HIST_SEG_STAT_OBJ""}}{\fldrslt{\cf1\ul SEG_STAT_OBJ}}}\cf0\ulnone\f0\fs24  \par
+{\pntext\f3\'B7\tab}DBA_HIST_{\field{\*\fldinst{HYPERLINK "\\l "DBA_HIST_SQLTEXT""}}{\fldrslt{\cf1\ul SQLTEXT}}}\cf0\ulnone\f0\fs24  \par
+{\pntext\f3\'B7\tab}DBA_HIST_{\field{\*\fldinst{HYPERLINK "\\l "DBA_HIST_ACTIVE_SESS_HISTORY""}}{\fldrslt{\cf1\ul ACTIVE_SESS_HISTORY}}}\cf0\ulnone\f0\fs24  \par
+\pard{\pntext\f3\'B7\tab}{\*\pn\pnlvlblt\pnf3\pnindent360{\pntxtb\'B7}}\fi-360\li720\sb100\sa100 Scripts \par
+\pard{\pntext\f3\'B7\tab}{\*\pn\pnlvlblt\pnf3\pnindent360{\pntxtb\'B7}}\fi-360\li1440\sb100\sa100 Find time ranges of load spikes: Average Active Sessions (AAS) \par
+\pard{\pntext\f3\'B7\tab}{\*\pn\pnlvlblt\pnf3\pnindent360{\pntxtb\'B7}}\fi-360\li2160\sb100\sa100{\field{\*\fldinst{HYPERLINK "\\l "script-aas-per-hour""}}{\fldrslt{\cf1\ul aas-per-hour.sql}}}\cf0\ulnone\f0\fs24  (AWR) \par
+{\field{\*\fldinst{HYPERLINK "{\pntext\f3\'B7\tab}\\l "script-aas-per-min""}}{\fldrslt{\cf1\ul aas-per-min.sql}}}\cf0\ulnone\f0\fs24  (ASH) \par
+{\field{\*\fldinst{HYPERLINK "{\pntext\f3\'B7\tab}\\l "script-aas-per-min-awr""}}{\fldrslt{\cf1\ul aas-per-min-awr.sql}}}\cf0\ulnone\f0\fs24  (AWR) \par
+{\field{\*\fldinst{HYPERLINK "{\pntext\f3\'B7\tab}\\l "script-aas-exact""}}{\fldrslt{\cf1\ul aas-exact.sql}}}\cf0\ulnone\f0\fs24  (AWR) \par
+\pard{\pntext\f3\'B7\tab}{\*\pn\pnlvlblt\pnf3\pnindent360{\pntxtb\'B7}}\fi-360\li1440\sb100\sa100 Find specific problem SQLs: Sort by aggregated statistics \par
+\pard{\pntext\f3\'B7\tab}{\*\pn\pnlvlblt\pnf3\pnindent360{\pntxtb\'B7}}\fi-360\li2160\sb100\sa100{\field{\*\fldinst{HYPERLINK "\\l "script-find-expensive""}}{\fldrslt{\cf1\ul find-expensive.sql}}}\cf0\ulnone\f0\fs24  (AWR) \par
+\pard{\pntext\f3\'B7\tab}{\*\pn\pnlvlblt\pnf3\pnindent360{\pntxtb\'B7}}\fi-360\li1440\sb100\sa100 Find specific problem SQLs: Non-uniform statistics \par
+\pard{\pntext\f3\'B7\tab}{\*\pn\pnlvlblt\pnf3\pnindent360{\pntxtb\'B7}}\fi-360\li2160\sb100\sa100{\field{\*\fldinst{HYPERLINK "\\l "script-high-var""}}{\fldrslt{\cf1\ul high-var-sql.sql}}}\cf0\ulnone\f0\fs24  (AWR) \par
+\pard{\pntext\f3\'B7\tab}{\*\pn\pnlvlblt\pnf3\pnindent360{\pntxtb\'B7}}\fi-360\li1440\sb100\sa100 Characterize a problem SQL's behavior over time \par
+\pard{\pntext\f3\'B7\tab}{\*\pn\pnlvlblt\pnf3\pnindent360{\pntxtb\'B7}}\fi-360\li2160\sb100\sa100{\field{\*\fldinst{HYPERLINK "\\l "script-sql-stat-hist""}}{\fldrslt{\cf1\ul sql-stat-hist.sql}}}\cf0\ulnone\f0\fs24  (AWR) \par
+\pard{\pntext\f3\'B7\tab}{\*\pn\pnlvlblt\pnf3\pnindent360{\pntxtb\'B7}}\fi-360\li720\sb100\sa100{\field{\*\fldinst{HYPERLINK "\\l "conclusion""}}{\fldrslt{\cf1\ul Conclusion}}}\cf0\ulnone\f0\fs24  \par
+{\field{\*\fldinst{HYPERLINK "{\pntext\f3\'B7\tab}\\l "references""}}{\fldrslt{\cf1\ul References}}}\cf0\ulnone\f0\fs24  \par
+\pard\sb100\sa100\par
+\pard\keepn\sb100\sa100\b\fs36 AWR Overview\par
+\fs28 What is AWR?\par
+\pard\sb100\sa100\b0\fs24 The Automatic Workload Repository ({\field{\*\fldinst{HYPERLINK "http://download.oracle.com/docs/cd/B19306_01/server.102/b14211/autostat.htm" \\\\l "PFGRF02601"}}{\fldrslt{\cf1\ul AWR}}}\cf0\ulnone\f0\fs24 ) takes "snapshots" of database performance statistics periodically, and records these data for later review. It is covered by Oracle's {\field{\*\fldinst{HYPERLINK "http://oraclestore.oracle.com/OA_HTML/ibeCCtpSctDspRte.jsp?section=10189&minisite=10021&respid=22372&grp=STORE&language=US"}}{\fldrslt{\cf1\ul Diagnostic Pack License}}}\cf0\ulnone\f0\fs24 .\par
+These AWR data are available in about 80 "tables" whose names begin with "\f1\fs20 DBA_HIST\f0\fs24 ". Oracle uses the AWR data internally for its self-tuning feature called Automatic Database Diagnostic Monitor ({\field{\*\fldinst{HYPERLINK "http://download.oracle.com/docs/cd/B19306_01/server.102/b14211/diagnsis.htm" \\\\l "i37241"}}{\fldrslt{\cf1\ul ADDM}}}\cf0\ulnone\f0\fs24 ), which includes a variety of reports and other tools. The ADDM will not be discussed further in this paper. Instead, this paper will focus on interactive use of custom queries using the AWR \f1\fs20 DBA_HIST\f0\fs24  tables.\par
+The AWR records performance data from several perspectives, some of which are shown below. This paper primarily focuses on the SQL perspective, however the techniques presented here can be easily adapted to other perspectives.\par
+\pard{\pntext\f3\'B7\tab}{\*\pn\pnlvlblt\pnf3\pnindent360{\pntxtb\'B7}}\fi-360\li720\sb100\sa100 SQL statement \par
+{\pntext\f3\'B7\tab}System \par
+{\pntext\f3\'B7\tab}Segment \par
+{\pntext\f3\'B7\tab}Wait events \par
+{\pntext\f3\'B7\tab}SGA \par
+{\pntext\f3\'B7\tab}Enqueue locks \par
+{\pntext\f3\'B7\tab}etc. \par
+\pard\keepn\sb100\sa100\b\fs28 Why use AWR?\par
+\pard\sb100\sa100\b0\fs24 AWR is not used for real-time performance monitoring like the \f1\fs20 V$\f0\fs24  tables. Instead, it is used for historical analysis of performance. AWR complements, but does not replace, real-time monitoring. Example uses include the following:\par
+\pard{\pntext\f3\'B7\tab}{\*\pn\pnlvlblt\pnf3\pnindent360{\pntxtb\'B7}}\fi-360\li720\sb100\sa100\b Databases that you rarely, if ever, review\b0\line DBAs are often responsible for more databases than they can watch closely at all times. Consultants are often called into to diagnose and fix a database they have never seen. A company might acquire another company's databases, suddenly becoming responsible for them. A DBA might not have instant access to a suffering database. In all these cases, AWR can provide vital data that is otherwise not available.\par
+\b{\pntext\f3\'B7\tab}Find and drill down into recent load spikes\b0\line A real-time monitor might detect a database problem in time to alert DBAs, but diagnoses might take a while. AWR automatically preserves vital performance data to support thorough diagnosis over a period of days.\par
+\b{\pntext\f3\'B7\tab}Prioritize developer and DBA resources\b0\line Many database applications have a backlog of performance problems, all requiring limited developer and DBA resources to fix. AWR can provide vital objective and quantitative data to help prioritize such fixes, ensuring the most effective use of these limited human resources.\par
+\b{\pntext\f3\'B7\tab}Load testing\b0\line It is often possible to organize load testing projects so that each test run fits within a set of AWR snapshots, with each snapshot containing only one test run. When this approach is used, the detailed performance data gathered automatically by AWR provides vital insight that is simply not visible when using only application-level metrics. AWR can also be used to assess comparability of the various test runs: it can tell you, for example, if a given SQL statement executed the same number of times in each test.\par
+\b{\pntext\f3\'B7\tab}Capacity planning\b0\line The long-term view supported by AWR can help assess overall database capacity. Some applications can use multiple databases, and AWR can show which of these databases have the most remaining capacity, thereby informing decisions about where to put new data or customers.\par
+\b{\pntext\f3\'B7\tab}Real-time monitors might be inadequate\b0\line It is not uncommon for real-time database monitors to be poor, missing, or unreliable. Or perhaps monitoring takes place only at the application level. AWR can make up for these deficiencies by providing a complete record of the full range of Oracle internal diagnostics.\par
+\pard\keepn\sb100\sa100\b\fs28 Ways of using AWR\par
+\pard\sb100\sa100\b0\fs24 An investigation into a database performance problem might involve a series of goals similar to the ones outlined below. Each of these goals calls for a slightly different set of AWR tables or query design. Although this outline focuses on an SQL perspective, these goals can be adapted to other perspectives, such as an alternative focus on segments. This paper presents example AWR queries for each of these different goals.\par
+\pard{\pntext\f3\'B7\tab}{\*\pn\pnlvlblt\pnf3\pnindent360{\pntxtb\'B7}}\fi-360\li720\sb100\sa100\b Find time ranges of load spikes\b0\line Often, the first step in an investigation is to determine the specific time ranges of the problem. This is usually the case even if external, application-level monitors have alerted you to the problem. It is especially true if you are on a "fishing expedition", with no knowledge of any particular problem or time range. One of the best tools for this goal is to examine the history of the {\field{\*\fldinst{HYPERLINK "\\l "aas-definition""}}{\fldrslt{\cf1\ul Average Active Session}}}\cf0\ulnone\f0\fs24  (AAS) metric.\par
+\b{\pntext\f3\'B7\tab}Find specific problem SQLs\b0\line Once the time range of the performance problem has been determined, the next step is to determine the specific SQL statements associated with the problem. Several techniques are available as shown below. These techniques can also be used as the starting point of an investigation.\par
+\pard{\pntext\f3\'B7\tab}{\*\pn\pnlvlblt\pnf3\pnindent360{\pntxtb\'B7}}\fi-360\li1440\sb100\sa100\b Active Session History (ASH) and its AWR version\b0\line{\field{\*\fldinst{HYPERLINK "http://download.oracle.com/docs/cd/B19306_01/server.102/b14211/autostat.htm" \\\\l "i35568"}}{\fldrslt{\cf1\ul ASH}}}\cf0\ulnone\f0\fs24  provides a wealth of detail about active sessions and their problems. It records session-level details that are not always preserved by AWR. However, ASH does not include many of the performance statistics that are preserved by AWR, and so these two Oracle features are complementary. This paper does not go into detail about ASH.\par
+\b{\pntext\f3\'B7\tab}Sort by aggregated statistics\b0\line Since AWR stores performance statistics aggregated per snapshot for each SQL statement, a very natural and obvious technique is to simply sum these up, sort them, then look for statements with the highest sums. Usually, this is done with some consideration of time range, such as "since the deployment of the last code version" or "since addition of a new dataset", etc.\par
+\b{\pntext\f3\'B7\tab}Non-uniform statistics\b0\line Many of the most interesting and severe problems with database performance involve queries that normally execute well, but occasionally create problems. For example, a query might usually consume only a second or two of \i DB time\i0  per hour, then suddenly take over the CPUs and cause loss of application functionality. If these spikes are brief, they might not be visible through a review of gross aggregate data. So a method of finding non-uniformities is needed. One such method, the use of statistical "variance," is described below. \par
+\pard{\pntext\f3\'B7\tab}{\*\pn\pnlvlblt\pnf3\pnindent360{\pntxtb\'B7}}\fi-360\li720\sb100\sa100\b Characterize a problem SQL\rquote s behavior over time\b0\line It is often extraordinarily useful to examine a SQL statement's behavior over time. Factors that can be easily seen include:\par
+\pard{\pntext\f3\'B7\tab}{\*\pn\pnlvlblt\pnf3\pnindent360{\pntxtb\'B7}}\fi-360\li1440\sb100\sa100 sudden spikes in execution rate, \par
+{\pntext\f3\'B7\tab}changes in performance characteristics such as consistent gets, \par
+{\pntext\f3\'B7\tab}changes in execution plan, \par
+{\pntext\f3\'B7\tab}changes in time spent in wait states, etc. \par
+\pard\li720\sb100\sa100 One reason that these time-related factors are so very useful is that they can tie internal database diagnostics to the applictaion itself. For example, a statement might execute only at night, which can provide clues to its source within the aplplication.\par
+\pard\keepn\sb100\sa100\b\fs28 AWR settings\par
+\pard\sb100\sa100\b0\fs24 By default, AWR will take snapshots once per hour, at the "top" of each hour. Also, by default, AWR will retain only a week's worth of snapshots. \par
+In my experience, the hourly interval is appropriate. However, I much prefer to retain a full month of data. Most of us have workweeks that are very busy and filled with crises, so being able to save AWR data for more than a week is very important. Also, some trends, or other changes, are much easier to spot when a full month of data are available. \par
+Of course, storage needs increase along with snapshot frequency or length of retention. Storage needs will also probably vary with level of activity and application behavior. Oracle {\field{\*\fldinst{HYPERLINK "http://download.oracle.com/docs/cd/B19306_01/server.102/b14211/autostat.htm" \\\\l "BABHJBBI"}}{\fldrslt{\cf1\ul claims}}}\cf0\ulnone\f0\fs24  that about 300 megabytes are needed for a one-week retention of hourly snapshots; more space will be needed for longer retion periods.\par
+The default AWR settings are modified using Oracle supplied package method {\field{\*\fldinst{HYPERLINK "http://download.oracle.com/docs/cd/B19306_01/appdev.102/b14258/d_wkrpos.htm" \\\\l "BACEHJJI"}}{\fldrslt{\cf1\ul\f1\fs20 DBMS_WORKLOAD_REPOSITORY.MODIFY_SNAPSHOT_SETTINGS()}}}\cf0\ulnone\f0\fs24 . Example syntax is shown below. Both \f1\fs20 retention\f0\fs24  and \f1\fs20 interval\f0\fs24  arguments expect units of minutes. See the Oracle documentation for more details.\par
+\pard\tx0\tx959\tx1918\tx2877\tx3836\tx4795\tx5754\tx6713\tx7672\tx8631\f1\fs20 DBMS_WORKLOAD_REPOSITORY.MODIFY_SNAPSHOT_SETTINGS(\par
+   retention   IN  NUMBER    DEFAULT NULL,\par
+   interval    IN  NUMBER    DEFAULT NULL,\par
+   topnsql     IN  NUMBER    DEFAULT NULL,\par
+   dbid        IN  NUMBER    DEFAULT NULL);\par
+\pard\keepn\sb100\sa100\b\f0\fs36 Find time ranges of load spikes: Average Active Sessions (AAS)\par
+\fs28 AAS definition and usefulness\par
+\pard\sb100\sa100\b0\fs24 The \i "Average Active Session"\i0  (AAS) metric is an extraordinarily simple and useful measure of the overall health of an Oracle database. This metric has been championed by Kyle Hailey, and some of his material can be found at the {\field{\*\fldinst{HYPERLINK "\\l "ref-kyle-hailey""}}{\fldrslt{\cf1\ul links below}}}\cf0\ulnone\f0\fs24  in the reference section.\par
+The AAS metric can be defined as \i "DB time"\i0  divided by \i "elapsed time"\i0 .\par
+In turn, \i DB time\i0  is defined as the sum of time spent by all sessions both on the CPU and stuck in non-idle wait states. In other words, \i DB time\i0  can be thought of as the sum of time spent by all active sessions.\par
+For example, let's say a database had four sessions that were active for the duration of a one-minute observation. Each session contributes one minute to the sum of \i DB time\i0  in the numerator, giving a total \i DB time\i0  value of four minutes. In this example, the \i "elapsed time"\i0  denominator is one minute. Doing the division gives an AAS of four. In this trivial example, it is easy to see how an AAS metric of four relates to having four active sessions. In this example, there was an average of four active sessions. \par
+If we generalize the example to include more sessions that have various periods of active status, the calculation of the AAS metric still gives a sense of the average number of active sessions during the observation period. This explains the name of the metric, even though it is not explicitly defined based on counts or averages of sessions.\par
+The AAS metric is most useful when compared to the number of CPUs available. If the AAS metric far exceeds the number of CPUs, then database performance will suffer. On the other hand, if the AAS metric is significantly less than the number of CPUs, then database performance should be fine. The threshold value of the AAS metric above which database performance suffers depends upon the application behavior and the expectations of the end users. Therefore, this threshold AAS value should be determined empirically within the context of the application. Once this threshold AAS value has been determined, this metric can serve as a very reliable, and readily available, indicator of overall database performance problems. In fact, reducing the \i DB time\i0  metric is the {\field{\*\fldinst{HYPERLINK "http://download.oracle.com/docs/cd/B19306_01/server.102/b14211/diagnsis.htm" \\\\l "sthref318"}}{\fldrslt{\cf1\ul main goal}}}\cf0\ulnone\f0\fs24  of Oracle's built-in ADDM self-tuning tool.\par
+The AAS metric can be calculated exactly, or it can be estimated, as described below. All methods, both using estimates or exact calculations, depend upon the choice the \i "elapsed time"\i0  denominator. The choice of the \i "elapsed time"\i0  denominator relates to issues of non-uniformity, as explained next.\par
+\pard\keepn\sb100\sa100\b\fs28 Elapsed time denominator and non-uniformity (aka "skew")\par
+\pard\sb100\sa100\b0\fs24 The AAS is inherently an aggregate, or averaged, metric. Average-based metrics always hide any non-uniformity of the underlying data. Often, it is exactly this hidden non-uniformity that is most important for understanding an Oracle performance problem. Therefore, effective use of the metric requires that we understand and detect non-uniformity.\par
+Note: several Oracle authors use the term "skew" to refer to any type of non-uniformity. The {\field{\*\fldinst{HYPERLINK "http://en.wikipedia.org/wiki/Skewness"}}{\fldrslt{\cf1\ul statistical definition}}}\cf0\ulnone\f0\fs24  of skew actually is limited to one particular type of non-uniformity. However, due to these existing precedents within the Oracle literature, this paper also uses the term "skew" to refer to any type of non-uniformity.\par
+As will be shown with {\field{\*\fldinst{HYPERLINK "\\l "example-aas-1""}}{\fldrslt{\cf1\ul examples below}}}\cf0\ulnone\f0\fs24 , the choice of the \i "elapsed time"\i0  denominator is crucial to detection of skew. A large elapsed time (e.g., one hour) is convenient to use, since there relatively few rows to look at or plot. Also, an hourly average might be the most appropriate for many applications or studies. However, such large elapsed time intervals might mask brief spikes of vital interest. Using a small elapsed time instead (e.g., one minute) might reveal such brief spikes, but at the expense of more visual clutter, data volume, etc. The best approach, as described in detail below, is to use a large elapsed time when possible for convenience, but to also know when to focus in, using small elapsed times to identify brief spikes.\par
+Robyn Sands recently presented a paper that outlines effective ways to detect skew (see reference section {\field{\*\fldinst{HYPERLINK "\\l "ref-robyn-sands""}}{\fldrslt{\cf1\ul below}}}\cf0\ulnone\f0\fs24 ). She suggests calculating the ratio of the {\field{\*\fldinst{HYPERLINK "http://en.wikipedia.org/wiki/Variance"}}{\fldrslt{\cf1\ul variance}}}\cf0\ulnone\f0\fs24  to the {\field{\*\fldinst{HYPERLINK "http://en.wikipedia.org/wiki/Expected_value"}}{\fldrslt{\cf1\ul mean}}}\cf0\ulnone\f0\fs24  of the observations: a "high" ratio indicates skew. This approach is easy to incorporate into estimates of AAS, and is demonstrated below.\par
+\pard\keepn\sb100\sa100\b\fs28 AAS exact calculation (not very useful)\par
+\pard\sb100\sa100\b0\fs24 Oracle includes \i DB time\i0  as one of the statistics listed in {\field{\*\fldinst{HYPERLINK "http://download-west.oracle.com/docs/cd/B19306_01/server.102/b14237/dynviews_2136.htm" \\\\l "i1419643"}}{\fldrslt{\cf1\ul\f1\fs20 V$STATNAME}}}\cf0\ulnone\f0\fs24 , and its cumulative value is available in {\field{\*\fldinst{HYPERLINK "http://download-west.oracle.com/docs/cd/B19306_01/server.102/b14237/dynviews_2150.htm" \\\\l "i1420473"}}{\fldrslt{\cf1\ul\f1\fs20 V$SYSSTAT}}}\cf0\ulnone\f0\fs24 . Unfortunately, the cumulative value is nearly worthless for most investigative purposes. Conceivably, to calculate the AAS metric, one could periodically record the \i DB time\i0  statistic in {\field{\*\fldinst{HYPERLINK "http://download-west.oracle.com/docs/cd/B19306_01/server.102/b14237/dynviews_2150.htm" \\\\l "i1420473"}}{\fldrslt{\cf1\ul\f1\fs20 V$SYSSTAT}}}\cf0\ulnone\f0\fs24 , calculate the difference between successive observations, then divide by elapsed time. However, this is probably not worth the hassle, since there are easier methods, outlined next, that leverage Oracle's built-in AWR snapshotting.\par
+A simpler exact calculation technique would be to use the {\field{\*\fldinst{HYPERLINK "http://download-west.oracle.com/docs/cd/B19306_01/server.102/b14237/statviews_3192.htm" \\\\l "I1023453"}}{\fldrslt{\cf1\ul\f1\fs20 DBA_HIST_SYSSTAT}}}\cf0\ulnone\f0\fs24  table, which is the AWR version of {\field{\*\fldinst{HYPERLINK "http://download-west.oracle.com/docs/cd/B19306_01/server.102/b14237/dynviews_2150.htm" \\\\l "i1420473"}}{\fldrslt{\cf1\ul\f1\fs20 V$SYSSTAT}}}\cf0\ulnone\f0\fs24 . With this approach, Oracle is doing the periodic recording of \i DB time\i0  for us. But we are still left with the hassle of calculating the difference between successive observations, since this table stores cumulative, rather that incremental statistics. Moreover, the default AWR recording frequency, one hour intervals, is almost certainly too large for most AAS diagnostic purposes, hiding the skew that is usually of greatest interest.\par
+An example query that calculates AAS exactly from {\field{\*\fldinst{HYPERLINK "http://download-west.oracle.com/docs/cd/B19306_01/server.102/b14237/statviews_3192.htm" \\\\l "I1023453"}}{\fldrslt{\cf1\ul\f1\fs20 DBA_HIST_SYSSTAT}}}\cf0\ulnone\f0\fs24  is available in the script section below as {\field{\*\fldinst{HYPERLINK "\\l "script-aas-exact""}}{\fldrslt{\cf1\ul aas-exact.sql}}}\cf0\ulnone\f0\fs24 . I show here some example output that illustrates the relationship between \i DB time\i0  and AAS. Since the AWR snapshots are one hour intervals, we can divide the incremental \i DB time\i0  by 3600 to obtain AAS.\par
+\pard\tx0\tx959\tx1918\tx2877\tx3836\tx4795\tx5754\tx6713\tx7672\tx8631\f1\fs20    SNAP_ID BEGIN_HOUR       SECONDS_PER_HOUR        AAS\par
+---------- ---------------- ---------------- ----------\par
+      4196 2008-07-09 06:00             3821        1.1\par
+      4197 2008-07-09 07:00            12839        3.6\par
+      4198 2008-07-09 08:00            76104       21.1\par
+      4199 2008-07-09 09:00             6435        1.8\par
+      4200 2008-07-09 10:00            15178        4.2\par
+      4201 2008-07-09 11:00             7850        2.2\par
+      4202 2008-07-09 12:00            11482        3.2\par
+      4203 2008-07-09 13:00            14014        3.9\par
+      4204 2008-07-09 14:00             8855        2.5\par
+      4205 2008-07-09 15:00            31272        8.7\par
+      4206 2008-07-09 16:00             4939        1.4\par
+      4207 2008-07-09 17:00            28983        8.1\par
+      4208 2008-07-09 18:00             4171        1.2\par
+      4209 2008-07-09 19:00             2518         .7\par
+      4210 2008-07-09 20:00             7044          2\par
+\pard\keepn\sb100\sa100\b\f0\fs28 AAS estimation methods (very useful, based on Active Session History - ASH)\par
+\pard\sb100\sa100\b0\fs24 To clarify the method used to estimate the AAS metric from AWR data, the logic and math are explained below incrementally. \par
+\pard\keepn\sb100\sa100\b Step 1 - active session count per observation\par
+\pard\sb100\sa100\b0 Oracle records key facts about active sessions about once per second, and maintains a historical buffer of its observations in a table called {\field{\*\fldinst{HYPERLINK "http://download-west.oracle.com/docs/cd/B19306_01/server.102/b14237/dynviews_1007.htm" \\\\l "I1030299"}}{\fldrslt{\cf1\ul\f1\fs20 V$ACTIVE_SESSION_HISTORY}}}\cf0\ulnone\f0\fs24 . Each observation sample is identified by the integer column \f1\fs20 SAMPLE_ID\f0\fs24 . The count of rows in this table for a given \f1\fs20 SAMPLE_ID\f0\fs24  is essentially the count of active sessions for that observation. An example is shown in the query results below, where the count of active sessions ranges from 2 to 12 per ASH observation.\par
+Although not essential to estimating AAS, the query below also distinguishes between sessions in a wait state from those that think they are on the CPU. This additional diagnostic detail is often helpful, but is not necessary.\par
+\pard\tx0\tx959\tx1918\tx2877\tx3836\tx4795\tx5754\tx6713\tx7672\tx8631\f1\fs20 column sample_time format a25\par
+\par
+select\par
+   sample_id,\par
+   sample_time,\par
+   sum(decode(session_state, 'ON CPU', 1, 0))  as on_cpu,\par
+   sum(decode(session_state, 'WAITING', 1, 0)) as waiting,\par
+   count(*) as active_sessions\par
+from\par
+   v$active_session_history\par
+where\par
+   -- last 15 seconds\par
+   sample_time > sysdate - (0.25/1440)\par
+group by\par
+   sample_id,\par
+   sample_time\par
+order by\par
+   sample_id\par
+;\par
+\par
+ SAMPLE_ID SAMPLE_TIME                   ON_CPU    WAITING ACTIVE_SESSIONS\par
+---------- ------------------------- ---------- ---------- ---------------\par
+  50667633 24-JUL-08 08.56.03.078 PM          3          9              12\par
+  50667634 24-JUL-08 08.56.04.085 PM          1          6               7\par
+  50667635 24-JUL-08 08.56.05.095 PM          0          4               4\par
+  50667636 24-JUL-08 08.56.06.105 PM          1          2               3\par
+  50667637 24-JUL-08 08.56.07.115 PM          0          3               3\par
+  50667638 24-JUL-08 08.56.08.125 PM          0          2               2\par
+  50667639 24-JUL-08 08.56.09.135 PM          3          1               4\par
+  50667640 24-JUL-08 08.56.10.155 PM          0          4               4\par
+  50667641 24-JUL-08 08.56.11.165 PM          1          2               3\par
+  50667642 24-JUL-08 08.56.12.175 PM          0          4               4\par
+  50667643 24-JUL-08 08.56.13.185 PM          1          2               3\par
+  50667644 24-JUL-08 08.56.14.195 PM          1          3               4\par
+  50667645 24-JUL-08 08.56.15.205 PM          1          4               5\par
+  50667646 24-JUL-08 08.56.16.215 PM          1          2               3\par
+  50667647 24-JUL-08 08.56.17.225 PM          0          2               2\par
+  50667648 24-JUL-08 08.56.18.235 PM          0          2               2\par
+\par
+16 rows selected.\par
+\pard\sb100\sa100\f0\fs24 As an aside, be aware that the ASH definition of an active session does not necessarily correspond exactly to the value of {\field{\*\fldinst{HYPERLINK "http://download-west.oracle.com/docs/cd/B19306_01/server.102/b14237/dynviews_2088.htm" \\\\l "i1414383"}}{\fldrslt{\cf1\ul V$SESSION.STATE}}}\cf0\ulnone\f0\fs24  ({\field{\*\fldinst{HYPERLINK "\\l "ref-shee-2004""}}{\fldrslt{\cf1\ul Shee 2004}}}\cf0\ulnone\f0\fs24 , pp. 253). Also, sometimes ASH will record sessions that are in an "Idle" wait state, even though we would not normally consider these to be "active" (I sometimes, extremely rarely, see ASH sessions with the "Idle" \f1\fs20 event='virtual circuit status'\f0\fs24 ). However, neither of these very minor considerations impact the usefulness of this approach.\par
+\pard\keepn\sb100\sa100\b Step 2 - average the number of active sessions over a time interval\par
+\pard\sb100\sa100\b0 The "Step 1" query above provided session counts for every observation recorded by ASH in the time interval. To compute the average number of active sessions, we can turn the "Step 1" query above into an inline view subquery, then wrap it in an outer query that does the averaging. In this example, I also round the averages to a single decimal point, and associate the averages with the earliest timestamp in the subquery.\par
+\pard\tx0\tx959\tx1918\tx2877\tx3836\tx4795\tx5754\tx6713\tx7672\tx8631\f1\fs20 column sample_time format a19\par
+\par
+select\par
+   to_char(min(sub1.sample_time), 'YYYY-MM-DD HH24:MI:SS') as sample_time,\par
+   round(avg(sub1.on_cpu),1) as cpu_avg,\par
+   round(avg(sub1.waiting),1) as wait_avg,\par
+   round(avg(sub1.active_sessions),1) as act_avg\par
+from\par
+   ( -- sub1: one row per second, the resolution of SAMPLE_TIME\par
+     select\par
+        sample_id,\par
+        sample_time,\par
+        sum(decode(session_state, 'ON CPU', 1, 0))  as on_cpu,\par
+        sum(decode(session_state, 'WAITING', 1, 0)) as waiting,\par
+        count(*) as active_sessions\par
+     from\par
+        v$active_session_history\par
+     where\par
+        sample_time > sysdate - (0.25/1440)\par
+     group by\par
+        sample_id,\par
+        sample_time\par
+   ) sub1\par
+;\par
+\par
+SAMPLE_TIME            CPU_AVG   WAIT_AVG    ACT_AVG\par
+------------------- ---------- ---------- ----------\par
+2008-07-24 20:56:03         .8        3.3        4.1\par
+\par
+1 row selected.\par
+\pard\sb100\sa100\f0\fs24 As an aside, the averaging shown above does not include any data from ASH snapshots taken when the database was idle. ASH does not record a row for an observation that found no active sessions (i.e., such \f1\fs20 SAMPLE_ID\f0\fs24  values are "missing" from ASH). Therefore, the averages thus calculated will be artificially too high for those intervals that include observations without active sessions (because the N=samples denominator for the \f1\fs20 avg()\f0\fs24  function is artificially too low). However, this is not a problem in practice, since periods of interest to us usually involve performance crises, during which it is unlikely that ASH will observe an idle database. Obviously, most periods of interest involve plenty of active sessions, typically many more active sessions than CPUs.\par
+\pard\keepn\sb100\sa100\b Step 3 - include variance divided by mean to find skew\par
+\pard\sb100\sa100\b0 To the above "Step 3" query, I have added both \f1\fs20 variance\f0\fs24  and the ratio of \f1\fs20 variance\f0\fs24  to \f1\fs20 mean\f0\fs24 . This allows us to use the techniques championed by Robyn Sands to find skew (as described above). A "high" ratio indicates skew.\par
+\pard\tx0\tx959\tx1918\tx2877\tx3836\tx4795\tx5754\tx6713\tx7672\tx8631\f1\fs20 select\par
+   to_char(min(sub1.sample_time), 'YYYY-MM-DD HH24:MI:SS') as sample_time,\par
+   round(avg(sub1.on_cpu),1) as cpu_avg,\par
+   round(avg(sub1.waiting),1) as wait_avg,\par
+   round(avg(sub1.active_sessions),1) as act_avg,\par
+   round(variance(sub1.active_sessions),1) as act_var,\par
+   round( (variance(sub1.active_sessions)/avg(sub1.active_sessions)),1) as act_var_mean\par
+from\par
+   ( -- sub1: one row per second, the resolution of SAMPLE_TIME\par
+     select\par
+        sample_id,\par
+        sample_time,\par
+        sum(decode(session_state, 'ON CPU', 1, 0))  as on_cpu,\par
+        sum(decode(session_state, 'WAITING', 1, 0)) as waiting,\par
+        count(*) as active_sessions\par
+     from\par
+        v$active_session_history\par
+     where\par
+        sample_time > sysdate - (0.25/1440)\par
+     group by\par
+        sample_id,\par
+        sample_time\par
+   ) sub1\par
+;\par
+\par
+SAMPLE_TIME            CPU_AVG   WAIT_AVG    ACT_AVG    ACT_VAR ACT_VAR_MEAN\par
+------------------- ---------- ---------- ---------- ---------- ------------\par
+2008-07-24 20:56:03         .8        3.3        4.1        6.1          1.5\par
+\par
+1 row selected.\par
+\pard\keepn\sb100\sa100\b\f0\fs24 Step 4 - estimate for multiple time intervals (one minute resolution here)\par
+\pard\sb100\sa100\b0 To the "Step 3" query above, I made the following changes to extend this approach to multiple, sequential time intervals. This query is now identical to the final {\field{\*\fldinst{HYPERLINK "\\l "script-aas-per-min""}}{\fldrslt{\cf1\ul aas-per-min.sql}}}\cf0\ulnone\f0\fs24  script below.\par
+\pard{\pntext\f3\'B7\tab}{\*\pn\pnlvlblt\pnf3\pnindent360{\pntxtb\'B7}}\fi-360\li720\sb100\sa100 Used \f1\fs20 round(sub1.sample_time, 'MI')\f0\fs24  as the basis of \f1\fs20 GROUP BY\f0\fs24 , \par
+{\pntext\f3\'B7\tab}Added a \f1\fs20 sqlplus\f0\fs24  substitution variable to specify the overall time range of interest,\par
+{\pntext\f3\'B7\tab}Removed the variance column, since it is only interesting for debugging.\par
+\pard\tx0\tx959\tx1918\tx2877\tx3836\tx4795\tx5754\tx6713\tx7672\tx8631\f1\fs20 column sample_minute format a20\par
+\par
+select\par
+   to_char(round(sub1.sample_time, 'MI'), 'YYYY-MM-DD HH24:MI:SS') as sample_minute,\par
+   round(avg(sub1.on_cpu),1) as cpu_avg,\par
+   round(avg(sub1.waiting),1) as wait_avg,\par
+   round(avg(sub1.active_sessions),1) as act_avg,\par
+   round( (variance(sub1.active_sessions)/avg(sub1.active_sessions)),1) as act_var_mean\par
+from\par
+   ( -- sub1: one row per second, the resolution of SAMPLE_TIME\par
+     select\par
+        sample_id,\par
+        sample_time,\par
+        sum(decode(session_state, 'ON CPU', 1, 0))  as on_cpu,\par
+        sum(decode(session_state, 'WAITING', 1, 0)) as waiting,\par
+        count(*) as active_sessions\par
+     from\par
+        v$active_session_history\par
+     where\par
+        sample_time > sysdate - (&minutes/1440)\par
+     group by\par
+        sample_id,\par
+        sample_time\par
+   ) sub1\par
+group by\par
+   round(sub1.sample_time, 'MI')\par
+order by\par
+   round(sub1.sample_time, 'MI')\par
+;\par
+\par
+old  18:         sample_time > sysdate - (&minutes/1440)\par
+new  18:         sample_time > sysdate - (10/1440)\par
+\par
+SAMPLE_MINUTE           CPU_AVG   WAIT_AVG    ACT_AVG ACT_VAR_MEAN\par
+-------------------- ---------- ---------- ---------- ------------\par
+2008-07-25 19:05:00         1.7        3.2        4.9           .4\par
+2008-07-25 19:06:00           1        3.4        4.4           .3\par
+2008-07-25 19:07:00          .7        2.9        3.5           .2\par
+2008-07-25 19:08:00           1        3.6        4.6           .4\par
+2008-07-25 19:09:00          .8        3.3        4.2           .3\par
+2008-07-25 19:10:00          .8        3.4        4.2           .3\par
+2008-07-25 19:11:00           1        2.6        3.6           .3\par
+2008-07-25 19:12:00          .5        1.9        2.4           .3\par
+2008-07-25 19:13:00           1         .9        1.9           .6\par
+2008-07-25 19:14:00          .8        1.8        2.6           .8\par
+2008-07-25 19:15:00          .6        1.4          2           .4\par
+\par
+11 rows selected.\par
+\pard\keepn\sb100\sa100\b\f0\fs24 Step 5 - generalize to AWR for a longer history (hourly resolution here)\par
+\pard\sb100\sa100\b0 To the "Step 4" query above, I made the following changes to extend this approach to time intervals older than maintained by {\field{\*\fldinst{HYPERLINK "http://download-west.oracle.com/docs/cd/B19306_01/server.102/b14237/dynviews_1007.htm" \\\\l "I1030299"}}{\fldrslt{\cf1\ul\f1\fs20 V$ACTIVE_SESSION_HISTORY}}}\cf0\ulnone\f0\fs24 . This query is now identical to the final {\field{\*\fldinst{HYPERLINK "\\l "script-aas-per-hour""}}{\fldrslt{\cf1\ul aas-per-hour.sql}}}\cf0\ulnone\f0\fs24  script below.\par
+\pard{\pntext\f3\'B7\tab}{\*\pn\pnlvlblt\pnf3\pnindent360{\pntxtb\'B7}}\fi-360\li720\sb100\sa100 Changed the rounding to be hourly rather than by minute, \par
+{\pntext\f3\'B7\tab}Switched to {\field{\*\fldinst{HYPERLINK "http://download-west.oracle.com/docs/cd/B19306_01/server.102/b14237/statviews_3125.htm" \\\\l "I1023400"}}{\fldrslt{\cf1\ul\f1\fs20 DBA_HIST_ACTIVE_SESS_HISTORY}}}\cf0\ulnone\f0\fs24  to review older data.\par
+\pard\tx0\tx959\tx1918\tx2877\tx3836\tx4795\tx5754\tx6713\tx7672\tx8631\f1\fs20 column sample_hour format a17\par
+\par
+select\par
+   to_char(round(sub1.sample_time, 'HH24'), 'YYYY-MM-DD HH24:MI') as sample_hour,\par
+   round(avg(sub1.on_cpu),1) as cpu_avg,\par
+   round(avg(sub1.waiting),1) as wait_avg,\par
+   round(avg(sub1.active_sessions),1) as act_avg,\par
+   round( (variance(sub1.active_sessions)/avg(sub1.active_sessions)),1) as act_var_mean\par
+from\par
+   ( -- sub1: one row per second, the resolution of SAMPLE_TIME\par
+     select\par
+        sample_id,\par
+        sample_time,\par
+        sum(decode(session_state, 'ON CPU', 1, 0))  as on_cpu,\par
+        sum(decode(session_state, 'WAITING', 1, 0)) as waiting,\par
+        count(*) as active_sessions\par
+     from\par
+        dba_hist_active_sess_history\par
+     where\par
+        sample_time > sysdate - (&hours/24)\par
+     group by\par
+        sample_id,\par
+        sample_time\par
+   ) sub1\par
+group by\par
+   round(sub1.sample_time, 'HH24')\par
+order by\par
+   round(sub1.sample_time, 'HH24')\par
+;\par
+\pard\sb100\sa100\f0\fs24 As an aside, Oracle seems to use a sampling method to extract some of the rows from {\field{\*\fldinst{HYPERLINK "http://download-west.oracle.com/docs/cd/B19306_01/server.102/b14237/dynviews_1007.htm" \\\\l "I1030299"}}{\fldrslt{\cf1\ul\f1\fs20 V$ACTIVE_SESSION_HISTORY}}}\cf0\ulnone\f0\fs24  for longer-term storage in {\field{\*\fldinst{HYPERLINK "http://download-west.oracle.com/docs/cd/B19306_01/server.102/b14237/statviews_3125.htm" \\\\l "I1023400"}}{\fldrslt{\cf1\ul\f1\fs20 DBA_HIST_ACTIVE_SESS_HISTORY}}}\cf0\ulnone\f0\fs24 . Based on empirical evidence, it appears that this sampling method selects a subset of \f1\fs20 SAMPLE_ID\f0\fs24  values for archiving, while obtaining all ASH observations for the chosen \f1\fs20 SAMPLE_ID\f0\fs24  values. This is very fortuitous, since it preserves the ability to estimate active sessions by counting rows per \f1\fs20 SAMPLE_ID\f0\fs24  value (the basis of all the queries presented here). If Oracle had implemented a different subsetting method, such as selecting random rows from {\field{\*\fldinst{HYPERLINK "http://download-west.oracle.com/docs/cd/B19306_01/server.102/b14237/dynviews_1007.htm" \\\\l "I1030299"}}{\fldrslt{\cf1\ul\f1\fs20 V$ACTIVE_SESSION_HISTORY}}}\cf0\ulnone\f0\fs24 , then the \f1\fs20 count(*)\f0\fs24  based method here would break down.\par
+\pard\keepn\sb100\sa100\b\fs28 Example scenario\par
+\pard\sb100\sa100\b0\fs24 Running the {\field{\*\fldinst{HYPERLINK "\\l "script-aas-per-hour""}}{\fldrslt{\cf1\ul aas-per-hour.sql}}}\cf0\ulnone\f0\fs24  AWR script showed only low and moderate values of the hourly-average AAS metric (\f1\fs20 ACT_AVG\f0\fs24  column) over the previous twelve hours (from 1.8 to 6.4). Experience had shown that application users would start to suffer only when the AAS metric was greater than about 20. So based on only this hourly-average AAS metric, it would seem that there had been no performance problems over the twelve hour period.\par
+However, the variance/mean value (\f1\fs20 ACT_VAR_MEAN\f0\fs24 ) spiked very high (95.4) at around 14:00. This indicates a large amount of variability over that hour, perhaps a brief but intense spike in the AAS metric. Without considering the variance/mean, such a spike would have gone unnoticed.\par
+\pard\tx0\tx959\tx1918\tx2877\tx3836\tx4795\tx5754\tx6713\tx7672\tx8631\f1\fs20 SQL> @aas-per-hour\par
+Enter value for hours: 12\par
+old  18:         sample_time > sysdate - (&hours/24)\par
+new  18:         sample_time > sysdate - (12/24)\par
+\par
+SAMPLE_HOUR          CPU_AVG   WAIT_AVG    ACT_AVG ACT_VAR_MEAN\par
+----------------- ---------- ---------- ---------- ------------\par
+2008-04-16 07:00         1.4         .4        1.8           .6\par
+2008-04-16 08:00         1.8         .5        2.3            1\par
+2008-04-16 09:00         2.3         .5        2.8          1.3\par
+2008-04-16 10:00         2.6         .6        3.2          2.3\par
+2008-04-16 11:00         3.5         .6        4.1          2.3\par
+2008-04-16 12:00         2.4         .6          3          1.1\par
+2008-04-16 13:00         2.3         .6        2.9            1\par
+2008-04-16 14:00         3.7        2.7        6.4         95.4   <== spike in variance\par
+2008-04-16 15:00         3.1         .7        3.8          1.9\par
+2008-04-16 16:00         2.9         .7        3.6          1.6\par
+2008-04-16 17:00         2.3         .4        2.7           .9\par
+2008-04-16 18:00         2.1         .6        2.7          2.6\par
+\pard\sb100\sa100\f0\fs24 Since the apparent peak in the AAS metric occurred at a time older than was still available in {\field{\*\fldinst{HYPERLINK "http://download-west.oracle.com/docs/cd/B19306_01/server.102/b14237/dynviews_1007.htm" \\\\l "I1030299"}}{\fldrslt{\cf1\ul\f1\fs20 V$ACTIVE_SESSION_HISTORY}}}\cf0\ulnone\f0\fs24 , the AWR historical data was necessary. Running the {\field{\*\fldinst{HYPERLINK "\\l "script-aas-per-min-awr""}}{\fldrslt{\cf1\ul aas-per-min-awr.sql}}}\cf0\ulnone\f0\fs24  AWR script showed that the AAS metric spiked to a very high value (130.3) at around 14:08. The high value of the AAS metric indicated severe performance problems at that time, sure to impact the application end users. This knowledge of the time of the transient, but severe, spike enabled investigation and resolution of the problem. This brief problem might not have been visible without this approach, but finding it here was very quick: just two simple queries.\par
+\pard\tx0\tx959\tx1918\tx2877\tx3836\tx4795\tx5754\tx6713\tx7672\tx8631\f1\fs20 SQL> aas-per-min-awr\par
+Enter value for minutes: 300\par
+old  18:         SAMPLE_TIME > sysdate - (&minutes/1440)\par
+new  18:         SAMPLE_TIME > sysdate - (300/1440)\par
+\par
+SAMPLE_MINUTE           CPU_AVG   WAIT_AVG    ACT_AVG ACT_VAR_MEAN\par
+-------------------- ---------- ---------- ---------- ------------\par
+2008-04-16 13:54:00           3          1          4            0\par
+2008-04-16 13:55:00         3.2         .3        3.5           .7\par
+2008-04-16 13:56:00         4.2         .3        4.5          3.4\par
+2008-04-16 13:57:00         3.8         .8        4.7           .7\par
+2008-04-16 13:58:00         6.3          1        7.3          1.6\par
+2008-04-16 13:59:00         3.4         .4        3.8           .2\par
+2008-04-16 14:00:00         8.3         .5        8.8          1.8\par
+2008-04-16 14:01:00        10.7        2.2       12.8           .5\par
+2008-04-16 14:02:00         3.5         .7        4.2           .5\par
+2008-04-16 14:03:00         2.6        1.2        3.8          1.5\par
+2008-04-16 14:04:00         3.3        1.2        4.5          1.3\par
+2008-04-16 14:05:00         8.2         .7        8.8          2.1\par
+2008-04-16 14:06:00         6.7        1.3          8          1.1\par
+2008-04-16 14:07:00         4.7        3.2        7.8          3.7\par
+2008-04-16 14:08:00        20.5      109.8      130.3          170  <== spike in AAS\par
+2008-04-16 14:09:00           6        1.3        7.3         10.3\par
+2008-04-16 14:10:00         2.6         .4          3           .8\par
+2008-04-16 14:11:00           4         .3        4.3          1.1\par
+2008-04-16 14:12:00         5.7         .8        6.5          1.6\par
+2008-04-16 14:13:00           3         .3        3.3           .7\par
+2008-04-16 14:14:00         1.8         .7        2.5           .6\par
+2008-04-16 14:15:00         3.3          2        5.3          2.2\par
+2008-04-16 14:16:00         3.6         .6        4.2           .4\par
+2008-04-16 14:17:00         3.2          2        5.2          1.9\par
+2008-04-16 14:18:00           1         .8        1.8           .4\par
+2008-04-16 14:19:00         2.2         .5        2.7           .2\par
+2008-04-16 14:20:00         5.5         .8        6.3           .5\par
+2008-04-16 14:21:00           2         .7        2.7           .7\par
+2008-04-16 14:22:00         2.6          0        2.6           .3\par
+2008-04-16 14:23:00         2.8         .5        3.3           .2\par
+2008-04-16 14:24:00         1.7          1        2.7           .9\par
+2008-04-16 14:25:00           1         .8        1.8           .7\par
+2008-04-16 14:26:00         1.4        1.2        2.6           .3\par
+2008-04-16 14:27:00         4.5         .5          5           .8\par
+2008-04-16 14:28:00         2.3          1        3.3          1.6\par
+2008-04-16 14:29:00         3.5         .5          4          1.6\par
+2008-04-16 14:30:00         2.7         .8        3.5           .1\par
+2008-04-16 14:31:00         5.3        1.7          7           .9\par
+...\par
+\pard\keepn\sb100\sa100\b\f0\fs36 Find specific problem SQLs: Sort by aggregated statistics\par
+\pard\sb100\sa100\b0\fs24 The AWR table \f1\fs20 DBA_HIST_SQLSTAT\f0\fs24  records aggregate performance statistics for each combination of SQL statement and execution plan. It is "snapshot" based, and is easy to join to \f1\fs20 DBA_HIST_SNAPSHOT\f0\fs24  to get time interval details. It contains an excellent variety of basic performance statistics such as execution rate and buffer gets, as well as time spent in wait events, as detailed in the "{\field{\*\fldinst{HYPERLINK "\\l "DBA_HIST_SQLSTAT""}}{\fldrslt{\cf1\ul Selected AWR tables}}}\cf0\ulnone\f0\fs24 " section below.\par
+Once you have a time interval of interest (load spike, new code deployment, load test, etc.), you can often find interesting or significant SQL statements by aggregating these statistics, then sorting to find the biggest contributors to resource consumption. \par
+\pard\keepn\sb100\sa100\b\fs28 Example scenario\par
+\pard\sb100\sa100\b0\fs24 Running the {\field{\*\fldinst{HYPERLINK "\\l "script-find-expensive""}}{\fldrslt{\cf1\ul find-expensive.sql}}}\cf0\ulnone\f0\fs24  script while sorting by elapsed time gave the results shown below. These SQL statements were the largest consumers of \i DB time\i0 , and would probably benefit from a closer look. It is pretty easy to tell at a glance that some of these statements were big consumers of time due to high execution rate, while some others were relatively expensive with only a very few executions.\par
+The script is very easy to modify to include different metrics, sort orders, or time ranges.\par
+\pard\tx0\tx959\tx1918\tx2877\tx3836\tx4795\tx5754\tx6713\tx7672\tx8631\f1\fs20 SQL> @find-expensive.sql\par
+Enter value for start_yyyymmdd: 2008-08-01\par
+old  16:     begin_interval_time > to_date('&&start_YYYYMMDD','YYYY-MM-DD')\par
+new  16:     begin_interval_time > to_date('2008-08-01','YYYY-MM-DD')\par
+\par
+SQL_ID        SECONDS_SINCE_DATE EXECS_SINCE_DATE GETS_SINCE_DATE\par
+------------- ------------------ ---------------- ---------------\par
+1wc4bx0qap8ph              30617            21563       284059357\par
+6hudrj03d3w5g              23598         20551110       472673974\par
+6tccf6u9tf891              18731            33666       457970700\par
+2u874gr7qz2sk              15175            29014       370715705\par
+fpth08dw8pyr6              14553             2565        36018228\par
+1jt5kjbg7fs5p              11812            12451      2004271887\par
+2f75gyksy99zn              10805            21529       567776447\par
+ccp5w0adc6xx9               5222             6167       222949142\par
+gn26ddjqk93wc               3568        114084711       248687700\par
+b6usrg82hwsa3               2888                2       165621244\par
+ctaajfgak033z               2391                4        66644336\par
+7zwhhjv42qmfq               2197           592377        31495833\par
+96v8tzx8zb99s               2152             6167       117875813\par
+cxjsw79bprkm4               1526           396277       137413869\par
+f2awk3951dcxv               1500             3462        35853709\par
+fzmzt8mf2sw16               1421              311        44067742\par
+01bqmm3gcy9yj               1329           299778        23504806\par
+\pard\keepn\sb100\sa100\b\f0\fs36 Find specific problem SQLs: Non-uniform statistics\par
+\pard\sb100\sa100\b0\fs24 As explained {\field{\*\fldinst{HYPERLINK "\\l "aas-denominator""}}{\fldrslt{\cf1\ul above}}}\cf0\ulnone\f0\fs24 , aggregate statistics hide underlying skew. Short spikes in resource consumption often have severe impacts on application usability, but can go unnoticed in a review of aggregated data. Many database performance problems are related to skew: insight into problems, and their solutions often require finding or recognizing skew. \par
+An excellent way to find skew is to use the statistical measure of non-uniformity called variance. This statistic is usually easier to use when it is normalized by dividing it by the mean. This technique was previously described for {\field{\*\fldinst{HYPERLINK "\\l "script-aas-per-hour""}}{\fldrslt{\cf1\ul finding load spikes}}}\cf0\ulnone\f0\fs24 , and the script below, {\field{\*\fldinst{HYPERLINK "\\l "script-high-var""}}{\fldrslt{\cf1\ul high-var-sql.sql}}}\cf0\ulnone\f0\fs24 , illustrates how it can be adapted to the SQL performance history in \f1\fs20 DBA_HIST_SQLSTAT\f0\fs24 .\par
+Once you understand the general technique, this use of variance can be easily adapted to many other contexts, such as \f1\fs20 DBA_HIST_SEG_STAT\f0\fs24 , etc.\par
+\pard\keepn\sb100\sa100\b\fs28 Example scenario\par
+\pard\sb100\sa100\b0\fs24 Running {\field{\*\fldinst{HYPERLINK "\\l "script-high-var""}}{\fldrslt{\cf1\ul high-var-sql.sql}}}\cf0\ulnone\f0\fs24  over a week's work of data gave the following results. Notice how \f1\fs20 SQL_ID='g3176qdxahvv9'\f0\fs24  (third from the bottom) had only a moderate amount of elapsed time, but a variance much higher that its mean (ratio of 383). Subsequent investigation revealed a significant, although transient, problem with this query that was adversely impacting the application, but would not have been noticed by looking only at aggregate performance statistics.\par
+\pard\tx0\tx959\tx1918\tx2877\tx3836\tx4795\tx5754\tx6713\tx7672\tx8631\f1\fs20 SQL> @high-var-sql.sql\par
+Enter value for days_back: 7\par
+old  17:         snap.BEGIN_INTERVAL_TIME > sysdate - &&days_back\par
+new  17:         snap.BEGIN_INTERVAL_TIME > sysdate - 7\par
+old  32:    count(*) > ( &&days_back * 24) * 0.50\par
+new  32:    count(*) > ( 7 * 24) * 0.50\par
+\par
+SQL_ID        AVG_SECONDS_PER_HOUR VAR_OVER_MEAN         CT\par
+------------- -------------------- ------------- ----------\par
+72wuyy9sxdmpx                   41             7        167\par
+bgpag6tkxt34h                   29            12        167\par
+crxfkabz8atgn                   14            14        167\par
+66uc7dydx131a                   16            16        167\par
+334d2t692js2z                   36            19        167\par
+6y7mxycfs7afs                   23            20        167\par
+36vs0kyfmr0qa                   17            21        129\par
+fp10bju9zh6qn                   45            22        167\par
+fas56fsc7j9u5                   10            22        167\par
+61dyrn8rjqva2                   17            22        129\par
+4f8wgv0d5hgua                   31            23        167\par
+7wvy5xpy0c6k5                   15            23        151\par
+8v59g9tn46y3p                   17            24        132\par
+9pw7ucw4n113r                   59            27        167\par
+41n1dhb0r3dhv                   32            32        120\par
+8mqxjr571bath                   35            38        117\par
+8jp67hs2296v3                   46           154        128\par
+afdjq1cf8dpwx                   34           184        150\par
+6n3h2sgxpr78g                  454           198        145\par
+g3176qdxahvv9                   42           383         92\par
+b72dmps6rp8z8                  209          1116        167\par
+6qv7az2048hk4                 3409         50219        167\par
+\pard\keepn\sb100\sa100\b\f0\fs36 Characterize a problem SQL\rquote s behavior over time\par
+\pard\sb100\sa100\b0\fs24 The techniques above will help you find SQL statements that are associated with load spikes, high resource consumption, or unstable performance. Once you have some suspect SQL statements to investigate, it is often very helpful to review performance over time. By using \f1\fs20 DBA_HIST_SQLSTAT\f0\fs24  to examine the time behavior of an SQL statement, it is often easy to spot trends or patterns that point towards causes and solutions. This approach can also help identify parts ofthe application using the SQL. The {\field{\*\fldinst{HYPERLINK "\\l "script-sql-stat-hist""}}{\fldrslt{\cf1\ul sql-stat-hist.sql}}}\cf0\ulnone\f0\fs24  is one way to spot these trends, and was used for the following examples.\par
+\pard\keepn\sb100\sa100\b\fs28 Example 1 scenario\par
+\pard\sb100\sa100\b0\fs24 The SQL statement with the time behavior shown below had sustained high execution rates, as high as 44 times per second (158739 per hour). It was very efficient, at a steady four gets per execution. However, it would occasionally completely consume the CPUs, with over 45,000 seconds per hour (12.6 hours per hour, averaged over a whole hour!). This was due to concurrency-related wait event pile-ups. The data shown below was vital for resolution of this problem, and these time-series data would have been hard to obtain without AWR.\par
+\pard\tx0\tx959\tx1918\tx2877\tx3836\tx4795\tx5754\tx6713\tx7672\tx8631\f1\fs20    SNAP_ID BEGIN_HOUR       EXECS_PER_HOUR GETS_PER_HOUR GETS_PER_EXEC SECONDS_PER_HOUR\par
+---------- ---------------- -------------- ------------- ------------- ----------------\par
+      1978 2008-04-07 20:00         140449        540639             4               11\par
+      1979 2008-04-07 21:00         124142        477807             4               17\par
+      1980 2008-04-07 22:00          90568        347286             4               20\par
+      1981 2008-04-07 23:00          83287        323100             4               30\par
+      1982 2008-04-08 00:00          57094        221166             4               49\par
+      1983 2008-04-08 01:00          43925        170594             4                7\par
+      1984 2008-04-08 02:00          38596        150277             4                4\par
+      1985 2008-04-08 03:00          35710        139576             4                4\par
+      1986 2008-04-08 04:00          29700        115429             4                4\par
+      1987 2008-04-08 05:00          43666        170520             4                5\par
+      1988 2008-04-08 06:00          50755        197116             4                6\par
+      1989 2008-04-08 07:00          80371        310652             4                9\par
+      1990 2008-04-08 08:00         111924        431470             4               11\par
+      1991 2008-04-08 09:00         127154        489649             4               27\par
+      1992 2008-04-08 10:00         139270        536962             4               25\par
+      1993 2008-04-08 11:00         128697        496013             4               18\par
+      1994 2008-04-08 12:00         158739        613554             4            45287\par
+      1995 2008-04-08 13:00         152515        587605             4               40\par
+      1996 2008-04-08 14:00         144389        555770             4            37589\par
+      1997 2008-04-08 15:00         149278        575827             4               26\par
+      1998 2008-04-08 16:00         140632        542580             4               12\par
+      1999 2008-04-08 17:00         120113        462665             4               11\par
+      2000 2008-04-08 18:00         121394        468684             4               12\par
+      2001 2008-04-08 19:00         127948        493084             4               13\par
+\pard\keepn\sb100\sa100\b\f0\fs28 Example 2 scenario\par
+\pard\sb100\sa100\b0\fs24 The SQL statement with the time behavior shown below had nightly high execution rates, but it was not executed during the day. As shown by the last column, the database seemed to be able to handle this high execution rate for this efficient query (all values well under 3600). Nevertheless, these data pointed to a flaw in the application that needed fixing.\par
+\pard\tx0\tx959\tx1918\tx2877\tx3836\tx4795\tx5754\tx6713\tx7672\tx8631\f1\fs20    SNAP_ID BEGIN_HOUR       EXECS_PER_HOUR GETS_PER_HOUR GETS_PER_EXEC SECONDS_PER_HOUR\par
+---------- ---------------- -------------- ------------- ------------- ----------------\par
+      1811 2008-03-31 21:00          98550        893916             9               28\par
+      1812 2008-03-31 22:00           9794         89386             9                2\par
+\par
+      1823 2008-04-01 09:00           3038         27604             9                1\par
+      1824 2008-04-01 10:00           4360         39362             9                1\par
+      1825 2008-04-01 11:00           3608         32759             9                1\par
+\par
+      1859 2008-04-02 21:00          17369        156840             9                3\par
+\par
+      1883 2008-04-03 21:00          79566        717500             9               22\par
+      1884 2008-04-03 22:00         207334       1871430             9               38\par
+      1885 2008-04-03 23:00         276997       2500938             9               39\par
+\par
+      1886 2008-04-04 00:00         258505       2329526             9               36\par
+      1887 2008-04-04 01:00         190127       1710001             9               27\par
+      1888 2008-04-04 02:00         188449       1695215             9               24\par
+      1907 2008-04-04 21:00         102162        923998             9               20\par
+\par
+      1930 2008-04-05 20:00          17437        158213             9                3\par
+      1931 2008-04-05 21:00         196100       1768306             9               30\par
+      1932 2008-04-05 22:00         207867       1875544             9               40\par
+      1933 2008-04-05 23:00         230548       2079470             9               32\par
+\par
+      1934 2008-04-06 00:00         216352       1946824             9               31\par
+      1935 2008-04-06 01:00         207935       1871111             9               28\par
+      1936 2008-04-06 02:00         118544       1065785             9               15\par
+\pard\keepn\sb100\sa100\b\f0\fs28 Example 3 scenario\par
+\pard\sb100\sa100\b0\fs24 The SQL statement with the time behavior shown below had sporadically high execution rates. As shown by the last column, the database seemed to be able to handle this high execution rate for this efficient query (all values well under 3600). Nevertheless, these data pointed to a flaw in the application that needed fixing.\par
+\pard\tx0\tx959\tx1918\tx2877\tx3836\tx4795\tx5754\tx6713\tx7672\tx8631\f1\fs20    SNAP_ID BEGIN_HOUR       EXECS_PER_HOUR GETS_PER_HOUR GETS_PER_EXEC SECONDS_PER_HOUR\par
+---------- ---------------- -------------- ------------- ------------- ----------------\par
+      1790 2008-03-31 00:00           6710         20340             3                0\par
+      1791 2008-03-31 01:00             83           253             3                0\par
+      1792 2008-03-31 02:00             18            54             3                0\par
+      1793 2008-03-31 03:00             18            54             3                0\par
+      1794 2008-03-31 04:00              1             3             3                0\par
+      1795 2008-03-31 05:00             16            48             3                0\par
+      1796 2008-03-31 06:00        1943358       5901783             3               85\par
+      1797 2008-03-31 07:00           5633         17195             3                0\par
+      1798 2008-03-31 08:00         927016       2815340             3               35\par
+      1799 2008-03-31 09:00        5843023      17744104             3              252\par
+      1800 2008-03-31 10:00        2929624       8896969             3              131\par
+      1801 2008-03-31 11:00         988709       3002649             3               45\par
+      1802 2008-03-31 12:00        1959757       5951342             3              108\par
+      1803 2008-03-31 13:00          10767         32728             3                1\par
+      1804 2008-03-31 14:00         997451       3028890             3               70\par
+      1805 2008-03-31 15:00        1000944       3039948             3               49\par
+      1806 2008-03-31 16:00           5166         15861             3                0\par
+      1807 2008-03-31 17:00           4821         14616             3                0\par
+      1808 2008-03-31 18:00          11639         35243             3                1\par
+      1809 2008-03-31 19:00           8346         25421             3                1\par
+      1810 2008-03-31 20:00           4731         14380             3                1\par
+      1811 2008-03-31 21:00        1975147       5998626             3              160\par
+      1812 2008-03-31 22:00          27361         83023             3                3\par
+      1813 2008-03-31 23:00            521          1589             3                0\par
+\pard\keepn\sb100\sa100\b\f0\fs28 Example 4 scenario\par
+\pard\sb100\sa100\b0\fs24 The SQL statement with the time behavior shown below had sporadically high execution rates. As shown by the last column, the database was often struggling with this execution rate. For example, during the hour of 2008-04-03 10:00 it was essentially consuming more than a whole CPU all by itself (4502 > 3600). Also, it would switch execution plans, with the plans having different efficiencies (primary key \f1\fs20 plan_hash_value\f0\fs24  is not shown here, but notice how the hour of 2008-04-02 23:00 has two rows). Again, these AWR data were critical into characterizing this SQL statement's behavior so that a fix could be designed.\par
+\pard\tx0\tx959\tx1918\tx2877\tx3836\tx4795\tx5754\tx6713\tx7672\tx8631\f1\fs20    SNAP_ID BEGIN_HOUR       EXECS_PER_HOUR GETS_PER_HOUR GETS_PER_EXEC SECONDS_PER_HOUR\par
+---------- ---------------- -------------- ------------- ------------- ----------------\par
+      1848 2008-04-02 10:00        1028451       3155807             3               39\par
+      1849 2008-04-02 11:00        1015627       3116830             3               35\par
+      1850 2008-04-02 12:00         957525       2941788             3               34\par
+      1851 2008-04-02 13:00           7740         23486             3                0\par
+      1852 2008-04-02 14:00        2039987       6260065             3               86\par
+      1853 2008-04-02 15:00        1017857       3123548             3               33\par
+      1854 2008-04-02 16:00           3692         11286             3                0\par
+      1855 2008-04-02 17:00           8700         26482             3                0\par
+      1856 2008-04-02 18:00           5895         17937             3                0\par
+      1857 2008-04-02 19:00           7296         22103             3                0\par
+      1858 2008-04-02 20:00           2156          6526             3                0\par
+      1859 2008-04-02 21:00           2686          8186             3                0\par
+      1860 2008-04-02 22:00           5439         74432            14               14\par
+      1861 2008-04-02 23:00         227644       3152747            14              848\par
+      1861 2008-04-02 23:00             80           283             4                0\par
+      1862 2008-04-03 00:00         792146       7807033            10             1215\par
+      1865 2008-04-03 03:00            829          7464             9                1\par
+      1867 2008-04-03 05:00            432          3889             9                0\par
+      1868 2008-04-03 06:00            388          2720             7                0\par
+      1869 2008-04-03 07:00           1273          9142             7                1\par
+      1870 2008-04-03 08:00          28277        804514            28              190\par
+      1871 2008-04-03 09:00         399722       5372737            13             1461\par
+      1872 2008-04-03 10:00        1563634      17540545            11             4503\par
+      1873 2008-04-03 11:00            232           717             3                0\par
+\pard\keepn\sb100\sa100\b\f0\fs36 Selected AWR tables\par
+\pard\sb100\sa100\b0\fs24 The various 10g databases I have seen all contained 79 AWR "tables" (i.e., tables whose names begin with "\f1\fs20 DBA_HIST_\f0\fs24 "). Of course, these are not really tables, but \f1\fs20 SYS\f0\fs24 -owned views with public synonyms. Many of the underlying objects seem to have names starting with "\f1\fs20 WRH$_\f0\fs24 " and their segments seem to reside in the \f1\fs20 SYSAUX\f0\fs24  tablespace. However, this paper is not a detailed look at the underlying structure of the AWR tables.\par
+This paper discusses only a small fraction of the approximately 79 AWR tables. The focus here is application SQL performance diagnostics, rather than topics of more interest to the DBA such as undo segments, SGA, etc.\par
+\pard\keepn\sb100\sa100\b\fs28 DBA_HIST_SNAPSHOT\par
+\pard\sb100\sa100\b0\fs24 The {\field{\*\fldinst{HYPERLINK "http://download-west.oracle.com/docs/cd/B19306_01/server.102/b14237/statviews_3177.htm" \\\\l "I1023442"}}{\fldrslt{\cf1\ul\f1\fs20 DBA_HIST_SNAPSHOT}}}\cf0\ulnone\f0\fs24  table defines the time interval for each AWR snapshot (\f1\fs20 SNAP_ID\f0\fs24 ). Its effective primary key apparently includes these columns:\par
+\pard{\pntext\f3\'B7\tab}{\*\pn\pnlvlblt\pnf3\pnindent360{\pntxtb\'B7}}\fi-360\li720\sb100\sa100\f1\fs20 SNAP_ID\f0\fs24  \par
+\f1\fs20{\pntext\f3\'B7\tab}DBID\f0\fs24  and \f1\fs20 INSTANCE_NUMBER\f0\fs24  (irrelevant for single, non-RAC database) \par
+\pard\tx0\tx959\tx1918\tx2877\tx3836\tx4795\tx5754\tx6713\tx7672\tx8631\f1\fs20  Name                                      Null?    Type\par
+ ----------------------------------------- -------- ----------------------------\par
+ SNAP_ID                                   NOT NULL NUMBER\par
+ DBID                                      NOT NULL NUMBER\par
+ INSTANCE_NUMBER                           NOT NULL NUMBER\par
+ ...\par
+ BEGIN_INTERVAL_TIME                       NOT NULL TIMESTAMP(3)\par
+ END_INTERVAL_TIME                         NOT NULL TIMESTAMP(3)\par
+ ...\par
+\pard\keepn\sb100\sa100\b\f0\fs28 DBA_HIST_SQLSTAT\par
+\pard\sb100\sa100\b0\fs24 The {\field{\*\fldinst{HYPERLINK "http://download-west.oracle.com/docs/cd/B19306_01/server.102/b14237/statviews_3183.htm" \\\\l "I1023447"}}{\fldrslt{\cf1\ul\f1\fs20 DBA_HIST_SQLSTAT}}}\cf0\ulnone\f0\fs24  table records aggregate performance statistics for each SQL statement and execution plan. Its effective primary key apparently includes these columns:\par
+\pard{\pntext\f3\'B7\tab}{\*\pn\pnlvlblt\pnf3\pnindent360{\pntxtb\'B7}}\fi-360\li720\sb100\sa100\f1\fs20 SNAP_ID\f0\fs24  \par
+\f1\fs20{\pntext\f3\'B7\tab}SQL_ID\f0\fs24  \par
+\f1\fs20{\pntext\f3\'B7\tab}PLAN_HASH_VALUE\f0\fs24  \par
+\f1\fs20{\pntext\f3\'B7\tab}(DBID\f0\fs24  and \f1\fs20 INSTANCE_NUMBER\f0\fs24 , irrelevant for single, non-RAC database) \par
+\pard\sb100\sa100 It includes basic statistics such as executions, gets, and reads. as well as wait times in classes of IO, concurrency, application (in microseconds). It also include CPU time and elapsed time. This is a very comprehensive set of statistics.\par
+\pard\tx0\tx959\tx1918\tx2877\tx3836\tx4795\tx5754\tx6713\tx7672\tx8631\f1\fs20  Name                                      Null?    Type\par
+ ----------------------------------------- -------- ----------------------------\par
+ SNAP_ID                                            NUMBER\par
+ DBID                                               NUMBER\par
+ INSTANCE_NUMBER                                    NUMBER\par
+ SQL_ID                                             VARCHAR2(13)\par
+ PLAN_HASH_VALUE                                    NUMBER\par
+ ...\par
+ MODULE                                             VARCHAR2(64)\par
+ ACTION                                             VARCHAR2(64)\par
+ ...\par
+ PARSING_SCHEMA_NAME                                VARCHAR2(30)\par
+ ...\par
+ EXECUTIONS_TOTAL                                   NUMBER\par
+ EXECUTIONS_DELTA                                   NUMBER\par
+ ...\par
+ DISK_READS_DELTA                                   NUMBER\par
+ ...\par
+ BUFFER_GETS_DELTA                                  NUMBER\par
+ ...\par
+ CPU_TIME_DELTA                                     NUMBER\par
+ ...\par
+ ELAPSED_TIME_DELTA                                 NUMBER\par
+ ...\par
+ IOWAIT_DELTA                                       NUMBER\par
+ ...\par
+ CLWAIT_DELTA                                       NUMBER\par
+ ...\par
+ APWAIT_DELTA                                       NUMBER\par
+ ...\par
+ CCWAIT_DELTA                                       NUMBER\par
+ ... \par
+\pard\sb100\sa100\f0\fs24 Most of these statistics are available in both cumulative (i.e., since parsing) and incremental (i.e., for the snapshot only) aggregates. The incremental aggregates, with names ending in \f1\fs20 DELTA\f0\fs24 , are much more useful, since they allow you to calculate sums for specific snapshots. In fact, the \f1\fs20 TOTAL\f0\fs24  cumulative versions can be horribly misleading, since they can actually decrease, presumably if it aged out then brought back into the library cache. The following example illustrates this severe problem with \f1\fs20 TOTAL\f0\fs24  versions:\par
+\pard\tx0\tx959\tx1918\tx2877\tx3836\tx4795\tx5754\tx6713\tx7672\tx8631\f1\fs20 select\par
+   snap_id,\par
+   to_char(begin_interval_time,'YYYY-MM-DD HH24:MI') as begin_hour,\par
+   executions_total,\par
+   executions_delta\par
+from\par
+   dba_hist_snapshot natural join dba_hist_sqlstat\par
+where\par
+   sql_id = 'gk8sdttq18sxw'\par
+order by\par
+   snap_id\par
+;\par
+\par
+SNAP_ID BEGIN_HOUR       EXECS_TOTAL EXECS_DELTA\par
+------- ---------------- ----------- -----------\par
+   4571 2008-07-24 21:00       52647       52647\par
+   4572 2008-07-24 22:00       63756       11109\par
+   4691 2008-07-29 21:00       27602       27576\par
+   4739 2008-07-31 21:00       77292       77280\par
+   4756 2008-08-01 14:00       79548        2256\par
+   4757 2008-08-01 15:00      109722       30174\par
+   4758 2008-08-01 16:00      137217       27495\par
+   4759 2008-08-01 17:00      155265       18048\par
+   4763 2008-08-01 21:00      237432       82167\par
+   4823 2008-08-04 09:00       97036       19744\par
+   4824 2008-08-04 10:00       11232       11232\par
+   4835 2008-08-04 21:00        2016        2016\par
+\pard\keepn\sb100\sa100\b\f0\fs28 DBA_HIST_SYSSTAT\par
+\pard\sb100\sa100\b0\fs24 The {\field{\*\fldinst{HYPERLINK "http://download-west.oracle.com/docs/cd/B19306_01/server.102/b14237/statviews_3192.htm" \\\\l "I1023453"}}{\fldrslt{\cf1\ul\f1\fs20 DBA_HIST_SYSSTAT}}}\cf0\ulnone\f0\fs24  table records hourly snapshots of {\field{\*\fldinst{HYPERLINK "http://download-west.oracle.com/docs/cd/B19306_01/server.102/b14237/dynviews_2150.htm" \\\\l "i1420473"}}{\fldrslt{\cf1\ul\f1\fs20 V$SYSSTAT}}}\cf0\ulnone\f0\fs24 . It includes almost 400 values of \f1\fs20 STAT_NAME\f0\fs24 .\par
+It includes only cumulative data, not incremental, so you need to calculate the deltas yourself. These cumulative statistic counters get reset with an Oracle bounce, which complicates the calculation of deltas. \par
+Its \i DB time\i0  values are in units of centiseconds, unlike some other AWR tables, which complicates things.\par
+Many of its statistics can be used a basis for comparison, for example calculating the percentage of all \i DB time\i0  consumed by a particular query as a function of time.\par
+Its effective primary key apparently includes these columns:\par
+\pard{\pntext\f3\'B7\tab}{\*\pn\pnlvlblt\pnf3\pnindent360{\pntxtb\'B7}}\fi-360\li720\sb100\sa100\f1\fs20 SNAP_ID\f0\fs24  \par
+\f1\fs20{\pntext\f3\'B7\tab}STAT_ID\f0\fs24  \par
+\f1\fs20{\pntext\f3\'B7\tab}DBID\f0\fs24  and \f1\fs20 INSTANCE_NUMBER\f0\fs24  (irrelevant for single, non-RAC database) \par
+\pard\tx0\tx959\tx1918\tx2877\tx3836\tx4795\tx5754\tx6713\tx7672\tx8631\f1\fs20  Name                                      Null?    Type\par
+ ----------------------------------------- -------- ----------------------------\par
+ SNAP_ID                                            NUMBER\par
+ DBID                                               NUMBER\par
+ INSTANCE_NUMBER                                    NUMBER\par
+ STAT_ID                                            NUMBER\par
+ STAT_NAME                                          VARCHAR2(64)\par
+ VALUE                                              NUMBER\par
+\pard\keepn\sb100\sa100\b\f0\fs28 DBA_HIST_SEG_STAT\par
+\pard\sb100\sa100\b0\fs24 The {\field{\*\fldinst{HYPERLINK "http://download-west.oracle.com/docs/cd/B19306_01/server.102/b14237/statviews_3165.htm" \\\\l "I1023436"}}{\fldrslt{\cf1\ul\f1\fs20 DBA_HIST_SEG_STAT}}}\cf0\ulnone\f0\fs24  table provides a very useful alternative perspective from usual SQL focus. In some cases, the database objects themselves must be redesigned, since SQL tuning can only go so far. This table can help you identify objects associated with the greatest resource consumption or with frequent occurrences of spikes.\par
+This table includes basic statistics such as logical reads, physical reads, and block changes, as well as wait counts such as buffer busy and row locks. Both "delta" and "total" values are available: use the "delta" versions for easier aggregation within time intervals.\par
+You should join to \f1\fs20 DBA_HIST_SEG_STAT_OBJ\f0\fs24  to get segment characteristics.\par
+Its effective primary key apparently includes these columns:\par
+\pard{\pntext\f3\'B7\tab}{\*\pn\pnlvlblt\pnf3\pnindent360{\pntxtb\'B7}}\fi-360\li720\sb100\sa100\f1\fs20 SNAP_ID\f0\fs24  \par
+\f1\fs20{\pntext\f3\'B7\tab}OBJ#\f0\fs24  \par
+\f1\fs20{\pntext\f3\'B7\tab}DATAOBJ#\f0\fs24  \par
+\f1\fs20{\pntext\f3\'B7\tab}DBID\f0\fs24  and \f1\fs20 INSTANCE_NUMBER\f0\fs24  (irrelevant for single, non-RAC database) \par
+\pard\tx0\tx959\tx1918\tx2877\tx3836\tx4795\tx5754\tx6713\tx7672\tx8631\f1\fs20  Name                                      Null?    Type\par
+ ----------------------------------------- -------- ----------------------------\par
+ SNAP_ID                                            NUMBER\par
+ DBID                                               NUMBER\par
+ INSTANCE_NUMBER                                    NUMBER\par
+ TS#                                                NUMBER\par
+ OBJ#                                               NUMBER\par
+ DATAOBJ#                                           NUMBER\par
+  ...\par
+ LOGICAL_READS_DELTA                                NUMBER\par
+  ...\par
+ BUFFER_BUSY_WAITS_DELTA                            NUMBER\par
+  ...\par
+ DB_BLOCK_CHANGES_DELTA                             NUMBER\par
+  ...\par
+ PHYSICAL_READS_DELTA                               NUMBER\par
+  ...\par
+ PHYSICAL_WRITES_DELTA                              NUMBER\par
+  ...\par
+ PHYSICAL_READS_DIRECT_DELTA                        NUMBER\par
+  ...\par
+ ROW_LOCK_WAITS_DELTA                               NUMBER\par
+  ...\par
+ GC_BUFFER_BUSY_DELTA                               NUMBER\par
+  ...\par
+ SPACE_USED_TOTAL                                   NUMBER\par
+ SPACE_USED_DELTA                                   NUMBER\par
+ SPACE_ALLOCATED_TOTAL                              NUMBER\par
+ SPACE_ALLOCATED_DELTA                              NUMBER\par
+  ...\par
+ TABLE_SCANS_DELTA                                  NUMBER\par
+\pard\keepn\sb100\sa100\b\f0\fs28 DBA_HIST_SEG_STAT_OBJ\par
+\pard\sb100\sa100\b0\fs24 The {\field{\*\fldinst{HYPERLINK "http://download-west.oracle.com/docs/cd/B19306_01/server.102/b14237/statviews_3166.htm" \\\\l "I1023437"}}{\fldrslt{\cf1\ul\f1\fs20 DBA_HIST_SEG_STAT_OBJ}}}\cf0\ulnone\f0\fs24  table contains segment level details for objects tracked by \f1\fs20 DBA_HIST_SEG_STAT\f0\fs24 . These details include name, owner, type and tablespace name. Several segment types are included:\par
+\pard{\pntext\f3\'B7\tab}{\*\pn\pnlvlblt\pnf3\pnindent360{\pntxtb\'B7}}\fi-360\li720\sb100\sa100 table and table partition \par
+{\pntext\f3\'B7\tab}index and index partition \par
+{\pntext\f3\'B7\tab}LOB \par
+\pard\sb100\sa100 Its effective primary key apparently includes these columns:\par
+\pard{\pntext\f3\'B7\tab}{\*\pn\pnlvlblt\pnf3\pnindent360{\pntxtb\'B7}}\fi-360\li720\sb100\sa100\f1\fs20 OBJ#\f0\fs24  \par
+\f1\fs20{\pntext\f3\'B7\tab}DATAOBJ#\f0\fs24  \par
+\f1\fs20{\pntext\f3\'B7\tab}DBID\f0\fs24  (irrelevant for single, non-RAC database) \par
+\pard\tx0\tx959\tx1918\tx2877\tx3836\tx4795\tx5754\tx6713\tx7672\tx8631\f1\fs20  Name                                      Null?    Type\par
+ ----------------------------------------- -------- ----------------------------\par
+ DBID                                      NOT NULL NUMBER\par
+ TS#                                                NUMBER\par
+ OBJ#                                      NOT NULL NUMBER\par
+ DATAOBJ#                                  NOT NULL NUMBER\par
+ OWNER                                     NOT NULL VARCHAR2(30)\par
+ OBJECT_NAME                               NOT NULL VARCHAR2(30)\par
+ SUBOBJECT_NAME                                     VARCHAR2(30)\par
+ OBJECT_TYPE                                        VARCHAR2(18)\par
+ TABLESPACE_NAME                           NOT NULL VARCHAR2(30)\par
+ PARTITION_TYPE                                     VARCHAR2(8)\par
+\pard\keepn\sb100\sa100\b\f0\fs28 DBA_HIST_SQLTEXT\par
+\pard\sb100\sa100\b0\fs24 The {\field{\*\fldinst{HYPERLINK "http://download-west.oracle.com/docs/cd/B19306_01/server.102/b14237/statviews_3184.htm" \\\\l "I1023448"}}{\fldrslt{\cf1\ul\f1\fs20 DBA_HIST_SQLTEXT}}}\cf0\ulnone\f0\fs24  table contains the full text of SQL statements for (nearly all) \f1\fs20 SQL_ID\f0\fs24  values included in other AWR tables. A SQL statement can often be found here even when it is no longer in {\field{\*\fldinst{HYPERLINK "http://download-west.oracle.com/docs/cd/B19306_01/server.102/b14237/dynviews_2113.htm" \\\\l "i1417057"}}{\fldrslt{\cf1\ul\f1\fs20 V$SQL}}}\cf0\ulnone\f0\fs24  and friends.\par
+Its effective primary key apparently includes these columns:\par
+\pard{\pntext\f3\'B7\tab}{\*\pn\pnlvlblt\pnf3\pnindent360{\pntxtb\'B7}}\fi-360\li720\sb100\sa100\f1\fs20 SQL_ID\f0\fs24  \par
+\f1\fs20{\pntext\f3\'B7\tab}DBID\f0\fs24  and \f1\fs20 INSTANCE_NUMBER\f0\fs24  (irrelevant for single, non-RAC database) \par
+\pard\tx0\tx959\tx1918\tx2877\tx3836\tx4795\tx5754\tx6713\tx7672\tx8631\f1\fs20  Name                                      Null?    Type\par
+ ----------------------------------------- -------- ----------------------------\par
+ DBID                                      NOT NULL NUMBER\par
+ SQL_ID                                    NOT NULL VARCHAR2(13)\par
+ SQL_TEXT                                           CLOB\par
+ COMMAND_TYPE                                       NUMBER\par
+\pard\keepn\sb100\sa100\b\f0\fs28 DBA_HIST_ACTIVE_SESS_HISTORY\par
+\pard\sb100\sa100\b0\fs24 The {\field{\*\fldinst{HYPERLINK "http://download-west.oracle.com/docs/cd/B19306_01/server.102/b14237/statviews_3125.htm" \\\\l "I1023400"}}{\fldrslt{\cf1\ul\f1\fs20 DBA_HIST_ACTIVE_SESS_HISTORY}}}\cf0\ulnone\f0\fs24  table contains a subset of the active session data sampled about once per second in {\field{\*\fldinst{HYPERLINK "http://download-west.oracle.com/docs/cd/B19306_01/server.102/b14237/dynviews_1007.htm" \\\\l "I1030299"}}{\fldrslt{\cf1\ul\f1\fs20 V$ACTIVE_SESSION_HISTORY}}}\cf0\ulnone\f0\fs24 , and is therefore a part of ASH as well as AWR.\par
+It is one of the few AWR tables that is not based on the AWR snapshots, since it has a much smaller time resolution. It is not uncommon to see resolution of about ten seconds. In other words, perhaps about one out of every ten ASH once-per-second samples is included in AWR. \par
+\pard\keepn\sb100\sa100\b\fs36 Scripts\par
+\fs28 Find time ranges of load spikes: Average Active Sessions (AAS)\par
+\fs24 aas-per-hour.sql (AWR)\par
+\pard\sb100\sa100\b0 See also the {\field{\*\fldinst{HYPERLINK "\\l "example-aas-1""}}{\fldrslt{\cf1\ul AAS example}}}\cf0\ulnone\f0\fs24  above.\par
+\pard\tx0\tx959\tx1918\tx2877\tx3836\tx4795\tx5754\tx6713\tx7672\tx8631\f1\fs20 column sample_hour format a16\par
+select\par
+   to_char(round(sub1.sample_time, 'HH24'), 'YYYY-MM-DD HH24:MI') as sample_hour,\par
+   round(avg(sub1.on_cpu),1) as cpu_avg,\par
+   round(avg(sub1.waiting),1) as wait_avg,\par
+   round(avg(sub1.active_sessions),1) as act_avg,\par
+   round( (variance(sub1.active_sessions)/avg(sub1.active_sessions)),1) as act_var_mean\par
+from\par
+   ( -- sub1: one row per second, the resolution of SAMPLE_TIME\par
+     select\par
+        sample_id,\par
+        sample_time,\par
+        sum(decode(session_state, 'ON CPU', 1, 0))  as on_cpu,\par
+        sum(decode(session_state, 'WAITING', 1, 0)) as waiting,\par
+        count(*) as active_sessions\par
+     from\par
+        dba_hist_active_sess_history\par
+     where\par
+        sample_time > sysdate - (&hours/24)\par
+     group by\par
+        sample_id,\par
+        sample_time\par
+   ) sub1\par
+group by\par
+   round(sub1.sample_time, 'HH24')\par
+order by\par
+   round(sub1.sample_time, 'HH24')\par
+;\par
+\pard\keepn\sb100\sa100\b\f0\fs24 aas-per-min.sql (ASH)\par
+\pard\sb100\sa100\b0 See also the {\field{\*\fldinst{HYPERLINK "\\l "example-aas-1""}}{\fldrslt{\cf1\ul AAS example}}}\cf0\ulnone\f0\fs24  above.\par
+\pard\tx0\tx959\tx1918\tx2877\tx3836\tx4795\tx5754\tx6713\tx7672\tx8631\f1\fs20 column sample_minute format a16\par
+select\par
+   to_char(round(sub1.sample_time, 'MI'), 'YYYY-MM-DD HH24:MI') as sample_minute,\par
+   round(avg(sub1.on_cpu),1) as cpu_avg,\par
+   round(avg(sub1.waiting),1) as wait_avg,\par
+   round(avg(sub1.active_sessions),1) as act_avg,\par
+   round( (variance(sub1.active_sessions)/avg(sub1.active_sessions)),1) as act_var_mean\par
+from\par
+   ( -- sub1: one row per second, the resolution of SAMPLE_TIME\par
+     select\par
+        sample_id,\par
+        sample_time,\par
+        sum(decode(session_state, 'ON CPU', 1, 0))  as on_cpu,\par
+        sum(decode(session_state, 'WAITING', 1, 0)) as waiting,\par
+        count(*) as active_sessions\par
+     from\par
+        v$active_session_history\par
+     where\par
+        sample_time > sysdate - (&minutes/1440)\par
+     group by\par
+        sample_id,\par
+        sample_time\par
+   ) sub1\par
+group by\par
+   round(sub1.sample_time, 'MI')\par
+order by\par
+   round(sub1.sample_time, 'MI')\par
+;\par
+\pard\keepn\sb100\sa100\b\f0\fs24 aas-per-min-awr.sql (AWR)\par
+\pard\sb100\sa100\b0 See also the {\field{\*\fldinst{HYPERLINK "\\l "example-aas-1""}}{\fldrslt{\cf1\ul AAS example}}}\cf0\ulnone\f0\fs24  above.\par
+\pard\tx0\tx959\tx1918\tx2877\tx3836\tx4795\tx5754\tx6713\tx7672\tx8631\f1\fs20 column sample_minute format a16\par
+select\par
+   to_char(round(sub1.sample_time, 'MI'), 'YYYY-MM-DD HH24:MI') as sample_minute,\par
+   round(avg(sub1.on_cpu),1) as cpu_avg,\par
+   round(avg(sub1.waiting),1) as wait_avg,\par
+   round(avg(sub1.active_sessions),1) as act_avg,\par
+   round( (variance(sub1.active_sessions)/avg(sub1.active_sessions)),1) as act_var_mean\par
+from\par
+   ( -- sub1: one row per sampled ASH observation second\par
+     select\par
+        sample_id,\par
+        sample_time,\par
+        sum(decode(session_state, 'ON CPU', 1, 0))  as on_cpu,\par
+        sum(decode(session_state, 'WAITING', 1, 0)) as waiting,\par
+        count(*) as active_sessions\par
+     from\par
+        dba_hist_active_sess_history\par
+     where\par
+        sample_time > sysdate - (&minutes/1440)\par
+     group by\par
+        sample_id,\par
+        sample_time\par
+   ) sub1\par
+group by\par
+   round(sub1.sample_time, 'MI')\par
+order by\par
+   round(sub1.sample_time, 'MI')\par
+;\par
+\pard\keepn\sb100\sa100\b\f0\fs24 aas-exact.sql (AWR)\par
+\pard\tx0\tx959\tx1918\tx2877\tx3836\tx4795\tx5754\tx6713\tx7672\tx8631\b0\f1\fs20 column BEGIN_HOUR format a16\par
+select\par
+   stat_start.snap_id,\par
+   to_char(snap.begin_interval_time,'YYYY-MM-DD HH24:MI') as begin_hour,\par
+   -- DB time is in units of centiseconds in DBA_HIST_SYSSTAT.VALUE\par
+   round( (stat_end.value - stat_start.value)/100 , 0) as seconds_per_hour,\par
+   -- also assumes hourly snapshots, hence divided by 3600\par
+   round( (stat_end.value - stat_start.value)/(100*3600) , 1) as aas\par
+from\par
+   dba_hist_sysstat stat_start,\par
+   dba_hist_sysstat stat_end,\par
+   dba_hist_snapshot snap\par
+where\par
+   -- assumes the snap_id at the end of the interval is \par
+   -- one greater than the snap_id at teh start ofthe interval\par
+   --\par
+   stat_end.snap_id = stat_start.snap_id + 1\par
+and\par
+   -- otherwise, we join stat_end and stat_start\par
+   -- on exact matches of the remaining PK columns\par
+   --\par
+   ( stat_end.dbid = stat_start.dbid\par
+     and\par
+     stat_end.instance_number = stat_start.instance_number\par
+     and\par
+     stat_end.stat_name = stat_start.stat_name\par
+   )\par
+and\par
+   -- filter for the statistic we are interested in\par
+   --\par
+   stat_end.stat_name = 'DB time'\par
+and\par
+   -- join stat_start to snap on FK\par
+   -- \par
+   ( stat_start.snap_id = snap.snap_id\par
+     and\par
+     stat_start.dbid = snap.dbid\par
+     and\par
+     stat_start.instance_number = snap.instance_number\par
+   )\par
+order by\par
+   stat_start.snap_id\par
+;\par
+\pard\keepn\sb100\sa100\b\f0\fs28 Find specific problem SQLs: Sort by aggregated statistics\par
+\fs24 find-expensive.sql (AWR)\par
+\pard\sb100\sa100\b0 See also the {\field{\*\fldinst{HYPERLINK "\\l "example-aggregated-stats""}}{\fldrslt{\cf1\ul aggregate example}}}\cf0\ulnone\f0\fs24  above. \par
+This script looks at three metrics only, but it is easy to use other metrics stored by the {\field{\*\fldinst{HYPERLINK "\\l "DBA_HIST_SQLSTAT""}}{\fldrslt{\cf1\ul\f1\fs20 DBA_HIST_SQLSTAT}}}\cf0\ulnone\f0\fs24  table. For the order-by clause, I suggest using the numeric column position style so that it is easy to change interactively.\par
+\pard\tx0\tx959\tx1918\tx2877\tx3836\tx4795\tx5754\tx6713\tx7672\tx8631\f1\fs20 -- gets most expensive queries \par
+-- (by time spent, change "order by" to use another metric)\par
+-- after a specific date\par
+select\par
+   sub.sql_id,\par
+   sub.seconds_since_date,\par
+   sub.execs_since_date,\par
+   sub.gets_since_date\par
+from\par
+   ( -- sub to sort before rownum\par
+     select\par
+        sql_id,\par
+        round(sum(elapsed_time_delta)/1000000) as seconds_since_date,\par
+        sum(executions_delta) as execs_since_date,\par
+        sum(buffer_gets_delta) as gets_since_date\par
+     from\par
+        dba_hist_snapshot natural join dba_hist_sqlstat\par
+     where\par
+        begin_interval_time > to_date('&&start_YYYYMMDD','YYYY-MM-DD')\par
+     group by\par
+        sql_id\par
+     order by\par
+        2 desc\par
+   ) sub\par
+where\par
+   rownum < 30\par
+;\par
+\pard\keepn\sb100\sa100\b\f0\fs28 Find specific problem SQLs: Non-uniform statistics\par
+\fs24 high-var-sql.sql (AWR)\par
+\pard\sb100\sa100\b0 See also the {\field{\*\fldinst{HYPERLINK "\\l "example-high-var""}}{\fldrslt{\cf1\ul high-variance example}}}\cf0\ulnone\f0\fs24  above.\par
+\pard\tx0\tx959\tx1918\tx2877\tx3836\tx4795\tx5754\tx6713\tx7672\tx8631\f1\fs20 -- high-var-sql.sql\par
+undefine days_back\par
+select\par
+   sub1.sql_id,\par
+   round( avg(sub1.seconds_per_hour) ) as avg_seconds_per_hour,\par
+   round( variance(sub1.seconds_per_hour)/avg(sub1.seconds_per_hour) ) as var_over_mean,\par
+   count(*) as ct\par
+from\par
+   ( -- sub1\par
+     select\par
+        snap_id,\par
+        sql_id,\par
+        elapsed_time_delta/1000000 as seconds_per_hour\par
+     from\par
+        dba_hist_snapshot natural join dba_hist_sqlstat\par
+     where\par
+        -- look at recent history only\par
+        begin_interval_time > sysdate - &&days_back;\par
+     and\par
+        -- must have executions to be interesting\par
+        executions_delta > 0\par
+   ) sub1\par
+group by \par
+   sub1.sql_id\par
+having \par
+   -- only queries that consume 10 seconds per hour on the average\par
+   avg(sub1.seconds_per_hour) > 10\par
+and \par
+   -- only queries that run 50% of the time\par
+   -- assumes hourly snapshots too\par
+   count(*) > ( &&days_back * 24) * 0.50\par
+order by\par
+   3\par
+;\par
+undefine days_back\par
+\pard\keepn\sb100\sa100\b\f0\fs28 Characterize a problem SQL's behavior over time\par
+\fs24 sql-stat-hist.sql (AWR)\par
+\pard\sb100\sa100\b0 See also example scenarios {\field{\*\fldinst{HYPERLINK "\\l "example-time-1""}}{\fldrslt{\cf1\ul 1}}}\cf0\ulnone\f0\fs24 , {\field{\*\fldinst{HYPERLINK "\\l "example-time-2""}}{\fldrslt{\cf1\ul 2}}}\cf0\ulnone\f0\fs24 , {\field{\*\fldinst{HYPERLINK "\\l "example-time-3""}}{\fldrslt{\cf1\ul 3}}}\cf0\ulnone\f0\fs24 , and {\field{\*\fldinst{HYPERLINK "\\l "example-time-4""}}{\fldrslt{\cf1\ul 4}}}\cf0\ulnone\f0\fs24  above.\par
+\pard\tx0\tx959\tx1918\tx2877\tx3836\tx4795\tx5754\tx6713\tx7672\tx8631\f1\fs20 -- gets basic DBA_HIST_SQLSTAT data for a single sql_id\par
+-- assumes that each AWR snap is one-hour (used in names, not math)\par
+column BEGIN_HOUR format a16\par
+\par
+select\par
+   snap_id,\par
+   to_char(begin_interval_time,'YYYY-MM-DD HH24:MI') as begin_hour,\par
+   executions_delta as execs_per_hour,\par
+   buffer_gets_delta as gets_per_hour,\par
+   round(buffer_gets_delta/executions_delta) as gets_per_exec,\par
+   round(elapsed_time_delta/1000000) as seconds_per_hour\par
+from\par
+   dba_hist_snapshot natural join dba_hist_sqlstat\par
+where\par
+   begin_interval_time between to_date('&start_hour', 'YYYY-MM-DD HH24:MI')\par
+                           and to_date('&end_hour',   'YYYY-MM-DD HH24:MI')\par
+and\par
+   sql_id = '&sql_id'\par
+and\par
+   executions_delta > 0\par
+order by\par
+   snap_id\par
+;\par
+\pard\keepn\sb100\sa100\b\f0\fs36 Conclusion\par
+\pard\sb100\sa100\b0\fs24 AWR enables study of historical database performance statistics. This information complements, but does not replace, real-time monitoring. However, AWR tables provide many benefits that are not otherwise easy to obtain, in a wide variety of contexts:\par
+\pard{\pntext\f3\'B7\tab}{\*\pn\pnlvlblt\pnf3\pnindent360{\pntxtb\'B7}}\fi-360\li720\sb100\sa100 Databases that you rarely, if ever, review, \par
+{\pntext\f3\'B7\tab}Finding, and drilling down into, recent load spikes, \par
+{\pntext\f3\'B7\tab}Prioritizing developer and DBA resources, \par
+{\pntext\f3\'B7\tab}Load testing. \par
+{\pntext\f3\'B7\tab}Capacity planning, and \par
+{\pntext\f3\'B7\tab}Making up for deficiencies in real-time monitors. \par
+\pard\sb100\sa100 AWR tables are easy to use, and encourage interactive exploration. The tables are easy to join, and their information is relevant, well organized and clearly documented.\par
+The industrial/quality engineering concept of using variance to find skew is easy to incorporate into AWR projects. This approach illuminates anomalies that might otherwise remain unnoticed, such as very short spikes. These anomalies often point to limits of database scalability that need to be addressed. \par
+\pard\keepn\sb100\sa100\b\fs36 References\par
+\pard\sb100\sa100\b0\fs24 Kyle Hailey has championed the Average Active Session metric (AAS), and some of his material can be found at the following links:\par
+\pard{\pntext\f3\'B7\tab}{\*\pn\pnlvlblt\pnf3\pnindent360{\pntxtb\'B7}}\fi-360\li720\sb100\sa100{\field{\*\fldinst{HYPERLINK "http://www.perfvision.com/ftp/hotsos/aas.ppt"}}{\fldrslt{\ul\cf1 http://www.perfvision.com/ftp/hotsos/aas.ppt}}}\f0\fs24  (MS Powerpoint) \par
+{\field{\*\fldinst{HYPERLINK "{\pntext\f3\'B7\tab}http://www.hotsos.com/sym_speakers_hailey.html"}}{\fldrslt{\ul\cf1 http://www.hotsos.com/sym_speakers_hailey.html}}}\f0\fs24  \par
+\pard\sb100\sa100 Robyn Anderson Sands, a System Design Architect with Cisco Systems, wrote "An Industrial Engineer's Approach to Managing Oracle Databases", which describes the usefulness of the ratio of variance to mean for finding skew:\par
+\pard{\pntext\f3\'B7\tab}{\*\pn\pnlvlblt\pnf3\pnindent360{\pntxtb\'B7}}\fi-360\li720\sb100\sa100{\field{\*\fldinst{HYPERLINK "http://www.optimaldba.com/papers/IEDBMgmt.pdf"}}{\fldrslt{\ul\cf1 http://www.optimaldba.com/papers/IEDBMgmt.pdf}}}\f0\fs24  \par
+{\field{\*\fldinst{HYPERLINK "{\pntext\f3\'B7\tab}http://www.hotsos.com/sym_speakers_sands.html"}}{\fldrslt{\ul\cf1 http://www.hotsos.com/sym_speakers_sands.html}}}\f0\fs24  \par
+\pard\sb100\sa100 Oracle Wait Interface: A Practical Guide to Performance Diagnostics & Tuning\line By Richmond Shee, Kirtikumar Deshpande, K. Gopalakrishnan\line Published 2004 McGraw-Hill Professional, 2004\line{\field{\*\fldinst{HYPERLINK "http://www.mhprofessional.com/product.php?isbn=007222729X&cat=&promocode="}}{\fldrslt{\cf1\ul ISBN:007222729X}}}\cf0\ulnone\f0\fs24\par
+\pard\sa200\sl276\slmult1\lang22\f2\fs22\par
+}
+ 

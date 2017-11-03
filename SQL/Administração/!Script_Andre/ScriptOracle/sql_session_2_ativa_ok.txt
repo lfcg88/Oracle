@@ -1,0 +1,54 @@
+column status format a10
+set feedback off
+set serveroutput on size 1000000
+
+select username, sid, serial#, process, status 
+from v$session 
+where username is not null and status='ACTIVE' and rawtohex(sql_address) <> '00'
+/
+
+column username format a20
+column sql_text format a70 word_wrapped
+set linesize 120
+
+begin
+    for x in 
+    ( select username||'('||sid||','||serial#||') ospid = ' ||  process || ' program = ' || program username, 
+	       to_char(LOGON_TIME,' Day HH24:MI') logon_time,	 to_char(sysdate,' Day HH24:MI') current_time, 
+             sql_address, sql_hash_value 
+        from v$session
+       where status = 'ACTIVE'
+         and rawtohex(sql_address) <> '00'
+         and username is not null ) loop
+--
+        dbms_output.put_line('---------------------------------------------------------------------');
+        dbms_output.put_line(x.username);
+        dbms_output.put_line('---------------------------------------------------------------------');
+--
+        for y in ( select * from sys.v_$sqltext
+                         where HASH_VALUE = x.sql_hash_value order by piece) loop
+            dbms_output.put_line(chr(9)||y.sql_text);       
+        end loop;
+-----
+ -- dbms_output.put_line('Current SQL statement:');
+ -- for c1 in ( select * from sys.v_$sqltext
+ --             where HASH_VALUE = s.sql_hash_value order by piece) loop
+ --   dbms_output.put_line(chr(9)||c1.sql_text);
+ -- end loop;
+
+----
+    end loop;
+end;
+/
+
+----column username format a15 word_wrapped
+----column module format a15 word_wrapped
+----column action format a15 word_wrapped
+----column client_info format a30 word_wrapped
+----
+----select username||'('||sid||','||serial#||')' username,
+----	   module, 
+----	   action, 
+----	   client_info
+----from v$session
+----where module||action||client_info is not null;

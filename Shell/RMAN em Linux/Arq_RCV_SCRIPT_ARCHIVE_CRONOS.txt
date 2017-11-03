@@ -1,0 +1,29 @@
+run {
+CONFIGURE RETENTION POLICY TO REDUNDANCY 1;
+CONFIGURE BACKUP OPTIMIZATION OFF;
+CONFIGURE DEFAULT DEVICE TYPE TO DISK ;
+CONFIGURE CONTROLFILE AUTOBACKUP ON;
+CONFIGURE SNAPSHOT CONTROLFILE NAME TO '/backup/rman/DBPTN/arch/rman_arch_DBPTN_Thu_07_04_2016_13/snapcf_DBPTN.f' ;
+CONFIGURE CONTROLFILE AUTOBACKUP FORMAT FOR DEVICE TYPE DISK TO '/backup/rman/DBPTN/arch/rman_arch_DBPTN_Thu_07_04_2016_13/copiacontrol%F';
+CONFIGURE DEVICE TYPE DISK PARALLELISM 2;
+CONFIGURE DATAFILE BACKUP COPIES FOR DEVICE TYPE DISK TO 1;
+CONFIGURE ARCHIVELOG BACKUP COPIES FOR DEVICE TYPE DISK TO 1;
+CONFIGURE MAXSETSIZE TO UNLIMITED;
+}
+run {
+ALLOCATE CHANNEL C1 TYPE DISK FORMAT '/backup/rman/DBPTN/arch/rman_arch_DBPTN_Thu_07_04_2016_13/ora_df_%U' ;
+ALLOCATE CHANNEL C2 TYPE DISK FORMAT '/backup/rman/DBPTN/arch/rman_arch_DBPTN_Thu_07_04_2016_13/ora_df_%U' ;
+ALLOCATE CHANNEL C3 TYPE DISK FORMAT '/backup/rman/DBPTN/arch/rman_arch_DBPTN_Thu_07_04_2016_13/ora_df_%U' ;
+backup current controlfile format '/backup/rman/DBPTN/arch/rman_arch_DBPTN_Thu_07_04_2016_13/control_DBPTN_Thu_07_04_2016_13_%U.ctl' ;
+sql 'alter system archive log current';
+BACKUP AS COMPRESSED BACKUPSET ARCHIVELOG ALL format '/backup/rman/DBPTN/arch/rman_arch_DBPTN_Thu_07_04_2016_13/archive_DBPTN_Thu_07_04_2016_13_%U' ;
+SQL "ALTER DATABASE BACKUP CONTROLFILE TO TRACE AS ''/backup/rman/DBPTN/arch/rman_arch_DBPTN_Thu_07_04_2016_13/control_DBPTN_Thu_07_04_2016_13.txt''";
+backup format '/backup/rman/DBPTN/arch/rman_arch_DBPTN_Thu_07_04_2016_13/spfile_DBPTN_Thu_07_04_2016_13.dbf' spfile ;
+CROSSCHECK BACKUP;
+REPORT OBSOLETE;
+BACKUP AS COMPRESSED BACKUPSET ARCHIVELOG ALL DELETE ALL INPUT format '/backup/rman/DBPTN/arch/rman_arch_DBPTN_Thu_07_04_2016_13/archive_DBPTN_Thu_07_04_2016_13_%U' ;
+crosscheck archivelog all ;
+Delete noprompt expired archivelog all;
+backup current controlfile format '/backup/rman/DBPTN/arch/rman_arch_DBPTN_Thu_07_04_2016_13/control_DBPTN_Thu_07_04_2016_13_%U.ctl' ;
+}
+~

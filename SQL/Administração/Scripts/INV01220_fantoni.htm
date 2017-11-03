@@ -1,0 +1,920 @@
+<i>ver: 8.2</i>
+<hr>
+
+
+<html>
+<a name=top></a>
+
+<b> HOST: INV01220 </b>
+<hr>
+<b> INSTANCE: fantoni </b>
+<hr>
+<b> VERSION: 9.2.0.1.0 </b>
+<hr>
+<b> DATE: 15-DEZ-2010 </b>
+<hr>
+<pre>
+
+
+BANNER                                                                          
+----------------------------------------------------------------                
+Oracle9i Enterprise Edition Release 9.2.0.1.0 - Production                      
+PL/SQL Release 9.2.0.1.0 - Production                                           
+CORE	9.2.0.1.0	Production                                                       
+TNS for 32-bit Windows: Version 9.2.0.1.0 - Production                          
+NLSRTL Version 9.2.0.1.0 - Production                                           
+
+
+.CLIENT_CONFIGURATION.                                                          
+----------------------                                                          
+CURRENT_USER                  HOST                                              
+----------------------------- ---------------------------                       
+SYSTEM                        DUFRY\INV01220
+
+
+</pre>
+<hr>
+<hr>
+
+[INV01220 / fantoni] Collecting default passwords...
+
+
+<br>
+
+<b>.DEFAULT PASSWORDS.</b>
+
+<pre>
+		 from	dba_users, user$, v$instance
+		     	           *
+ERRO na linha 20:
+ORA-06550: linha 20, coluna 20: 
+PL/SQL: ORA-00942: a tabela ou view não existe 
+ORA-06550: linha 16, coluna 3: 
+PL/SQL: SQL Statement ignored 
+ORA-06550: linha 3222, coluna 7: 
+PLS-00364: o uso da variável 'LV_USER' de índice de loop é inválido 
+ORA-06550: linha 3222, coluna 4: 
+PL/SQL: Statement ignored 
+
+
+
+</pre>
+<a HREF=#top><h6>Top</h6></a>
+<hr>
+
+[INV01220 / fantoni] Collecting DBlinks...
+
+
+<br>
+
+<b>.DBLINKS.</b>
+
+<pre>
+
+NAME                                     USERID               PASSWORD           HOST                                    
+---------------------------------------- -------------------- ------------------ ----------------------------------------
+MIA0DSV.DUFRY.COM.BR                                                             mia0dsv                                 
+MIA2DSV.DUFRY.COM.BR                                                             mia2dsv                                 
+
+</pre>
+<a HREF=#top><h6>Top</h6></a>
+<hr>
+
+[INV01220 / fantoni] Collecting RESTRICTED OBJECTS ACCCESS...
+
+
+<br>
+
+<b>.RESTRICTED OBJECTS ACCESS.</b>
+
+'ALL_USERS','AUD$','LINK$','ALL_DB_LINKS', 'DBMS_SYSTEM'
+
+<pre>
+
+PRIVILEGE            GRANTEE                   TABLE_NAME                                 
+-------------------- ------------------------- ----------------------------------------   
+EXECUTE              OEM_MONITOR               DBMS_SYSTEM                                
+SELECT               PUBLIC                    ALL_DB_LINKS                               
+SELECT               PUBLIC                    ALL_USERS                                  
+
+</pre>
+<a HREF=#top><h6>Top</h6></a>
+<hr>
+
+[INV01220 / fantoni] Collecting Account/Passwords Policy ...
+
+
+<br>
+
+<b>.USER PROFILES.</b>
+
+<pre>
+
+PROFILE                        RESOURCE_NAME                  LIMIT               
+------------------------------ ------------------------------ --------------------
+DEFAULT                        FAILED_LOGIN_ATTEMPTS          UNLIMITED           
+DEFAULT                        PASSWORD_LIFE_TIME             UNLIMITED           
+DEFAULT                        PASSWORD_REUSE_TIME            UNLIMITED           
+DEFAULT                        PASSWORD_REUSE_MAX             UNLIMITED           
+DEFAULT                        PASSWORD_VERIFY_FUNCTION       NULL                
+DEFAULT                        PASSWORD_LOCK_TIME             UNLIMITED           
+DEFAULT                        PASSWORD_GRACE_TIME            UNLIMITED           
+
+</pre>
+<a HREF=#top><h6>Top</h6></a>
+<hr>
+
+[INV01220 / fantoni] Collecting users in profiles ...
+
+
+<br>
+
+<b>.TOTAL USERS IN PROFILES.</b>
+
+<pre>
+
+ TOT_USERS PROFILE                                                                
+---------- ------------------------------                                         
+        32 DEFAULT                                                                
+
+</pre>
+<a HREF=#top><h6>Top</h6></a>
+<hr>
+
+[INV01220 / fantoni] Collecting OS Authentications Prefix...
+
+
+<br>
+
+<b>.AUTHENT PREFIX.</b>
+
+<pre>
+
+</pre>
+<a HREF=#top><h6>Top</h6></a>
+<hr>
+
+[INV01220 / fantoni] Collecting parameter dblink_encrypt...
+
+
+<br>
+
+<b>.DBLink_encrypt.</b>
+
+<pre>
+
+NAME                         VALUE                                    
+---------------------------- ---------------                          
+dblink_encrypt_login         FALSE                                    
+
+</pre>
+<a HREF=#top><h6>Top</h6></a>
+<hr>
+
+[INV01220 / fantoni] Collecting Parameter O7_DICTIONARY...
+
+
+<br>
+
+<b>.O7_DICTIONARY.</b>
+
+<pre>
+
+</pre>
+<a HREF=#top><h6>Top</h6></a>
+<hr>
+
+[INV01220 / fantoni] Collecting Remote Logins...
+
+
+<br>
+
+<b>.REMOTE LOGINS.</b>
+
+<pre>
+
+NAME                         VALUE                     
+---------------------------- --------------------------
+remote_login_passwordfile    EXCLUSIVE                 
+
+</pre>
+<a HREF=#top><h6>Top</h6></a>
+<hr>
+
+[INV01220 / fantoni] Collecting privileges "ADMIN OPTION"...
+
+
+<br>
+
+<b>.ADMIN OPTION.</b>
+
+<pre>
+
+</pre>
+<a HREF=#top><h6>Top</h6></a>
+<hr>
+
+[INV01220 / fantoni] Collecting users with "OLAP_DBA"...
+
+
+<br>
+
+<b>.OLAP_ADMIN.</b>
+
+<pre>
+
+</pre>
+<a HREF=#top><h6>Top</h6></a>
+<hr>
+
+[INV01220 / fantoni] Collecting "SPECIAL PRIVS"...
+
+
+<br>
+
+<b>.SPECIAL PRIVS.</b>
+
+<pre>
+
+GRANTEE                   PRIVILEGE                                             
+------------------------- --------------------------------------------------    
+ODM                       ALTER SYSTEM                                          
+OLAPSYS                   CREATE LIBRARY                                        
+OLAPSYS                   CREATE PUBLIC SYNONYM                                 
+OLAPSYS                   DROP PUBLIC SYNONYM                                   
+WKSYS                     ADMINISTER DATABASE TRIGGER                           
+WKSYS                     ADMINISTER RESOURCE MANAGER                           
+WKSYS                     ALTER DATABASE                                        
+WKSYS                     ALTER PROFILE                                         
+WKSYS                     ALTER RESOURCE COST                                   
+WKSYS                     ALTER SYSTEM                                          
+WKSYS                     ALTER TABLESPACE                                      
+WKSYS                     ALTER USER                                            
+WKSYS                     AUDIT SYSTEM                                          
+WKSYS                     BECOME USER                                           
+WKSYS                     CREATE LIBRARY                                        
+WKSYS                     CREATE PUBLIC DATABASE LINK                           
+WKSYS                     CREATE PUBLIC SYNONYM                                 
+WKSYS                     CREATE ROLLBACK SEGMENT                               
+WKSYS                     CREATE TABLESPACE                                     
+WKSYS                     DROP PROFILE                                          
+WKSYS                     DROP PUBLIC DATABASE LINK                             
+WKSYS                     DROP PUBLIC SYNONYM                                   
+WKSYS                     DROP ROLLBACK SEGMENT                                 
+WKSYS                     DROP TABLESPACE                                       
+WKSYS                     DROP USER                                             
+WKSYS                     MANAGE TABLESPACE                                     
+XDB                       ADMINISTER DATABASE TRIGGER                           
+XDB                       CREATE LIBRARY                                        
+XDB                       CREATE PUBLIC SYNONYM                                 
+XDB                       DROP PUBLIC SYNONYM                                   
+
+</pre>
+<a HREF=#top><h6>Top</h6></a>
+<hr>
+
+[INV01220 / fantoni] Collecting "RISK PACKAGES"...
+
+
+<br>
+
+<b>.RISK_PACKAGES.</b>
+
+<pre>
+
+PRIVILEGE  OWNER           TABLE_NAME                GRANTEE                    
+---------- --------------- ------------------------- -------------------------  
+EXECUTE    SYS             DBMS_DDL                  PUBLIC                     
+EXECUTE    SYS             DBMS_EXPORT_EXTENSION     PUBLIC                     
+EXECUTE    SYS             DBMS_STATS                PUBLIC                     
+EXECUTE    SYS             DBMS_LOB                  PUBLIC                     
+EXECUTE    SYS             DBMS_XRWMV                PUBLIC                     
+EXECUTE    SYS             DBMS_RANDOM               PUBLIC                     
+EXECUTE    SYS             DBMS_METADATA             PUBLIC                     
+EXECUTE    SYS             DBMS_CDC_SUBSCRIBE        PUBLIC                     
+EXECUTE    SYS             OWA_OPT_LOCK              PUBLIC                     
+DEBUG      SYS             OWA_OPT_LOCK              PUBLIC                     
+EXECUTE    SYS             DBMS_REPUTIL              PUBLIC                     
+EXECUTE    SYS             DBMS_REPCAT_RGT_EXP       PUBLIC                     
+EXECUTE    SYS             DBMS_REPCAT_INSTANTIATE   PUBLIC                     
+EXECUTE    ORDSYS          ORDIMGIDXMETHODS          PUBLIC                     
+EXECUTE    MDSYS           PRVT_IDX                  PUBLIC                     
+EXECUTE    MDSYS           MD2                       PUBLIC                     
+EXECUTE    MDSYS           SDO_TUNE                  PUBLIC                     
+EXECUTE    MDSYS           SDO_CATALOG               PUBLIC                     
+EXECUTE    MDSYS           RTREE_IDX                 PUBLIC                     
+EXECUTE    MDSYS           SDO_RTREE_ADMIN           PUBLIC                     
+EXECUTE    MDSYS           SDO_UTIL                  PUBLIC                     
+EXECUTE    CTXSYS          CATSEARCH                 PUBLIC                     
+EXECUTE    CTXSYS          DRILOAD                   PUBLIC                     
+EXECUTE    CTXSYS          CTX_DOC                   PUBLIC                     
+EXECUTE    CTXSYS          CTX_QUERY                 PUBLIC                     
+EXECUTE    XDB             DBMS_XMLSCHEMA            PUBLIC                     
+EXECUTE    XDB             DBMS_XMLSCHEMA_INT        PUBLIC                     
+EXECUTE    WKSYS           WK_SNAPSHOT               PUBLIC                     
+EXECUTE    SYS             DBMS_REGISTRY             WKSYS                      
+EXECUTE    SYS             DBMS_REGISTRY             ODM                        
+EXECUTE    SYS             DBMS_RANDOM               ODM                        
+EXECUTE    SYS             DBMS_STATS                HR                         
+EXECUTE    SYS             DBMS_STATS                QS_ADM                     
+
+</pre>
+<a HREF=#top><h6>Top</h6></a>
+<hr>
+
+[INV01220 / fantoni] Collecting privileges "ANY"...
+
+
+<br>
+
+<b>.PRIVILEGE_ANY.</b>
+
+<pre>
+
+GRANTEE                                            PRIVILEGE                     
+-------------------------------------------------- ------------------------------
+JAVADEBUGPRIV                                      DEBUG ANY PROCEDURE           
+SALES_HISTORY_ROLE                                 DROP ANY DIRECTORY            
+
+</pre>
+<a HREF=#top><h6>Top</h6></a>
+<hr>
+
+[INV01220 / fantoni] Collecting Default TableSpaces...
+
+
+<br>
+
+<b>.DEFAULT TABLESPACES.</b>
+
+<pre>
+
+USERNAME                       ACCOUNT_STATUS     DEFAULT_TABLESPACE TEMPORARY_TABLESPACE                
+------------------------------ ------------------ ------------------ --------------------                
+SACM                           OPEN               SYSTEM             TEMP                                
+SCOTT                          OPEN               SYSTEM             TEMP                                
+FANTONI                        OPEN               SYSTEM             TEMP                                
+
+</pre>
+<a HREF=#top><h6>Top</h6></a>
+<hr>
+
+[INV01220 / fantoni] Collecting PUBLIC permission on system privileges...
+
+
+<br>
+
+<b>.PUBLIC SYS.</b>
+
+<pre>
+
+</pre>
+<a HREF=#top><h6>Top</h6></a>
+<hr>
+
+[INV01220 / fantoni] Collecting AUDIT value...
+
+
+<br>
+
+<b>.AUDITING CONFIGURATION OPTIONS.</b>
+
+<pre>
+
+NAME                      VALUE                                                 
+------------------------- --------------------------------------------------    
+audit_trail               NONE                                                  
+
+</pre>
+<a HREF=#top><h6>Top</h6></a>
+<hr>
+
+[INV01220 / fantoni] Collecting Auditing Configutation...
+
+
+<br>
+
+<b>.AUDITING COMMANDS.</b>
+
+<pre>
+
+</pre>
+<a HREF=#top><h6>Top</h6></a>
+<hr>
+
+[INV01220 / fantoni] Collecting TABLESPACE_AUD$...
+
+
+<br>
+
+<b>.TABLESPACE_AUD$.</b>
+
+<pre>
+
+TABLESPACE_NAME           SEGMENT_NAME                                          
+------------------------- -------------------------                             
+SYSTEM                    AUD$                                                  
+SYSTEM                    I_AUD1                                                
+
+</pre>
+<a HREF=#top><h6>Top</h6></a>
+<hr>
+
+[INV01220 / fantoni] Collecting public privileges on UTL_packages ...
+
+
+<br>
+
+<b>.UTL_packages.</b>
+
+<pre>
+
+PRIVILEGE            GRANTEE                   TABLE_NAME                                 
+-------------------- ------------------------- ----------------------------------------   
+EXECUTE              PUBLIC                    UTL_FILE                                   
+EXECUTE              PUBLIC                    UTL_TCP                                    
+EXECUTE              PUBLIC                    UTL_SMTP                                   
+EXECUTE              PUBLIC                    UTL_HTTP                                   
+
+</pre>
+<a HREF=#top><h6>Top</h6></a>
+<hr>
+
+[INV01220 / fantoni] Collecting users with DBA role...
+
+
+<br>
+
+<b>.USERS_DBA_ROLE.</b>
+
+<pre>
+
+GRANTEE                   DEFA ADMI                                                                 
+------------------------- ---- ----                                                                 
+WKSYS                     YES  NO                                                                   
+CTXSYS                    YES  NO                                                                   
+FANTONI                   YES  NO                                                                   
+
+</pre>
+<a HREF=#top><h6>Top</h6></a>
+<hr>
+<br>
+
+<b>.SYSDBA AND SYSOPER USERS.</b>
+
+<pre>
+
+USERNAME                       SYSDB SYSOP                                                          
+------------------------------ ----- -----                                                          
+RMAN                           TRUE  FALSE                                                          
+
+</pre>
+<a HREF=#top><h6>Top</h6></a>
+<hr>
+
+[INV01220 / fantoni] Collecting privileges "CATALOG_ROLE"...
+
+
+<br>
+
+<b>.CATALOG_ROLES.</b>
+
+<pre>
+
+</pre>
+<a HREF=#top><h6>Top</h6></a>
+<hr>
+
+[INV01220 / fantoni] Collecting DBA Users...
+
+
+<br>
+
+<b>.DBA_USERS.</b>
+
+<pre>
+
+USERNAME                            PROFILE           PASSWORD           ACCOUNT_STATUS                                 
+----------------------------------- ----------------- ------------------ ------------------                             
+SYS                                 DEFAULT           *****************  OPEN                                           
+SYSTEM                              DEFAULT           *****************  OPEN                                           
+DBSNMP                              DEFAULT           *****************  OPEN                                           
+SCOTT                               DEFAULT           *****************  OPEN                                           
+RMAN                                DEFAULT           *****************  OPEN                                           
+SACM                                DEFAULT           *****************  OPEN                                           
+FANTONI                             DEFAULT           *****************  OPEN                                           
+OUTLN                               DEFAULT           *****************  EXPIRED & LOCKED                               
+WMSYS                               DEFAULT           *****************  EXPIRED & LOCKED                               
+ORDSYS                              DEFAULT           *****************  EXPIRED & LOCKED                               
+ORDPLUGINS                          DEFAULT           *****************  EXPIRED & LOCKED                               
+MDSYS                               DEFAULT           *****************  EXPIRED & LOCKED                               
+CTXSYS                              DEFAULT           *****************  EXPIRED & LOCKED                               
+QS_OS                               DEFAULT           *****************  EXPIRED & LOCKED                               
+QS_ES                               DEFAULT           *****************  EXPIRED & LOCKED                               
+QS_WS                               DEFAULT           *****************  EXPIRED & LOCKED                               
+QS                                  DEFAULT           *****************  EXPIRED & LOCKED                               
+QS_ADM                              DEFAULT           *****************  EXPIRED & LOCKED                               
+SH                                  DEFAULT           *****************  EXPIRED & LOCKED                               
+PM                                  DEFAULT           *****************  EXPIRED & LOCKED                               
+OE                                  DEFAULT           *****************  EXPIRED & LOCKED                               
+HR                                  DEFAULT           *****************  EXPIRED & LOCKED                               
+QS_CS                               DEFAULT           *****************  EXPIRED & LOCKED                               
+QS_CB                               DEFAULT           *****************  EXPIRED & LOCKED                               
+QS_CBADM                            DEFAULT           *****************  EXPIRED & LOCKED                               
+XDB                                 DEFAULT           *****************  EXPIRED & LOCKED                               
+ANONYMOUS                           DEFAULT           *****************  EXPIRED & LOCKED                               
+WKSYS                               DEFAULT           *****************  EXPIRED & LOCKED                               
+WKPROXY                             DEFAULT           *****************  EXPIRED & LOCKED                               
+ODM                                 DEFAULT           *****************  EXPIRED & LOCKED                               
+ODM_MTR                             DEFAULT           *****************  EXPIRED & LOCKED                               
+OLAPSYS                             DEFAULT           *****************  EXPIRED & LOCKED                               
+
+</pre>
+<a HREF=#top><h6>Top</h6></a>
+<hr>
+
+[INV01220 / fantoni] Collecting externally users...
+
+
+<br>
+
+<b>.Externally Users.</b>
+
+<pre>
+
+</pre>
+<a HREF=#top><h6>Top</h6></a>
+<hr>
+
+[INV01220 / fantoni] Collecting Roles...
+
+
+<br>
+
+<b>.ROLES.</b>
+
+<pre>
+
+GRANTEE                   GRANTED_ROLE                   ADMIN_ DEFAULT 
+------------------------- ------------------------------ ------ ------- 
+HR                        CONNECT                        NO     YES     
+HR                        RESOURCE                       NO     YES     
+OE                        CONNECT                        NO     YES     
+OE                        RESOURCE                       NO     YES     
+PM                        CONNECT                        NO     YES     
+PM                        RESOURCE                       NO     YES     
+QS                        CONNECT                        NO     YES     
+QS                        RESOURCE                       NO     YES     
+SH                        CONNECT                        NO     YES     
+SH                        RESOURCE                       NO     YES     
+SH                        SALES_HISTORY_ROLE             NO     YES     
+SH                        SELECT_CATALOG_ROLE            NO     YES     
+ODM                       AQ_USER_ROLE                   NO     YES     
+ODM                       SELECT_CATALOG_ROLE            NO     YES     
+XDB                       RESOURCE                       NO     YES     
+XDB                       JAVAUSERPRIV                   NO     YES     
+RMAN                      CONNECT                        NO     YES     
+RMAN                      RESOURCE                       NO     YES     
+RMAN                      RECOVERY_CATALOG_OWNER         NO     YES     
+QS_CB                     CONNECT                        NO     YES     
+QS_CB                     RESOURCE                       NO     YES     
+QS_CS                     CONNECT                        NO     YES     
+QS_CS                     RESOURCE                       NO     YES     
+QS_ES                     CONNECT                        NO     YES     
+QS_ES                     RESOURCE                       NO     YES     
+QS_OS                     CONNECT                        NO     YES     
+QS_OS                     RESOURCE                       NO     YES     
+QS_WS                     CONNECT                        NO     YES     
+QS_WS                     RESOURCE                       NO     YES     
+SCOTT                     CONNECT                        NO     YES     
+SCOTT                     RESOURCE                       NO     YES     
+WKSYS                     DBA                            NO     YES     
+WKSYS                     CTXAPP                         YES    YES     
+WKSYS                     CONNECT                        NO     YES     
+WKSYS                     RESOURCE                       NO     YES     
+WKSYS                     JAVASYSPRIV                    NO     YES     
+WKSYS                     JAVAUSERPRIV                   NO     YES     
+WMSYS                     CONNECT                        NO     YES     
+WMSYS                     RESOURCE                       NO     YES     
+WMSYS                     WM_ADMIN_ROLE                  YES    YES     
+ORDSYS                    CONNECT                        NO     YES     
+ORDSYS                    RESOURCE                       NO     YES     
+ORDSYS                    JAVAUSERPRIV                   NO     YES     
+QS_ADM                    CONNECT                        NO     YES     
+QS_ADM                    RESOURCE                       NO     YES     
+QS_ADM                    AQ_ADMINISTRATOR_ROLE          NO     YES     
+WKUSER                    CONNECT                        NO     YES     
+FANTONI                   DBA                            NO     YES     
+ODM_MTR                   SELECT_CATALOG_ROLE            NO     YES     
+OLAPSYS                   CONNECT                        NO     YES     
+OLAPSYS                   OLAP_DBA                       NO     YES     
+OLAPSYS                   RESOURCE                       NO     YES     
+OLAP_DBA                  SELECT_CATALOG_ROLE            NO     YES     
+QS_CBADM                  CONNECT                        NO     YES     
+QS_CBADM                  RESOURCE                       NO     YES     
+ORDPLUGINS                CONNECT                        NO     YES     
+ORDPLUGINS                RESOURCE                       NO     YES     
+JAVASYSPRIV               JAVAUSERPRIV                   NO     YES     
+
+</pre>
+<a HREF=#top><h6>Top</h6></a>
+<hr>
+
+[INV01220 / fantoni] Collecting CPU...
+
+
+<br>
+
+<b>.CPU.</b>
+
+<pre>
+	select comments, id from sys.registry$history
+	                             *
+ERRO na linha 1:
+ORA-00942: a tabela ou view não existe 
+
+
+
+</pre>
+<a HREF=#top><h6>Top</h6></a>
+<hr>
+
+[INV01220 / fantoni] Collecting Parameters...
+
+
+<br>
+
+<b>.PARAMETERS.</b>
+
+<pre>
+
+NAME                            VALOR                                                     
+------------------------------- -------------------------------------------------------   
+row_locking                     ALWAYS                                                    
+nls_territory                   AMERICA                                                   
+nls_language                    AMERICAN                                                  
+log_archive_format              ARC%S.%T                                                  
+undo_management                 AUTO                                                      
+workarea_size_policy            AUTO                                                      
+nls_length_semantics            BYTE                                                      
+optimizer_mode                  CHOOSE                                                    
+background_dump_dest            C:\ORACLE\ADMIN\FANTONI\BDUMP                             
+core_dump_dest                  C:\ORACLE\ADMIN\FANTONI\CDUMP                             
+user_dump_dest                  C:\ORACLE\ADMIN\FANTONI\UDUMP                             
+control_files                   C:\ORACLE\ORADATA\FANTONI\CONTROL01.CTL, C:\ORACLE\ORAD   
+                                ATA\FANTONI\CONTROL02.CTL, C:\ORACLE\ORADATA\FANTONI\CO   
+                                NTROL03.CTL                                               
+                                                                                          
+utl_file_dir                    C:\XML                                                    
+serial_reuse                    DISABLE                                                   
+log_archive_dest_state_1        ENABLE                                                    
+log_archive_dest_state_10       ENABLE                                                    
+log_archive_dest_state_2        ENABLE                                                    
+log_archive_dest_state_3        ENABLE                                                    
+log_archive_dest_state_4        ENABLE                                                    
+log_archive_dest_state_5        ENABLE                                                    
+log_archive_dest_state_6        ENABLE                                                    
+log_archive_dest_state_7        ENABLE                                                    
+log_archive_dest_state_8        ENABLE                                                    
+log_archive_dest_state_9        ENABLE                                                    
+query_rewrite_integrity         ENFORCED                                                  
+cursor_sharing                  EXACT                                                     
+remote_login_passwordfile       EXCLUSIVE                                                 
+audit_sys_operations            FALSE                                                     
+backup_tape_io_slaves           FALSE                                                     
+blank_trimming                  FALSE                                                     
+cluster_database                FALSE                                                     
+cursor_space_for_time           FALSE                                                     
+db_block_checking               FALSE                                                     
+dblink_encrypt_login            FALSE                                                     
+dg_broker_start                 FALSE                                                     
+drs_start                       FALSE                                                     
+file_mapping                    FALSE                                                     
+global_names                    FALSE                                                     
+lock_sga                        FALSE                                                     
+log_archive_start               FALSE                                                     
+log_checkpoints_to_alert        FALSE                                                     
+mts_multiple_listeners          FALSE                                                     
+nls_nchar_conv_excp             FALSE                                                     
+oracle_trace_enable             FALSE                                                     
+os_roles                        FALSE                                                     
+O7_DICTIONARY_ACCESSIBILITY     FALSE                                                     
+parallel_adaptive_multi_user    FALSE                                                     
+parallel_automatic_tuning       FALSE                                                     
+parallel_server                 FALSE                                                     
+partition_view_enabled          FALSE                                                     
+plsql_v2_compatibility          FALSE                                                     
+pre_page_sga                    FALSE                                                     
+query_rewrite_enabled           FALSE                                                     
+read_only_open_delayed          FALSE                                                     
+remote_os_authent               FALSE                                                     
+remote_os_roles                 FALSE                                                     
+resource_limit                  FALSE                                                     
+serializable                    FALSE                                                     
+sql_trace                       FALSE                                                     
+sql92_security                  FALSE                                                     
+star_transformation_enabled     FALSE                                                     
+undo_suppress_errors            FALSE                                                     
+use_indirect_data_buffers       FALSE                                                     
+db_name                         FANTONI                                                   
+instance_name                   FANTONI                                                   
+mts_service                     FANTONI                                                   
+service_names                   FANTONI                                                   
+plsql_compiler_flags            INTERPRETED                                               
+fast_start_parallel_rollback    LOW                                                       
+standby_file_management         MANUAL                                                    
+sql_version                     NATIVE                                                    
+audit_trail                     NONE                                                      
+db_cache_advice                 ON                                                        
+os_authent_prefix               OPS$                                                      
+oracle_trace_facility_name      ORACLED                                                   
+dg_broker_config_file1          %ORACLE_HOME%\DATABASE\DR1%ORACLE_SID%.DAT                
+dg_broker_config_file2          %ORACLE_HOME%\DATABASE\DR2%ORACLE_SID%.DAT                
+spfile                          %ORACLE_HOME%\DATABASE\SPFILE%ORACLE_SID%.ORA             
+oracle_trace_collection_path    %ORACLE_HOME%\OTRACE\ADMIN\CDF\                           
+oracle_trace_facility_path      %ORACLE_HOME%\OTRACE\ADMIN\FDF\                           
+standby_archive_dest            %ORACLE_HOME%\RDBMS                                       
+background_core_dump            PARTIAL                                                   
+shadow_core_dump                PARTIAL                                                   
+dispatchers                     (PROTOCOL=TCP) (SERVICE=FANTONIXDB)                       
+mts_dispatchers                 (PROTOCOL=TCP) (SERVICE=FANTONIXDB)                       
+remote_dependencies_mode        TIMESTAMP                                                 
+db_block_checksum               TRUE                                                      
+disk_asynch_io                  TRUE                                                      
+hash_join_enabled               TRUE                                                      
+hs_autoregister                 TRUE                                                      
+remote_archive_enable           TRUE                                                      
+replication_dependency_tracking TRUE                                                      
+tape_asynch_io                  TRUE                                                      
+timed_statistics                TRUE                                                      
+trace_enabled                   TRUE                                                      
+transaction_auditing            TRUE                                                      
+statistics_level                TYPICAL                                                   
+undo_tablespace                 UNDOTBS1                                                  
+max_dump_file_size              UNLIMITED                                                 
+archive_lag_target              0                                                         
+db_block_buffers                0                                                         
+db_keep_cache_size              0                                                         
+db_recycle_cache_size           0                                                         
+dbwr_io_slaves                  0                                                         
+db_16k_cache_size               0                                                         
+db_2k_cache_size                0                                                         
+db_32k_cache_size               0                                                         
+db_4k_cache_size                0                                                         
+db_8k_cache_size                0                                                         
+fast_start_io_target            0                                                         
+hi_shared_memory_address        0                                                         
+instance_number                 0                                                         
+java_max_sessionspace_size      0                                                         
+java_soft_sessionspace_limit    0                                                         
+license_max_sessions            0                                                         
+license_max_users               0                                                         
+license_sessions_warning        0                                                         
+log_archive_trace               0                                                         
+log_checkpoint_interval         0                                                         
+optimizer_index_caching         0                                                         
+parallel_min_percent            0                                                         
+parallel_min_servers            0                                                         
+plsql_native_library_subdir_cou 0                                                         
+nt                                                                                        
+                                                                                          
+recovery_parallelism            0                                                         
+session_cached_cursors          0                                                         
+shared_memory_address           0                                                         
+sort_area_retained_size         0                                                         
+thread                          0                                                         
+timed_os_statistics             0                                                         
+aq_tm_processes                 1                                                         
+cluster_database_instances      1                                                         
+commit_point_strength           1                                                         
+db_writer_processes             1                                                         
+log_archive_min_succeed_dest    1                                                         
+logmnr_max_persistent_sessions  1                                                         
+log_parallelism                 1                                                         
+mts_servers                     1                                                         
+optimizer_dynamic_sampling      1                                                         
+parallel_server_instances       1                                                         
+shared_servers                  1                                                         
+job_queue_processes             10                                                        
+object_cache_max_size_percent   10                                                        
+session_max_open_files          10                                                        
+optimizer_index_cost_adj        100                                                       
+object_cache_optimal_size       102400                                                    
+bitmap_merge_area_size          1048576                                                   
+hash_area_size                  1048576                                                   
+undo_retention                  10800                                                     
+sga_max_size                    135338868                                                 
+processes                       150                                                       
+db_file_multiblock_read_count   16                                                        
+mts_sessions                    165                                                       
+shared_server_sessions          165                                                       
+circuits                        170                                                       
+mts_circuits                    170                                                       
+sessions                        170                                                       
+log_checkpoint_timeout          1800                                                      
+transactions                    187                                                       
+cpu_count                       2                                                         
+log_archive_max_processes       2                                                         
+parallel_threads_per_cpu        2                                                         
+max_shared_servers              20                                                        
+mts_max_servers                 20                                                        
+db_files                        200                                                       
+optimizer_max_permutations      2000                                                      
+parallel_execution_message_size 2148                                                      
+shared_pool_reserved_size       2516582                                                   
+db_cache_size                   25165824                                                  
+pga_aggregate_target            25165824                                                  
+max_enabled_roles               30                                                        
+fast_start_mttr_target          300                                                       
+open_cursors                    300                                                       
+java_pool_size                  33554432                                                  
+olap_page_pool_size             33554432                                                  
+max_rollback_segments           37                                                        
+open_links                      4                                                         
+open_links_per_instance         4                                                         
+max_dispatchers                 5                                                         
+mts_max_dispatchers             5                                                         
+parallel_max_servers            5                                                         
+transactions_per_rollback_segme 5                                                         
+nt                                                                                        
+                                                                                          
+shared_pool_size                50331648                                                  
+log_buffer                      524288                                                    
+sort_area_size                  524288                                                    
+oracle_trace_collection_size    5242880                                                   
+distributed_lock_timeout        60                                                        
+control_file_record_keep_time   7                                                         
+max_commit_propagation_delay    700                                                       
+dml_locks                       748                                                       
+db_block_size                   8192                                                      
+create_bitmap_area_size         8388608                                                   
+large_pool_size                 8388608                                                   
+optimizer_features_enable       9.2.0                                                     
+compatible                      9.2.0.0.0                                                 
+enqueue_resources               968                                                       
+active_instance_count                                                                     
+buffer_pool_keep                                                                          
+buffer_pool_recycle                                                                       
+cluster_interconnects                                                                     
+db_create_file_dest                                                                       
+db_create_online_log_dest_1                                                               
+db_create_online_log_dest_2                                                               
+db_create_online_log_dest_3                                                               
+db_create_online_log_dest_4                                                               
+db_create_online_log_dest_5                                                               
+db_domain                                                                                 
+db_file_name_convert                                                                      
+event                                                                                     
+fal_client                                                                                
+fal_server                                                                                
+filesystemio_options                                                                      
+fixed_date                                                                                
+gc_files_to_locks                                                                         
+global_context_pool_size                                                                  
+ifile                                                                                     
+instance_groups                                                                           
+local_listener                                                                            
+lock_name_space                                                                           
+log_archive_dest                                                                          
+log_archive_dest_1                                                                        
+log_archive_dest_10                                                                       
+log_archive_dest_2                                                                        
+log_archive_dest_3                                                                        
+log_archive_dest_4                                                                        
+log_archive_dest_5                                                                        
+log_archive_dest_6                                                                        
+log_archive_dest_7                                                                        
+log_archive_dest_8                                                                        
+log_archive_dest_9                                                                        
+log_archive_duplex_dest                                                                   
+log_file_name_convert                                                                     
+mts_listener_address                                                                      
+nls_calendar                                                                              
+nls_comp                                                                                  
+nls_currency                                                                              
+nls_date_format                                                                           
+nls_date_language                                                                         
+nls_dual_currency                                                                         
+nls_iso_currency                                                                          
+nls_numeric_characters                                                                    
+nls_sort                                                                                  
+nls_time_format                                                                           
+nls_timestamp_format                                                                      
+nls_timestamp_tz_format                                                                   
+nls_time_tz_format                                                                        
+oracle_trace_collection_name                                                              
+parallel_instance_group                                                                   
+plsql_native_c_compiler                                                                   
+plsql_native_library_dir                                                                  
+plsql_native_linker                                                                       
+plsql_native_make_file_name                                                               
+plsql_native_make_utility                                                                 
+rdbms_server_dn                                                                           
+remote_listener                                                                           
+resource_manager_plan                                                                     
+rollback_segments                                                                         
+tracefile_identifier                                                                      
+
+</pre>
+<a HREF=#top><h6>Top</h6></a>
+<hr>

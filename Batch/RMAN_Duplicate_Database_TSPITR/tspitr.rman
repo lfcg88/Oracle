@@ -1,0 +1,91 @@
+connect target /@miafisdp;
+connect catalog rman/senharman@rcvcat;
+#connect auxiliary /@miafisdp;
+
+run
+  {   allocate  channel ch1 type disk; 
+      allocate  channel ch2 type disk; 
+      allocate  channel ch3 type disk; 
+      set until time '09/02/2003 19:00:00'; 
+      restore controlfile;
+      sql "alter database mount clone database";
+      set newname for datafile 1 to 'E:\ORACLE\ORADATA\MIAFISDP\DATAFILE\SYSTEM01.DBF';
+      set newname for datafile 2 to 'E:\ORACLE\ORADATA\MIAFISDP\DATAFILE\DF_RBS_R_01_01.DBF';
+      set newname for datafile 35 to 'E:\ORACLE\ORADATA\MIAFISDP\DATAFILE\DF_SQLNAV_D_01_01.DBF';
+      restore tablespace system, ts_rbs_r_01, TS_SQLNAV_D_01; 
+      sql "alter database datafile 1,2,35 online"; 
+      sql "alter database datafile 3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20 offline drop";
+      sql "alter database datafile 21,22,23,24,25,26,27,28,29,30,31,32,33,34,36,37,38,39,40 offline drop";
+      sql "alter database datafile 41,42,43,44,45,46,47,48,49,50,51,52,53,54,55,56,57,58,59,60 offline drop";
+      sql "alter database datafile 61,62 offline drop";
+      switch datafile all;
+      recover database skip forever tablespace
+IDCIVIL_DATA,
+IDCIVIL_INDX,
+TEMP,
+TS_AFISMAIN_B_01,
+TS_AFISMAIN_D_01,
+TS_AFISMAIN_D_02,
+TS_AFISMAIN_D_03,
+TS_AFISMAIN_I_01,
+TS_AFISMAIN_I_02,
+TS_AFISTEMP_D_01,
+TS_AFISTEMP_I_01,
+TS_BDI_B_0002,
+
+TS_BDI_B_0003,
+TS_BDI_B_01,
+TS_BDI_D_01,
+TS_BDI_D_02,
+TS_BDI_I_01,
+TS_BDI_I_02,
+TS_CFB_D_01,
+TS_CFB_I_01,
+TS_CIV_D_01,
+TS_CIV_D_02,
+TS_CIV_I_01,
+TS_CIV_I_02,
+TS_CRM_D_01,
+
+TS_CRM_D_02,
+TS_CRM_I_01,
+TS_CRM_I_02,
+TS_CRP_D_01,
+TS_CRP_D_02,
+TS_CRP_I_01,
+TS_CRP_I_02,
+TS_DGT_D_01,
+TS_DGT_D_02,
+TS_DGT_I_01,
+TS_DGT_I_02,
+TS_GBK_B_01,
+TS_GBK_D_01,
+
+TS_GBK_I_01,
+TS_IDT_D_01,
+TS_IDT_D_02,
+TS_IDT_I_01,
+TS_IDT_I_02,
+TS_INT_D_01,
+TS_INT_I_01,
+TS_LAT_D_01,
+TS_LAT_D_02,
+TS_LAT_I_01,
+TS_LAT_I_02,
+TS_MIG_D_01,
+TS_MIG_D_02,
+
+TS_MIG_I_01,
+TS_MIG_I_02,
+#TS_SQLNAV_D_01,
+TS_WFL_D_01,
+TS_WFL_D_02,
+TS_WFL_I_01,
+TS_WFL_I_02,
+USERS;
+   sql "alter database open resetlogs";
+
+   release channel ch1; 
+   release channel ch2; 
+   release channel ch3; 
+}   

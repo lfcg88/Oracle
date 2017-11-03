@@ -1,0 +1,293 @@
+rem
+rem Information about a table - Columns, primary key, foreign keys,
+rem indexes, constraints, triggers 
+rem
+rem Biju Thomas
+rem
+rem Provide the owner name and table name along with the script with a space
+rem
+set serveroutput on feedback off verify off pages 0 lines 200 trims on
+
+/* 
+1. Table Owner (Wild character % may be used)
+2. Table Name (Wild character % may be used)
+*/
+
+spool c:\tabinfo.lst
+declare
+     wuser varchar2 (15) := '&1';
+     wtable varchar2 (30) := '&2';
+     /*  Tables */
+     cursor ctabs is select table_name, owner, tablespace_name,
+          initial_extent, next_extent, pct_increase, num_rows, blocks
+     from all_tables where
+     owner like upper(wuser)
+     and table_name like upper(wtable);
+     /* Columns */
+     cursor ccols (o in varchar2, t in varchar2)
+     is select rpad(column_name,40)
+          ||rpad(data_type,10)
+          ||rpad(
+            decode(data_type,'DATE'    ,' '
+                            ,'LONG'    ,' '
+                            ,'LONG RAW',' '
+                            ,'RAW'     ,decode(data_length,null,null
+                                                    ,'('||data_length||')')
+                            ,'CHAR'    ,decode(data_length,null,null
+                                                    ,'('||data_length||')')
+                            ,'VARCHAR' ,decode(data_length,null,null
+                                                    ,'('||data_length||')')
+                            ,'VARCHAR2',decode(data_length,null,null
+                                                    ,'('||data_length||')')
+                            ,'NUMBER'  ,decode(data_precision,null,'   '
+                                                ,'('||data_precision||
+     decode(data_scale,null,null,','||data_scale)||')'),'unknown'),8,' ')
+          ||decode(nullable,'Y','NULL','NOT NULL') cstr
+     from all_tab_columns
+     where table_name = upper(t)
+     and   owner = upper(o)
+     order by column_id;
+     /* Indexes */
+     cursor cinds (o in varchar2, t in varchar2) is
+     select owner, index_name,decode(uniqueness,'UNIQUE','UNIQUE') unq,
+     decode(status, 'VALID', '( VALID )', '(INVALID)') status
+     from all_indexes where
+     table_name = upper(t) and
+     table_owner = upper(o);
+     cursor cind_cols (o in varchar2, t in varchar2, i in varchar2) is
+     select  column_name
+     from all_ind_columns where table_name = upper(t) and
+      index_name = upper(i) and
+      index_owner = upper(o)
+     order by column_position;
+     /* Primary and Unique Constraints */
+     cursor cpk (o in varchar2, t in varchar2)  is
+     select constraint_name, decode(constraint_type,'U',' UNQ',' PKEY') typ,
+     decode(status, 'ENABLED', '( VALID )', '(INVALID)') status
+     from all_constraints
+     where table_name = upper(t)
+     and   owner = upper(o)
+     and   constraint_type in ('U','P');
+     cursor cpk_cols (o in varchar2, t in varchar2, c in varchar2) is
+     select column_name
+     from all_cons_columns
+     where table_name = upper(t)
+     and   constraint_name = upper(c)
+     and owner = upper(o)
+     order by position;
+     /* Foreign Key */
+     cursor cfk (o in varchar2, t in varchar2) is
+     select c.constraint_name cname, c.r_constraint_name rname,
+            c.table_name ctable, r.table_name rtable, c.r_owner rowner,
+            c.status cstatus,
+            decode(c.delete_rule,'CASCADE','ON CASCADE',' ') drule
+     from   all_constraints c, all_constraints r
+     where c.constraint_type='R' and
+           c.owner = upper(o) and
+           c.table_name = upper(t) and
+           c.r_owner = r.owner and
+           c.r_constraint_name = r.constraint_name;
+     cursor cfk_cols (o in varchar2, t in varchar2, c in varchar2) is
+     select column_name
+     from all_cons_columns
+     where   constraint_name = upper(c) and
+             owner = upper(o) and
+             table_name = upper(t)
+     order by position;
+     /* Other Constraints */
+     cursor coc (o in varchar2, t in varchar2)  is
+     select constraint_name, search_condition,
+     decode(status, 'ENABLED', '( VALID )', '(INVALID)') status
+     from all_constraints
+     where table_name = upper(t)
+     and   owner = upper(o)
+     and   constraint_type in ('C');
+     /* Trigger */
+     cursor ctrig (o in varchar2, t in varchar2) is
+     select owner, trigger_name, status, triggering_event event
+     from all_triggers
+     where table_name = upper(t) and
+           table_owner = upper(o);
+     /* Privileges on this table */
+     cursor cpriv (o in varchar2, t in varchar2) is
+     select grantee, grantor, privilege, grantable
+     from all_tab_privs
+     where table_name = upper(t) and
+           table_schema = upper(o);
+     /* Objects Dependency */
+     cursor cdep (o in varchar2, t in varchar2) is
+     select owner || '.' || name name,  type
+     from all_dependencies
+     where referenced_owner = upper (o) and
+           referenced_name  = upper (t) and
+           referenced_type  = 'TABLE'
+     order by owner, name;
+     wcount number := 0;
+     wdate varchar2 (25) := to_char(sysdate,'Mon DD, YYYY  HH:MI AM');
+     w5space char(5) := '.    ';
+     wdum1 varchar2 (255);
+     wdum2 varchar2 (255);
+     wdum3 varchar2 (255);
+     wdum4 varchar2 (255);
+     wdum5 varchar2 (255);
+     wdum6 varchar2 (255);
+     wdum7 varchar2 (255);
+  begin
+    dbms_output.enable(100000);
+    for rtabs in ctabs loop
+      dbms_output.put_line('********** TABLE INFORMATION **********               ' || wdate);
+      dbms_output.put_line('*--------------*------------------------------*-----------------------------');
+      dbms_output.put_line('Table Owner    Table Name                     Tablespace Name');
+      dbms_output.put_line('Initial        Next           PctIncrease    Rows           Blocks');
+      dbms_output.put_line('*--------------*------------------------------*-----------------------------');
+      wcount := wcount + 1;
+      dbms_output.put_line(rpad(rtabs.owner,15) || rpad(rtabs.table_name,31) || rpad(rtabs.tablespace_name,30));
+      dbms_output.put_line(rpad(rtabs.initial_extent,15) || rpad(rtabs.next_extent,15) || rpad(rtabs.pct_increase,15) || rpad(rtabs.num_rows,15) || rpad(rtabs.blocks,15));
+      dbms_output.put_line(w5space);
+      dbms_output.put_line(w5space || 'Column Name                             Datatype          Null?');
+      dbms_output.put_line(w5space || '*---------------------------------------*---------*-------*-------');
+      for rcols  in ccols (rtabs.owner, rtabs.table_name) loop
+         dbms_output.put_line(w5space || rcols.cstr);
+      end loop;
+      dbms_output.put_line(w5space);
+      open cinds (rtabs.owner, rtabs.table_name);
+      fetch cinds into wdum1, wdum2, wdum3, wdum4;
+      if cinds%notfound then
+         dbms_output.put_line('********** ' || rtabs.table_name || ' - NO INDEXES  *********');
+         close cinds;
+      else
+         close cinds;
+         dbms_output.put_line('********** ' || rtabs.table_name || ' -INDEX **********');
+         dbms_output.put_line(w5space || '*--------------*----------------------------------*-------*-------------*');
+         dbms_output.put_line(w5space || 'Index Owner    Index Name                         Unique  Index Columns');
+         dbms_output.put_line(w5space || '*--------------*----------------------------------*-------*-------------*');
+         for rinds in cinds (rtabs.owner, rtabs.table_name) loop
+             dbms_output.put_line(w5space || rpad(rinds.owner,15) || rpad(rinds.index_name,35) || rpad(rinds.unq,8) || rinds.status);
+             for rind_cols in cind_cols (rinds.owner, rtabs.table_name, rinds.index_name) loop
+
+                 dbms_output.put_line(lpad(rind_cols.column_name,78, '.   .'));
+             end loop;
+          end loop;
+      end if;
+      dbms_output.put_line(w5space);
+      open cpk (rtabs.owner, rtabs.table_name);
+      fetch cpk into wdum1, wdum2, wdum3;
+      if cpk%notfound then
+         dbms_output.put_line('********** ' || rtabs.table_name || ' - NO PRIMARY/UNIQUE KEYS **********');
+         close cpk;
+      else
+         close cpk;
+         dbms_output.put_line('********** ' || rtabs.table_name || ' -PRIMARY/UNIQUE KEY **********');
+         dbms_output.put_line(w5space || '*----------------------------------------*----*-------------*');
+         dbms_output.put_line(w5space || 'Primary/Unique Key                       Type Key Columns');
+         dbms_output.put_line(w5space || '*----------------------------------------*----*-------------*');
+         for rpk in cpk (rtabs.owner, rtabs.table_name) loop
+           dbms_output.put_line(w5space || Rpad(rpk.constraint_name,40) || rpad(rpk.typ,5) || rpk.status);
+           for rpk_cols in cpk_cols (rtabs.owner, rtabs.table_name, rpk.constraint_name) loop
+              dbms_output.put_line(lpad(rpk_cols.column_name,66, '.   .'));
+           end loop;
+         end loop;
+      end if;
+      dbms_output.put_line(w5space);
+      open cfk (rtabs.owner, rtabs.table_name);
+      fetch cfk into wdum1, wdum2, wdum3, wdum4, wdum5, wdum6, wdum7;
+      if cfk%notfound then
+         dbms_output.put_line('********** ' || rtabs.table_name || ' - NO FOREIGN KEYS  **********');
+         close cfk;
+      else
+         close cfk;
+         dbms_output.put_line('********** ' || rtabs.table_name || ' -FOREIGN KEY **********');
+         dbms_output.put_line(w5space || '*------------------------*-------*-------*----------------*');
+         dbms_output.put_line(w5space || 'Foreign Key              Status  Rule    Key Columns');
+         dbms_output.put_line(w5space || '*------------------------*-------*-------*----------------*');
+         for rfk in cfk (rtabs.owner, rtabs.table_name) loop
+           dbms_output.put_line(w5space || rpad(rfk.cname,32) || rpad(rfk.cstatus,8) || rfk.drule);
+           for rfk_cols in cfk_cols (rtabs.owner, rtabs.table_name, rfk.cname) loop
+              dbms_output.put_line(lpad(rfk_cols.column_name,60,'.   .'));
+           end loop;
+           dbms_output.put_line(w5space || 'Referred To  : ' || rfk.rowner || '.' || rfk.rtable || '.' || rfk.rname);
+           for rfk_cols in cfk_cols (rtabs.owner, rtabs.table_name, rfk.rname) loop
+              dbms_output.put_line(lpad(rfk_cols.column_name,60,'.   .'));
+           end loop;
+         end loop;
+      end if;
+      dbms_output.put_line(w5space);
+      open coc (rtabs.owner, rtabs.table_name);
+      fetch coc into wdum1, wdum2, wdum3;
+      if coc%notfound then
+         dbms_output.put_line('********** ' || rtabs.table_name || ' - NO OTHER CONSTRAINTS **********');
+         close coc;
+      else
+         close coc;
+         dbms_output.put_line('********** ' || rtabs.table_name || ' -OTHER CONSTRAINTS **********');
+         dbms_output.put_line(w5space || '*----------------------------------*------------------------------------*');
+         dbms_output.put_line(w5space || 'Constraint Name                    Condition');
+         dbms_output.put_line(w5space || '*----------------------------------*------------------------------------*');
+         for roc in coc (rtabs.owner, rtabs.table_name) loop
+           dbms_output.put_line(w5space || Rpad(roc.constraint_name,26) || roc.status || roc.search_condition);
+         end loop;
+      end if;
+      dbms_output.put_line(w5space);
+      open ctrig (rtabs.owner, rtabs.table_name);
+      fetch ctrig into wdum1, wdum2, wdum3, wdum4;
+      if ctrig%notfound then
+          dbms_output.put_line('********** ' || rtabs.table_name || ' - NO TRIGGERS  **********');
+          close ctrig;
+      else
+          close ctrig;
+          dbms_output.put_line('********** ' || rtabs.table_name || ' -TRIGGER **********');
+          dbms_output.put_line(w5space || '*--------------*------------------------------------------------*--------');
+          dbms_output.put_line(w5space || 'Owner          Trigger Name                                     Status');
+          dbms_output.put_line(w5space || '*--------------*------------------------------------------------*--------');
+          for rtrig in ctrig (rtabs.owner, rtabs.table_name) loop
+             dbms_output.put_line(w5space || rpad(rtrig.owner,15) || rpad(rtrig.trigger_name,50) ||  rtrig.status);
+          end loop;
+      end if;
+      dbms_output.put_line(w5space);
+      open cpriv (rtabs.owner, rtabs.table_name);
+      fetch cpriv into wdum1, wdum2, wdum3, wdum4;
+      if cpriv%notfound then
+          dbms_output.put_line('********** ' || rtabs.table_name || ' - NO PRIVILEGES GRANTED **********');
+          close cpriv;
+      else
+          close cpriv;
+          dbms_output.put_line('********** ' || rtabs.table_name || ' -PRIVILEGES GRANTED **********');
+          dbms_output.put_line(w5space || '*--------------*------------------------------------------------*--------');
+          dbms_output.put_line(w5space || 'Granted To     Granted By     Privilege                         Grantable');
+          dbms_output.put_line(w5space || '*--------------*--------------*---------------------------------*--------');
+          for rpriv in cpriv (rtabs.owner, rtabs.table_name) loop
+             dbms_output.put_line(w5space || rpad(rpriv.grantee,15) || rpad(rpriv.grantor,15) || rpad(rpriv.privilege,34) ||  rpriv.grantable);
+          end loop;
+      end if;
+      dbms_output.put_line(w5space);
+      open cdep (rtabs.owner, rtabs.table_name);
+      fetch cdep into wdum1, wdum2;
+      if cdep%notfound then
+          dbms_output.put_line('********** ' || rtabs.table_name || ' - NO DEPENDENT OBJECTS **********');
+          close cdep;
+      else
+          close cdep;
+          dbms_output.put_line('********** ' || rtabs.table_name || ' -DEPENDENT OBJECTS **********');
+          dbms_output.put_line(w5space || '*-------------------------------------------------*------------------');
+          dbms_output.put_line(w5space || 'Object Name                                       Type ');
+          dbms_output.put_line(w5space || '*-------------------------------------------------*------------------');
+          for rdep in cdep (rtabs.owner, rtabs.table_name) loop
+             dbms_output.put_line(w5space || rpad(rdep.name,50) || rdep.type);
+          end loop;
+      end if;
+      dbms_output.put_line('********** ' || rtabs.table_name || ' - END INFO **********');
+    end loop;
+    if wcount =0 then
+      dbms_output.put_line('******************************************************');
+      dbms_output.put_line('*                                                    *');
+      dbms_output.put_line('* Plese Verify Input Parameters... No Matches Found! *');
+      dbms_output.put_line('*                                                    *');
+      dbms_output.put_line('******************************************************');
+    end if;
+  end;
+/
+set serveroutput off feedback on verify on pages 999
+spool off
+prompt
+prompt Output saved at /tmp/tabinfo.lst
+

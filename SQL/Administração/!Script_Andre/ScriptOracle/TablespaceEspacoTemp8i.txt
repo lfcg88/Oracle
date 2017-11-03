@@ -1,0 +1,166 @@
+SELECT /*+ FIRST_ROWS */
+  f.tablespace_name,
+  f.status,
+  f.contents,
+  f.logging,
+  f.extent_management,
+  f.initial_extent initial_extent,
+  ROUND(f.initial_extent/1024,2) initial_extent_kb,
+  ROUND(f.initial_extent/1048576,2) initial_extent_mb,
+  f.next_extent next_extent,
+  ROUND(f.next_extent/1024,2) next_extent_kb,
+  ROUND(f.next_extent/1048576,2) next_extent_mb,
+  f.min_extents min_extents,
+  f.max_extents max_extents,
+  f.pct_increase pct_increase,
+  f.min_extlen min_extent_length,
+  ROUND(f.min_extlen/1024,2) min_extent_length_kb,
+  ROUND(f.min_extlen/1048576,2) min_extent_length_mb,
+  f.allocation_type,
+  f.plugged_in,
+  f.size_mb,
+  f.used_mb,
+  f.used_percent
+FROM
+  (
+    SELECT
+      d.*,
+      ROUND(NVL(a.bytes / 1048576, 0),2) size_mb,
+      ROUND(NVL(a.bytes - NVL(f.bytes, 0), 0)/1048576, 2) used_mb,
+      ROUND(DECODE(a.bytes,0,0,NVL((a.bytes - NVL(f.bytes, 0)) / a.bytes * 100,0)),2) used_percent
+    FROM sys.dba_tablespaces d,
+      (
+        SELECT
+          tablespace_name,
+          SUM(bytes) bytes
+        FROM
+          sys.dba_data_files
+        GROUP BY
+          tablespace_name
+      ) a,
+      (
+        SELECT /*+ FIRST_ROWS */
+          tablespace_name,
+          SUM(bytes) bytes
+        FROM
+          sys.dba_free_space
+        GROUP BY
+          tablespace_name
+      ) f
+    WHERE
+     -- d.tablespace_name LIKE :tablespace_name
+      --AND
+      d.tablespace_name = a.tablespace_name(+)
+      AND d.tablespace_name = f.tablespace_name(+)
+      AND NOT (d.extent_management LIKE 'LOCAL' AND d.contents LIKE 'TEMPORARY')
+    UNION ALL
+    SELECT
+      d.*,
+      ROUND(NVL(a.bytes / 1048576, 0),2) size_mb,
+      ROUND(NVL(t.bytes, 0)/1048576, 2) used_mb,
+      ROUND(DECODE(a.bytes,0,0,NVL(t.bytes / a.bytes * 100, 0)), 2) used_percent
+    FROM
+      sys.dba_tablespaces d,
+      (
+        SELECT
+          tablespace_name,
+          SUM(bytes) bytes
+        FROM
+          sys.dba_temp_files
+        GROUP BY
+          tablespace_name
+      ) a,
+      (
+        SELECT
+          tablespace_name,
+          SUM(bytes_cached) bytes
+          FROM
+            v$temp_extent_pool
+          GROUP BY
+            tablespace_name
+      ) t
+    WHERE
+   --   d.tablespace_name LIKE :tablespace_name
+   --   AND
+      d.tablespace_name = a.tablespace_name(+)
+      AND d.tablespace_name = t.tablespace_name(+)
+      AND d.extent_management LIKE 'LOCAL'
+      AND d.contents LIKE 'TEMPORARY'
+  ) f
+ORDER BY
+  f.tablespace_name
+/
+
+
+-------------------------------------------------------------------------------
+-- Espaço free *** este seria o valor real para tablespace temporaria  ---------
+--------------------------------------------------------------------------------
+
+SELECT /*+ FIRST_ROWS */
+  d.tablespace_name,
+  NVL(f.bytes_mb,0) free_space_mb,
+  NVL(f.largest_free_extent_mb,0) largest_free_extent_mb,
+  NVL(t.total_size_mb,0) total_size_mb
+FROM
+  (
+    SELECT
+      tablespace_name,
+      ROUND(SUM(bytes)/1048576,2) bytes_mb,
+      ROUND(MAX(bytes)/1048576,2) largest_free_extent_mb
+    FROM
+      dba_free_space
+    GROUP BY
+      tablespace_name
+  ) f,
+  dba_data_files d,
+  (
+    SELECT
+      ROUND(SUM(bytes)/1048576,2) total_size_mb,
+      tablespace_name
+    FROM
+      dba_data_files
+    GROUP BY
+      tablespace_name
+  ) t,
+  dba_tablespaces dt
+WHERE
+ -- d.tablespace_name LIKE :tablespace_name
+  --AND
+  d.tablespace_name = t.tablespace_name
+  AND d.tablespace_name = f.tablespace_name(+)
+  AND d.tablespace_name = dt.tablespace_name
+  AND NOT (dt.extent_management LIKE 'LOCAL' AND dt.contents LIKE 'TEMPORARY')
+UNION
+SELECT /*+ FIRST_ROWS */
+  d.tablespace_name,
+  ROUND(NVL(t.bytes, 0)/1048576,2) free_space_mb,
+  ROUND(NVL(t.largest_free / 1048576,2),2) largest_free_extent_mb,
+  ROUND(NVL(a.bytes / 1048576, 2),2) total_size_mb
+FROM
+  sys.dba_tablespaces d,
+  (
+    SELECT
+      tablespace_name,
+      SUM(bytes) bytes
+    FROM
+      dba_temp_files
+    GROUP BY
+      tablespace_name
+  ) a,
+  (
+    SELECT
+      tablespace_name,
+      SUM(bytes_cached) bytes,
+      MAX(bytes_cached) largest_free
+    FROM
+      v$temp_extent_pool
+    GROUP BY tablespace_name
+  ) t
+WHERE
+  --d.tablespace_name LIKE :tablespace_name
+  --AND
+  d.tablespace_name = a.tablespace_name(+)
+  AND d.tablespace_name = t.tablespace_name(+)
+  AND d.extent_management LIKE 'LOCAL' AND d.contents LIKE 'TEMPORARY'
+/
+

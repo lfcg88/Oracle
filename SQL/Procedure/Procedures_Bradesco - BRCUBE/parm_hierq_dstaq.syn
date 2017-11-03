@@ -1,0 +1,3 @@
+create or replace synonym SGPB_PROC.PARM_HIERQ_DSTAQ
+  for SGPB.PARM_HIERQ_DSTAQ;
+

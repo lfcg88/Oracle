@@ -1,0 +1,184 @@
+rem $DBA/file_use.sql
+rem
+rem Changed 08/01/97 by Brian Lomasky - Removed sequence#.  Increased sizes.
+rem Changed 03/18/97 by Brian Lomasky - Increased size of MB column
+rem Changed 12/19/96 by Brian Lomasky - Calculate database name and report date
+rem Changed 12/17/96 by Brian Lomasky - Divided bytes by 1048576 (was 1000000),
+rem					  Removed rem statements from SELECT,
+rem					  Included "set verify off"
+rem Changed 07/26/96 by Brian Lomasky - Increased MB field size
+rem Changed 06/26/96 by Brian Lomasky - Added archive log mode desc
+rem
+set  echo off
+set feedback off
+set linesize 99
+set pagesize 100
+set termout on
+set verify off
+rem
+rem Calculate database name and report date
+rem
+column dbname noprint new_value sid
+column now noprint new_value today
+select name dbname, to_char(sysdate, 'MM/DD/YY') now from v$database;
+set termout on
+ttitle skip 2 left &today center 'FILE_USE - Files for database ' &sid skip 2
+column type heading 'Type'
+column tablespace_name format A19 heading 'Tablesp'
+column file_name format A60 heading 'File Name'
+column MB format 99999B heading 'Act MB|on|Disk'
+column stat format A5 heading 'Stat'
+break on tablespace_name nodup on report
+compute sum of mb on report
+spool file_use.lst
+-- set termout off
+select 'Data' type, tablespace_name,
+  REPLACE(file_name,'?','&&1') file_name,
+  bytes/1048576 MB,
+  decode(status,'AVAILABLE','Avail','INVALID','Inval','****') stat
+from dba_data_files
+union
+select 'Redo', 'Grp ' || a.group#, member, bytes/1048576 MB,
+  decode(b.status,'CURRENT','Curr','INACTIVE','Inact','UNUSED','Unuse','****')
+from v$logfile a, v$log b
+where a.group# = b.group#
+union
+select 'Parm', 'Ctrl 1',
+  REPLACE(nvl(ltrim(substr(value,1,instr(value||',',',',1,1)-1)),'  (none)'),
+  '?','&&1') file_name,
+  0, ''
+from v$parameter where name = 'control_files'
+union
+select 'Parm', 'Ctrl 2',
+  REPLACE(nvl(ltrim(substr(value,instr(value||',',',',1,1)+1,
+  instr(value||',',',',1,2)-instr(value||',',',',1,1)-1)),'  (none)'),
+  '?','&&1') file_name,
+  0, ''
+from v$parameter where name = 'control_files'
+union
+select 'Parm', 'Ctrl 3',
+  REPLACE(nvl(ltrim(substr(value,instr(value||',',',',1,2)+1,
+  instr(value||',',',',1,3)-instr(value||',',',',1,2)-1)),'  (none)'),
+  '?','&&1') file_name,
+  0, ''
+from v$parameter where name = 'control_files'
+union
+select 'Parm', 'Ctrl 4',
+  REPLACE(nvl(ltrim(substr(value,instr(value||',',',',1,3)+1,
+  instr(value||',',',',1,4)-instr(value||',',',',1,3)-1)),'  (none)'),
+  '?','&&1') file_name,
+  0, ''
+from v$parameter where name = 'control_files'
+union
+select 'Parm', 'Ifile', REPLACE(value,'?','&&1') file_name, 0, ''
+from v$parameter where name = 'ifile'
+union
+select 'Parm', 'Archive', DECODE(d.log_mode, 'ARCHIVELOG',
+	REPLACE(p.value,'?','&&1') || ' - ENABLED',
+	REPLACE(p.value,'?','&&1') || ' - Disabled') file_name,
+	0, ''
+from v$parameter p, v$database d
+where p.name = 'log_archive_dest'
+order by 1, 2, 3;
+spool off
+set termout on
+rem prompt Created file_use.lst for your viewing pleasure...
+
+
+-------------------- lista os arquivos por diretorio ----------------------------
+
+break on diretorio
+
+set linesize 90
+
+column diretorio format a35
+column arquivo format a40
+
+select *
+from ( 
+	select substr(name,1,instr(name,'/',-1)) diretorio ,substr(name, instr(name, '/', -1)) arquivo,'DF  '  "tipo"
+	FROM V$DATAFILE  
+	UNION
+	select substr(member,1,instr(member,'/',-1)) diretorio ,substr(member, instr(member, '/', -1)) arquivo,'LF  '  "tipo"  
+	FROM V$LOGFILE  
+	UNION
+	select substr(name,1,instr(name,'/',-1)) diretorio ,substr(name, instr(name, '/', -1)) arquivo,'CF  '  "tipo"   
+	FROM V$CONTROLFILE
+)
+order by diretorio;
+
+
+-------------------- lista os arquivos por mount point ----------------------------
+
+
+break on MounPoint
+
+set linesize 90
+
+column MounPoint format a10
+column arquivo format a40
+
+select *
+from (
+	select substr(name,1,5) MounPoint ,substr(name, instr(name, '/', -1)) arquivo,'DF  '  "tipo"
+	FROM V$DATAFILE  
+	UNION
+	select substr(member,1,5) MounPoint ,substr(member, instr(member, '/', -1)) arquivo,'LF  '  "tipo"  
+	FROM V$LOGFILE  
+	UNION
+	select substr(name,1,5) MounPoint ,substr(name, instr(name, '/', -1)) arquivo,'CF  '  "tipo"   
+	FROM V$CONTROLFILE
+)
+order by MounPoint;
+
+
+
+
+------------------- lista tablespace por mount point ----------------------------
+
+break on MounPoint
+
+set linesize 90
+
+column MounPoint format a10
+column tablespace_name format a40
+
+select substr(file_name,1,5) MounPoint ,tablespace_name
+	FROM dba_data_files
+order by MounPoint;
+
+
+
+
+
+------------------- lista  mount point por tablespace----------------------------
+
+
+break on tablespace_name
+
+set linesize 90
+
+column MounPoint format a10
+column tablespace_name format a40
+
+select tablespace_name, substr(file_name,1,5) MounPoint 
+	FROM dba_data_files
+order by tablespace_name;
+
+
+
+
+----------------------- lista configuração de diretorio no init.ora ----------------
+
+
+
+
+set linesize 90
+
+column parametro format a40
+column diretorio format a40
+
+
+select NAME parametro,VALUE diretorio from v$parameter
+where name in ('background_dump_dest','user_dump_dest','core_dump_dest','log_archive_dest');
+

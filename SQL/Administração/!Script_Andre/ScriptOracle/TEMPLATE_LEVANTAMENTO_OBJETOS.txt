@@ -1,0 +1,1291 @@
+
+
+
+
+spool c:\objetos.lst
+set lines 130
+set pages 100
+set numf 99,999,999,999,999
+prompt ==================================
+prompt D A T A B A S E
+prompt ==================================
+select * from global_name;
+prompt
+prompt
+prompt
+prompt =========================================
+prompt Schemas e Objetos 
+prompt =========================================
+prompt
+prompt
+column name format a13 trunc heading SCHEMA
+column cl format 999999 heading CLSTR
+column ta format 999999 heading TABLE
+column ix format 999999 heading INDEX
+column se format 999999 heading SEQNC
+column tr format 999999 heading TRIGR
+column fn format 999999 heading FUNCT
+column pr format 999999 heading PROCD
+column pa format 999999 heading PACKG
+column vi format 999999 heading VIEWS
+column sy format 999999 heading SYNYM
+column ot format 999999 heading OTHER
+break on report
+compute sum of cl ta ix se tr fn pr pa vi sy ot on report
+
+select
+  u.name,
+  sum(decode(o.type#, 3, objs))  cl,
+  sum(decode(o.type#, 2, objs))  ta,
+  sum(decode(o.type#, 1, objs))  ix,
+  sum(decode(o.type#, 6, objs))  se,
+  sum(decode(o.type#, 12, objs)) tr,
+  sum(decode(o.type#, 8, objs))  fn,
+  sum(decode(o.type#, 7, objs))  pr,
+  sum(decode(o.type#, 9, objs))  pa,
+  sum(decode(o.type#, 4, objs))  vi,
+  sum(decode(o.type#, 5, objs))  sy,
+  sum(decode(o.type#, 1,0, 2,0, 3,0, 4,0, 5,0, 6,0, 7,0, 8,0, 9,0, 12,0, objs))  ot
+from
+(select owner#, type#, count(*) objs from sys.obj$ group by owner#, type#)  o,
+sys.user$  u
+where
+  u.user# = o.owner#
+group by
+  u.name
+order by
+  decode(u.name, 'SYS', 1, 'SYSTEM', 2, 'PUBLIC', 3, 4),
+  u.name
+/
+prompt
+prompt
+prompt
+prompt
+prompt =========================================
+prompt Schemas e Objetos 
+prompt =========================================
+prompt
+select   USERNAME,
+         count(decode(o.TYPE#, 2,o.OBJ#,'')),
+         count(decode(o.TYPE#, 1,o.OBJ#,'')),
+         count(decode(o.TYPE#, 5,o.OBJ#,'')),
+         count(decode(o.TYPE#, 4,o.OBJ#,'')),
+         count(decode(o.TYPE#, 6,o.OBJ#,'')),
+         count(decode(o.TYPE#, 7,o.OBJ#,'')),
+         count(decode(o.TYPE#, 8,o.OBJ#,'')),
+         count(decode(o.TYPE#, 9,o.OBJ#,'')),
+         count(decode(o.TYPE#,12,o.OBJ#,'')),
+         count(decode(o.TYPE#,10,o.OBJ#,''))
+from     sys.obj$ o, dba_users u
+where    u.USER_ID = o.OWNER# (+)
+and      o.TYPE# is NOT NULL
+group by USERNAME
+order by USERNAME;
+prompt
+prompt
+prompt ********************************
+prompt  Quantidade de objetos 
+prompt ********************************
+column owner format a15
+column object_type format a15
+select owner,object_type,count(*)
+from dba_objects
+GROUP BY OWNER,OBJECT_TYPE
+/
+prompt
+prompt
+prompt
+prompt
+prompt *********************************************
+prompt  Segments With More Than 50% Of Max Extents  
+prompt *********************************************
+prompt
+prompt
+select   OWNER,
+         TABLESPACE_NAME,
+         SEGMENT_NAME,
+         SEGMENT_TYPE,
+         BYTES,
+         EXTENTS,
+         MAX_EXTENTS,
+         (EXTENTS/MAX_EXTENTS)*100
+from     dba_segments
+where    SEGMENT_TYPE in ('TABLE','INDEX')
+and      EXTENTS > MAX_EXTENTS/2
+order by (EXTENTS/MAX_EXTENTS) desc;
+prompt
+prompt
+prompt ********************************
+prompt  Objects In The SYSTEM Tablespace  
+prompt ********************************
+prompt
+prompt
+select   OWNER,
+         SEGMENT_NAME,
+         SEGMENT_TYPE,
+         TABLESPACE_NAME,
+         BYTES
+from     dba_segments
+where    TABLESPACE_NAME = 'SYSTEM'
+and      OWNER not in ('SYS','SYSTEM')
+order by OWNER, SEGMENT_NAME;
+prompt
+prompt
+prompt ********************************
+prompt  Objects by tablesapce  
+prompt ********************************
+prompt
+prompt
+select   OWNER,
+         TABLESPACE_NAME,
+         sum(decode(SEGMENT_TYPE,'TABLE',1,0)),
+         sum(decode(SEGMENT_TYPE,'INDEX',1,0))
+from     dba_segments
+where    SEGMENT_TYPE in ('TABLE','INDEX')
+group by OWNER, TABLESPACE_NAME;
+prompt
+prompt
+
+
+prompt ===============================
+prompt LSISTAGEM DE OBJETOS INVALIDOS
+prompt ==================================
+prompt
+prompt
+select owner,object_type,status,count(*)
+from dba_objects
+where STATUS = 'INVALID'
+group by  owner,object_type,status
+/
+prompt
+prompt
+prompt =========================================
+prompt  OBJETOS DO MESMO TIPO COM NOME IDENTICO 
+prompt =========================================
+prompt
+prompt
+set linesize 110
+column owner format a10
+column object_name format a30
+select a.owner,b.object_name,b.owner,b.object_name
+from dba_objects a,dba_objects b
+where a.owner not in ('SYS','SYSTEM')
+and   b.owner not in ('SYS','SYSTEM')
+and   a.owner <> b.owner
+and   a.object_type = b.object_type
+and   a.object_name = b.object_name
+/
+prompt
+prompt
+prompt ============================================
+prompt Count object types with nologging turned on.
+prompt ============================================
+prompt
+prompt
+col object_type format a12;
+select owner, 'TABLE' object_type, count(*) total
+from dba_tables 
+where logging = 'NO'
+ and owner not in ('SYS','SYSTEM')
+ and duration is null
+group by owner 
+union
+select owner, 'INDEX' object_type, count(*) total
+from dba_indexes 
+where logging = 'NO'
+ and owner not in ('SYS','SYSTEM')
+ and duration is null
+group by owner;
+prompt
+prompt
+prompt =========================================
+prompt list of objects with nologging turned on.
+prompt =========================================
+prompt
+prompt
+set lines 132 pages 1000
+col object_type format a12;
+break on owner skip 1;
+select owner, table_name object_name, 'TABLE' object_type, tablespace_name
+from dba_tables 
+where logging = 'NO'
+ and owner not in ('SYS','SYSTEM')
+ and duration is null
+union
+select owner, index_name object_name, 'INDEX' object_type, tablespace_name
+from dba_indexes 
+where logging = 'NO'
+ and owner not in ('SYS','SYSTEM')
+ and duration is null
+order by 1,2;
+clear breaks;
+prompt
+prompt
+prompt =========================================
+prompt Objects That Cannot Extend 
+prompt =========================================
+prompt
+prompt
+select   ds.OWNER,
+         ds.SEGMENT_NAME,
+         ds.SEGMENT_TYPE,
+         ds.TABLESPACE_NAME,
+         ds.NEXT_EXTENT,
+         dfs.MAX,
+         dfs.SUM,
+         ds.EXTENTS
+from     dba_segments ds,
+        (select   max(BYTES) max,
+                  sum(BYTES) sum,
+                  TABLESPACE_NAME
+         from     dba_free_space
+         group by tablespace_name) dfs
+where    ds.NEXT_EXTENT > dfs.MAX
+and      ds.TABLESPACE_NAME = dfs.TABLESPACE_NAME
+order by ds.OWNER, ds.TABLESPACE_NAME, ds.SEGMENT_NAME;
+prompt
+prompt
+
+
+prompt =================================================
+prompt  This script will identify those objects created 
+prompt  in either lowercase or mixed case.
+prompt ===================================================
+prompt
+prompt
+set lines 132 pages 1000
+col object_name format a30 heading "Object Name";
+col object_type format a10 heading "Object|Type";
+col created format a30 heading "Created";
+col status format a30 heading "Status";
+select object_name,object_type,created,status from dba_objects
+where (object_name = lower(object_name) or 
+       object_name = initcap(lower(object_name)))
+and object_name != upper(object_name);
+prompt
+prompt
+prompt ==========================
+prompt  This script will identify those objects with 
+prompt  columns that have been created in 
+prompt  either lowercase or mixed case.
+prompt ==========================
+prompt
+prompt
+set lines 132 pages 1000
+
+col column_name format a30 heading "Column Name";
+col table_name format a30 heading "Table Name";
+col data_type format a10 heading "Data|Type";
+col owner format a30 heading "Owner";
+
+break on owner on table_name;
+select owner,table_name,column_name, data_type 
+from dba_tab_columns
+where (column_name = lower(column_name) or 
+       column_name = initcap(lower(column_name)))
+and column_name != upper(column_name)
+order by owner,table_name,column_name;
+clear break
+prompt
+prompt
+prompt
+prompt
+prompt ==========================
+prompt  This script will identify those objects with 
+prompt  columns that have been created in 
+prompt  either lowercase or mixed case.
+prompt ==========================
+prompt
+prompt
+select   DATA_TYPE,
+         COUNT(*)
+from     dba_tab_columns
+where    OWNER not in ('SYS','SYSTEM')
+group    by DATA_TYPE;
+prompt
+prompt
+prompt ==========================
+prompt  Data Type por Owner 
+prompt  
+prompt ==========================
+prompt
+prompt
+select   OWNER,
+         DATA_TYPE,
+         COUNT(*)
+from     dba_tab_columns
+where    OWNER not in ('SYS','SYSTEM')
+group    by OWNER, DATA_TYPE;
+prompt
+prompt
+prompt ===============================================
+prompt Tables designated as temporary in the database.
+prompt ================================================
+prompt
+prompt
+SET PAGESIZE 9999 LINESIZE 145 VERIFY off FEEDBACK off TIMING off;
+
+COLUMN town      HEADING 'Owner'               FORMAT A10         TRUNCATE;
+COLUMN tname     HEADING 'Table|Name'          FORMAT A20         TRUNCATE;
+COLUMN tspace    HEADING 'Tablespace|Name'     FORMAT A20         TRUNCATE;
+COLUMN iext      HEADING 'Initial|Ext(KB)'     FORMAT 99999999;
+COLUMN next      HEADING 'Next|Ext(KB)'        FORMAT 99999999;
+COLUMN pcti      HEADING 'Pct|Incr'            FORMAT 999;
+COLUMN log       HEADING 'Logging'             FORMAT A3;
+COLUMN dur       HEADING 'Duration|Type'       FORMAT A12;
+COLUMN ca        HEADING 'Cached?'             FORMAT A7;
+
+break on town on tname;
+SELECT t.owner town,
+       SUBSTR(t.table_name,1,20) tname,
+       SUBSTR(u.temporary_tablespace,1,20) tspace,
+        decode(t.duration,'SYS$SESSION','SESSION','TRANSACTION') dur,
+       (ts.initial_extent / 1024) iext,
+       (ts.next_extent / 1024) next,
+       ts.pct_increase pcti,
+       decode(ts.logging,'LOGGING','Y','N') log,
+       DECODE(t.cache, 'N', 'No',
+                       'Y', 'Yes',
+                       'No') ca
+  FROM dba_tables t, dbA_users u, dba_tablespaces ts
+WHERE (DURATION = 'SYS$SESSION' or duration = 'SYS$TRANSACTION') 
+and t.owner=u.username
+and u.temporary_tablespace = ts.tablespace_name;
+
+clear columns;
+clear breaks;
+
+prompt
+prompt
+prompt ========================================================
+prompt tables that contain LOBS (lento)
+prompt =========================================================
+prompt
+prompt
+set lines 132;
+col owner format a20 heading 'LOB Owner';
+col table_name format a30 heading 'Table Name';
+col column_name format a30 heading 'Column Name';
+col data_type format a20 heading 'Data Type';
+break on owner;
+
+select a.owner,a.table_name,a.column_name, data_type
+from dba_lobs a, dba_tab_columns b
+where a.column_name=b.column_name
+  and a.table_name = b.table_name
+  and a.owner = b.owner
+  and b.owner <> 'SYS;
+
+clear columns;
+clear breaks;
+
+prompt
+prompt
+prompt
+prompt =====================================================
+prompt This script identifies Partition Table Details.
+prompt ========================================================
+prompt
+prompt
+prompt
+SET PAGESIZE 9999 LINESIZE 145 VERIFY off FEEDBACK off TIMING off;
+
+COLUMN town      HEADING 'Owner'               FORMAT A10         TRUNCATE;
+COLUMN tname     HEADING 'Table|Name'          FORMAT A20         TRUNCATE;
+COLUMN pnam      HEADING 'Partition Name'      FORMAT A20         TRUNCATE;
+COLUMN tspace    HEADING 'Tablespace|Name'     FORMAT A20         TRUNCATE;
+COLUMN iext      HEADING 'Initial|Ext(KB)'     FORMAT 99999999;
+COLUMN next      HEADING 'Next|Ext(KB)'        FORMAT 99999999;
+COLUMN pcti      HEADING 'Pct|Incr'            FORMAT 999;
+COLUMN nrows     HEADING 'Num Rows'            FORMAT 99999999;
+COLUMN blks      HEADING 'Blocks|Used'         FORMAT 999999;
+COLUMN chr       HEADING 'Chained|Rows'        FORMAT 999999;
+
+break on town on tname;
+
+SELECT tp.table_owner town,
+       SUBSTR(tp.table_name,1,20) tname,
+       SUBSTR(tp.partition_name,1,20) pnam,
+       SUBSTR(tp.tablespace_name,1,20) tspace,
+       (tp.initial_extent / 1024) iext,
+       (tp.next_extent / 1024) next,
+       tp.pct_increase pcti,
+       tp.num_rows nrows,
+       tp.blocks blks,
+       tp.chain_cnt chr
+  FROM dba_tab_partitions tp
+ WHERE tp.table_owner NOT IN ('SYS','SYSTEM')
+   ORDER BY tp.PARTITION_POSITION;
+clear columns;
+clear breaks;
+prompt
+prompt
+prompt =====================================================
+prompt Partitioned Tables 
+prompt ========================================================
+prompt
+prompt
+select   OWNER,
+         TABLE_NAME,
+         PARTITIONING_TYPE,
+         PARTITION_COUNT,
+         PARTITIONING_KEY_COUNT,
+         DEF_TABLESPACE_NAME,
+         DEF_PCT_FREE,
+         DEF_PCT_USED,
+         DEF_INI_TRANS,
+         DEF_MAX_TRANS,
+         DEF_INITIAL_EXTENT,
+         DEF_NEXT_EXTENT,
+         DEF_MIN_EXTENTS,
+         DEF_MAX_EXTENTS,
+         DEF_PCT_INCREASE,
+         DEF_FREELISTS,
+         DEF_FREELIST_GROUPS,
+         DEF_LOGGING,
+         DEF_BUFFER_POOL
+from     dba_part_tables
+order by OWNER, TABLE_NAME;
+prompt
+prompt
+prompt =====================================================
+prompt Partition Key Columns 
+prompt ========================================================
+prompt
+prompt
+select   OWNER,
+         NAME,
+         OBJECT_TYPE,
+         COLUMN_NAME,
+         COLUMN_POSITION
+from     dba_part_key_columns
+order by OWNER, NAME, OBJECT_TYPE, COLUMN_NAME, COLUMN_POSITION;
+prompt
+prompt ==============================================================================================
+prompt This script will identify tables and columns associated with clusters defined for the instance.
+prompt ===============================================================================================
+prompt
+prompt
+set lines 132 pages 1000
+break on cluster_name skip 1 on table_name;
+col cluster_name format a15 heading "Cluster Name";
+col table_name format a25 heading "Table Name";
+col clu_column_name format a15 heading "Column Name";
+col cluster_type format a10 heading "Cluster|Type";
+col owner format a15 heading "Owner";
+col tablespace_name format a20 heading "Tablespace Name";
+select a.cluster_name,
+       table_name,
+       b.clu_column_name,
+       cluster_type,
+       a.owner,
+       tablespace_name
+from dba_clusters a, dba_clu_columns b
+where a.cluster_name =b.cluster_name
+order by 1,2,3,4,5,6;
+clear columns;
+clear breaks;
+prompt
+prompt
+prompt ========================================
+prompt all tables that do not have any indexes.
+prompt =========================================
+prompt
+prompt
+select  owner, table_name 
+  from  all_tables
+  where owner not in ('SYS','SYSTEM')
+MINUS
+select  owner, table_name  
+ from  all_indexes
+;
+prompt
+prompt
+prompt ========================================
+prompt Tabela com mais de 5 indices
+prompt =========================================
+prompt
+prompt
+select   OWNER,
+         TABLE_NAME,
+         COUNT(*)
+from     dba_indexes 
+where    OWNER not in ('SYS','SYSTEM')
+group    by OWNER, TABLE_NAME 
+having   COUNT(*) > 5 
+order by COUNT(*) desc, OWNER, TABLE_NAME;
+prompt
+prompt
+
+
+
+prompt ========================================
+prompt Large Tables
+prompt =========================================
+prompt
+prompt
+select   owner,
+         segment_name,
+         segment_type,
+         tablespace_name,
+         bytes,
+         initial_extent,
+         next_extent,
+         extents,
+         pct_increase
+from 	 dba_segments
+where    bytes > (
+         select avg(bytes) 
+         from   dba_segments
+         where  owner not in ('SYS','SYSTEM'))
+and      owner  not in ('SYS','SYSTEM')
+order by bytes desc; 
+prompt
+prompt
+prompt ==========================
+prompt   tabela sem pk
+prompt ==========================
+prompt
+prompt
+set echo on pages 1000;
+break on owner;
+select owner, table_name
+from dba_tables a
+where table_name not in
+         (select table_name 
+          from dba_constraints 
+          where owner=a.owner 
+           and constraint_type='P')
+and owner not in ('SYS','SYSTEM')
+order by owner;
+clear breaks;
+prompt
+prompt
+prompt ==========================
+prompt   objetos com pctincraese > 0
+prompt ==========================
+prompt
+prompt
+select segmnet_name,segment_type,pct_increase
+from dba_segments
+where owner <> 'SYS'
+and pct_incraese > 0
+;
+prompt
+prompt
+prompt
+prompt ======================
+prompt grau de parallelimos
+prompt ====================
+prompt
+prompt
+ select distinct owner,DEGREE
+  from dba_tables
+ where owner not in ('SYS','SYSTEM');
+prompt
+prompt
+prompt ===============================
+prompt  tipo de index
+prompt ==================================
+prompt
+prompt
+select distinct OWNER, index_type from dba_indexes;
+prompt
+prompt =====================================
+prompt  verificar status dos indices
+prompt ======================================
+prompt
+prompt
+set pagesize 500
+select owner,status,count(*)
+from dba_indexes
+WHERE  OWNER NOT IN ('SYS','SYSTEM')
+group by owner,status;
+prompt
+prompt
+prompt
+prompt ===============================
+prompt  identifies Partition Index 
+prompt ==============================
+prompt
+prompt
+select   OWNER,
+         INDEX_NAME,
+         PARTITIONING_TYPE,
+         PARTITION_COUNT,
+         PARTITIONING_KEY_COUNT,
+         DEF_TABLESPACE_NAME,
+         DEF_PCT_FREE,
+         DEF_INI_TRANS,
+         DEF_MAX_TRANS,
+         DEF_INITIAL_EXTENT,
+         DEF_NEXT_EXTENT,
+         DEF_MIN_EXTENTS,
+         DEF_MAX_EXTENTS,
+         DEF_PCT_INCREASE,
+         DEF_FREELISTS,
+         DEF_FREELIST_GROUPS,
+         DEF_LOGGING,
+         DEF_BUFFER_POOL
+from     dba_part_indexes
+order by OWNER, INDEX_NAME;
+prompt
+prompt
+prompt ===============================
+prompt  identifies Partition Index 
+prompt ==============================
+prompt
+prompt
+select   INDEX_OWNER,
+         INDEX_NAME,
+         PARTITION_NAME,
+         HIGH_VALUE_LENGTH,
+         PARTITION_POSITION,
+         STATUS,
+         TABLESPACE_NAME,
+         PCT_FREE,
+         INI_TRANS,
+         MAX_TRANS,
+         INITIAL_EXTENT,
+         NEXT_EXTENT,
+         MIN_EXTENT,
+         MAX_EXTENT,
+         PCT_INCREASE,
+         FREELISTS,
+         FREELIST_GROUPS,
+         LOGGING,
+         BLEVEL,
+         LEAF_BLOCKS,
+         DISTINCT_KEYS,
+         AVG_LEAF_BLOCKS_PER_KEY,
+         AVG_DATA_BLOCKS_PER_KEY,
+         CLUSTERING_FACTOR,
+         NUM_ROWS,
+         SAMPLE_SIZE,
+         LAST_ANALYZED,
+         BUFFER_POOL
+from     dba_ind_partitions
+order by INDEX_OWNER, INDEX_NAME, PARTITION_NAME;
+prompt
+prompt
+prompt ===============================
+prompt  identifies Partition Index Details.
+prompt ==============================
+prompt
+prompt
+prompt
+SET PAGESIZE 9999 LINESIZE 145 VERIFY off FEEDBACK off TIMING off;
+COLUMN iown	         HEADING 'Index|Owner'         FORMAT A10           TRUNCATE;
+COLUMN inam	         HEADING 'Index|Name'          FORMAT A20           TRUNCATE;
+COLUMN tnam          HEADING 'Table|Name'          FORMAT A20           TRUNCATE;
+COLUMN pnam          HEADING 'Partition Name'      FORMAT A30           TRUNCATE;
+COLUMN ts            HEADING 'Tablespace|Name'     FORMAT A15           TRUNCATE;
+COLUMN iext          HEADING 'Initial|Ext(KB)'     FORMAT 999999;
+COLUMN next          HEADING 'Next|Ext(KB)'        FORMAT 999999;
+COLUMN pcti          HEADING 'Pct|Incr'            FORMAT 999;
+COLUMN log           HEADING 'Logging'             FORMAT A3            TRUNCATE;
+COLUMN unq           HEADING 'Unique'              FORMAT A9            TRUNCATE;
+COLUMN loc           HEADING 'Locality'            FORMAT A6            TRUNCATE;
+COLUMN pref          HEADING 'Prefixed?'           FORMAT A12           TRUNCATE;
+COLUMN bl            HEADING 'Blevel'              FORMAT 99;
+COLUMN lfb           HEADING 'Num Leaf|Blocks'     FORMAT 99999;
+COLUMN stat          HEADING 'Indx|Status'         FORMAT A11           TRUNCATE;
+
+BREAK ON iown ON inam;
+
+SELECT SUBSTR(ip.index_owner,1,10) iown,
+       SUBSTR(ip.index_name,1,20) inam,
+       SUBSTR(i.table_name,1,20) tnam,
+       SUBSTR(ip.partition_name,1,30) pnam,
+       SUBSTR(ip.tablespace_name,1,15) ts,
+       (ip.initial_extent / 1024) iext,
+       (ip.next_extent / 1024) next,
+       ip.pct_increase pcti,
+       pi.locality loc,
+       pi.alignment pref,
+       ip.logging log,
+       SUBSTR(i.uniqueness,1,9) unq,
+       ip.blevel bl,
+       ip.leaf_blocks lfb,
+       SUBSTR(ip.status,1,11) stat
+  FROM dba_ind_partitions ip,
+       dba_indexes i,
+       dba_part_indexes pi
+ WHERE i.owner not in ('SYS','SYSTEM')
+  -- AND i.table_name = UPPER('&&tabnam')
+   AND i.owner = ip.index_owner
+   AND i.index_name = ip.index_name
+   AND ip.index_owner = pi.owner
+   AND ip.index_name = pi.index_name
+ ORDER BY iown,
+       inam, 
+       tnam,
+       pnam;
+
+clear columns;
+clear breaks;
+prompt
+prompt
+prompt =======================================
+prompt iNDICE COM NOME INCLUINDO PK ( non-unique)
+prompt =======================================
+prompt
+prompt
+select owner,table_owner,table_name,index_name
+from dba_indexes
+where index_name like 'PK%' and UNIQUENESS = 'NONUNIQUE';
+prompt ===========================
+prompt fk sem indice 
+prompt ===========================
+prompt
+prompt
+select   distinct acc.OWNER,
+          acc.TABLE_NAME,
+         acc.CONSTRAINT_NAME,
+         acc.COLUMN_NAME,
+         acc.POSITION,
+         'No Index'
+from     dba_cons_columns acc, dba_constraints ac
+where    ac.CONSTRAINT_NAME = acc.CONSTRAINT_NAME
+and      ac.CONSTRAINT_TYPE = 'R'
+and      acc.OWNER not in ('SYS','SYSTEM')
+and      not exists (
+            select   'TRUE'
+            from     dba_ind_columns b
+            where    b.TABLE_OWNER = acc.OWNER
+            and      b.TABLE_NAME = acc.TABLE_NAME
+            and      b.COLUMN_NAME = acc.COLUMN_NAME
+            and      b.COLUMN_POSITION = acc.POSITION)
+order by acc.OWNER, acc.table_name,acc.CONSTRAINT_NAME, acc.POSITION, acc.COLUMN_NAME desc
+/
+prompt
+prompt
+prompt =========================================================
+prompt PK NÃO UNIQUE
+prompt ==============================================================
+prompt
+prompt
+set pages 1000 lines 132;
+
+col index_name format a30 heading 'Index Name';
+col index_type format a15 heading 'Index Type';
+col table_owner format a30 heading 'Table Owner';
+col table_name format a30 heading 'Table Name';
+
+break on table_owner on index_type;
+
+select table_owner, index_type, index_name, di.table_name
+from dba_indexes di, dba_constraints dc
+where  
+constraint_name = index_name
+ and di.owner not in ('SYS','SYSTEM')
+ and dc.owner  not in ('SYS','SYSTEM')
+ and di.table_name = dc.table_name
+ and di.owner = dc.owner
+ and constraint_type = 'P'
+ and uniqueness='NONUNIQUE';
+
+clear breaks;
+clear columns;
+undefine schema;
+prompt
+prompt
+prompt =============================================================================
+prompt This query searches for indexes created by anyone other than the table owner.
+prompt ==============================================================================
+prompt
+prompt
+break on owner skip 1 on table_owner on table_name
+select 
+	owner,			/*Owner of the index*/
+	index_name,			/*Name of the index*/
+	table_owner,		/*Owner of the table*/
+	table_name			/*Name of the indexed table*/
+from dba_indexes
+where owner != table_owner
+and owner not in ('SYS','SYSTEM')
+clear breaks;
+ttitle off;
+prompt
+prompt
+prompt ===============================
+prompt  QUANTIDADE DE CONSTRAINTS
+prompt ==============================
+prompt
+prompt
+set pagesize 500
+SELECT OWNER,CONSTRAINT_TYPE,COUNT(*)
+FROM DBA_CONSTRAINTS
+WHERE  OWNER NOT IN ('SYS','SYSTEM')
+GROUP BY OWNER,CONSTRAINT_TYPE
+/
+prompt
+prompt
+prompt =====================================
+prompt  CONSTRAINTS STATUS
+prompt ======================================
+prompt
+prompt
+set pagesize 500
+SELECT OWNER,CONSTRAINT_TYPE,STATUS,COUNT(*)
+FROM DBA_CONSTRAINTS
+WHERE  OWNER NOT IN ('SYS','SYSTEM')
+and status='DISABLED'
+GROUP BY OWNER,CONSTRAINT_TYPE,STATUS;
+prompt
+prompt
+prompt =========================================
+prompt  CONSTRAINTS DISABILIDATAS
+prompt ==========================================
+prompt
+prompt
+SELECT 'ALTER TABLE '||OWNER||'.'||TABLE_NAME||' DISABLE CONSTRAINT '||CONSTRAINT_NAME||';'
+FROM DBA_CONSTRAINTS
+WHERE OWNER NOT IN ('SYS','SYSTEM')
+AND STATUS='DISABLED';
+prompt
+prompt
+prompt ===================================================
+prompt fk fazendo referencia a constraints de outro owner
+prompt ====================================================
+prompt
+prompt
+select owner,R_OWNER,count(*)
+from dba_constraints
+where owner <> R_OWNER
+group by ;
+prompt
+prompt
+prompt ==============================
+prompt  STATUS DAS TRIGGER
+prompt =============================
+prompt
+prompt
+select  OWNER,status,COUNT(*) from dba_triggers
+WHERE OWNER NOT IN ('SYS','SYSTEM')
+GROUP BY OWNER,status
+/
+prompt
+prompt
+prompt =====================================
+prompt  LSISTAGEM DE TRIGGERS DISABILITADA
+prompt ======================================
+prompt
+prompt
+select 'ALTER TRIGGER '||owner||'.'||TRIGGER_NAME||' DISABLE;'
+from from dba_triggers
+WHERE OWNER NOT IN ('SYS','SYSTEM') AND STATUS='DISABLED'
+/
+prompt
+prompt
+prompt ===============================
+prompt VERIFICAR ANALYZE
+prompt ================================
+prompt
+prompt
+ select owner,trunc(LAST_ANALYZED),count(*)
+   from dba_tables
+   GROUP BY owner,trunc(LAST_ANALYZED);
+prompt
+prompt
+prompt ==========================================================
+prompt how many tables are analyzed and how many are not
+prompt ==========================================================
+prompt
+prompt
+column owner format a16 heading "Schema Owner"; 
+column "Chained Rows" format 99,999;
+column table_name format a26;
+column analyzed   format a16;
+
+select owner, 
+	   sum(decode(nvl(num_rows,9999), 9999,0,1)) "Tables Analyzed",
+	   sum(decode(nvl(num_rows,9999), 9999,1,0)) "Tables Not Analyzed"
+  from all_tables where owner not in ('SYS', 'SYSTEM') group by owner; 
+prompt
+prompt
+
+prompt ==============================================================================================
+prompt This script will show table snapshot information.
+prompt ===============================================================================================
+prompt
+prompt
+set pages 300 lines 200 newpage 1 verify off feedback on echo off;
+
+column name heading "Snapshot Name" format a20;
+column owner heading "Snapshot Owner" format a15;
+column table_name heading "Base Table" format a20;
+column can_use_log heading "Log?" format a3;
+column master_view heading "Mstr View Name" format a20;
+column master_owner header "Mstr Owner" format a15;
+column master heading "Mstr Table" format a20;
+column master_link heading "Mstr Link" format a15;
+column update_trig heading "Update Trigger" format a15;
+column lf heading "Last Refresh" format a18;
+column sw heading "Start With" format a18;
+column next heading "Next" format a50;
+column type heading "Refresh|Type" format a8;
+
+SELECT name,owner,table_name,can_use_log,master_view,master_owner,master,master_link,
+       update_trig,TO_CHAR(last_refresh,'mm/dd/yy hh24:mi:ss') lf,TO_CHAR(start_with,'mm/dd/yy hh24:mi:ss') sw,next,type
+FROM dba_snapshots
+WHERE name  NOT IN ('SYS','SYSTEM')
+ORDER BY 1,2; 
+
+clear columns;
+set echo on verify on;
+prompt
+prompt
+
+prompt ********************************
+prompt   Pinned Objects 
+prompt ********************************
+prompt
+prompt
+select   OWNER,
+         NAME,
+         TYPE,
+         KEPT
+from     sys.v_$db_object_cache
+where    KEPT = 'YES'
+order by OWNER, NAME, TYPE;
+prompt
+prompt
+
+prompt ********************************
+prompt   DEPENDENCIA ENTRE ESQUEMAS
+prompt ********************************
+prompt
+prompt
+
+--- problema: pode aparecer Public indiretamente
+
+column owner format a15 heading "Owner"
+
+select owner,referenced_owner, COUNT(*)
+from dba_dependencies
+where owner <> referenced_owner
+group by  owner,referenced_owner
+
+
+prompt ********************************
+prompt   dependencia 
+prompt ********************************
+--- problema: pode aparecer Public indiretamente
+set pages 999 feedback off lines 80 trims on echo off verify off
+column owner format a8 heading "Owner"
+column type format a4 tru heading "Type"
+column name format a25 heading "Name"
+column referenced_owner format a8 heading "Depend|Owner"
+column referenced_type format a4  tru heading "Depend|Type"
+column referenced_name format a25 heading "Depend On Name"
+ttitle "Object Dependency Report"
+select owner, type, name,
+       referenced_owner, referenced_type, referenced_name
+from dba_dependencies
+where ((owner like upper('%')
+and   name  like upper('%') ) or
+      (referenced_owner like upper('%')
+and   referenced_name  like upper('%') ))
+and   referenced_owner != 'SYS'
+and   referenced_type != 'NON-EXISTENT'
+order by owner, type, name
+/
+spool off
+set pages 24 feedback on lines 80 trims on verify on
+ttitle off
+prompt
+prompt
+prompt ********************************
+prompt   dependencia 
+prompt ********************************
+
+DROP VIEW v_all_dep;
+CREATE OR REPLACE VIEW v_all_dep
+AS 
+SELECT owner,                  
+       name,                   
+       REPLACE(type,'PACKAGE BODY','PACKAGE') AS type,                   
+       referenced_owner                       AS r_owner,       
+       referenced_name                        AS r_name,        
+       referenced_type                        AS r_type,        
+       referenced_link_name                   AS r_link,
+       dependency_type         
+  FROM all_dependencies
+ WHERE NOT (name            = referenced_name  AND
+            owner           = referenced_owner AND
+            type            = 'PACKAGE BODY'   AND
+            referenced_type = 'PACKAGE'           ) 
+   AND referenced_owner    != 'SYS';
+--
+-- Table for downward-search ( a referencing b)
+--
+-- is necessary to use the hierarchical query
+-- later on
+--
+DROP TABLE t_referencing;
+CREATE TABLE t_referencing
+(lvl     NUMBER,        -- downwards-Level; the ROOT-object has 1
+ name    VARCHAR2(30),  -- the referencing object (level 1: none
+ owner   VARCHAR2(30),  --                         level 2: ROOT-object)  
+ type    VARCHAR2(12),
+ r_name  VARCHAR2(30), -- the referenced object (level 1: the ROOT-object
+ r_owner VARCHAR2(30), --                        level 2: objects directly referenced by the ROOT-Object) 
+ r_type  VARCHAR2(12));
+--
+-- Package to pull information
+-- out of all_dependencies
+--
+CREATE OR REPLACE PACKAGE make_deps_tree
+AS
+   PROCEDURE downwards(i_name IN VARCHAR2);
+   --
+   PROCEDURE upwards (i_name IN VARCHAR2);
+   --
+END make_deps_tree;
+/
+show errors
+--
+CREATE OR REPLACE PACKAGE BODY make_deps_tree
+AS
+   -- Constants and Exceptions
+   object_missing EXCEPTION;
+   --
+   -- Procedure cleanup: provides a clean environment
+   --                    to build dependeny tree
+   PROCEDURE cleanup
+   IS
+   BEGIN
+      DELETE t_referencing;
+   END cleanup;
+   --
+   -- Procedure check_exists: checks, wether the root object exists
+   --                         in current schema
+   --
+   PROCEDURE check_exists (i_object IN VARCHAR2)
+   IS    
+      CURSOR obj_cur
+      IS
+      SELECT 1 As dummy
+        FROM user_objects
+       WHERE object_name = i_object;
+      --
+      obj_rec obj_cur%ROWTYPE;
+      --
+   BEGIN
+      OPEN obj_cur;
+      FETCH obj_cur INTO obj_rec;
+      CLOSE obj_cur;
+      --
+      IF obj_rec.dummy IS NULL THEN
+         DBMS_OUTPUT.PUT_LINE('Analysis aborted:');
+         DBMS_OUTPUT.PUT_LINE('-> Object '||i_object||' does not exist in schema '||USER||'!');
+         RAISE object_missing;
+         --
+      ELSE
+         NULL;
+      END IF;
+      --
+   END check_exists;
+   --
+   PROCEDURE check_for_cycles
+   IS
+   BEGIN
+      NULL;
+   END check_for_cycles;
+   --
+   PROCEDURE downwards(i_name IN VARCHAR2)
+   IS
+      l_lvl      t_referencing.lvl%TYPE := 1 ;
+      l_root     VARCHAR2(30);
+      --
+   BEGIN
+      l_root := REPLACE(UPPER(i_name),' ');
+      --
+      cleanup;
+      -- 
+      check_exists(l_root);
+      --
+      -- ...Was machen, wenn das Objekt keine weiteren Objekte benutzt?
+      --
+      -- ROOT-Objekt to start dependency-tree
+      --
+      INSERT INTO t_referencing
+      SELECT DISTINCT
+             l_lvl,
+             NULL,
+             NULL,
+             NULL,
+             name,
+             owner,
+             type
+        FROM v_all_dep
+       WHERE name  = l_root
+         AND owner = USER;
+      --
+      -- incremental build of dependency-tree
+      --
+      LOOP
+         l_lvl := l_lvl + 1;  
+         --
+         INSERT INTO t_referencing
+         SELECT DISTINCT
+                l_lvl,              -- bestimme die Child-Objekte
+                name,
+                owner,
+                type,
+                r_name,
+                r_owner,
+                r_type
+           FROM v_all_dep
+          WHERE (name,owner,type) IN (SELECT r_name,r_owner,r_type  -- zu jedem Objekt eine Ebene höher
+                                        FROM t_referencing
+                                       WHERE lvl = l_lvl - 1
+                                      MINUS
+                                      SELECT r_name,r_owner,r_type  -- das nicht schon vorher aufgelöst wurde
+                                        FROM t_referencing
+                                       WHERE lvl < l_lvl-1);
+         --
+         EXIT WHEN SQL%ROWCOUNT = 0;
+         --
+      END LOOP;
+      --
+      check_for_cycles;
+      --
+   EXCEPTION
+      WHEN object_missing THEN
+         NULL;
+      WHEN OTHERS THEN
+         RAISE;
+   END downwards;
+   --
+   PROCEDURE upwards (i_name IN VARCHAR2)
+   IS
+      l_lvl      t_referencing.lvl%TYPE := 1 ;
+      l_root     VARCHAR2(30);
+      --
+   BEGIN
+      l_root := REPLACE(UPPER(i_name),' ');
+      --
+      cleanup;
+      --
+      check_exists(l_root);
+      --
+      -- ...Was machen, wenn das Objekt keine weiteren Objekte benutzt?
+      --
+      -- ROOT-Objekt to start dependency-tree
+      --
+      INSERT INTO t_referencing
+      SELECT DISTINCT
+             l_lvl,
+             r_name,
+             r_owner,
+             r_type,
+             NULL,
+             NULL,
+             NULL
+        FROM v_all_dep
+       WHERE r_name  = l_root
+         AND r_owner = USER;
+      --
+      -- incremental build of dependency-tree
+      --
+      LOOP
+         l_lvl := l_lvl + 1;  
+         --
+         INSERT INTO t_referencing
+         SELECT DISTINCT
+                l_lvl,              -- bestimme die Child-Objekte
+                name,
+                owner,
+                type,
+                r_name,
+                r_owner,
+                r_type
+           FROM v_all_dep
+          WHERE (r_name,r_owner,r_type) IN (SELECT name,owner,type  -- zu jedem Objekt eine Ebene höher
+                                              FROM t_referencing
+                                             WHERE lvl = l_lvl - 1
+                                            MINUS
+                                            SELECT name,owner,type  -- das nicht schon vorher aufgelöst wurde
+                                              FROM t_referencing
+                                             WHERE lvl < l_lvl-1);
+         --
+         EXIT WHEN SQL%ROWCOUNT = 0;
+         --
+      END LOOP;
+      --
+      check_for_cycles;
+      --
+   EXCEPTION
+      WHEN object_missing THEN
+         NULL;
+      WHEN OTHERS THEN
+         RAISE;
+   END upwards;
+   --
+END make_deps_tree;
+/
+show errors
+--
+set termout on verify off pages 100 serveroutput on
+--
+PROMPT
+PROMPT name of object:
+ACCEPT name
+-- ...Leerzeichen aus name filtern
+PROMPT
+spool deps_tree_&name..txt
+PROMPT DEPENDENCY TREES WITH RESPECT TO &name
+PROMPT
+PROMPT
+SELECT 'OBJECTS BEING REFERENCED BY '||'&name'||CHR(10)
+       ||RPAD('=',LENGTH('OBJECTS BEING REFERENCED BY '||'&name'),'=') FROM DUAL;
+PROMPT
+exec make_deps_tree.downwards('&name')
+-- ...kann man innerhalb eines Levels sortieren?
+--
+-- ...dynamische festlegung der Breite der Object-Spalte
+--
+set head on
+--
+column lvl heading "Lvl" format 999
+--
+select LEVEL                                      AS lvl,
+       SUBSTR(LPAD(' ',3*(LEVEL-1))||r_name,1,50) AS "Object",
+       r_type                                     AS "Type"
+  from t_referencing
+ start with (r_name = REPLACE(UPPER('&name'),' ') AND name IS NULL)
+connect by prior r_name = name;
+-- 
+set head off
+PROMPT
+PROMPT
+SELECT 'OBJECTS REFERENCING '||'&name'||CHR(10)
+       ||RPAD('=',LENGTH('OBJECTS REFERENCING '||'&name'),'=') FROM DUAL;
+PROMPT
+exec make_deps_tree.upwards('&name')
+-- ...kann man innerhalb eines Levels sortieren?
+set head on
+--
+select LEVEL                                    AS lvl,
+       SUBSTR(LPAD(' ',3*(LEVEL-1))||name,1,50) AS "Object",
+       type                                     AS "Type"
+  from t_referencing
+ start with (name = REPLACE(UPPER('&name'),' ') AND r_name IS NULL)
+connect by prior name = r_name;
+--
+PROMPT
+
+-- cleanup temporary objects
+drop package make_deps_tree;
+drop table t_referencing;
+drop view v_all_dep;
+UNDEFINE name
+set verify on feed on pages 100 head on
+/
+
+
+--
+--
+spool off

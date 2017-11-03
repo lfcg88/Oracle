@@ -1,0 +1,451 @@
+SQL> 
+SQL> create or replace procedure top_stmt5
+  2  (
+  3  	     in_start_date in date,
+  4  	     in_nbr_days in number,
+  5  	     in_top_count in integer default 10,
+  6  	     in_instance_nbr in number DEFAULT NULL,
+  7  	     in_max_disk_reads in integer default 10000,
+  8  	     in_max_buffer_gets in integer default 100000
+  9  ) is
+ 10  	     --
+ 11  	     cursor get_top_stmts(in_dr in integer, in_bg in integer,
+ 12  				  in_dbid in integer, in_inst_nbr in integer,
+ 13  				  in_begin_time in timestamp, in_end_time in timestamp)
+ 14  	     is
+ 15  	     select   sq.sql_id,
+ 16  		      sq.module,
+ 17  		      st.command_type,
+ 18  		      sum(sq.disk_reads_delta) disk_reads,
+ 19  		      sum(sq.buffer_gets_delta) buffer_gets,
+ 20  		      sum(sq.cpu_time_delta)/1000000 cpu_time,
+ 21  		      sum(sq.elapsed_time_delta)/1000000 elapsed_time,
+ 22  		      sum(sq.executions_delta) executions,
+ 23  		      (1 - (sum(sq.disk_reads_delta) / sum(sq.buffer_gets_delta)))*100 bchr,
+ 24  		      sum(sq.disk_reads_delta) / sum(sq.executions_delta) dr_per_exe,
+ 25  		      sum(sq.buffer_gets_delta) / sum(sq.executions_delta) bg_per_exe,
+ 26  		      sum(sq.cpu_time_delta)/1000000 / sum(sq.executions_delta) cpu_per_exe,
+ 27  		      sum(sq.elapsed_time_delta)/1000000 / sum(sq.executions_delta) ela_per_exe,
+ 28  		      ((sum(sq.disk_reads_delta)*100)+sum(sq.buffer_gets_delta))/100 factor
+ 29  	     from     dba_hist_sqltext		     st,
+ 30  		      dba_hist_sqlstat		     sq,
+ 31  		      dba_hist_snapshot 	     ss
+ 32  	     where    ss.dbid = in_dbid
+ 33  	     and      ss.instance_number = nvl(in_inst_nbr, ss.instance_number)
+ 34  	     and      ss.begin_interval_time between in_begin_time and in_end_time
+ 35  	     and      sq.dbid = ss.dbid
+ 36  	     and      sq.instance_number = ss.instance_number
+ 37  	     and      sq.snap_id = ss.snap_id
+ 38  	     and      st.sql_id = sq.sql_id
+ 39  	     group by sq.sql_id,
+ 40  		      sq.module,
+ 41  		      st.command_type
+ 42  	     having   (sum(sq.disk_reads_delta) > in_dr
+ 43  	       or      sum(sq.buffer_gets_delta) > in_bg)
+ 44  	     and      sum(sq.buffer_gets_delta) > 0
+ 45  	     and      sum(sq.executions_delta) > 0
+ 46  	     order by factor desc;
+ 47  	     --
+ 48  	     cursor get_sql_plan(in_dbid in number,
+ 49  				 in_sql_id in varchar2,
+ 50  				 in_begin_time in timestamp,
+ 51  				 in_end_time in timestamp)
+ 52  	     is
+ 53  	     select  distinct plan_hash_value, timestamp
+ 54  	     from    dba_hist_sql_plan
+ 55  	     where   dbid = in_dbid
+ 56  	     and     sql_id = in_sql_id
+ 57  	     and     timestamp between in_begin_time and in_end_time
+ 58  	     order by 2;
+ 59  	     --
+ 60  	     v_text_lines	     integer;
+ 61  	     v_sql_text 	     clob;
+ 62  	     v_sql_text_len	     integer;
+ 63  	     n			     integer;
+ 64  	     v_tot_logr 	     integer;
+ 65  	     v_tot_phyr 	     integer;
+ 66  	     v_sql_tot_cnt	     integer := 0;
+ 67  	     v_sql_tot_dr	     integer := 0;
+ 68  	     v_sql_tot_bg	     integer := 0;
+ 69  	     v_sql_tot_cpu	     integer := 0;
+ 70  	     v_sql_tot_ela	     integer := 0;
+ 71  	     v_plsql_tot_cnt	     integer := 0;
+ 72  	     v_plsql_tot_dr	     integer := 0;
+ 73  	     v_plsql_tot_bg	     integer := 0;
+ 74  	     v_plsql_tot_cpu	     integer := 0;
+ 75  	     v_plsql_tot_ela	     integer := 0;
+ 76  	     v_dbid		     integer;
+ 77  	     v_instance_nbr	     integer;
+ 78  	     v_begin_snapshot	     timestamp;
+ 79  	     v_end_snapshot	     timestamp;
+ 80  	     v_nbr_snapshots	     integer;
+ 81  	     v_nbr_instances	     integer;
+ 82  	     v_plan_id		     integer;
+ 83  	     --
+ 84  	     v_errcontext	     varchar2(100);
+ 85  	     v_errmsg		     varchar2(512);
+ 86  	     v_save_module	     varchar2(48);
+ 87  	     v_save_action	     varchar2(32);
+ 88  	     --
+ 89  begin
+ 90  --
+ 91  dbms_application_info.read_module(v_save_module, v_save_action);
+ 92  v_errcontext := 'query dba_hist_database_instance';
+ 93  dbms_application_info.set_module('TOP_STMT5', v_errcontext);
+ 94  select  h.dbid, decode(in_instance_nbr, null, null, i.instance_number), count(distinct i.instance_number)
+ 95  into    v_dbid, v_instance_nbr, v_nbr_instances
+ 96  from    dba_hist_database_instance      h,
+ 97  	     gv$instance		     i
+ 98  where   h.instance_number = i.instance_number
+ 99  and     i.instance_number = nvl(in_instance_nbr, i.instance_number)
+100  group by h.dbid, decode(in_instance_nbr, null, null, i.instance_number);
+101  --
+102  v_errcontext := 'query dba_hist_snapshot';
+103  dbms_application_info.set_action(v_errcontext);
+104  select  min(begin_interval_time),
+105  	     max(end_interval_time),
+106  	     count(*)
+107  into    v_begin_snapshot,
+108  	     v_end_snapshot,
+109  	     v_nbr_snapshots
+110  from    dba_hist_snapshot
+111  where   begin_interval_time between in_start_date and (in_start_date + in_nbr_days)
+112  and     dbid = v_dbid
+113  and     instance_number = nvl(v_instance_nbr, instance_number);
+114  --
+115  v_errcontext := 'query dba_hist_sysstat';
+116  dbms_application_info.set_action(v_errcontext);
+117  select  sum(cg.value_delta+dbg.value_delta),
+118  	     sum(p.value_delta)
+119  into    v_tot_logr,
+120  	     v_tot_phyr
+121  from    (select dbid, instance_number, snap_id,
+122  		     decode(greatest(value, lag(value,1,0) over (partition by dbid, instance_number order by snap_id)),
+123  			    value, value - lag(value,1,0) over (partition by dbid, instance_number order by snap_id),
+124  			    value) value_delta
+125  	      from   dba_hist_sysstat
+126  	      where  stat_name = 'consistent gets')	     cg,
+127  	     (select dbid, instance_number, snap_id,
+128  		     decode(greatest(value, lag(value,1,0) over (partition by dbid, instance_number order by snap_id)),
+129  			    value, value - lag(value,1,0) over (partition by dbid, instance_number order by snap_id),
+130  			    value) value_delta
+131  	      from   dba_hist_sysstat
+132  	      where  stat_name = 'db block gets')	     dbg,
+133  	     (select dbid, instance_number, snap_id,
+134  		     decode(greatest(value, lag(value,1,0) over (partition by dbid, instance_number order by snap_id)),
+135  			    value, value - lag(value,1,0) over (partition by dbid, instance_number order by snap_id),
+136  			    value) value_delta
+137  	      from   dba_hist_sysstat
+138  	      where  stat_name = 'physical reads')	     p,
+139  	     dba_hist_snapshot				     s
+140  where   s.begin_interval_time between in_start_date and (in_start_date + in_nbr_days)
+141  and     s.dbid = v_dbid
+142  and     s.instance_number = nvl(v_instance_nbr, s.instance_number)
+143  and     cg.snap_id = s.snap_id
+144  and     cg.dbid = s.dbid
+145  and     cg.instance_number = s.instance_number
+146  and     dbg.snap_id = s.snap_id
+147  and     dbg.dbid = s.dbid
+148  and     dbg.instance_number = s.instance_number
+149  and     p.snap_id = s.snap_id
+150  and     p.dbid = s.dbid
+151  and     p.instance_number = s.instance_number;
+152  --
+153  v_errcontext := 'open/fetch get_top_stmts';
+154  dbms_application_info.set_action(v_errcontext);
+155  for a in get_top_stmts(in_max_disk_reads, in_max_buffer_gets,
+156  			    v_dbid, v_instance_nbr,
+157  			    v_begin_snapshot, v_end_snapshot) loop
+158  	     --
+159  	     if get_top_stmts%rowcount > in_top_count then
+160  		     --
+161  		     exit;
+162  		     --
+163  	     end if;
+164  	     --
+165  	     v_errcontext := 'put_line formfeed';
+166  	     dbms_application_info.set_action(v_errcontext);
+167  	     if get_top_stmts%rowcount > 1 then
+168  		     --
+169  		     dbms_output.put_line(chr(12));
+170  		     --
+171  	     end if;
+172  	     --
+173  	     v_errcontext := 'put_line statement header';
+174  	     dbms_application_info.set_action(v_errcontext);
+175  	     dbms_output.put_line(rpad('Beginning Snap Time: ',30) ||
+176  			     to_char(v_begin_snapshot, 'MM/DD/YY HH24:MI:SS') ||
+177  			     lpad('Page ' ||
+178  				  to_char(get_top_stmts%rowcount,'990'),60));
+179  	     dbms_output.put_line(rpad('Ending Snap Time : ',30) ||
+180  			     to_char(v_end_snapshot, 'MM/DD/YY HH24:MI:SS') ||
+181  			     lpad('Nbr of Snapshots: ' ||
+182  				  to_char(v_nbr_snapshots,'990'),60));
+183  	     dbms_output.put_line(rpad('Date of Report : ',30) ||
+184  			     to_char(sysdate, 'MM/DD/YY HH24:MI:SS') ||
+185  			     lpad('Nbr of Instances: ' ||
+186  				  to_char(v_nbr_instances,'990'),60));
+187  	     dbms_output.put_line(rpad('Total Logical Reads: ', 23) ||
+188  			     to_char(v_tot_logr,'999,999,999,999,999,990') ||
+189  			     lpad('Total Physical Reads: ' ||
+190  			     to_char(v_tot_phyr,'999,999,999,999,999,990'), 60));
+191  	     dbms_output.put_line('.');
+192  	     --
+193  	     if a.module is not null then
+194  		     v_errcontext := 'display module';
+195  		     dbms_output.put_line('Module: "' || a.module || '"');
+196  		     dbms_output.put_line('.');
+197  	     end if;
+198  	     --
+199  	     dbms_output.put_line('SQL Statement Text (SQL ID=' || a.sql_id || ')');
+200  	     dbms_output.put_line('-------------------------------' || rpad('-', length(trim(to_char(a.sql_id))), '-') || '-');
+201  	     --
+202  	     v_errcontext := 'get sql_text from dba_hist_sqltext';
+203  	     dbms_application_info.set_action(v_errcontext);
+204  	     select  sql_text,
+205  		     dbms_lob.getlength(sql_text) len
+206  	     into    v_sql_text,
+207  		     v_sql_text_len
+208  	     from    dba_hist_sqltext
+209  	     where   sql_id = a.sql_id;
+210  	     v_text_lines := 1;
+211  	     n := 1;
+212  	     while n < v_sql_text_len loop
+213  		     --
+214  		     dbms_output.put_line(rpad(to_char(v_text_lines),6) ||
+215  			     replace(dbms_lob.substr(v_sql_text, 100, n),chr(10),null));
+216  		     n := n + 100;
+217  		     v_text_lines := v_text_lines + 1;
+218  		     --
+219  		     v_errcontext := 'fetch/close get_text';
+220  		     --
+221  	     end loop;
+222  	     --
+223  	     v_errcontext := 'put_line statement totals';
+224  	     dbms_application_info.set_action(v_errcontext);
+225  	     dbms_output.put_line('.');
+226  	     dbms_output.put_line(':' ||
+227  				     lpad('Disk ',16) ||
+228  				     lpad('Buffer',16) ||
+229  				     lpad('Cache Hit',10) ||
+230  				     lpad(' ',11) ||
+231  				     lpad('DR Per',12) ||
+232  				     lpad('BG Per',12) ||
+233  				     lpad('CPU Per',15) ||
+234  				     lpad('Ela Per',15));
+235  	     dbms_output.put_line(':' ||
+236  				     lpad('Reads',16) ||
+237  				     lpad('Gets',16) ||
+238  				     lpad('Ratio',10) ||
+239  				     lpad('Runs',11) ||
+240  				     lpad('Run',12) ||
+241  				     lpad('Run',12) ||
+242  				     lpad('Run',15) ||
+243  				     lpad('Run',15));
+244  	     dbms_output.put_line(':' ||
+245  				     lpad('-----',16) ||
+246  				     lpad('------',16) ||
+247  				     lpad('---------',10) ||
+248  				     lpad('----',11) ||
+249  				     lpad('------',12) ||
+250  				     lpad('------',12) ||
+251  				     lpad('------',15) ||
+252  				     lpad('------',15));
+253  	     dbms_output.put_line(':' ||
+254  		     lpad(ltrim(to_char(a.disk_reads,'999,999,999,990')),16) ||
+255  		     lpad(ltrim(to_char(a.buffer_gets,'999,999,999,990')),16) ||
+256  		     lpad(ltrim(to_char(a.bchr,'990.00')||'%'),10) ||
+257  		     lpad(ltrim(to_char(a.executions,'99,999,990')),11) ||
+258  		     lpad(ltrim(to_char(a.dr_per_exe,'999,999,990')),12) ||
+259  		     lpad(ltrim(to_char(a.bg_per_exe,'999,999,990')),12) ||
+260  		     lpad(ltrim(to_char(a.cpu_per_exe,'999,999,990.00')),15) ||
+261  		     lpad(ltrim(to_char(a.ela_per_exe,'999,999,990.00')),15));
+262  	     dbms_output.put_line(':' ||
+263  		     lpad('('||ltrim(to_char(round((a.disk_reads/v_tot_phyr)*100,3),
+264  					'990.000'))||'%)',16) ||
+265  		     lpad('('||ltrim(to_char(round((a.buffer_gets/v_tot_logr)*100,3),
+266  					'990.000'))||'%)',16));
+267  	     --
+268  	     v_errcontext := 'open/fetch get_sql_plan';
+269  	     dbms_application_info.set_action(v_errcontext);
+270  	     for p in get_sql_plan(v_dbid, a.sql_id, v_begin_snapshot, v_end_snapshot) loop
+271  		     --
+272  		     v_text_lines := 0;
+273  		     v_errcontext := 'open/fetch get_xplan';
+274  		     dbms_application_info.set_action(v_errcontext);
+275  		     for s in (select plan_table_output
+276  			       from   table(dbms_xplan.display_awr(a.sql_id, p.plan_hash_value, v_dbid, 'ALL'))) loop
+277  			     --
+278  			     if s.plan_table_output like 'Plan hash value: %' then
+279  				     v_text_lines := 1;
+280  			     end if;
+281  			     --
+282  			     if v_text_lines = 1 then
+283  				     dbms_output.put_line('.');
+284  				     dbms_output.put_line('.  SQL execution plan from "'||
+285  					     to_char(p.timestamp,'MM/DD/YY HH24:MI:SS') || '"');
+286  			     end if;
+287  			     --
+288  			     if v_text_lines >= 1 then
+289  				     dbms_output.put_line(s.plan_table_output);
+290  				     v_text_lines := v_text_lines + 1;
+291  			     end if;
+292  			     --
+293  		     end loop;
+294  		     --
+295  		     v_errcontext := 'fetch/close get_sql_plan';
+296  		     --
+297  	     end loop;
+298  	     --
+299  	     if a.command_type = 47 then
+300  		     --
+301  		     v_plsql_tot_cnt := v_plsql_tot_cnt + 1;
+302  		     v_plsql_tot_dr := v_plsql_tot_dr + a.disk_reads;
+303  		     v_plsql_tot_bg := v_plsql_tot_bg + a.buffer_gets;
+304  		     v_plsql_tot_cpu := v_plsql_tot_cpu + a.cpu_time;
+305  		     v_plsql_tot_ela := v_plsql_tot_ela + a.elapsed_time;
+306  		     --
+307  	     else
+308  		     --
+309  		     v_sql_tot_cnt := v_sql_tot_cnt + 1;
+310  		     v_sql_tot_dr := v_sql_tot_dr + a.disk_reads;
+311  		     v_sql_tot_bg := v_sql_tot_bg + a.buffer_gets;
+312  		     v_sql_tot_cpu := v_sql_tot_cpu + a.cpu_time;
+313  		     v_sql_tot_ela := v_sql_tot_ela + a.elapsed_time;
+314  		     --
+315  	     end if;
+316  	     --
+317  	     v_errcontext := 'fetch/close get_top_stmt';
+318  	     dbms_application_info.set_action(v_errcontext);
+319  	     --
+320  end loop;
+321  --
+322  if v_sql_tot_cnt > 0 then
+323  	     --
+324  	     v_errcontext := 'put_line SQL cumulative totals';
+325  	     dbms_application_info.set_action(v_errcontext);
+326  	     dbms_output.put_line('.');
+327  	     dbms_output.put_line('.');
+328  	     dbms_output.put_line(': =============================================================================');
+329  	     dbms_output.put_line(':');
+330  	     dbms_output.put_line(': >>> CUMULATIVE TOTALS FOR '||v_sql_tot_cnt||' "TOP ' || in_top_count || '" SQL STATEMENTS <<<');
+331  	     dbms_output.put_line(':');
+332  	     dbms_output.put_line(':' ||
+333  		     lpad('Disk ',16) ||
+334  		     lpad('Buffer',20) ||
+335  		     lpad('Cache Hit',10) ||
+336  		     lpad('CPU',20) ||
+337  		     lpad('Elapsed',20));
+338  	     dbms_output.put_line(':' ||
+339  		     lpad('Reads',16) ||
+340  		     lpad('Gets',20) ||
+341  		     lpad('Ratio',10) ||
+342  		     lpad('Time',20) ||
+343  		     lpad('Time',20));
+344  	     dbms_output.put_line(':' ||
+345  		     lpad('-----',16) ||
+346  		     lpad('------',20) ||
+347  		     lpad('---------',10) ||
+348  		     lpad('---------',20) ||
+349  		     lpad('---------',20));
+350  	     dbms_output.put_line(':' ||
+351  		     lpad(ltrim(to_char(v_sql_tot_dr,'999,999,999,990')),16) ||
+352  		     lpad(ltrim(to_char(v_sql_tot_bg,'999,999,999,999,990')),20) ||
+353  		     lpad(ltrim(to_char((1 - (v_sql_tot_dr/v_sql_tot_bg))*100,'990.00')||'%'),10) ||
+354  		     lpad(ltrim(to_char(v_sql_tot_cpu,'999,999,999,999,990')),20) ||
+355  		     lpad(ltrim(to_char(v_sql_tot_ela,'999,999,999,999,990')),20));
+356  	     dbms_output.put_line(':' ||
+357  		     lpad('('||ltrim(to_char(round((v_sql_tot_dr/v_tot_phyr)*100,3),
+358  				     '990.000'))||'%)',16) ||
+359  		     lpad('('||ltrim(to_char(round((v_sql_tot_bg/v_tot_logr)*100,3),
+360  				     '990.000'))||'%)',20));
+361  	     --
+362  end if;
+363  --
+364  if v_plsql_tot_cnt > 0 then
+365  	     --
+366  	     v_errcontext := 'put_line PLSQL cumulative totals';
+367  	     dbms_application_info.set_action(v_errcontext);
+368  	     dbms_output.put_line('.');
+369  	     dbms_output.put_line('.');
+370  	     dbms_output.put_line(': =============================================================================');
+371  	     dbms_output.put_line(':');
+372  	     dbms_output.put_line(': >>> CUMULATIVE TOTALS FOR '||v_plsql_tot_cnt||' "TOP '||in_top_count||'" PL/SQL STATEMENTS <<<');
+373  	     dbms_output.put_line(':');
+374  	     dbms_output.put_line(':' ||
+375  		     lpad('Disk ',20) ||
+376  		     lpad('Buffer',20) ||
+377  		     lpad('Cache Hit',10) ||
+378  		     lpad('CPU',20) ||
+379  		     lpad('Elapsed',20));
+380  	     dbms_output.put_line(':' ||
+381  		     lpad('Reads',16) ||
+382  		     lpad('Gets',20) ||
+383  		     lpad('Ratio',10) ||
+384  		     lpad('Time',20) ||
+385  		     lpad('Time',20));
+386  	     dbms_output.put_line(':' ||
+387  		     lpad('-----',20) ||
+388  		     lpad('------',20) ||
+389  		     lpad('---------',10) ||
+390  		     lpad('---------',20) ||
+391  		     lpad('---------',20));
+392  	     dbms_output.put_line(':' ||
+393  		     lpad(ltrim(to_char(v_plsql_tot_dr,'999,999,999,999,990')),20) ||
+394  		     lpad(ltrim(to_char(v_plsql_tot_bg,'999,999,999,999,990')),20) ||
+395  		     lpad(ltrim(to_char((1 - (v_plsql_tot_dr/v_plsql_tot_bg))*100,'990.00')||'%'),10) ||
+396  		     lpad(ltrim(to_char(v_plsql_tot_cpu,'999,999,999,999,990')),20) ||
+397  		     lpad(ltrim(to_char(v_plsql_tot_ela,'999,999,999,999,990')),20));
+398  	     dbms_output.put_line(':' ||
+399  		     lpad('('||ltrim(to_char(round((v_plsql_tot_dr/v_tot_phyr)*100,3),
+400  				     '990.000'))||'%)',20) ||
+401  		     lpad('('||ltrim(to_char(round((v_plsql_tot_bg/v_tot_logr)*100,3),
+402  				     '990.000'))||'%)',20));
+403  	     --
+404  end if;
+405  --
+406  rollback;
+407  --
+408  dbms_application_info.set_module(v_save_module, v_save_action);
+409  --
+410  exception
+411  	     when others then
+412  		     v_errmsg := sqlerrm;
+413  		     dbms_application_info.set_module(v_save_module, v_save_action);
+414  		     rollback;
+415  		     raise_application_error(-20000, v_errcontext || ': ' || v_errmsg);
+416  end top_stmt5;
+417  /
+
+Advertência: Procedimento criado com erros de compilação.
+
+Decorrido: 00:00:00.27
+SQL> show errors
+Erros para PROCEDURE TOP_STMT5:
+
+LINE/COL ERROR                                                                                                          
+-------- -----------------------------------------------------------------                                              
+15/2     PL/SQL: SQL Statement ignored                                                                                  
+31/4     PL/SQL: ORA-00942: a tabela ou view não existe                                                                 
+53/2     PL/SQL: SQL Statement ignored                                                                                  
+54/7     PL/SQL: ORA-00942: a tabela ou view não existe                                                                 
+94/1     PL/SQL: SQL Statement ignored                                                                                  
+97/2     PL/SQL: ORA-00942: a tabela ou view não existe                                                                 
+104/1    PL/SQL: SQL Statement ignored                                                                                  
+110/6    PL/SQL: ORA-00942: a tabela ou view não existe                                                                 
+117/1    PL/SQL: SQL Statement ignored                                                                                  
+137/8    PL/SQL: ORA-00942: a tabela ou view não existe                                                                 
+193/2    PL/SQL: Statement ignored                                                                                      
+
+LINE/COL ERROR                                                                                                          
+-------- -----------------------------------------------------------------                                              
+193/5    PLS-00364: o uso da variável 'A' de índice de loop é inválido                                                  
+199/2    PL/SQL: Statement ignored                                                                                      
+199/56   PLS-00364: o uso da variável 'A' de índice de loop é inválido                                                  
+200/2    PL/SQL: Statement ignored                                                                                      
+200/90   PLS-00364: o uso da variável 'A' de índice de loop é inválido                                                  
+204/2    PL/SQL: SQL Statement ignored                                                                                  
+209/17   PL/SQL: ORA-00904: "A"."SQL_ID": identificador inválido                                                        
+209/17   PLS-00364: o uso da variável 'A' de índice de loop é inválido                                                  
+254/22   PLS-00364: o uso da variável 'A' de índice de loop é inválido                                                  
+SQL> spool off

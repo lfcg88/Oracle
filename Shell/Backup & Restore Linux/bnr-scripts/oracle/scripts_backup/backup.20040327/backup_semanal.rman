@@ -1,0 +1,21 @@
+CONNECT TARGET sys/dontknow; 
+CONNECT CATALOG rman/rman@metdb01;
+
+crosscheck archivelog all;
+
+run
+{
+allocate channel ch1 type DISK format '/oracle/backup/semanal/db_%d_%t_%s_%p_%T'; 
+backup incremental 
+level 0 
+cumulative 
+TAG "Full Diario" 
+(database  setsize 3145728 include current controlfile channel ch1); 
+# arquiva log corrente 
+sql 'alter system archive log current'; 
+release channel ch1; 
+allocate channel ch1 type DISK format '/oracle/backup/semanal/al_%d_%t_%s_%p_%T'; 
+backup 
+(archivelog all delete input setsize 3145728 channel ch1); 
+release channel ch1; 
+}

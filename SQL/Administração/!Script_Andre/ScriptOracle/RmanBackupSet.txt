@@ -1,0 +1,12 @@
+
+select bs_key, 
+   decode(backup_type,'D','Full Backup','I','Incremental Backup','Archived Logfile Backup') bt,
+   to_char(completion_time,'dd/mm/yyyy hh24:mi:ss'), 
+   decode(status,'A','Backup Set Available','D','Backup Set Deleted','Unusable Backup Set') bss
+   --,
+   --controlfile_included
+from rc_database_incarnation i, rc_backup_set b
+where i.name = upper('PRD2')
+and i.db_key = b.db_key
+and i.current_incarnation = 'YES'
+AND completion_time > (SYSDATE - 2)

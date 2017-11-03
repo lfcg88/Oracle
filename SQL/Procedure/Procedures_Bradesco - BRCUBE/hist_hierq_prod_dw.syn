@@ -1,0 +1,3 @@
+create or replace synonym SGPB_PROC.HIST_HIERQ_PROD_DW
+  for DWCO.HIST_HIERQ_PROD;
+

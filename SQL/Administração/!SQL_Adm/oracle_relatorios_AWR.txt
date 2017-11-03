@@ -1,0 +1,5 @@
+>> SQLPLUS
+
+@ORACLE_HOME/RDBMS/ADMIN/addmrpt.sql
+
+@ORACLE_HOME/RDBMS/ADMIN/awrrpt.sql

@@ -1,0 +1,31 @@
+#### Recriar o EM Standalone #####
+emca -config dbcontrol db -repos recreate -silent -ORACLE_HOSTNAME unimedor03 -SID unimed3 -PORT 1521 -ORACLE_HOME $ORACLE_HOME -DBSNMP_PWD unimed -SYSMAN_PWD unimed -SYS_PWDunimedinfo
+
+#### Dropar o EM Standalone #####
+emca -deconfig dbcontrol db -repos drop
+
+#### Criar EM Standalone ###
+emca -config dbcontrol db -repos create
+
+### Configurar EM como Não-Seguro - Standalone/Cluster ###
+emctl unsecure dbconsole
+
+#### Reconfigurar EM Cluster ####
+emca -reconfig dbcontrol –cluster –EM_NODE unimedor03 -EM_SID_LIST unimed3,unimed4
+
+#### Dropar EM Cluster ####
+emca -repos drop -cluster -DB_UNIQUE_NAME unimed -PORT 1521 -SYS_PWD unimedinfo -DBSNMP_PWD unimed -SYSMAN_PWD unimed -SERVICE_NAME unimedrac
+
+#### Criar EM Cluster ###
+emca -config dbcontrol db -repos create -cluster -DB_UNIQUE_NAME unimed -PORT 1521 -CLUSTER_NAME unimed -SYS_PWD unimedinfo 
+-DBSNMP_PWD unimed -SYSMAN_PWD unimed -ASM_OH /u01/app/oracle/product/10.2.0/asm -ASM_PORT 1521 -ASM_USER_ROLE sysdba 
+-ASM_USER_NAME sys ASM_USER_PWD senha
+
+
+select username, account_status from dba_users where username in ('DBSNMP','SYSMAN');
+
+alter user SYSMAN account unlock;
+alter user DBSNMP account unlock;
+alter user DBSNMP identified by unimed;
+orapwd file=$ORACLE_HOME/dbs/orapwunimed3 password=unimedinfo entries=5
+orapwd file=$ORACLE_HOME/dbs/orapwunimed4 password=unimedinfo entries=5

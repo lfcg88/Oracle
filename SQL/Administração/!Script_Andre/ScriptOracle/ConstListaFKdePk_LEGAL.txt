@@ -1,0 +1,74 @@
+ORACLE DATABASE ADMINISTRATOR
+Identify tables having FKs on a given table's PK
+Daniel Clamage
+18 Nov 2003
+Rating: -3.50- (out of 5)
+
+Frequently, you need to know what tables have foreign keys on a specified table's primary key. This stored procedure displays them. I've used it on 8i (8.1.x) and 9i (9.0.x, 9.2.x) databases in development and production environments.
+
+
+CREATE OR REPLACE
+PROCEDURE show_fkeys(
+  p_table_name  IN user_constraints.table_name%TYPE)
+IS
+  -- constants
+  -- identify fkeys on pkey for given table
+  CURSOR id_fkeys (
+    c_table_name user_constraints.table_name%TYPE)
+  IS
+  SELECT table_name, constraint_name fkey, r_constraint_name pkey,
+status
+  FROM user_constraints
+  WHERE constraint_type='R'
+    AND r_constraint_name IN (
+      SELECT constraint_name
+      FROM user_constraints
+      WHERE table_name=c_table_name
+        AND constraint_type='P')
+  ORDER BY table_name, constraint_name;
+  -- record variables
+  rec_id_fkeys id_fkeys%ROWTYPE;
+  -- variables
+  l_table_name user_constraints.table_name%TYPE;
+  l_pkey_name user_constraints.constraint_name%TYPE;
+  l_status NUMERIC;
+BEGIN
+  l_table_name := UPPER(p_table_name);
+  -- a primary key for the given table must exist
+  SELECT constraint_name
+  INTO l_pkey_name
+  FROM user_constraints
+  WHERE table_name=l_table_name
+    AND constraint_type='P';
+  DBMS_OUTPUT.put_line(
+    'show_fkeys: foreign key constraints on table [' || l_table_name || ']');
+  DBMS_OUTPUT.put_line(
+    '            whose primary key is [' || l_pkey_name || ']');
+  OPEN id_fkeys(l_table_name);
+  LOOP -- display foreign keys
+    FETCH id_fkeys INTO rec_id_fkeys;
+    EXIT WHEN id_fkeys%NOTFOUND;
+    DBMS_OUTPUT.put_line(RPAD('Table: [' || rec_id_fkeys.table_name || ']',40) ||
+                         RPAD('FK Name: [' || rec_id_fkeys.fkey || ']',42) ||
+                         'Status: [' || rec_id_fkeys.status || ']');
+  END LOOP; -- display foreign keys
+  IF (id_fkeys%ROWCOUNT = 0) THEN  -- no fkeys found
+    DBMS_OUTPUT.put_line(
+      'show_fkeys: No foreign keys found against table ' || l_table_name);
+
+  END IF;  -- no rows found
+  CLOSE id_fkeys;
+EXCEPTION
+WHEN NO_DATA_FOUND THEN -- primary key lookup failed
+  DBMS_OUTPUT.put_line(
+    'show_fkeys: no primary key exists for table ' || l_table_name);
+WHEN OTHERS THEN
+  l_status := SQLCODE;
+  DBMS_OUTPUT.put_line('show_fkeys: ' || SQLERRM(l_status));
+  IF (id_fkeys%ISOPEN) THEN
+    CLOSE id_fkeys;
+  END IF;
+END show_fkeys;
+/
+
+ 

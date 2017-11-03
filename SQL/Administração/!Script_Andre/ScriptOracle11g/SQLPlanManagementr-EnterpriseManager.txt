@@ -1,0 +1,4 @@
+Use the SQL Plan Management page to
+manage both SQL profiles and SQL plan baselines. You can get to the SQL Plan
+Management page by going to Home page | Server | SQL Plan Control (under the
+Query Optimizer section).

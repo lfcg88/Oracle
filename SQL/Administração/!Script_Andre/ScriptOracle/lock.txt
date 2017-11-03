@@ -1,0 +1,881 @@
+
+SET LINESIZE 140
+
+REM
+REM
+REM Veja: LIBRARY_CACHE_LOCK.html
+REM       library_cache_pin_wait
+REM
+
+-- FACA O BACKUP DA V$LOCK,V$SESSION,V$SESSION_WAIT PARA UM MELHOR ESTUDO
+--
+-- CREATE TABLE BACKUP.V$LOCK           SELECT * FROM SYS.V$LOCK;
+-- CREATE TABLE BACKUP.V$SESSION        SELECT * FROM SYS.V$SESSION;
+-- CREATE TABLE BACKUP.V$V$SESSION_WAIT SELECT * FROM SYS.V$SESSION_WAIT;
+
+
+REM
+REM DBAToolZ NOTE:
+REM	This script was obtained from DBAToolZ.com
+REM	It's configured to work with SQL Directory (SQLDIR).
+REM	SQLDIR is a utility that allows easy organization and
+REM	execution of SQL*Plus scripts using user-friendly menu.
+REM	Visit DBAToolZ.com for more details and free SQL scripts.
+REM
+REM 
+REM File:
+REM 	s_locked_obj.sql
+REM
+REM <SQLDIR_GRP>USER LOCK TRACE MOST</SQLDIR_GRP>
+REM 
+REM Author:
+REM 	Vitaliy Mogilevskiy 
+REM	VMOGILEV
+REM	(vit100gain@earthlink.net)
+REM 
+REM Purpose:
+REM	<SQLDIR_TXT>
+REM	            *** QUICK ***
+REM	Reports the following:
+REM	-  object locks from V$LOCKED_OBJECT
+REM	   using PL/SQL loops since join of DBA_OBJECTS
+REM	   and V$LOCKED_OBJECT is extremly slow
+REM	- blocked objects from V$LOCK and SYS.OBJ$
+REM	- blocked sessions from V$LOCK
+REM	</SQLDIR_TXT>
+REM	
+REM Usage:
+REM	s_locked_obj.sql
+REM 
+REM Example:
+REM	s_locked_obj.sql
+REM
+REM
+REM History:
+REM	08-01-1998	VMOGILEV	Created
+REM	12-18-2001	VMOGILEV	added V$LOCK queries to ID blockers
+REM
+REM
+
+
+set lines 200 
+set pagesize 66 
+break on Kill on sid on  username on terminal 
+column Kill heading 'Kill String' format a13 
+column res heading 'Resource Type' format 999 
+column id1 format 9999990 
+column id2 format 9999990 
+column locking heading 'Lock Held/Lock Requested' format a40 
+column lmode heading 'Lock Held' format a40 
+column request heading 'Lock Requested' format a30 
+column serial# format 99999 
+column username  format a10  heading "Username" 
+column terminal heading Term format a6 
+column tab format a25 heading "Table Name" 
+column owner format a9 
+column LAddr heading "ID1 - ID2" format a18 
+column Lockt heading "Lock Type" format a40 
+column command format a10 
+column sid format 990 
+
+select /*+ rule */
+nvl(S.USERNAME,'Internal') username, 
+        L.SID, 
+        nvl(S.TERMINAL,'None') terminal, 
+        decode(command, 
+0,'None',decode(l.id2,0,U1.NAME||'.'||substr(T1.NAME,1,20),'None')) tab, 
+decode(command, 
+0,'BACKGROUND', 
+1,'Create Table', 
+2,'INSERT', 
+3,'SELECT', 
+4,'CREATE CLUSTER', 
+5,'ALTER CLUSTER', 
+6,'UPDATE', 
+7,'DELETE', 
+8,'DROP', 
+9,'CREATE INDEX', 
+10,'DROP INDEX', 
+11,'ALTER INDEX', 
+12,'DROP TABLE', 
+13,'CREATE SEQUENCE', 
+14,'ALTER SEQUENCE', 
+15,'ALTER TABLE', 
+16,'DROP SEQUENCE', 
+17,'GRANT', 
+18,'REVOKE', 
+19,'CREATE SYNONYM', 
+20,'DROP SYNONYM', 
+21,'CREATE VIEW', 
+22,'DROP VIEW', 
+23,'VALIDATE INDEX', 
+24,'CREATE PROCEDURE', 
+25,'ALTER PROCEDURE', 
+26,'LOCK TABLE', 
+27,'NO OPERATION', 
+28,'RENAME', 
+29,'COMMENT', 
+30,'AUDIT', 
+31,'NOAUDIT', 
+32,'CREATE EXTERNAL DATABASE', 
+33,'DROP EXTERNAL DATABASE', 
+34,'CREATE DATABASE', 
+35,'ALTER DATABASE', 
+36,'CREATE ROLLBACK SEGMENT', 
+37,'ALTER ROLLBACK SEGMENT', 
+38,'DROP ROLLBACK SEGMENT', 
+39,'CREATE TABLESPACE', 
+40,'ALTER TABLESPACE', 
+41,'DROP TABLESPACE', 
+42,'ALTER SESSION', 
+43,'ALTER USER', 
+44,'COMMIT', 
+45,'ROLLBACK', 
+46,'SAVEPOINT', 
+47,'PL/SQL EXECUTE', 
+48,'SET TRANSACTION', 
+49,'ALTER SYSTEM SWITCH LOG', 
+50,'EXPLAIN', 
+51,'CREATE USER', 
+52,'CREATE ROLE', 
+53,'DROP USER', 
+54,'DROP ROLE', 
+55,'SET ROLE', 
+56,'CREATE SCHEMA', 
+57,'CREATE CONTROL FILE', 
+58,'ALTER TRACING', 
+59,'CREATE TRIGGER', 
+60,'ALTER TRIGGER', 
+61,'DROP TRIGGER', 
+62,'ANALYZE TABLE', 
+63,'ANALYZE INDEX', 
+64,'ANALYZE CLUSTER', 
+65,'CREATE PROFILE', 
+66,'DROP PROFILE', 
+67,'ALTER PROFILE', 
+68,'DROP PROCEDURE', 
+69,'DROP PROCEDURE',
+70,'ALTER RESOURCE COST', 
+71,'CREATE SNAPSHOT LOG', 
+72,'ALTER SNAPSHOT LOG', 
+73,'DROP SNAPSHOT LOG', 
+74,'CREATE SNAPSHOT', 
+75,'ALTER SNAPSHOT', 
+76,'DROP SNAPSHOT', 
+79,'ALTER ROLE',
+85,'TRUNCATE TABLE', 
+86,'TRUNCATE CLUSTER', 
+87,'-', 
+88,'ALTER VIEW', 
+89,'-', 
+90,'-', 
+91,'CREATE FUNCTION', 
+92,'ALTER FUNCTION', 
+93,'DROP FUNCTION', 
+94,'CREATE PACKAGE', 
+95,'ALTER PACKAGE', 
+96,'DROP PACKAGE', 
+97,'CREATE PACKAGE BODY', 
+98,'ALTER PACKAGE BODY', 
+99,'DROP PACKAGE BODY', 
+command||' - ???') COMMAND, 
+        decode(L.LMODE,1,'No Lock', 
+                2,'Row Share', 
+                3,'Row Exclusive', 
+                4,'Share', 
+                5,'Share Row Exclusive', 
+                6,'Exclusive','NONE') lmode, 
+        decode(L.REQUEST,1,'No Lock', 
+                2,'Row Share', 
+                3,'Row Exclusive', 
+                4,'Share', 
+                5,'Share Row Exclusive', 
+                6,'Exclusive','NONE') request, 
+l.id1||'-'||l.id2 Laddr, 
+l.type||' - '|| 
+decode(l.type, 
+'BL','Buffer hash table instance lock', 
+'CF',' Control file schema global enqueue lock', 
+'CI','Cross-instance function invocation instance lock',
+'CS','Control file schema global enqueue lock', 
+'CU','Cursor bind lock',
+'DF','Data file instance lock', 
+'DL','Direct loader parallel index create',
+'DM','Mount/startup db primary/secondary instance lock', 
+'DR','Distributed recovery process lock', 
+'DX','Distributed transaction entry lock', 
+'FI','SGA open-file information lock', 
+'FS','File set lock', 
+'HW','Space management operations on a specific segment lock',
+'IN','Instance number lock',
+'IR','Instance recovery serialization global enqueue lock', 
+'IS','Instance state lock',
+'IV','Library cache invalidation instance lock', 
+'JQ','Job queue lock',
+'KK','Thread kick lock',
+'MB','Master buffer hash table instance lock', 
+'MM','Mount definition gloabal enqueue lock', 
+'MR','Media recovery lock', 
+'PF','Password file lock',
+'PI','Parallel operation lock',
+'PR','Process startup lock',
+'PS','Parallel operation lock',
+'RE','USE_ROW_ENQUEUE enforcement lock', 
+'RT','Redo thread global enqueue lock', 
+'RW','Row wait enqueue lock', 
+'SC','System commit number instance lock', 
+'SH','System commit number high water mark enqueue lock', 
+'SM','SMON lock',
+'SN','Sequence number instance lock', 
+'SQ','Sequence number enqueue lock', 
+'SS','Sort segment lock',
+'ST','Space transaction enqueue lock', 
+'SV','Sequence number value lock', 
+'TA','Generic enqueue lock', 
+'TD','DDL enqueue lock', 
+'TE','Extend-segment enqueue lock', 
+'TM','DML enqueue lock', 
+'TT','Temporary table enqueue lock', 
+'TX','Transaction enqueue lock', 
+'UL','User supplied lock', 
+'UN','User name lock', 
+'US','Undo segment DDL lock',
+'WL','Being-written redo log instance lock', 
+'WS','Write-atomic-log-switch global enqueue lock', 
+'TS',decode(l.id2,0,'Temporary segment enqueue lock (ID2=0)',                   
+'New block allocation enqueue lock (ID2=1)'), 
+'LA','Library cache lock instance lock (A=namespace)', 
+'LB','Library cache lock instance lock (B=namespace)', 
+'LC','Library cache lock instance lock (C=namespace)', 
+'LD','Library cache lock instance lock (D=namespace)', 
+'LE','Library cache lock instance lock (E=namespace)', 
+'LF','Library cache lock instance lock (F=namespace)', 
+'LG','Library cache lock instance lock (G=namespace)', 
+'LH','Library cache lock instance lock (H=namespace)', 
+'LI','Library cache lock instance lock (I=namespace)', 
+'LJ','Library cache lock instance lock (J=namespace)', 
+'LK','Library cache lock instance lock (K=namespace)', 
+'LL','Library cache lock instance lock (L=namespace)', 
+'LM','Library cache lock instance lock (M=namespace)', 
+'LN','Library cache lock instance lock (N=namespace)', 
+'LO','Library cache lock instance lock (O=namespace)', 
+'LP','Library cache lock instance lock (P=namespace)', 
+'LS','Log start/log switch enqueue lock', 
+'PA','Library cache pin instance lock (A=namespace)', 
+'PB','Library cache pin instance lock (B=namespace)', 
+'PC','Library cache pin instance lock (C=namespace)', 
+'PD','Library cache pin instance lock (D=namespace)', 
+'PE','Library cache pin instance lock (E=namespace)', 
+'PF','Library cache pin instance lock (F=namespace)', 
+'PG','Library cache pin instance lock (G=namespace)', 
+'PH','Library cache pin instance lock (H=namespace)', 
+'PI','Library cache pin instance lock (I=namespace)', 
+'PJ','Library cache pin instance lock (J=namespace)', 
+'PL','Library cache pin instance lock (K=namespace)', 
+'PK','Library cache pin instance lock (L=namespace)', 
+'PM','Library cache pin instance lock (M=namespace)', 
+'PN','Library cache pin instance lock (N=namespace)', 
+'PO','Library cache pin instance lock (O=namespace)', 
+'PP','Library cache pin instance lock (P=namespace)', 
+'PQ','Library cache pin instance lock (Q=namespace)', 
+'PR','Library cache pin instance lock (R=namespace)', 
+'PS','Library cache pin instance lock (S=namespace)', 
+'PT','Library cache pin instance lock (T=namespace)', 
+'PU','Library cache pin instance lock (U=namespace)', 
+'PV','Library cache pin instance lock (V=namespace)', 
+'PW','Library cache pin instance lock (W=namespace)', 
+'PX','Library cache pin instance lock (X=namespace)', 
+'PY','Library cache pin instance lock (Y=namespace)', 
+'PZ','Library cache pin instance lock (Z=namespace)', 
+'QA','Row cache instance lock (A=cache)', 
+'QB','Row cache instance lock (B=cache)', 
+'QC','Row cache instance lock (C=cache)', 
+'QD','Row cache instance lock (D=cache)', 
+'QE','Row cache instance lock (E=cache)', 
+'QF','Row cache instance lock (F=cache)', 
+'QG','Row cache instance lock (G=cache)', 
+'QH','Row cache instance lock (H=cache)', 
+'QI','Row cache instance lock (I=cache)', 
+'QJ','Row cache instance lock (J=cache)', 
+'QL','Row cache instance lock (K=cache)', 
+'QK','Row cache instance lock (L=cache)', 
+'QM','Row cache instance lock (M=cache)', 
+'QN','Row cache instance lock (N=cache)', 
+'QO','Row cache instance lock (O=cache)', 
+'QP','Row cache instance lock (P=cache)', 
+'QQ','Row cache instance lock (Q=cache)', 
+'QR','Row cache instance lock (R=cache)', 
+'QS','Row cache instance lock (S=cache)', 
+'QT','Row cache instance lock (T=cache)', 
+'QU','Row cache instance lock (U=cache)', 
+'QV','Row cache instance lock (V=cache)', 
+'QW','Row cache instance lock (W=cache)', 
+'QX','Row cache instance lock (X=cache)', 
+'QY','Row cache instance lock (Y=cache)', 
+'QZ','Row cache instance lock (Z=cache)','????') Lockt 
+from    V$LOCK L,  
+        V$SESSION S, 
+        SYS.USER$ U1, 
+        SYS.OBJ$ T1 
+where   L.SID = S.SID  
+and     T1.OBJ#  = decode(L.ID2,0,L.ID1,1)  
+and     U1.USER# = T1.OWNER# 
+and     S.TYPE != 'BACKGROUND' 
+order by 1,2,5 
+/ 
+
+set serveroutput on size 1000000   
+DECLARE   
+   CURSOR lcobj_cur IS
+      select session_id
+      ,      oracle_username
+      ,      os_user_name
+      ,      object_id obj_id
+      ,      locked_mode
+      from   V$LOCKED_OBJECT;
+      
+   CURSOR obj_cur(p_obj_id IN NUMBER) IS
+      select owner||'.'||object_name object_name
+      ,      object_type
+      from dba_objects 
+      where object_id = p_obj_id;
+BEGIN
+   DBMS_OUTPUT.PUT_LINE(RPAD('Sid',5)||
+                        RPAD('O-User',10)||
+                        RPAD('OS-User',10)||
+                        RPAD('Owner.Object Name',45)||
+                        RPAD('Object Type',35));
+
+   DBMS_OUTPUT.PUT_LINE(RPAD('-',1,'-')||
+                        RPAD('-',6,'-')||
+                        RPAD('-',6,'-')||
+                        RPAD('-',41,'-')||
+                        RPAD('-',31,'-'));
+
+   FOR lcobj IN lcobj_cur
+   LOOP
+      FOR obj IN obj_cur(lcobj.obj_id)
+      LOOP
+         DBMS_OUTPUT.PUT_LINE(RPAD(lcobj.session_id,5)||
+                              RPAD(lcobj.oracle_username,10)||
+                              RPAD(lcobj.os_user_name,10)||
+                              RPAD(obj.object_name,45)||
+                              RPAD(obj.object_type,35));
+      END LOOP;
+   END LOOP;
+END;
+/
+
+/* 
+blocked objects from V$LOCK and SYS.OBJ$
+*/
+
+column lmode heading 'Lock Held' format 9999999 
+ 
+
+select /*+ ORDERED */
+    l.sid 
+,   l.lmode
+,   TRUNC(l.ctime/60) min_blocked
+,   u.name||'.'||o.NAME blocked_obj 
+from (select *
+      from v$lock 
+      where type='TM'
+      and sid in (select sid 
+                  from v$lock 
+                  where block!=0)) l
+,     sys.obj$ o
+,     sys.user$ u  
+where o.obj# = l.ID1
+and   o.OWNER# = u.user#
+/
+
+column request heading 'Lock Requested' format 9999999
+
+/* 
+blocked sessions from V$LOCK
+*/
+select /*+ ORDERED */
+   blocker.sid blocker_sid
+,  blocked.sid blocked_sid
+,  TRUNC(blocked.ctime/60) min_blocked
+,  blocked.request
+from (select *
+      from v$lock
+      where block != 0
+      and type = 'TX') blocker
+,    v$lock            blocked
+where blocked.type='TX' 
+and blocked.block = 0
+and blocked.id1 = blocker.id1
+/
+
+
+
+select /*+ ordered */
+  l.type || '-' || l.id1 || '-' || l.id2  "RESOURCE",
+  nvl(b.name, lpad(to_char(l.sid), 4))  sid,
+  decode(
+    l.lmode,
+    1, '      N',
+    2, '     SS',
+    3, '     SX',
+    4, '      S',
+    5, '    SSX',
+    6, '      X'
+  )  holding,
+  decode(
+    l.request,
+    1, '      N',
+    2, '     SS',
+    3, '     SX',
+    4, '      S',
+    5, '    SSX',
+    6, '      X'
+  )  wanting,
+  l.ctime  seconds
+from
+  sys.v_$lock l,
+  sys.v_$session s,
+  sys.v_$bgprocess b
+where
+  s.sid = l.sid and
+  b.paddr (+) = s.paddr
+order by
+  l.type || '-' || l.id1 || '-' || l.id2,
+  sign(l.request),
+  l.ctime desc
+/
+
+
+
+select /*+ ordered */
+  l.type || '-' || l.id1 || '-' || l.id2  "RESOURCE",
+  lpad(to_char(l.sid), 4)  sid,
+  decode(
+    l.lmode,
+    1, '      N',
+    2, '     SS',
+    3, '     SX',
+    4, '      S',
+    5, '    SSX',
+    6, '      X'
+  )  holding,
+  decode(
+    l.request,
+    1, '      N',
+    2, '     SS',
+    3, '     SX',
+    4, '      S',
+    5, '    SSX',
+    6, '      X'
+  )  wanting,
+  l.ctime  seconds
+from
+  sys.v_$lock l,
+  sys.v_$session s
+--,
+--  sys.v_$bgprocess b
+where
+  s.sid = l.sid 
+--and
+--  b.paddr (+) = s.paddr
+  and username is  not null
+order by
+  l.type || '-' || l.id1 || '-' || l.id2,
+  sign(l.request),
+  l.ctime desc
+/
+
+-------------------------------------------------
+-------------------------------------------------
+
+rem -----------------------------------------------------------------------
+rem Filename:   lock.sql
+rem Purpose:    Display database locks and latches (with tables names, etc)
+rem Date:       12-Apr-1998
+rem Author:     Frank Naude (frank@ibi.co.za)
+rem -----------------------------------------------------------------------
+clear column
+set pagesize 23
+set pause on
+set pause 'Hit any key...'
+
+col sid format 999999
+col serial# format 999999
+col username format a12 trunc
+col process format a8 trunc
+col terminal format a12 trunc
+col type format a12 trunc
+col lmode format a4 trunc
+col lrequest format a4 trunc
+col object format a73 trunc
+
+select s.sid, s.serial#,
+       decode(s.process, null,
+          decode(substr(p.username,1,1), '?',   upper(s.osuser), p.username),
+          decode(       p.username, 'ORACUSR ', upper(s.osuser), s.process)
+       ) process,
+       nvl(s.username, 'SYS ('||substr(p.username,1,4)||')') username,
+       decode(s.terminal, null, rtrim(p.terminal, chr(0)),
+              upper(s.terminal)) terminal,
+       decode(l.type,
+          -- Long locks
+                      'TM', 'DML/DATA ENQ',   'TX', 'TRANSAC ENQ',
+                      'UL', 'PLS USR LOCK',
+          -- Short locks
+                      'BL', 'BUF HASH TBL',  'CF', 'CONTROL FILE',
+                      'CI', 'CROSS INST F',  'DF', 'DATA FILE   ',
+                      'CU', 'CURSOR BIND ',
+                      'DL', 'DIRECT LOAD ',  'DM', 'MOUNT/STRTUP',
+                      'DR', 'RECO LOCK   ',  'DX', 'DISTRIB TRAN',
+                      'FS', 'FILE SET    ',  'IN', 'INSTANCE NUM',
+                      'FI', 'SGA OPN FILE',
+                      'IR', 'INSTCE RECVR',  'IS', 'GET STATE   ',
+                      'IV', 'LIBCACHE INV',  'KK', 'LOG SW KICK ',
+                      'LS', 'LOG SWITCH  ',
+                      'MM', 'MOUNT DEF   ',  'MR', 'MEDIA RECVRY',
+                      'PF', 'PWFILE ENQ  ',  'PR', 'PROCESS STRT',
+                      'RT', 'REDO THREAD ',  'SC', 'SCN ENQ     ',
+                      'RW', 'ROW WAIT    ',
+                      'SM', 'SMON LOCK   ',  'SN', 'SEQNO INSTCE',
+                      'SQ', 'SEQNO ENQ   ',  'ST', 'SPACE TRANSC',
+                      'SV', 'SEQNO VALUE ',  'TA', 'GENERIC ENQ ',
+                      'TD', 'DLL ENQ     ',  'TE', 'EXTEND SEG  ',
+                      'TS', 'TEMP SEGMENT',  'TT', 'TEMP TABLE  ',
+                      'UN', 'USER NAME   ',  'WL', 'WRITE REDO  ',
+                      'TYPE='||l.type) type,
+       decode(l.lmode, 0, 'NONE', 1, 'NULL', 2, 'RS', 3, 'RX',
+                       4, 'S',    5, 'RSX',  6, 'X',
+                       to_char(l.lmode) ) lmode,
+       decode(l.request, 0, 'NONE', 1, 'NULL', 2, 'RS', 3, 'RX',
+                         4, 'S', 5, 'RSX', 6, 'X',
+                         to_char(l.request) ) lrequest,
+       decode(l.type, 'MR', decode(u.name, null,
+                            'DICTIONARY OBJECT', u.name||'.'||o.name),
+                      'TD', u.name||'.'||o.name,
+                      'TM', u.name||'.'||o.name,
+                      'RW', 'FILE#='||substr(l.id1,1,3)||
+                      ' BLOCK#='||substr(l.id1,4,5)||' ROW='||l.id2,
+                      'TX', 'RS+SLOT#'||l.id1||' WRP#'||l.id2,
+                      'WL', 'REDO LOG FILE#='||l.id1,
+                      'RT', 'THREAD='||l.id1,
+                      'TS', decode(l.id2, 0, 'ENQUEUE',
+                                             'NEW BLOCK ALLOCATION'),
+                      'ID1='||l.id1||' ID2='||l.id2) object
+from   sys.v_$lock l, sys.v_$session s, sys.obj$ o, sys.user$ u,
+       sys.v_$process p
+where  s.paddr  = p.addr(+)
+  and  l.sid    = s.sid
+  and  l.id1    = o.obj#(+)
+  and  o.owner# = u.user#(+)
+  and  l.type   <> 'MR'
+UNION ALL                          /*** LATCH HOLDERS ***/
+select s.sid, s.serial#, s.process, s.username, s.terminal,
+       'LATCH', 'X', 'NONE', h.name||' ADDR='||rawtohex(laddr)
+from   sys.v_$process p, sys.v_$session s, sys.v_$latchholder h
+where  h.pid  = p.pid
+  and  p.addr = s.paddr
+UNION ALL                         /*** LATCH WAITERS ***/
+select s.sid, s.serial#, s.process, s.username, s.terminal,
+       'LATCH', 'NONE', 'X', name||' LATCH='||p.latchwait
+from   sys.v_$session s, sys.v_$process p, sys.v_$latch l
+where  latchwait is not null
+  and  p.addr      = s.paddr
+  and  p.latchwait = l.addr
+/
+
+
+/**********************************************************************
+ * File:	locks.sql
+ * Type:	SQL*Plus script
+ * Author:	Tim Gorman (Evergreen Database Technologies, Inc.)
+ * Date:	29-Nov-99
+ *
+ * Description:
+ *	Query the V$LOCK view and decode the following columns:
+ *		TYPE
+ *		LMODE
+ *		REQUEST
+ *	Also, summarize by these columns...
+ *
+ *	Enqueue type-names are a composite of Oracle7, Oracle8, and
+ *	Oracle8i documentation.  It is up-to-date as of v8.1.5 and
+ *	should be valid going back to v7.3.x...
+ *
+ * Modifications:
+ *********************************************************************/
+col type format a40 truncate heading "Lock Type"
+col mode_held format a30 truncate heading "Mode Held"
+col mode_requested format a30 truncate heading "Mode Requested"
+col cnt format 9990 heading "Quant Sess"
+col instance new_value V_INSTANCE noprint
+
+set feedback off echo off timing off pause off verify off
+
+select  lower(replace(t.instance,chr(0),'')) instance
+from    v$thread        t,
+        v$parameter     p
+where   p.name = 'thread'
+and     t.thread# = to_number(decode(p.value,'0','1',p.value));
+
+SELECT    TYPE ||
+          DECODE(TYPE,
+		 'BL',': Buffer hash table',
+		 'CF',': Control File Transaction',
+		 'CI',': Cross Instance Call',
+		 'CS',': Control File Schema',
+		 'CU',': Bind Enqueue',
+		 'DF',': Data File',
+		 'DL',': Direct-loader index-creation',
+		 'DM',': Mount/startup db primary/secondary instance',
+		 'DR',': Distributed Recovery Process',
+		 'DX',': Distributed Transaction Entry',
+		 'FI',': SGA Open-File Information',
+		 'FS',': File Set',
+		 'IN',': Instance Number',
+		 'IR',': Instance Recovery Serialization',
+		 'IS',': Instance State',
+		 'IV',': Library Cache InValidation',
+		 'JQ',': Job Queue',
+		 'KK',': Redo Log "Kick"',
+		 'LS',': Log Start/Log Switch',
+		 'MB',': Master Buffer hash table',
+		 'MM',': Mount Definition',
+		 'MR',': Media Recovery',
+		 'PF',': Password File',
+		 'PI',': Parallel Slaves',
+		 'PR',': Process Startup',
+		 'PS',': Parallel Slaves Synchronization',
+		 'RE',': USE_ROW_ENQUEUE Enforcement',
+		 'RT',': Redo Thread',
+		 'RW',': Row Wait',
+		 'SC',': System Commit Number',
+		 'SH',': System Commit Number HWM',
+		 'SM',': SMON',
+		 'SQ',': Sequence Number',
+		 'SR',': Synchronized Replication',
+		 'SS',': Sort Segment',
+		 'ST',': Space Transaction',
+		 'SV',': Sequence Number Value',
+		 'TA',': Transaction Recovery',
+		 'TD',': DDL enqueue',
+		 'TE',': Extend-segment enqueue',
+		 'TM',': DML enqueue',
+		 'TS',': Temporary Segment',
+		 'TT',': Temporary Table',
+		 'TX',': Transaction',
+		 'UL',': User-defined Lock',
+		 'UN',': User Name',
+		 'US',': Undo Segment Serialization',
+		 'WL',': Being-written redo log instance',
+		 'WS',': Write-atomic-log-switch global enqueue',
+		 'XA',': Instance Attribute',
+		 'XI',': Instance Registration',
+		 decode(substr(type,1,1),
+			'L', ': Library Cache ('||substr(type,2,1)||')',
+			'N', ': Library Cache Pin ('||substr(type,2,1)||')',
+			'Q', ': Row Cache ('||substr(type,2,1)||')',
+			     ': ????')) type,
+	  DECODE(LMODE,
+                 0, '--Waiting--',
+                 1, 'Null',
+                 2, 'Sub-Share',
+                 3, 'Sub-Exclusive',
+                 4, 'Share',
+                 5, 'Share/Sub-Excl',
+                 6, 'Exclusive',
+		         '<Unknown>') mode_held,
+          DECODE(REQUEST,
+                 0, '',
+                 1, 'Null',
+                 2, 'Sub-Share',
+                 3, 'Sub-Exclusive',
+                 4, 'Share',
+                 5, 'Share/Sub-Excl',
+                 6, 'Exclusive',
+		         '<Unknown>') mode_requested,
+          COUNT(*) cnt
+FROM      GV$LOCK
+WHERE     TYPE NOT IN ('MR','RT')
+GROUP BY  TYPE ||
+          DECODE(TYPE,
+		 'BL',': Buffer hash table',
+		 'CF',': Control File Transaction',
+		 'CI',': Cross Instance Call',
+		 'CS',': Control File Schema',
+		 'CU',': Bind Enqueue',
+		 'DF',': Data File',
+		 'DL',': Direct-loader index-creation',
+		 'DM',': Mount/startup db primary/secondary instance',
+		 'DR',': Distributed Recovery Process',
+		 'DX',': Distributed Transaction Entry',
+		 'FI',': SGA Open-File Information',
+		 'FS',': File Set',
+		 'IN',': Instance Number',
+		 'IR',': Instance Recovery Serialization',
+		 'IS',': Instance State',
+		 'IV',': Library Cache InValidation',
+		 'JQ',': Job Queue',
+		 'KK',': Redo Log "Kick"',
+		 'LS',': Log Start/Log Switch',
+		 'MB',': Master Buffer hash table',
+		 'MM',': Mount Definition',
+		 'MR',': Media Recovery',
+		 'PF',': Password File',
+		 'PI',': Parallel Slaves',
+		 'PR',': Process Startup',
+		 'PS',': Parallel Slaves Synchronization',
+		 'RE',': USE_ROW_ENQUEUE Enforcement',
+		 'RT',': Redo Thread',
+		 'RW',': Row Wait',
+		 'SC',': System Commit Number',
+		 'SH',': System Commit Number HWM',
+		 'SM',': SMON',
+		 'SQ',': Sequence Number',
+		 'SR',': Synchronized Replication',
+		 'SS',': Sort Segment',
+		 'ST',': Space Transaction',
+		 'SV',': Sequence Number Value',
+		 'TA',': Transaction Recovery',
+		 'TD',': DDL enqueue',
+		 'TE',': Extend-segment enqueue',
+		 'TM',': DML enqueue',
+		 'TS',': Temporary Segment',
+		 'TT',': Temporary Table',
+		 'TX',': Transaction',
+		 'UL',': User-defined Lock',
+		 'UN',': User Name',
+		 'US',': Undo Segment Serialization',
+		 'WL',': Being-written redo log instance',
+		 'WS',': Write-atomic-log-switch global enqueue',
+		 'XA',': Instance Attribute',
+		 'XI',': Instance Registration',
+		 decode(substr(type,1,1),
+			'L', ': Library Cache ('||substr(type,2,1)||')',
+			'N', ': Library Cache Pin ('||substr(type,2,1)||')',
+			'Q', ': Row Cache ('||substr(type,2,1)||')',
+			     ': ????')),
+          DECODE(LMODE,
+                 0, '--Waiting--',
+                 1, 'Null',
+                 2, 'Sub-Share',
+                 3, 'Sub-Exclusive',
+                 4, 'Share',
+                 5, 'Share/Sub-Excl',
+                 6, 'Exclusive',
+		         '<Unknown>'),
+          DECODE(REQUEST,
+                 0, '',
+                 1, 'Null',
+                 2, 'Sub-Share',
+                 3, 'Sub-Exclusive',
+                 4, 'Share',
+                 5, 'Share/Sub-Excl',
+                 6, 'Exclusive',
+		         '<Unknown>')
+
+spool locks_&&V_INSTANCE
+/
+
+------------  lista sessions esperando liberacao de lock --------------------
+
+select /*+ ordered */
+     (select username from v$session where sid=a.sid) blocker,
+          ' is blocking ',
+     (select username from v$session where sid=b.sid) blockee,
+               b.sid
+from v$lock a, v$lock b
+where a.block = 1
+       and b.request > 0
+       and a.id1 = b.id1
+      and a.id2 = b.id2
+/
+
+
+------------  lista sessions com lock --------------------
+
+set pages 20
+col username form A10
+col sid form 9990
+col type form A4
+col lmode form 990
+col request form 990
+col objname form A15 Heading "Object Name"
+rem Display the object id's if the object_name is not unique
+rem col id1 form 999999900   
+rem col id2 form 999999900
+
+
+SELECT sn.username, m.sid, m.type,
+   DECODE(m.lmode, 0, 'None'
+                 , 1, 'Null'
+                 , 2, 'Row Share'
+                 , 3, 'Row Excl.'
+                 , 4, 'Share'
+                 , 5, 'S/Row Excl.'
+                 , 6, 'Exclusive'
+                 , lmode, ltrim(to_char(lmode,'990'))) lmode,
+   DECODE(m.request, 0, 'None'
+                 , 1, 'Null'
+                 , 2, 'Row Share'
+                 , 3, 'Row Excl.'
+                 , 4, 'Share'
+                 , 5, 'S/Row Excl.'
+                 , 6, 'Exclusive'
+                 , request, ltrim(to_char(request,'990'))) request,
+         obj1.object_name objname, obj2.object_name objname
+FROM v$session sn, V$lock m, dba_objects obj1, dba_objects obj2
+WHERE sn.sid = m.sid
+AND m.id1 = obj1.object_id (+)
+AND m.id2 = obj2.object_id (+)
+     AND lmode != 4 
+ORDER BY id1,id2, m.request
+/
+
+--------------------
+
+
+column username format A15
+column "TABLE" format A12
+column "MODE" format A5
+column sql_text format A40 word_wrapped
+column dummy noprint
+break on name skip 1 on username on sql_text
+select o.name "TABLE",
+       s.username,
+       l.type,
+       l.id1 dummy,
+       l.id2 dummy,
+       decode(l.lmode, 0, '',
+                       1, '*NULL',
+                       2, '*RS',
+                       3, '*RX',
+                       4, '*S',
+                       5, '*SRX',
+                       6, '*X',
+                       '*' || to_char(l.lmode)) ||
+       decode(l.request, 0, '',
+                         1, ' NULL',
+                         2, ' RS',
+                         3, ' RX',
+                         4, ' S',
+                         5, ' SRX',
+                         6, ' X',
+                         ' ' || to_char(l.request)) "MODE",
+       a.sql_text   
+from v$session s,
+     v$sqlarea a,
+     sys.obj$ o,
+     v$lock l
+where l.sid = s.sid
+  and l.id1 = o.obj# (+)
+  and s.sql_address = a.address
+  and s.sql_hash_value = a.hash_value
+  and s.username is not null
+order by 4, 5, 2
+/
+
+
+spool off
+

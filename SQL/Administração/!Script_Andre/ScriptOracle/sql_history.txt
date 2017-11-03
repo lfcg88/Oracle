@@ -1,0 +1,94 @@
+ create table myextents as select * from dba_extents ;
+ 
+ 
+ col own for A7
+ col segment_name for a40
+ col segment_type for a15
+ col cnt for 9999
+ Select 
+       count(*) cnt, 
+       owner own, 
+       segment_name , 
+       segment_type
+ from 
+       v$active_session_history ash, 
+       myextents ext
+ where
+        ( event like 'db file s%' or event like 'direct%' )
+     and (current_obj# in (0,-1) or current_obj# is Null)
+     and sample_time > sysdate - &v_minutes/(60*24)
+     and session_state='WAITING'
+     and P1 = file_id
+     and P2  between  block_id and block_id + blocks - 1
+ group by 
+    owner, segment_name, segment_type
+ /
+
+
+
+ col own for A7
+ col segment_name for a40
+ col segment_type for a15
+ col cnt for 9999
+ Select 
+              owner own, 
+       segment_name , 
+       segment_type ,
+       event       
+ from 
+       v$active_session_history ash, 
+       myextents ext
+ where
+        ( event like 'db file s%' or event like 'direct%' )
+     and (current_obj# in (0,-1) or current_obj# is Null)
+     and sample_time > sysdate - &v_minutes/(60*24)
+     and session_state='WAITING'
+     and P1 = file_id
+     and P2  between  block_id and block_id + blocks - 1
+
+
+
+
+
+===================================
+Tuning IO
+====================================
+
+select 
+       to_char(begin_interval_time,'yyyy-mm-dd hh24:mi') snap_time,
+       file#,  readtim/nullif(phyrds,0) avg_read_ms, phyrds
+from 
+     DBA_HIST_FILESTATXS f,
+     dba_hist_snapshot  s
+where f.snap_id=s.snap_id ;
+
+
+
+select
+       to_char(begin_time,'yyyy-mm-dd hh24:mi') begin_time,
+       file_id fid,  
+       average_read_time *10  avgrd_ms,
+       average_write_time *10 avgwr_ms,
+       physical_reads pr,
+       physical_writes pw
+from
+      V$FILEMETRIC_HISTORY f
+order by begin_time;
+
+
+
+Historic  IO read  times
+
+select 
+       to_char(begin_interval_time,'yyyy-mm-dd hh24:mi') snap_time,
+       file#,  readtim/nullif(phyrds,0) avg_read_ms, phyrds
+from 
+     DBA_HIST_FILESTATXS f,
+     dba_hist_snapshot  s
+where f.snap_id=s.snap_id ;
+
+
+
+
+
+

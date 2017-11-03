@@ -1,0 +1,19 @@
+DEFINE access_level = 1000 (NUMBER)
+	COLUMN parsing_user_id FORMAT 9999999 HEADING 'User Id'
+	COLUMN executions FORMAT 9999 HEADING 'Exec'
+	COLUMN sorts FORMAT 99999 HEADING 'Sorts'
+	COLUMN command_type FORMAT 99999 HEADING 'CmdT'
+	COLUMN disk_reads FORMAT 999,999,999 HEADING 'Block Reads'
+	COLUMN sql_text FORMAT a40 HEADING 'Statement' WORD_WRAPPED
+	SET LINES 130 VERIFY OFF FEEDBACK OFF
+SELECT
+	USERNAME, executions,
+	sorts,command_type,
+	disk_reads,sql_text
+	FROM
+	v$sqlarea a, dba_users b
+	WHERE
+	disk_reads > 1000 and
+        parsing_user_id = b.USER_ID
+	ORDER BY
+	disk_reads desc;

@@ -1,0 +1,1 @@
+rman cmdfile=backup_standby.rman log=backup_standby.log

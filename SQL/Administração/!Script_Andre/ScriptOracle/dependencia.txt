@@ -1,0 +1,41 @@
+rem
+rem Dependency information
+rem 
+rem Input : owner and object name
+rem
+rem Biju Thomas
+rem
+/*
+
+Object Owner (Wild Character % may be used) 
+Object Name (Wild Character % may be used) 
+ 
+Command Line SQL> @dependinfo example % 
+*/
+
+set pages 999 feedback off lines 80 trims on echo off verify off
+spool c:\dependinfo.lst
+column owner format a8 heading "Owner"
+column type format a4 tru heading "Type"
+column name format a25 heading "Name"
+column referenced_owner format a8 heading "Depend|Owner"
+column referenced_type format a4  tru heading "Depend|Type"
+column referenced_name format a25 heading "Depend On Name"
+ttitle "Object Dependency Report"
+select owner, type, name,
+       referenced_owner, referenced_type, referenced_name
+from dba_dependencies
+where ((owner like upper('&1')
+and   name  like upper('&2') ) or
+      (referenced_owner like upper('&&1')
+and   referenced_name  like upper('&&2') ))
+and   referenced_owner != 'SYS'
+and   referenced_type != 'NON-EXISTENT'
+order by owner, type, name
+/
+spool off
+set pages 24 feedback on lines 80 trims on verify on
+ttitle off
+prompt
+prompt Output saved at c:/dependinfo.lst
+prompt

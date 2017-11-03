@@ -1,0 +1,1 @@
+select 'grant select on <schema>.'||table_name||' to <usuario>;' from dba_tables where owner='<schema>';

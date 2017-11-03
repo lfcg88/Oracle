@@ -1,0 +1,108 @@
+# nécessite
+# alter session set events '10046 trace name context forever, level 12'
+
+use strict;
+
+my $file = $ARGV[0];
+my $ligne;
+my @cursor;
+my $cursor;
+my $cursor1;
+my $wait;
+my $elapsed;
+my $query;
+my $nb;
+my %wait;
+my $bind;
+my $bind1;
+my $value;
+my $startTime;
+my $endTime;
+
+die "syntax: perl wait.pl <filename>\n" unless $file;
+
+open(FILE, $file) || die "can't open $file\n";
+while ($ligne = <FILE>) {
+   $nb++;
+   $startTime = $1 if !$startTime && $ligne =~ /^EXEC.*tim=(\d+)/;
+   $endTime = $1 if $startTime && $ligne =~ /^EXEC.*tim=(\d+)/;
+   if ($ligne =~ /^PARSING\sIN\sCURSOR\s\#(\d+)/) {
+      $cursor = $1;
+      if (exists $cursor[$cursor]) {
+         &printCursor($cursor);
+         delete $cursor[$cursor]
+      }
+      $query = "";
+      while ($ligne = <FILE>) {
+
+         $nb++;
+         last if $ligne =~ /END\sOF\sSTMT/;
+         $query = $query . $ligne;
+      }
+      $cursor[$cursor]{statement} = $query;
+   }
+   if ($ligne =~ /^BINDS\s\#(\d+)\:/) {
+      $cursor1 = $1;
+      while ($ligne = <FILE>) {
+         $nb++;
+         last unless $ligne =~ /^\s/;
+         $bind = $1 if $ligne =~ /^\sbind\s(\d+)/;
+         if ($ligne =~ /\s\s\svalue\=(.*)$/) {
+            $value = $1;
+            $bind1 = $bind+1;
+            $cursor[$cursor1]{bind}{$bind1} = $value;
+         }
+      }
+   }
+   if ($ligne =~ /^WAIT\s\#(\d+):\snam=\'(.*)\'\sela=\s(\d+)/) {
+      $cursor = $1;
+      $wait = $2;
+      $elapsed = $3;
+      $cursor[$cursor]{wait}{$wait}{ela} += $elapsed;
+      $cursor[$cursor]{wait}{$wait}{cnt}++;
+      $wait{$wait}{ela} += $elapsed;
+      $wait{$wait}{cnt}++;
+   }
+}
+close FILE;
+
+for ($cursor=0; $cursor<@cursor; $cursor++) {
+   if (exists $cursor[$cursor]) {
+      printCursor($cursor);
+   }
+}
+
+&printWait;
+
+sub printCursor{
+   my ($cursor) = @_;
+   my ($wait, $bind);
+
+   print "=====================\n";
+   print "CURSOR $cursor\n", $cursor[$cursor]{statement}, "\n";
+   for $wait(keys %{$cursor[$cursor]{wait}}) {
+      print "\tWAIT : $wait ela=$cursor[$cursor]{wait}{$wait}{ela} cnt=$cursor[$cursor]{wait}{$wait}{cnt}\n";
+   }
+   print "\n";
+   for $bind(sort {$a <=> $b} keys %{$cursor[$cursor]{bind}}) {
+      print "\tBIND : $bind value=$cursor[$cursor]{bind}{$bind}\n";
+   }
+   print "\n";
+}
+
+sub printWait{
+   my $wait;
+   my $totalWait=0;
+   my $totalRun = 1;
+
+   print "Total runtime : ", sprintf ("%.2f", ($endTime-$startTime)/100), "\n\n";
+
+   for $wait(keys %wait) {
+      $totalWait += $wait{$wait}{ela};
+   }
+   print "Total wait time : ", sprintf("%.2f\n", $totalWait/100);
+
+   for $wait(sort {-($wait{$a}{ela} <=> $wait{$b}{ela})} keys %wait){
+      print "\tWAIT (", sprintf("%-2.1f", 100*$wait{$wait}{ela}/$totalWait), "% wait time, ", sprintf("%-2.1f", 100*$wait{$wait}{ela}/($endTime-$startTime)), "% run time)\t: $wait ela=", sprintf ("%.2f", $wait{$wait}{ela}/100), " cnt=$wait{$wait}{cnt}\n";
+   }
+}

@@ -1,0 +1,159 @@
+/**********************************************************************
+ * File:	sppurpkg.sql
+ * Type:	SQL*Plus script
+ * Author:	Tim Gorman (Evergreen Database Technologies, Inc.)
+ * Date:	18Oct01
+ *
+ * Description:
+ *	SQL*Plus script containing DDL commands to create the package
+ *	SPPURPKG, intended for use with STATSPACK from Oracle database
+ *	versions 8.1.7 and above.  Adapted from the "sppurge.sql" script
+ *	which is included with standard STATSPACK v8.1.7, it is easier
+ *	to use because it can be called automatedly from the DBMS_JOB
+ *	package (instead of interactively as with "sppurge.sql") and it
+ *	takes only the number of days of STATSPACK data to retain
+ *	(instead of prompting for a begin/end range of SNAP_IDs, like
+ *	"sppurge.sql")
+ *
+ *	After the package is created, then this script will submit the
+ *	procedure "SPPURPKG.RUN(14)" (i.e. purge data older than 14
+ *	days) to run once per day.  You may want to modify this,
+ *	depending on the volume of activity on the database(s) being
+ *	monitored by STATSPACK and the amount of storage you are
+ *	prepared to allocate to the PERFSTAT schema...
+ *
+ * Modifications:
+ *********************************************************************/
+set echo on feedback on timing on verify on
+
+spool sppurpkg
+
+connect perfstat
+
+show user
+show release
+
+set termout off
+create or replace package SPPURPKG
+is
+	--
+	procedure PURGE(in_days_older_than IN INTEGER);
+	--
+end SPPURPKG;
+/
+set termout on
+show errors
+
+set termout off
+create or replace package body SPPURPKG
+is
+	--
+	procedure PURGE(in_days_older_than IN INTEGER)
+	is
+		--
+		cursor get_snaps(in_days IN INTEGER)
+		is
+		select	s.rowid,
+			s.snap_id,
+			s.dbid,
+			s.instance_number
+		from	stats$snapshot	s,
+			sys.v_$database	d,
+			sys.v_$instance i
+		where	s.dbid = d.dbid
+		and	s.instance_number = i.instance_number
+		and	s.snap_time < trunc(sysdate) - in_days;
+		--
+		errcontext		VARCHAR2(100);
+		errmsg			VARCHAR2(1000);
+		save_module		VARCHAR2(48);
+		save_action		VARCHAR2(32);
+		--
+	begin
+		--
+		errcontext := 'save settings of DBMS_APPLICATION_INFO';
+		dbms_application_info.read_module(save_module, save_action);
+		dbms_application_info.set_module('SPPURPKG.PURGE', 'begin');
+		--
+		errcontext := 'open/fetch get_snaps';
+		dbms_application_info.set_action(errcontext);
+		for x in get_snaps(in_days_older_than) loop
+			--
+			errcontext := 'delete (cascade) STATS$SNAPSHOT';
+			dbms_application_info.set_action(errcontext);
+			delete
+			from	stats$snapshot
+			where	rowid = x.rowid;
+			--
+			errcontext := 'delete "dangling" STATS$SQLTEXT rows';
+			dbms_application_info.set_action(errcontext);
+			delete
+			from	stats$sqltext
+			where	(hash_value, text_subset) not in
+				(select /*+ hash_aj(ss) */ hash_value, text_subset
+				 from	stats$sql_summary ss
+				);
+			--
+			errcontext := 'delete "dangling" STATS$DATABASE_INSTANCE rows';
+			dbms_application_info.set_action(errcontext);
+			delete
+			from	stats$database_instance i
+			where	i.instance_number = x.instance_number
+			and	i.dbid            = x.dbid
+			and not exists
+				(select	1
+				 from	stats$snapshot s
+				 where	s.dbid            = i.dbid
+				 and	s.instance_number = i.instance_number
+				 and	s.startup_time    = i.startup_time
+				);
+			--
+			errcontext := 'delete "dangling" STATS$STATSPACK_PARAMETER rows';
+			dbms_application_info.set_action(errcontext);
+			delete
+			from	stats$statspack_parameter p
+			where	p.instance_number = x.instance_number
+			and	p.dbid            = x.dbid
+			and not exists
+				(select	1
+				 from	stats$snapshot s
+				 where	s.dbid            = p.dbid
+				 and	s.instance_number = p.instance_number
+				);
+			--
+			errcontext := 'fetch/close get_snaps';
+			dbms_application_info.set_action(errcontext);
+			--
+                  commit; -- eu coloquei
+                 --
+		end loop;
+		--
+		errcontext := 'restore saved settings of DBMS_APPLICATION_INFO';
+		dbms_application_info.set_module(save_module, save_action);
+		--
+	exception
+		--
+		when OTHERS then
+			errmsg := sqlerrm;
+			dbms_application_info.set_module(save_module, save_action);
+			raise_application_error(-20000, errcontext || ': ' || errmsg);
+		--
+	end PURGE;
+	--
+end SPPURPKG;
+/
+set termout on
+show errors
+
+variable jobno number;
+begin
+  dbms_job.submit(:jobno, 'sppurpkg.purge(14);', sysdate+(1/1440), 'SYSDATE+1', TRUE);
+  commit;
+end;
+/
+
+set pages 100
+select * from user_jobs where job = :jobno;
+
+spool off
+

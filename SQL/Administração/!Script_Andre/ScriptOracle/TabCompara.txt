@@ -1,0 +1,101 @@
+   
+
+/* 
+Description:    This script compares tables in different databases across
+                a remote link. It is written using dbms_sql.describe and is
+                very quick and can easily be turned into a package for schema 
+                comparisons. 
+Code: 
+*/
+DECLARE
+
+-- Change the following to the Source Table/View
+-- and the remote database linke
+g_table_name VARCHAR2(50) := 'RECUPERACAO';
+g_db_link VARCHAR2(50) := 'DSV8.WORLD';
+
+
+-------------------------------------------------------------
+-- --
+-- Everything from here down should not be touched !!! --
+-- --
+-------------------------------------------------------------
+empty_list DBMS_SQL.DESC_TAB;
+src_column_list DBMS_SQL.DESC_TAB;
+des_column_list DBMS_SQL.DESC_TAB;
+com_column_list DBMS_SQL.DESC_TAB;
+
+-- Fill a table with the Describe of a Table
+PROCEDURE fill_column_list(p_column_list IN OUT DBMS_SQL.DESC_TAB, p_table_name IN VARCHAR2)
+IS
+column_cursor PLS_INTEGER;
+column_list DBMS_SQL.DESC_TAB;
+number_of_columns_in_list PLS_INTEGER;
+BEGIN
+
+-- Get the Source Table Columns
+column_cursor := DBMS_SQL.OPEN_CURSOR;
+DBMS_SQL.PARSE(column_cursor, 'select * from '||p_table_name, DBMS_SQL.NATIVE);
+DBMS_SQL.DESCRIBE_COLUMNS(column_cursor, number_of_columns_in_list, column_list);
+p_column_list := column_list;
+DBMS_SQL.CLOSE_CURSOR(column_cursor);
+
+END;
+
+-- Display the Columns in the Descibed Column List
+PROCEDURE show_column_list(p_column_list IN DBMS_SQL.DESC_TAB)
+IS
+BEGIN
+FOR i IN p_column_list.FIRST..p_column_list.LAST
+LOOP
+DBMS_OUTPUT.PUT_LINE(p_column_list(i).col_name);
+END loop;
+END;
+
+-- Create a list of Differences
+FUNCTION compare_column_list (p_src_column_list IN DBMS_SQL.DESC_TAB, p_des_column_list IN DBMS_SQL.DESC_TAB)
+RETURN DBMS_SQL.DESC_TAB
+IS
+ret_column_list DBMS_SQL.DESC_TAB;
+ret_col_idx INTEGER := 1;
+bNOTFOUND BOOLEAN;
+BEGIN
+FOR i IN p_src_column_list.FIRST..p_src_column_list.LAST
+LOOP
+bNOTFOUND := TRUE;
+FOR j IN p_des_column_list.FIRST..p_des_column_list.LAST
+LOOP
+IF p_des_column_list(j).col_name = p_src_column_list(i).col_name THEN
+bNOTFOUND := FALSE;
+EXIT;
+END IF;
+END LOOP;
+
+IF (bNOTFOUND) THEN
+ret_column_list(ret_col_idx) := p_src_column_list(i);
+ret_col_idx := ret_col_idx + 1;
+END IF;
+
+END LOOP;
+
+IF ret_column_list.COUNT = 0 THEN
+ret_column_list(ret_col_idx).col_name := 'No Differences Found...';
+END IF;
+
+RETURN (ret_column_list);
+END;
+
+BEGIN
+-- Clean Column Lists
+src_column_list := empty_list;
+des_column_list := empty_list;
+com_column_list := empty_list;
+
+-- Setup Source and Destination Lists
+fill_column_list(src_column_list, g_table_name);
+fill_column_list(des_column_list, g_table_name||'@'||g_db_link);
+
+-- Compare the Lists and
+com_column_list := compare_column_list(src_column_list, des_column_list);
+show_column_list(com_column_list);
+END;

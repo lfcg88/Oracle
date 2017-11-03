@@ -1,0 +1,59 @@
+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+Here’s a query that shows how to find out key information about the SQL plan baselines in your database:
+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+SQL> select sql_handle, sql_text, plan_name,
+origin, enabled, accepted, fixed, autopurge
+from dba_sql_plan_baselines;
+
++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+you can manually set the status of any SQL plan to accepted through the ALTER_SQL_PLAN_BASELINE procedure, as shown here:
++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+SQL> exec dbms_spm.alter_sql_plan_baselines(
+sql_handle => SYS_SQL_122222222',
+plan_name => 'SYS_SQL_PLAN_b5429522ee05ab0e',
+attribute_name => 'accepted-status',
+attribute_value => 'YES');
+
++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+You can also disable an accepted plan by removing the enabled setting through the ALTER_SQL_PLAN_BASELINE view. Here’s an example:
++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+declare
+ctr binary_integer;
+begin
+ctr := dbms_spm.alter_sql_plan_baseline (
+sql_handle => 'SYS_SQL_e0b19f65b5429522',
+plan_name => 'SYS_SQL_PLAN_b5429522ee05ab0e',
+attribute_name => 'ENABLED',
+attribute_value => 'NO'
+);
+end;
+
+
++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+You can view the SQL plans stored in the SQL plan baseline for a specific SQL statement, using the DISPLAY_SQL_PLAN_BASELINE function of the DBMS_XPLAN package, as shown the following example:
++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+SQL> set serveroutput on
+SQL> set long 100000
+SQL> select * from table(
+2 dbms_xplan.display_sql_plan_baseline(
+3 sql_handle => 'SYS_SQL_ba5e12ccae97040f',
+4* format => 'basic'));
+
+
++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+You configure the SQL Management Base by setting values for two parameters,space_budget_percent and plan_retention_weeks.
++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+select parameter_name, parameter_value from
+dba_sql_management_config;
+
+
++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+You can modify the value of the space_budget_percent parameter by executing the DBMS_SPM.CONFIGURE procedure, as shown here:
++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+SQL> exec dbms_spm.configure ('space_budget_percent', 40);

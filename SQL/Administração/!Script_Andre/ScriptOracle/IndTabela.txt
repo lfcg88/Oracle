@@ -1,0 +1,120 @@
+rem =========================================================================
+rem 
+rem                     ixcols.sql
+rem 
+rem     Copyright (C) Oriole Software, 2000
+rem 
+rem     Downloaded from http://www.oriolecorp.com
+rem 
+rem     This script for Oracle database administration is free software; you
+rem     can redistribute it and/or modify it under the terms of the GNU General
+rem     Public License as published by the Free Software Foundation; either
+rem     version 2 of the License, or any later version.
+rem 
+rem     This script is distributed in the hope that it will be useful,
+rem     but WITHOUT ANY WARRANTY; without even the implied warranty of
+rem     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+rem     GNU General Public License for more details.
+rem 
+rem     You should have received a copy of the GNU General Public License
+rem     along with this program; if not, write to the Free Software
+rem     Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+rem 
+rem =========================================================================
+__
+--  This function returns the columns which comprise an index, as a string
+--  and can be used with the script TABIX to give details of indexes for tables.
+--  It accepts as parameters, the index name, the maximum allowed length
+--  of the  output string (default 55) and the separator character default (/).
+--  If the output exceeds the length allowed, this is indicated by '/...'
+__
+
+create or replace function ixcols
+(pi_ixname        in varchar2
+,pi_string_length in number := 55
+,pi_sepchar       in varchar2 := ' / ')
+RETURN varchar2 is
+
+-- Returns the columns of the given index as a string
+
+   cursor c1 is
+      select uic.column_name
+        from user_ind_columns uic
+       where uic.index_name like upper(ixcols.pi_ixname)
+       order by uic.column_position;
+   
+   v_errm   varchar2(2000);      -- Holds SQLERRM.
+   v_string varchar2(2000);      -- Return string.
+
+begin
+  FOR r1 IN c1                   -- Fetch all rows from user_ind_columns
+    LOOP                         --   appending values to string
+-- If given string length is exceeded, show indicator and stop
+      IF   nvl(length(v_string),0)+length(r1.column_name)+length(pi_sepchar)
+                                                          < pi_string_length
+      THEN v_string := v_string||pi_sepchar||r1.column_name;
+      ELSE v_string := v_string||' /...';
+           exit;
+      END IF;
+    END LOOP;
+-- Remove first separator from string
+    v_string := ltrim(v_string,pi_sepchar);
+    IF v_string is null 
+    THEN v_string := 'Index "'||ixcols.pi_ixname||'" does not exist'; 
+    END IF;
+RETURN v_string;
+exception
+  when others then v_errm := sqlerrm;
+                   dbms_output.put_line('IXCOLS: '||v_errm);
+end ixcols;
+/
+
+
+
+
+
+rem =========================================================================
+rem 
+rem                     tabix.sql
+rem 
+rem     Copyright (C) Oriole Software, 2000
+rem 
+rem     Downloaded from http://www.oriolecorp.com
+rem 
+rem     This script for Oracle database administration is free software; you
+rem     can redistribute it and/or modify it under the terms of the GNU General
+rem     Public License as published by the Free Software Foundation; either
+rem     version 2 of the License, or any later version.
+rem 
+rem     This script is distributed in the hope that it will be useful,
+rem     but WITHOUT ANY WARRANTY; without even the implied warranty of
+rem     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+rem     GNU General Public License for more details.
+rem 
+rem     You should have received a copy of the GNU General Public License
+rem     along with this program; if not, write to the Free Software
+rem     Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+rem 
+rem =========================================================================
+--
+-- This script gives full details of each index, its type and the column(s)
+-- it comprises, for a specified table or all the user's tables.
+-- N.B. It requires that the function IXCOLS has already been compiled.
+--
+set echo off
+accept tabname default '%' -
+prompt 'Press Enter for all tables or enter a table name: '
+accept vowner default '%' -
+prompt 'enter owner: '
+--
+select uix.table_name||' | '||
+       uix.index_name||' | '||
+       uix.uniqueness||' | '||
+       ixcols(uix.index_name) "Table | Index | Type | Columns"
+  from DBA_indexes uix
+ where uix.table_name like upper('&tabname')and uix.owner like upper('&vowner')
+ order by uix.table_name, uix.index_name
+/
+set echo on
+
+

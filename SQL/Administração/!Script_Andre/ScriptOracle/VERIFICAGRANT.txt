@@ -1,0 +1,99 @@
+select 'GRANT INSERT,UPDATE,DELETE ON '||OBJECT_NAME||' TO RLE_RECUP2_ALT;'
+ from dba_OBJECTS
+where owner='OWNRECUP2' AND OBJECT_TYPE IN ('TABLE','VIEW') AND 
+OBJECT_NAME NOT IN ( SELECT TABLE_NAME
+FROM dba_tab_privs WHERE OWNER='OWNRECUP2' AND PRIVILEGE='DELETE');
+
+
+---------------------------------------
+ SELECT 'GRANT EXECUTE ON '||OBJECT_NAME||' TO RLE_RECUP_EXEC;'
+from USER_objects
+where 
+object_type in ('PACKAGE','FUNCTION','PROCEDURE')
+--AND owner like  'OWNINVT'
+AND TRUNC(CREATED)=TRUNC(SYSDATE)
+
+
+
+SELECT 'grant SELECT on '||OBJECT_NAME||' to rle_recup_CONSULTA;'
+from DBA_objects
+where 
+object_type in ('TABLE','VIEW')
+AND owner like  'OWNRECUP'
+AND TRUNC(CREATED)=TRUNC(SYSDATE)
+
+
+--------------------------------
+
+select 'grant execute on '||OBJECT_NAME||' to rle_recup__exec;'
+ from USER_OBJECTS
+where 
+OBJECT_TYPE IN ('PROCEDURE','FUNCTION','PACKAGE') 
+AND  TRUNC(CREATED)=TRUNC(SYSDATE)
+
+
+
+
+select 'grant SELECT on '||OBJECT_NAME||' to rle_recup_ACCESS;'
+ from USER_OBJECTS
+where 
+OBJECT_TYPE IN ('TABLE','VIEW','SEQUENCE')
+AND  TRUNC(CREATED)=TRUNC(SYSDATE)
+
+
+
+select 'grant INSERT,UPDATE,DELETE on '||OBJECT_NAME||' to rle_recup_ALT;'
+ from USER_OBJECTS
+where 
+OBJECT_TYPE IN ('TABLE','VIEW')
+AND  TRUNC(CREATED)=TRUNC(SYSDATE)
+
+
+AND 
+OBJECT_NAME NOT IN ( SELECT TABLE_NAME
+FROM dba_tab_privs WHERE OWNER='OWNINVT' AND PRIVILEGE='EXECUTE');
+
+
+=====================================================================
+
+
+SELECT 'GRANT SELECT,INSERT,UPDATE,DELETE ON '||SEGMENT_NAME||' TO RLE_'||SUBSTR(TABLESPACE_NAME,7,5)||'_MIGRACAO;'
+FROM USER_SEGMENTS
+WHERE SEGMENT_TYPE <> 'INDEX' AND
+  SUBSTR(TABLESPACE_NAME,7,5) = 'BBONE' AND
+ SEGMENT_NAME IN ( SELECT OBJECT_NAME FROM USER_OBJECTS
+                        WHERE TRUNC(SYSDATE) = TRUNC(CREATED) )
+/   
+======================================================
+
+select 'grant execute on '||OBJECT_NAME||' to rle_recup_exec;'
+ from dba_OBJECTS
+where owner='OWNRECUP' AND OBJECT_TYPE IN ('PROCEDURE','FUNCTION','PACKAGE') AND 
+OBJECT_NAME NOT IN ( SELECT TABLE_NAME
+FROM dba_tab_privs WHERE OWNER='OWNRECUP' AND PRIVILEGE='EXECUTE');
+
+
+select 'GRANT SELECT ON '||OBJECT_NAME||' TO RLE_recup_ACCESS;'
+ from dba_OBJECTS
+where owner='OWNRECUP' AND OBJECT_TYPE IN ('TABLE','VIEW') AND 
+OBJECT_NAME NOT IN ( SELECT TABLE_NAME
+FROM dba_tab_privs WHERE OWNER='OWNRECUP' AND PRIVILEGE='SELECT');
+
+
+
+===========================================================
+
+Select 'GRANT SELECT ON '||OBJECT_NAME||' TO RLE_ACCESS;'
+ from dba_OBJECTS
+where owner='ICDBOWN' AND OBJECT_TYPE IN ('TABLE','VIEW') AND 
+OBJECT_NAME NOT IN ( SELECT TABLE_NAME
+FROM dba_tab_privs WHERE OWNER='ICDBOWN' AND PRIVILEGE='SELECT');
+
+
+select 'grant execute on '||OBJECT_NAME||' to rle_recup_exec;'
+ from dba_OBJECTS
+where owner='ICDBOWN' AND OBJECT_TYPE IN ('PROCEDURE','FUNCTION','PACKAGE') AND 
+OBJECT_NAME NOT IN ( SELECT TABLE_NAME
+FROM dba_tab_privs WHERE OWNER='ICDBOWN' AND PRIVILEGE='EXECUTE');
+
+

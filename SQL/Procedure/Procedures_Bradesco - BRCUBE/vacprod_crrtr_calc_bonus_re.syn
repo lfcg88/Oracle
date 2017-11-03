@@ -1,0 +1,3 @@
+create or replace synonym SGPB_PROC.VACPROD_CRRTR_CALC_BONUS_RE
+  for SGPB.VACPROD_CRRTR_CALC_BONUS_RE;
+

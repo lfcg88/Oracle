@@ -1,0 +1,222 @@
+Monitoring Index Usage in Oracle9i
+by Daniel T. Liu
+Introduction
+DBAs and developers love indexes. They speed up query searches, especially in a data 
+warehouse environment, where the database receives many ad-hoc requests. To avoid full-table scans, 
+we tend to put indexes on every potentially searchable column. However, Indexes take lot of tablespace 
+storage; in many cases, indexes take more storage space than indexed tables. Indexes also add overhead
+ when inserting and deleting rows. Prior to Oracle9i, it was hard to find out if the index had been used or 
+not used, so many databases have many unused indexes. The purpose of this article is to explain how to 
+identify unused indexes using the new feature in Oracle9i.
+
+Identifying Unused Indexes
+
+Oracle9i provides a new mechanism of monitoring indexes to determine if those indexes are being used or not used. To start monitoring an index's usage, issue this command:
+ALTER INDEX index_name MONITORING USAGE;
+To stop monitoring an index, type:
+ALTER INDEX index_name NOMONITORING USAGE;
+Oracle contains the index monitoring usage information in the v$object_usage view.
+CREATE OR REPLACE VIEW SYS.V$OBJECT_USAGE 
+(
+    INDEX_NAME,
+    TABLE_NAME,
+    MONITORING,
+    USED,
+    START_MONITORING,
+    END_MONITORING
+)
+AS
+select io.name, t.name,
+       decode(bitand(i.flags, 65536), 0, 'NO', 'YES'),
+       decode(bitand(ou.flags, 1), 0, 'NO', 'YES'),
+       ou.start_monitoring,
+       ou.end_monitoring
+from sys.obj$ io, sys.obj$ t, sys.ind$ i, sys.object_usage ou
+where io.owner# = userenv('SCHEMAID')
+  and i.obj# = ou.obj#
+  and io.obj# = ou.obj#
+  and t.obj# = i.bo#
+/
+COMMENT ON TABLE SYS.V$OBJECT_USAGE IS 
+'Record of index usage'
+/
+GRANT SELECT ON SYS.V$OBJECT_USAGE TO "PUBLIC"
+/
+The view displays statistics about index usage gathered from the database. Here are the descriptions of the view 's columns:
+INDEX_NAME:	The index name in sys.obj$.name	
+TABLE_NAME:	The table name in sys.obj$obj$name	
+MONITORING:	YES (index is being monitored), NO (index is not being monitored)	
+USED:	YES (index has been used), NO (index has not been used)	
+START_MONITORING:	The start monitoring time	
+END_MONITORING:	the end monitoring time 	
+
+All indexes that have been used at least once can be monitored and displayed in this view. However, a user can only retrieve its own schema's index usage. Oracle does not provide a view to retrieve all schemas' indexes. To retrieve index usage for all schemas, log in as SYS user and run the following script (Note: this is not an Oracle provided script. The v$all_object_usage is a costumed view. It contains one more column, the owner of index.) 
+$ cat all_object_usage.sql
+CREATE OR REPLACE VIEW SYS.V$ALL_OBJECT_USAGE
+(
+    OWNER,
+    INDEX_NAME,
+    TABLE_NAME,
+    MONITORING,
+    USED,
+    START_MONITORING,
+    END_MONITORING
+)
+AS
+select u.name, io.name, t.name,
+       decode(bitand(i.flags, 65536), 0, 'NO', 'YES'),
+       decode(bitand(ou.flags, 1), 0, 'NO', 'YES'),
+       ou.start_monitoring,
+       ou.end_monitoring
+from  sys.obj$ io, sys.obj$ t, sys.ind$ i, sys.object_usage ou, sys.user$ u
+where i.obj# = ou.obj#
+  and io.obj# = ou.obj#
+  and t.obj# = i.bo#
+  and io.owner# = u.user#
+/
+COMMENT ON TABLE SYS.V$ALL_OBJECT_USAGE IS 
+'Record of all index usage - developed by Daniel Liu'
+/
+GRANT SELECT ON SYS.V$ALL_OBJECT_USAGE TO "PUBLIC"
+/
+CREATE PUBLIC SYNONYM V$ALL_OBJECT_USAGE 
+    FOR SYS.V$ALL_OBJECT_USAGE 
+/
+Each time you issue MONITORING USAGE, the view is reset for the specified index. Any previous usage information is cleared or reset, and a new start time is recorded. Every time you issue NOMONITORING USAGE, no further monitoring is performed; the end time is recorded for the monitoring period. If you drop an index that is being monitored, information about that index will be deleted from V$OBJECT_USAGE or V$ALL_OBJECT_USAGE view.
+Identifying All Unused Indexes in a Database
+This script will start monitoring of all indexes:
+         #####################################################################
+         ## start_index_monitoring.sh                                       ##
+         #####################################################################
+         #!/bin/ksh
+         # input parameter:    1: password
+         #                     2: SID
+         if (($#<1))
+         then
+                 echo "Please enter 'system' user password as the first parameter !"
+                 exit 0
+         fi
+         if (($#<2))
+         then
+                 echo "Please enter instance name as the second parameter!"
+                 exit 0
+         fi
+         sqlplus -s <<!
+         system/$1@$2
+         set heading off
+         set feed off
+         set pagesize 200
+         set linesize 100
+         spool start_index_monitoring.sql
+         select 'ALTER INDEX '||OWNER||'.'||INDEX_NAME||' MONITORING USAGE;' 
+         from dba_indexes
+         where owner not in ('SYS','SYSTEM','OUTLN','AURORA\$JIS\$UTILITY\$');
+         spool off
+         exit
+         !
+         sqlplus -s <<!
+         oracle/$1@$2
+         @./start_index_monitoring.sql
+         exit
+         !
+This script will stop monitoring of all indexes:
+         #####################################################################
+         ## stop_index_monitoring.sh                                        ##
+         #####################################################################
+         #!/bin/ksh
+         # input parameter:      1: password
+         #                       2: SID
+         if (($#<1))
+         then
+                 echo "Please enter 'system' user password as the first parameter !"
+                 exit 0
+         fi
+         if (($#<2))
+         then
+                 echo "Please enter instance name as the second parameter!"
+                 exit 0
+         fi
+         sqlplus -s <<!
+         system/$1@$2
+         set heading off
+         set feed off
+         set pagesize 200
+         set linesize 100
+         spool stop_index_monitoring.sql
+         select 'ALTER INDEX '||OWNER||'.'||INDEX_NAME||' NOMONITORING USAGE;'
+         from dba_indexes
+         where owner not in ('SYS','SYSTEM','OUTLN','AURORA/$JIS/$UTILITY/$');
+         spool off
+         exit
+         !
+         exit
+         sqlplus -s <<!
+         oracle/$1@$2
+         @./stop_index_monitoring.sql
+         exit
+         !
+This script will generate a report for all unused indexes:
+         #####################################################################
+         ## identify_unused_index.sh                                        ##
+         #####################################################################
+         #!/bin/ksh
+         # input parameter:       1: password
+         #                        2: SID
+         if (($#<1))
+         then
+                 echo "Please enter 'system' user password as the first parameter          !"
+                 exit 0
+         fi
+         if (($#<2))
+         then
+                 echo "Please enter instance name as the second parameter!"
+                 exit 0
+         fi
+         sqlplus -s <<!
+         system/$1@$2
+         set feed off
+         set pagesize 200
+         set linesize 100
+         ttitle center "Unused Indexes Report" skip 2
+         spool unused_index.rpt
+         select owner,index_name,table_name,used
+         from v\$all_object_usage
+         where used = 'NO';
+         spool off
+         exit
+         !
+Here is an example of an unused index report:
+Unused Indexes Report
+  OWNER                          INDEX_NAME                     TABLE_NAME         USE
+  ------------------------------ ------------------------------ -----------------  --- 
+  HR                             DEPT_ID_PK                     DEPARTMENTS        NO
+  HR                             DEPT_LOCATION_IX               DEPARTMENTS        NO
+  HR                             EMP_DEPARTMENT_IX              EMPLOYEES          NO
+  HR                             EMP_EMAIL_UK                   EMPLOYEES          NO
+  HR                             EMP_EMP_ID_PK                  EMPLOYEES          NO
+  HR                             EMP_JOB_IX                     EMPLOYEES          NO
+  HR                             EMP_MANAGER_IX                 EMPLOYEES          NO
+  HR                             EMP_NAME_IX                    EMPLOYEES          NO
+  HR                             JHIST_DEPARTMENT_IX            JOB_HISTORY        NO
+  HR                             JHIST_EMPLOYEE_IX              JOB_HISTORY        NO
+  HR                             JHIST_EMP_ID_ST_DATE_PK        JOB_HISTORY        NO
+  HR                             JHIST_JOB_IX                   JOB_HISTORY        NO
+  HR                             JOB_ID_PK                      JOBS               NO
+  HR                             LOC_CITY_IX                    LOCATIONS          NO
+  HR                             LOC_COUNTRY_IX                 LOCATIONS          NO
+  HR                             LOC_ID_PK                      LOCATIONS          NO
+  HR                             LOC_STATE_PROVINCE_IX          LOCATIONS          NO
+  HR                             REG_ID_PK                      REGIONS            NO
+  OE                             INVENTORY_PK                   INVENTORIES        NO
+  OE                             INV_PRODUCT_IX                 INVENTORIES        NO
+  OE                             INV_WAREHOUSE_IX               INVENTORIES        NO
+  OE                             ITEM_ORDER_IX                  ORDER_ITEMS        NO
+  OE                             ITEM_PRODUCT_IX                ORDER_ITEMS        NO
+  OE                             ORDER_ITEMS_PK                 ORDER_ITEMS        NO
+  OE                             ORDER_ITEMS_UK                 ORDER_ITEMS        NO
+  OE                             ORDER_PK                       ORDERS             NO
+Conclusion 
+Oracle9i provided a new means of monitoring index usage and helps us to identify unused indexes. And the capability to find 
+and drop unused indexes not only helps with insert and delete operations, but also saves storage space. No performance
+ degradation was observed when using index monitoring.
+

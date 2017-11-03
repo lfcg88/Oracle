@@ -1,0 +1,287 @@
+revoke create session from sgp_admin;
+
+
+
+select /*+ rule */ s.username, s.sid, object_name,
+ decode(lmode,1,' ',2,'Row Share',3,'Row Excl',4,'Share',
+        5,'Sh Row Ex',6,'Exclusive',' ') held,
+ decode(request,1,' ',2,'Row Share',3,'Row Excl',4,'Share',
+        5,'Sh Row Ex',6,'Exclusive',' ') requested
+ ,trunc(ctime/60,1) minutos
+ ,substr(decode(s.program,null,p.program,s.program),1,30) program
+ ,substr(rtrim(s.module)||decode(s.action,NULL,'','/'||s.action),1,60) module
+ from v$lock l, v$session s, v$process p, dba_objects o
+ where s.sid = l.sid and
+  o.object_id = l.id1 and
+  l.type = 'TM' and
+  s.username <> ' ' and
+  s.paddr = p.addr
+                and  ctime/60 > 5;
+
+
+SQL> @C:\SCRIPT\SID.TXT
+Enter User Id: 21
+=====================================================================
+SID/Serial  : 21,475
+Foreground  : PID: 488:1252 - ProjectSGP.exe
+Shadow      : PID: 19466 - oracle@sgppae2 (TNS V1-V2)
+Terminal    : WPPAE028/ ?
+OS User     : MANOELL on EBTPAE01\WPPAE028
+Ora User    : MANOELL
+Status Flags: ACTIVE DEDICATED USER
+Tran Active : NONE
+Login Time  : Seg 20:12:40
+Last Call   : Ter 19:16:10 - ###### min
+Lock/ Latch : NONE/ NONE
+Latch Spin  : NONE
+Current SQL statement:
+        SELECT ARGUMENT,OVERLOAD#,POSITION,TYPE,NVL(DEFAULT#,0) DEFAULT#
+        ,NVL(IN_OUT,0) IN_OUT,NVL(LEVEL#,0) LEVEL#,NVL(LENGTH,0) LENGTH,
+        NVL(PRECISION,0) PRECISION,NVL(SCALE,0) SCALE,NVL(RADIX,0) RADIX
+           FROM ARGUMENT$  WHERE OBJ# = :b1 ORDER BY OBJ#,PROCEDURE$,OVE
+        RLOAD#,SEQUENCE#
+Previous SQL statement:
+        SELECT STATUS   FROM OBJ$  WHERE OBJ# = :b1
+Session Waits:
+        WAITED UNKNOWN TIME: SQL*Net message from dblink
+Locks:
+=====================================================================
+SQL> 
+
+
+EXECUTE SP_GRAVA_REPLICACAO_NUM_ROWS
+
+
+
+Enter User Id: 99
+=====================================================================
+SID/Serial  : 99,34321
+Foreground  : PID: 2840:1248 - SQLPLUSW.EXE
+Shadow      : PID: 21002 - oracle@sgp01 (TNS V1-V2)
+Terminal    : YOUR-CB30D/ ?
+OS User     : Administrador on WORKGROUP\YOUR-CB30D227DE
+Ora User    : SGP
+Status Flags: ACTIVE DEDICATED USER
+Tran Active : 811F2F48
+Login Time  : Qui 07:51:35
+Last Call   : Qui 08:23:53 -   17.7 min
+Lock/ Latch : 810D7FB8/ NONE
+Latch Spin  : NONE
+Current SQL statement:
+        select oldest from mlog$ where master = :2 and mowner = :1 for u
+        pdate
+Previous SQL statement:
+        select oldest from mlog$ where master = :2 and mowner = :1 for u
+        pdate
+Session Waits:
+        WAITING: DFS enqueue lock acquisition
+Locks:
+        DML/DATA ENQ H: RS R: NONE - MLOG$
+        TRANSAC ENQ H: NONE R: X - RS+SLOT#458759 WRP#229803
+=====================================================================
+
+
+
+
+http://www.lsbu.ac.uk/oracle/oracle7/server/doc/SPS73/apd.htm#dela
+
+
+select chr(bitand(p1,-16777216)/16777215)||
+       chr(bitand(p1, 16711680)/65535) as "Lock",
+       bitand(p1,65535) "Mode", p2 id1, p3 id2
+  from v$session_wait
+ where event = 'DFS enqueue lock acquisition';
+
+Lock M        ID1        ID2
+---- - ---------- ----------
+TX   6     196617     139576
+
+
+Execute the following SQL statement on each instance to can find the current owner(s) of the enqueue for which this session is waiting:
+
+
+select l.* 
+  from v$lock l, v$session_wait s
+ where type = chr(bitand(p1, -16777216)/16777215)||
+              chr(bitand(p1, 16711680)/65535)
+   and event = 'DFS enqueue lock acquisition'
+   and lmode > 0;
+
+
+sgp1
+====
+
+ADDR     KADDR           SID TY        ID1        ID2      LMODE    REQUEST
+-------- -------- ---------- -- ---------- ---------- ---------- ----------
+     CTIME      BLOCK
+---------- ----------
+0089AC4C 0089ACFC         30 TX     589851      76769          6          0
+        22          2
+
+0089AC4C 0089ACFC         17 TX     524288      76261          6          0
+        86          2
+
+0089AC4C 0089ACFC         45 TX     262153     152917          6          0
+         7          2
+
+sgp2
+=====
+
+
+ADDR     KADDR           SID TY        ID1        ID2      LMODE    REQUEST
+-------- -------- ---------- -- ---------- ---------- ---------- ----------
+     CTIME      BLOCK
+---------- ----------
+0089ACC0 0089AD70         45 TX     458771     229728          6          0
+       174          2
+
+0089ACC0 0089AD70         80 TX     393235     225906          6          0
+       180          2
+
+0089ACC0 0089AD70        117 TX     393222     225873          6          0
+       124          2
+
+
+
+
+
+
+ADDR     KADDR           SID TY        ID1        ID2      LMODE    REQUEST      CTIME      BLOCK
+-------- -------- ---------- -- ---------- ---------- ---------- ---------- ---------- ----------
+811D7E54 811D7E68        189 TM       1066          0          4          0        454          2
+811D7F2C 811D7F40        207 TM       1066          0          4          0          6          2
+811D879C 811D87B0        201 TM       1066          0          4          0          5          2
+811D9300 811D9314         39 TM       1066          0          4          0          5          2
+811D9660 811D9674        133 TM       1066          0          4          0          4          2
+811D79B0 811D79C4        133 TM     489990          0          3          0          4          2
+811D4128 811D413C        201 TM     489275          0          4          5          6          2
+811D4200 811D4214        207 TM     489275          0          4          0          6          2
+811D3E34 811D3E48        201 TM       5969          0          3          0          5          2
+811D3C84 811D3C98        133 TM       5510          0          3          0          6          2
+811D7EC0 811D7ED4        201 TM       5510          0          3          0         16          2
+811D3924 811D3938         39 TM       4956          0          3          0          3          2
+811D4344 811D4358        207 TM       4956          0          3          0          6          2
+811D7F98 811D7FAC        189 TM       4956          0          3          0        453          2
+811D8070 811D8084        201 TM       4956          0          3          0          6          2
+811D7AF4 811D7B08        201 TM     490162          0          3          0          5          2
+811D80DC 811D80F0        189 TM     490162          0          3          0        446          2
+811D9150 811D9164        207 TM     490162          0          3          0          6          2
+811D7794 811D77A8         39 TM       5566          0          3          0          3          2
+811D8148 811D815C        133 TM       5566          0          3          0          1          2
+811D3480 811D3494        133 TM     493527          0          3          0          9          2
+811D3558 811D356C        201 TM     493527          0          3          0         24          2
+811D384C 811D3860        133 TM       4934          0          3          0          4          2
+811D38B8 811D38CC        189 TM       4934          0          3          0        457          2
+811D7800 811D7814         39 TM       4934          0          3          0          9          2
+811D5058 811D506C         39 TM       5012          0          3          0          5          2
+811D5490 811D54A4        133 TM       5012          0          3          0          3          2
+811D3BAC 811D3BC0        133 TM       5500          0          3          0          4          2
+811D52E0 811D52F4         39 TM       5500          0          3          0          5          2
+811D9BDC 811D9BF0        189 TM       5500          0          3          0        455          2
+811D9810 811D9824        133 TM       4989          0          3          0          6          2
+811D8C40 811D8C54        201 TM     493085          0          4          0          6          2
+811D9B70 811D9B84        207 TM     493085          0          4          0          6          2
+811D7E54 811D7E68        189 TM       1066          0          4          0        454          2
+811D7F2C 811D7F40        207 TM       1066          0          4          0          6          2
+811D879C 811D87B0        201 TM       1066          0          4          0          5          2
+811D9300 811D9314         39 TM       1066          0          4          0          5          2
+811D9660 811D9674        133 TM       1066          0          4          0          4          2
+811D79B0 811D79C4        133 TM     489990          0          3          0          4          2
+811D4128 811D413C        201 TM     489275          0          4          5          6          2
+811D4200 811D4214        207 TM     489275          0          4          0          6          2
+811D3E34 811D3E48        201 TM       5969          0          3          0          5          2
+811D3C84 811D3C98        133 TM       5510          0          3          0          6          2
+811D7EC0 811D7ED4        201 TM       5510          0          3          0         16          2
+811D3924 811D3938         39 TM       4956          0          3          0          3          2
+811D4344 811D4358        207 TM       4956          0          3          0          6          2
+811D7F98 811D7FAC        189 TM       4956          0          3          0        453          2
+811D8070 811D8084        201 TM       4956          0          3          0          6          2
+811D7AF4 811D7B08        201 TM     490162          0          3          0          5          2
+811D80DC 811D80F0        189 TM     490162          0          3          0        446          2
+811D9150 811D9164        207 TM     490162          0          3          0          6          2
+811D7794 811D77A8         39 TM       5566          0          3          0          3          2
+811D8148 811D815C        133 TM       5566          0          3          0          1          2
+811D3480 811D3494        133 TM     493527          0          3          0          9          2
+811D3558 811D356C        201 TM     493527          0          3          0         24          2
+811D384C 811D3860        133 TM       4934          0          3          0          4          2
+811D38B8 811D38CC        189 TM       4934          0          3          0        457          2
+811D7800 811D7814         39 TM       4934          0          3          0          9          2
+811D5058 811D506C         39 TM       5012          0          3          0          5          2
+811D5490 811D54A4        133 TM       5012          0          3          0          3          2
+811D3BAC 811D3BC0        133 TM       5500          0          3          0          4          2
+811D52E0 811D52F4         39 TM       5500          0          3          0          5          2
+811D9BDC 811D9BF0        189 TM       5500          0          3          0        455          2
+811D9810 811D9824        133 TM       4989          0          3          0          6          2
+811D8C40 811D8C54        201 TM     493085          0          4          0          9          2
+811D9B70 811D9B84        207 TM     493085          0          4          0          9   
+
+
+sgp2
+======
+
+       SID EVENT
+---------- --------------------------------
+         1 pmon timer
+         2 rdbms ipc message
+         3 rdbms ipc message
+         5 rdbms ipc message
+        19 rdbms ipc message
+        18 rdbms ipc message
+        39 rdbms ipc message
+        49 rdbms ipc message
+        63 rdbms ipc message
+        50 rdbms ipc message
+       128 rdbms ipc message
+       115 rdbms ipc message
+       112 rdbms ipc message
+        84 rdbms ipc message
+        80 rdbms ipc message
+        45 rdbms ipc message
+        29 buffer busy waits
+       142 buffer busy waits
+        28 lock element waits
+       108 lock element waits
+       145 lock element waits
+       138 lock element waits
+       133 lock element waits
+       116 lock element waits
+       114 lock element waits
+       110 lock element waits
+        76 lock element waits
+        33 lock element waits
+        89 lock element cleanup
+         4 smon timer
+
+sgp1
+=====
+
+
+SQL> select sid,event from v$session_wait
+  2  where event not like '%SQL%';
+
+       SID EVENT
+---------- ---------------------------------------------------
+         1 pmon timer
+         2 rdbms ipc message
+         3 rdbms ipc message
+         5 rdbms ipc message
+        19 rdbms ipc message
+        40 rdbms ipc message
+        51 rdbms ipc message
+        65 rdbms ipc message
+        67 rdbms ipc message
+       146 rdbms ipc message
+       124 rdbms ipc message
+       115 rdbms ipc message
+        99 rdbms ipc message
+        75 rdbms ipc message
+        42 rdbms ipc message
+        18 rdbms ipc message
+        70 buffer busy waits
+        39 db file sequential read
+       189 db file sequential read
+        15 lock element cleanup
+       208 lock element cleanup
+        53 lock element cleanup
+        82 lock element cleanup
+         4 smon timer

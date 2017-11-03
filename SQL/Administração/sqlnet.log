@@ -1,0 +1,493 @@
+
+
+***********************************************************************
+Fatal NI connect error 12541, connecting to:
+ (DESCRIPTION=(ADDRESS=(PROTOCOL=TCP)(HOST=10.4.2.4)(PORT=1521))(CONNECT_DATA=(SERVICE_NAME=orcl)(CID=(PROGRAM=sqlplus@arsenio)(HOST=arsenio)(USER=oracle))))
+
+  VERSION INFORMATION:
+	TNS for Linux: Version 9.2.0.8.0 - Production
+	TCP/IP NT Protocol Adapter for Linux: Version 9.2.0.8.0 - Production
+  Time: 18-FEB-2008 06:52:09
+  Tracing not turned on.
+  Tns error struct:
+    ns main err code: 12541
+    TNS-12541: TNS:no listener
+    ns secondary err code: 12560
+    nt main err code: 511
+    TNS-00511: No listener
+    nt secondary err code: 111
+    nt OS err code: 0
+
+
+***********************************************************************
+Fatal NI connect error 12541, connecting to:
+ (DESCRIPTION=(ADDRESS=(PROTOCOL=TCP)(HOST=10.4.2.4)(PORT=1521))(CONNECT_DATA=(SERVICE_NAME=orcl)(CID=(PROGRAM=jre)(HOST=arsenio)(USER=oracle))))
+
+  VERSION INFORMATION:
+	TNS for Linux: Version 9.2.0.8.0 - Production
+	TCP/IP NT Protocol Adapter for Linux: Version 9.2.0.8.0 - Production
+  Time: 09-APR-2008 08:49:58
+  Tracing not turned on.
+  Tns error struct:
+    ns main err code: 12541
+    TNS-12541: TNS:no listener
+    ns secondary err code: 12560
+    nt main err code: 511
+    TNS-00511: No listener
+    nt secondary err code: 111
+    nt OS err code: 0
+
+
+***********************************************************************
+Fatal NI connect error 12541, connecting to:
+ (DESCRIPTION=(ADDRESS=(PROTOCOL=TCP)(HOST=10.4.2.4)(PORT=1521))(CONNECT_DATA=(SERVICE_NAME=orcl)(CID=(PROGRAM=jre)(HOST=arsenio)(USER=oracle))))
+
+  VERSION INFORMATION:
+	TNS for Linux: Version 9.2.0.8.0 - Production
+	TCP/IP NT Protocol Adapter for Linux: Version 9.2.0.8.0 - Production
+  Time: 09-APR-2008 08:50:08
+  Tracing not turned on.
+  Tns error struct:
+    ns main err code: 12541
+    TNS-12541: TNS:no listener
+    ns secondary err code: 12560
+    nt main err code: 511
+    TNS-00511: No listener
+    nt secondary err code: 111
+    nt OS err code: 0
+
+
+***********************************************************************
+Fatal NI connect error 12541, connecting to:
+ (DESCRIPTION=(ADDRESS=(PROTOCOL=TCP)(HOST=10.4.2.4)(PORT=1521))(CONNECT_DATA=(SERVICE_NAME=orcl)(CID=(PROGRAM=jre)(HOST=arsenio)(USER=oracle))))
+
+  VERSION INFORMATION:
+	TNS for Linux: Version 9.2.0.8.0 - Production
+	TCP/IP NT Protocol Adapter for Linux: Version 9.2.0.8.0 - Production
+  Time: 09-APR-2008 08:50:18
+  Tracing not turned on.
+  Tns error struct:
+    ns main err code: 12541
+    TNS-12541: TNS:no listener
+    ns secondary err code: 12560
+    nt main err code: 511
+    TNS-00511: No listener
+    nt secondary err code: 111
+    nt OS err code: 0
+
+
+***********************************************************************
+Fatal NI connect error 12541, connecting to:
+ (DESCRIPTION=(ADDRESS=(PROTOCOL=TCP)(HOST=10.4.2.4)(PORT=1521))(CONNECT_DATA=(SERVICE_NAME=orcl)(CID=(PROGRAM=jre)(HOST=arsenio)(USER=oracle))))
+
+  VERSION INFORMATION:
+	TNS for Linux: Version 9.2.0.8.0 - Production
+	TCP/IP NT Protocol Adapter for Linux: Version 9.2.0.8.0 - Production
+  Time: 09-APR-2008 08:50:28
+  Tracing not turned on.
+  Tns error struct:
+    ns main err code: 12541
+    TNS-12541: TNS:no listener
+    ns secondary err code: 12560
+    nt main err code: 511
+    TNS-00511: No listener
+    nt secondary err code: 111
+    nt OS err code: 0
+
+
+***********************************************************************
+Fatal NI connect error 12541, connecting to:
+ (DESCRIPTION=(ADDRESS=(PROTOCOL=TCP)(HOST=10.4.2.4)(PORT=1521))(CONNECT_DATA=(SERVICE_NAME=orcl)(CID=(PROGRAM=jre)(HOST=arsenio)(USER=oracle))))
+
+  VERSION INFORMATION:
+	TNS for Linux: Version 9.2.0.8.0 - Production
+	TCP/IP NT Protocol Adapter for Linux: Version 9.2.0.8.0 - Production
+  Time: 09-APR-2008 08:50:38
+  Tracing not turned on.
+  Tns error struct:
+    ns main err code: 12541
+    TNS-12541: TNS:no listener
+    ns secondary err code: 12560
+    nt main err code: 511
+    TNS-00511: No listener
+    nt secondary err code: 111
+    nt OS err code: 0
+
+
+***********************************************************************
+Fatal NI connect error 12541, connecting to:
+ (DESCRIPTION=(ADDRESS=(PROTOCOL=TCP)(HOST=10.4.2.4)(PORT=1521))(CONNECT_DATA=(SERVICE_NAME=orcl)(CID=(PROGRAM=jre)(HOST=arsenio)(USER=oracle))))
+
+  VERSION INFORMATION:
+	TNS for Linux: Version 9.2.0.8.0 - Production
+	TCP/IP NT Protocol Adapter for Linux: Version 9.2.0.8.0 - Production
+  Time: 09-APR-2008 08:50:48
+  Tracing not turned on.
+  Tns error struct:
+    ns main err code: 12541
+    TNS-12541: TNS:no listener
+    ns secondary err code: 12560
+    nt main err code: 511
+    TNS-00511: No listener
+    nt secondary err code: 111
+    nt OS err code: 0
+
+
+***********************************************************************
+Fatal NI connect error 12541, connecting to:
+ (DESCRIPTION=(ADDRESS=(PROTOCOL=TCP)(HOST=10.4.2.4)(PORT=1521))(CONNECT_DATA=(SERVICE_NAME=orcl)(CID=(PROGRAM=jre)(HOST=arsenio)(USER=oracle))))
+
+  VERSION INFORMATION:
+	TNS for Linux: Version 9.2.0.8.0 - Production
+	TCP/IP NT Protocol Adapter for Linux: Version 9.2.0.8.0 - Production
+  Time: 09-APR-2008 08:50:58
+  Tracing not turned on.
+  Tns error struct:
+    ns main err code: 12541
+    TNS-12541: TNS:no listener
+    ns secondary err code: 12560
+    nt main err code: 511
+    TNS-00511: No listener
+    nt secondary err code: 111
+    nt OS err code: 0
+
+
+***********************************************************************
+Fatal NI connect error 12541, connecting to:
+ (DESCRIPTION=(ADDRESS=(PROTOCOL=TCP)(HOST=10.4.2.4)(PORT=1521))(CONNECT_DATA=(SERVICE_NAME=orcl)(CID=(PROGRAM=jre)(HOST=arsenio)(USER=oracle))))
+
+  VERSION INFORMATION:
+	TNS for Linux: Version 9.2.0.8.0 - Production
+	TCP/IP NT Protocol Adapter for Linux: Version 9.2.0.8.0 - Production
+  Time: 09-APR-2008 08:51:08
+  Tracing not turned on.
+  Tns error struct:
+    ns main err code: 12541
+    TNS-12541: TNS:no listener
+    ns secondary err code: 12560
+    nt main err code: 511
+    TNS-00511: No listener
+    nt secondary err code: 111
+    nt OS err code: 0
+
+
+***********************************************************************
+Fatal NI connect error 12541, connecting to:
+ (DESCRIPTION=(ADDRESS=(PROTOCOL=TCP)(HOST=10.4.2.4)(PORT=1521))(CONNECT_DATA=(SERVICE_NAME=orcl)(CID=(PROGRAM=jre)(HOST=arsenio)(USER=oracle))))
+
+  VERSION INFORMATION:
+	TNS for Linux: Version 9.2.0.8.0 - Production
+	TCP/IP NT Protocol Adapter for Linux: Version 9.2.0.8.0 - Production
+  Time: 09-APR-2008 08:51:18
+  Tracing not turned on.
+  Tns error struct:
+    ns main err code: 12541
+    TNS-12541: TNS:no listener
+    ns secondary err code: 12560
+    nt main err code: 511
+    TNS-00511: No listener
+    nt secondary err code: 111
+    nt OS err code: 0
+
+
+***********************************************************************
+Fatal NI connect error 12541, connecting to:
+ (DESCRIPTION=(ADDRESS=(PROTOCOL=TCP)(HOST=10.4.2.4)(PORT=1521))(CONNECT_DATA=(SERVICE_NAME=orcl)(CID=(PROGRAM=jre)(HOST=arsenio)(USER=oracle))))
+
+  VERSION INFORMATION:
+	TNS for Linux: Version 9.2.0.8.0 - Production
+	TCP/IP NT Protocol Adapter for Linux: Version 9.2.0.8.0 - Production
+  Time: 09-APR-2008 08:51:28
+  Tracing not turned on.
+  Tns error struct:
+    ns main err code: 12541
+    TNS-12541: TNS:no listener
+    ns secondary err code: 12560
+    nt main err code: 511
+    TNS-00511: No listener
+    nt secondary err code: 111
+    nt OS err code: 0
+
+
+***********************************************************************
+Fatal NI connect error 12541, connecting to:
+ (DESCRIPTION=(ADDRESS=(PROTOCOL=TCP)(HOST=10.4.2.4)(PORT=1521))(CONNECT_DATA=(SERVICE_NAME=orcl)(CID=(PROGRAM=jre@arsenio)(HOST=arsenio)(USER=oracle))))
+
+  VERSION INFORMATION:
+	TNS for Linux: Version 9.2.0.8.0 - Production
+	TCP/IP NT Protocol Adapter for Linux: Version 9.2.0.8.0 - Production
+  Time: 28-APR-2008 14:35:27
+  Tracing not turned on.
+  Tns error struct:
+    ns main err code: 12541
+    TNS-12541: TNS:no listener
+    ns secondary err code: 12560
+    nt main err code: 511
+    TNS-00511: No listener
+    nt secondary err code: 111
+    nt OS err code: 0
+
+
+***********************************************************************
+Fatal NI connect error 12541, connecting to:
+ (DESCRIPTION=(ADDRESS=(PROTOCOL=TCP)(HOST=10.4.2.4)(PORT=1521))(CONNECT_DATA=(SERVICE_NAME=orcl)(CID=(PROGRAM=jre)(HOST=arsenio)(USER=oracle))))
+
+  VERSION INFORMATION:
+	TNS for Linux: Version 9.2.0.8.0 - Production
+	TCP/IP NT Protocol Adapter for Linux: Version 9.2.0.8.0 - Production
+  Time: 28-APR-2008 14:35:37
+  Tracing not turned on.
+  Tns error struct:
+    ns main err code: 12541
+    TNS-12541: TNS:no listener
+    ns secondary err code: 12560
+    nt main err code: 511
+    TNS-00511: No listener
+    nt secondary err code: 111
+    nt OS err code: 0
+
+
+***********************************************************************
+Fatal NI connect error 12541, connecting to:
+ (DESCRIPTION=(ADDRESS=(PROTOCOL=TCP)(HOST=10.4.2.4)(PORT=1521))(CONNECT_DATA=(SERVICE_NAME=orcl)(CID=(PROGRAM=jre)(HOST=arsenio)(USER=oracle))))
+
+  VERSION INFORMATION:
+	TNS for Linux: Version 9.2.0.8.0 - Production
+	TCP/IP NT Protocol Adapter for Linux: Version 9.2.0.8.0 - Production
+  Time: 28-APR-2008 14:35:47
+  Tracing not turned on.
+  Tns error struct:
+    ns main err code: 12541
+    TNS-12541: TNS:no listener
+    ns secondary err code: 12560
+    nt main err code: 511
+    TNS-00511: No listener
+    nt secondary err code: 111
+    nt OS err code: 0
+
+
+***********************************************************************
+Fatal NI connect error 12541, connecting to:
+ (DESCRIPTION=(ADDRESS=(PROTOCOL=TCP)(HOST=10.4.2.4)(PORT=1521))(CONNECT_DATA=(SERVICE_NAME=orcl)(CID=(PROGRAM=jre)(HOST=arsenio)(USER=oracle))))
+
+  VERSION INFORMATION:
+	TNS for Linux: Version 9.2.0.8.0 - Production
+	TCP/IP NT Protocol Adapter for Linux: Version 9.2.0.8.0 - Production
+  Time: 28-APR-2008 14:35:57
+  Tracing not turned on.
+  Tns error struct:
+    ns main err code: 12541
+    TNS-12541: TNS:no listener
+    ns secondary err code: 12560
+    nt main err code: 511
+    TNS-00511: No listener
+    nt secondary err code: 111
+    nt OS err code: 0
+
+
+***********************************************************************
+Fatal NI connect error 12541, connecting to:
+ (DESCRIPTION=(ADDRESS=(PROTOCOL=TCP)(HOST=10.4.2.4)(PORT=1521))(CONNECT_DATA=(SERVICE_NAME=orcl)(CID=(PROGRAM=jre)(HOST=arsenio)(USER=oracle))))
+
+  VERSION INFORMATION:
+	TNS for Linux: Version 9.2.0.8.0 - Production
+	TCP/IP NT Protocol Adapter for Linux: Version 9.2.0.8.0 - Production
+  Time: 28-APR-2008 14:36:07
+  Tracing not turned on.
+  Tns error struct:
+    ns main err code: 12541
+    TNS-12541: TNS:no listener
+    ns secondary err code: 12560
+    nt main err code: 511
+    TNS-00511: No listener
+    nt secondary err code: 111
+    nt OS err code: 0
+
+
+***********************************************************************
+Fatal NI connect error 12541, connecting to:
+ (DESCRIPTION=(ADDRESS=(PROTOCOL=TCP)(HOST=10.4.2.4)(PORT=1521))(CONNECT_DATA=(SERVICE_NAME=orcl)(CID=(PROGRAM=jre)(HOST=arsenio)(USER=oracle))))
+
+  VERSION INFORMATION:
+	TNS for Linux: Version 9.2.0.8.0 - Production
+	TCP/IP NT Protocol Adapter for Linux: Version 9.2.0.8.0 - Production
+  Time: 28-APR-2008 14:36:17
+  Tracing not turned on.
+  Tns error struct:
+    ns main err code: 12541
+    TNS-12541: TNS:no listener
+    ns secondary err code: 12560
+    nt main err code: 511
+    TNS-00511: No listener
+    nt secondary err code: 111
+    nt OS err code: 0
+
+
+***********************************************************************
+Fatal NI connect error 12541, connecting to:
+ (DESCRIPTION=(ADDRESS=(PROTOCOL=TCP)(HOST=10.4.2.4)(PORT=1521))(CONNECT_DATA=(SERVICE_NAME=orcl)(CID=(PROGRAM=jre)(HOST=arsenio)(USER=oracle))))
+
+  VERSION INFORMATION:
+	TNS for Linux: Version 9.2.0.8.0 - Production
+	TCP/IP NT Protocol Adapter for Linux: Version 9.2.0.8.0 - Production
+  Time: 28-APR-2008 14:36:27
+  Tracing not turned on.
+  Tns error struct:
+    ns main err code: 12541
+    TNS-12541: TNS:no listener
+    ns secondary err code: 12560
+    nt main err code: 511
+    TNS-00511: No listener
+    nt secondary err code: 111
+    nt OS err code: 0
+
+
+***********************************************************************
+Fatal NI connect error 12541, connecting to:
+ (DESCRIPTION=(ADDRESS=(PROTOCOL=TCP)(HOST=10.4.2.4)(PORT=1521))(CONNECT_DATA=(SERVICE_NAME=orcl)(CID=(PROGRAM=jre)(HOST=arsenio)(USER=oracle))))
+
+  VERSION INFORMATION:
+	TNS for Linux: Version 9.2.0.8.0 - Production
+	TCP/IP NT Protocol Adapter for Linux: Version 9.2.0.8.0 - Production
+  Time: 28-APR-2008 14:36:37
+  Tracing not turned on.
+  Tns error struct:
+    ns main err code: 12541
+    TNS-12541: TNS:no listener
+    ns secondary err code: 12560
+    nt main err code: 511
+    TNS-00511: No listener
+    nt secondary err code: 111
+    nt OS err code: 0
+
+
+***********************************************************************
+Fatal NI connect error 12541, connecting to:
+ (DESCRIPTION=(ADDRESS=(PROTOCOL=TCP)(HOST=10.4.2.4)(PORT=1521))(CONNECT_DATA=(SERVICE_NAME=orcl)(CID=(PROGRAM=jre)(HOST=arsenio)(USER=oracle))))
+
+  VERSION INFORMATION:
+	TNS for Linux: Version 9.2.0.8.0 - Production
+	TCP/IP NT Protocol Adapter for Linux: Version 9.2.0.8.0 - Production
+  Time: 28-APR-2008 14:36:47
+  Tracing not turned on.
+  Tns error struct:
+    ns main err code: 12541
+    TNS-12541: TNS:no listener
+    ns secondary err code: 12560
+    nt main err code: 511
+    TNS-00511: No listener
+    nt secondary err code: 111
+    nt OS err code: 0
+
+
+***********************************************************************
+Fatal NI connect error 12541, connecting to:
+ (DESCRIPTION=(ADDRESS=(PROTOCOL=TCP)(HOST=10.4.2.4)(PORT=1521))(CONNECT_DATA=(SERVICE_NAME=orcl)(CID=(PROGRAM=jre)(HOST=arsenio)(USER=oracle))))
+
+  VERSION INFORMATION:
+	TNS for Linux: Version 9.2.0.8.0 - Production
+	TCP/IP NT Protocol Adapter for Linux: Version 9.2.0.8.0 - Production
+  Time: 28-APR-2008 14:36:57
+  Tracing not turned on.
+  Tns error struct:
+    ns main err code: 12541
+    TNS-12541: TNS:no listener
+    ns secondary err code: 12560
+    nt main err code: 511
+    TNS-00511: No listener
+    nt secondary err code: 111
+    nt OS err code: 0
+
+
+***********************************************************************
+Fatal NI connect error 12541, connecting to:
+ (DESCRIPTION=(ADDRESS=(PROTOCOL=TCP)(HOST=10.4.2.4)(PORT=1521))(CONNECT_DATA=(SERVICE_NAME=orcl)(CID=(PROGRAM=jre)(HOST=arsenio)(USER=oracle))))
+
+  VERSION INFORMATION:
+	TNS for Linux: Version 9.2.0.8.0 - Production
+	TCP/IP NT Protocol Adapter for Linux: Version 9.2.0.8.0 - Production
+  Time: 28-APR-2008 14:37:07
+  Tracing not turned on.
+  Tns error struct:
+    ns main err code: 12541
+    TNS-12541: TNS:no listener
+    ns secondary err code: 12560
+    nt main err code: 511
+    TNS-00511: No listener
+    nt secondary err code: 111
+    nt OS err code: 0
+
+
+***********************************************************************
+Fatal NI connect error 12541, connecting to:
+ (DESCRIPTION=(ADDRESS=(PROTOCOL=TCP)(HOST=10.4.2.4)(PORT=1521))(CONNECT_DATA=(SERVICE_NAME=orcl)(CID=(PROGRAM=jre)(HOST=arsenio)(USER=oracle))))
+
+  VERSION INFORMATION:
+	TNS for Linux: Version 9.2.0.8.0 - Production
+	TCP/IP NT Protocol Adapter for Linux: Version 9.2.0.8.0 - Production
+  Time: 28-APR-2008 14:37:17
+  Tracing not turned on.
+  Tns error struct:
+    ns main err code: 12541
+    TNS-12541: TNS:no listener
+    ns secondary err code: 12560
+    nt main err code: 511
+    TNS-00511: No listener
+    nt secondary err code: 111
+    nt OS err code: 0
+
+
+***********************************************************************
+Fatal NI connect error 12541, connecting to:
+ (DESCRIPTION=(ADDRESS=(PROTOCOL=TCP)(HOST=10.4.2.4)(PORT=1521))(CONNECT_DATA=(SERVICE_NAME=orcl)(CID=(PROGRAM=jre)(HOST=arsenio)(USER=oracle))))
+
+  VERSION INFORMATION:
+	TNS for Linux: Version 9.2.0.8.0 - Production
+	TCP/IP NT Protocol Adapter for Linux: Version 9.2.0.8.0 - Production
+  Time: 06-JUN-2008 10:59:19
+  Tracing not turned on.
+  Tns error struct:
+    ns main err code: 12541
+    TNS-12541: TNS:no listener
+    ns secondary err code: 12560
+    nt main err code: 511
+    TNS-00511: No listener
+    nt secondary err code: 111
+    nt OS err code: 0
+
+
+***********************************************************************
+Fatal NI connect error 12541, connecting to:
+ (DESCRIPTION=(ADDRESS=(PROTOCOL=TCP)(HOST=10.4.2.4)(PORT=1521))(CONNECT_DATA=(SERVICE_NAME=orcl)(CID=(PROGRAM=jre)(HOST=arsenio)(USER=oracle))))
+
+  VERSION INFORMATION:
+	TNS for Linux: Version 9.2.0.8.0 - Production
+	TCP/IP NT Protocol Adapter for Linux: Version 9.2.0.8.0 - Production
+  Time: 06-JUN-2008 10:59:29
+  Tracing not turned on.
+  Tns error struct:
+    ns main err code: 12541
+    TNS-12541: TNS:no listener
+    ns secondary err code: 12560
+    nt main err code: 511
+    TNS-00511: No listener
+    nt secondary err code: 111
+    nt OS err code: 0
+
+
+***********************************************************************
+Fatal NI connect error 12500, connecting to:
+ (DESCRIPTION=(ADDRESS=(PROTOCOL=TCP)(HOST=10.4.2.2)(PORT=1521))(CONNECT_DATA=(SERVICE_NAME=bdep)(CID=(PROGRAM=sqlplus@arsenio)(HOST=arsenio)(USER=oracle))))
+
+  VERSION INFORMATION:
+	TNS for Linux: Version 9.2.0.8.0 - Production
+	TCP/IP NT Protocol Adapter for Linux: Version 9.2.0.8.0 - Production
+  Time: 19-NOV-2008 11:13:38
+  Tracing not turned on.
+  Tns error struct:
+    ns main err code: 12564
+    TNS-12564: TNS:connection refused
+    ns secondary err code: 0
+    nt main err code: 0
+    nt secondary err code: 0
+    nt OS err code: 0

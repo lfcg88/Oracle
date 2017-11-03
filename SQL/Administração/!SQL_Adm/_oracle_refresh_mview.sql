@@ -1,0 +1,5 @@
+SELECT 'EXECUTE dbms_mview.refresh (''"' ||OWNER||'"."' ||NAME|| '"'', ''F'');'
+FROM DBA_SNAPSHOTS
+WHERE OWNER = 'CRMPS8'
+AND REFRESH_GROUP = 61
+ORDER BY NAME

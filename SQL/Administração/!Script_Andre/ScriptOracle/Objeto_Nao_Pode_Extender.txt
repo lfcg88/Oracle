@@ -1,0 +1,12 @@
+-------------------------------------------
+-- lista objetos que não podem extender
+--------------------------------------------
+
+select  a.owner, a.segment_name, a.tablespace_name
+from    dba_segments a
+where   next_extent > ( select   nvl(max(bytes),0) 
+                           from dba_free_space c
+                            where a.tablespace_name = c.tablespace_name 
+                      )
+
+

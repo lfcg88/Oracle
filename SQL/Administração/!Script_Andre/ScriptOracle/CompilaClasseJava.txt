@@ -1,0 +1,58 @@
+How to find a jar file which contains a particular JAVA CLASS object 
+-------------------------------------------------------------------- 
+1) Find invalid java classes: 
+-------------------------- 
+Lets assume that we have two JAVA CLASS invalids as returned by the 
+following query: 
+SQL>SELECT object_name,object_type,owner,status FROM dba_objects 
+WHERE object_type='JAVA CLASS' AND status='INVALID'; 
+OBJECT_NAME OBJECT_TYPE OWNER STATUS 
+------------------------------ ----------- ------- ------- 
+/b0993e19_MyAppsContext JAVA CLASS APPS INVALID 
+oracle/apps/fnd/common/FileLog JAVA CLASS APPS INVALID 
+2) Try to resolve invalids: 
+------------------------ 
+First of all try to resolve these invalids using following statements. 
+SQL>ALTER JAVA CLASS "/b0993e19_MyAppsContext" RESOLVE; 
+SQL> ALTER JAVA CLASS "oracle/apps/fnd/common/FileLog" RESOLVE; 
+Note: If you don't include java class name in double quotes the statements will fail. 
+If these objects are still invalid proceed to next step 
+3) Find respective modules of java classes: 
+---------------------------------------- 
+We need to check as to which module the JAVA CLASS belongs. 
+To check the module of first invalid run the following statement: 
+SQL>SELECT dbms_java.longname('/b0993e19_MyAppsContext') FROM dual; 
+DBMS_JAVA.LONGNAME('/B0993E19_MYAPPSCONTEXT') 
+--------------------------------------------------- 
+oracle/apps/wms/cartonization/server/MyAppsContext 
+The result of this query shows that this java class is associated 
+with WMS module as it is included in oracle/apps/wms package 
+From the name of second invalid above, FileLog, it is clear that it is 
+associated with FND module as it is included in oracle/apps/fnd package. 
+4) Find jar file which includes the java class: 
+-------------------------------------------- 
+Create a shell script, say, whichjar.sh with the following logic: 
+#!/usr/bin/ksh 
+for f in `ls $1/java/jar/*.jar` 
+do 
+t=`strings $f | grep $2` 
+if test ! -z "$t" 
+then 
+echo "$2 is found in $f" 
+fi 
+done 
+Now run the script with the following command: 
+$./whichjava.sh <$PRODUCT_TOP> <CLASSNAME> 
+$./whichjar.sh $WMS_TOP MyAppsContext 
+MyAppsContext is found in /u01/visappl/wms/11.5.0/java/jar/wmscrtzn.jar 
+$./whichjar.sh $FND_TOP FileLog 
+FileLog is found in /u01/visappl/fnd/11.5.0/java/jar/fndaolj.jar 
+Note: Before running the script make sure you give execute permissions 
+to script and there are no control or junk characters in the script 
+5) Load jar file into database: 
+---------------------------- 
+Change directory to [8.1.7 ORACLE_HOME]\bin and run the following command: 
+$loadjava -force -verbose -resolve \ 
+-user apps/<apps_pwd>@<connect_string> $WMS_TOP/java/jar/wmscrtzn.jar 
+$loadjava -force -resolve \ 
+-user apps/<apps_pwd>@<connect_string> $FND_TOP/java/jar/fndaolj.jar 

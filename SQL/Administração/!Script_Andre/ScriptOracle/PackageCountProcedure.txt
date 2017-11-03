@@ -1,0 +1,58 @@
+SELECT a.object_id OBJ#, a.object_name PROCEDURE$, a.overload OVERLOAD#,
+       SUM(DECODE(a.POSITION , 0, 1, 0)) TYPE
+FROM all_arguments a WHERE a.object_id = 7723
+GROUP BY a.object_id, a.object_name, a.overload
+/
+
+
+
+
+
+
+set serveroutput on size 1000000
+
+declare
+ cont number;
+ CURSOR cpackage is 
+ SELECT OBJECT_NAME,OBJECT_ID
+ FROM DBA_OBJECTS
+ WHERE OWNER='OWNRECUP2' AND OBJECT_TYPE='PACKAGE';
+
+ cursor cprocedure (idobjecto number) is 
+  SELECT a.object_id OBJ#, a.object_name PROCEDURE$, a.overload OVERLOAD#,
+       SUM(DECODE(a.POSITION , 0, 1, 0)) TYPE
+  FROM all_arguments a WHERE a.object_id = idobjecto
+  GROUP BY a.object_id, a.object_name, a.overload;
+
+Begin
+
+  For r_package in cpackage  Loop
+    cont := 0;
+    For r_procedure in cprocedure(r_package.OBJECT_ID)  Loop
+       cont := cont +1;
+    End Loop;
+    Dbms_Output.Put_Line ( r_package.OBJECT_NAME||'    ---->   '||cont);
+  End Loop;
+End;
+/
+
+
+
+PG_AUX_SMBD    	---->   41
+PG_CA          	---->   11
+PG_CF    	---->   11
+PG_CLIENTE    	---->   6
+PG_FECHA    	---->   20
+PG_ITEM    	---->   21
+PG_LOCALIDADE   ---->   3
+PG_LOG    	---->   1
+PG_LOV_SMBD    	---->   83
+PG_POSTO    	---->   19
+PG_RAL    	---->   12
+PG_RECUP    	---->   29
+PG_REGRA    	---->   44
+PG_REGRA_CQMR   ---->   30
+PG_REL_DECLARE  ---->   0
+PG_RESP_ACACA   ---->   3
+PG_TCC    	---->   18
+PG_USUARIO    	---->   8

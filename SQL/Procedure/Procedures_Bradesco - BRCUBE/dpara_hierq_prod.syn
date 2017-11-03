@@ -1,0 +1,3 @@
+create or replace synonym SGPB_PROC.DPARA_HIERQ_PROD
+  for DWMF.DPARA_HIERQ_PROD;
+

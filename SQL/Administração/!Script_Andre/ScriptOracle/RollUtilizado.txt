@@ -1,0 +1,72 @@
+REM
+REM DBAToolZ NOTE:
+REM	This script was obtained from DBAToolZ.com
+REM	It's configured to work with SQL Directory (SQLDIR).
+REM	SQLDIR is a utility that allows easy organization and
+REM	execution of SQL*Plus scripts using user-friendly menu.
+REM	Visit DBAToolZ.com for more details and free SQL scripts.
+REM
+REM 
+REM File:
+REM 	s_rbs_which.sql
+REM
+REM <SQLDIR_GRP>RBS</SQLDIR_GRP>
+REM 
+REM Author:
+REM 	Vitaliy Mogilevskiy 
+REM	VMOGILEV
+REM	(vit100gain@earthlink.net)
+REM 
+REM Purpose:
+REM	<SQLDIR_TXT>
+REM	Reports RBS usage by session
+REM	to enforce transaction to use RBS use this command:
+REM	SQL> SET TRANSACTION USE ROLLBACK SEGMENT large_rs1;
+REM	</SQLDIR_TXT>
+REM	
+REM Usage:
+REM	s_rbs_which.sql
+REM 
+REM Example:
+REM	s_rbs_which.sql
+REM
+REM
+REM History:
+REM	08-01-1998	VMOGILEV	Created
+REM
+REM
+
+set lines 132
+set trims on
+
+select   s.sid
+,        s.serial#
+,        s.username
+,        rn.name
+from     v$session   s
+,        v$transaction t
+,        v$rollstat    r
+,        v$rollname    rn
+where    s.saddr = t.ses_addr
+and      t.xidusn = r.usn
+and      r.usn = rn.usn
+/
+
+set lines 132
+
+SELECT         r.name              "ROLLBACK SEGMENT NAME ",
+               l.sid               "ORACLE PID",
+               p.spid              "SYSTEM PID ",
+               s.username          "ORACLE USERNAME"
+FROM v$lock     l
+,    v$process  p
+,    v$rollname r
+,    v$session  s
+WHERE  l.sid = p.pid(+)
+AND    s.sid=l.sid
+AND    TRUNC(l.id1(+)/65536) = r.usn
+-- and    l.id1(+) = r.usn
+AND    l.type(+) = 'TX'
+AND    l.lmode(+) = 6
+ORDER BY r.name
+/

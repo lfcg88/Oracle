@@ -1,0 +1,54 @@
+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+Here’s an example that shows how to specify ASM fast mirror resync for a disk group:
+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+SQL> alter diskgroup dgroupA
+set attribute 'disk_repair_time'='2h';
+
+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+You can also enable fast mirror resync by setting more complex time duration, as shown here:
+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+SQL> alter diskgroup dgroupA
+set attribute 'disk_repair_time'="2D6H30M";
+
+
+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+Once you repair a disk, you bring it online using the following command:
+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+SQL> alter diskgroup dgroupA online;
+
+
+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+You can override the time defined at the disk group level by specifying the drop after clause in an alter diskgroup <diskgroup_name> offline . . .
+command, as shown here:
+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+SQL> alter diskgroup dgroupA
+offline disks in failuregroup controller1
+drop after 4h;
+
+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+This command requires the database to wait for two hours before bringing the disk group dgroupA online again.
+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+SQL> alter diskgroup dgroupA
+online disks in failuregroup controller1 power 2 wait;
+
+
+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+If you can’t repair an offline disk group, you can use the force option to drop the disk group, as shown here:
+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+SQL> alter diskgroup dgroupA
+drop disks in failuregroup controller1 force;
+
+
+++++++++++++++++++++++++++++++++++++++++++++++++++++
+You can monitor the fast mirror resync process using
+++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+select * from V$ASM_DISK ;
+select * from V$ASM_DISK_IOSTAT views;
+
+seçect * from V$ASM_OPERATION where OPERATION='sync'

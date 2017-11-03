@@ -1,0 +1,8 @@
+
+drop tablespace TBSALERT including contents and datafiles;
+
+CREATE SMALLFILE TABLESPACE tbsalert
+DATAFILE 'alert1.dbf' SIZE 5M
+LOGGING
+EXTENT MANAGEMENT LOCAL
+SEGMENT SPACE MANAGEMENT AUTO;

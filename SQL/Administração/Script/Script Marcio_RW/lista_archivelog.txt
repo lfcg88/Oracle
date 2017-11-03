@@ -1,0 +1,2 @@
+--Verificar os archives que estão ativos na area de flash_recovery
+select STATUS,NAME from v$archived_log;

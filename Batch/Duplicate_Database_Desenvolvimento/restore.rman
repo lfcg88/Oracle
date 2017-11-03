@@ -1,0 +1,100 @@
+connect target /@miafisnb	
+connect catalog rmann/senharman@rcvcat
+
+
+startup force nomount PFILE=C:\ORACLE\admin\miafisnb\pfile\initmiafisnb.ora;
+
+
+run 
+{ 
+  SET UNTIL logseq 719 THREAD 1;
+  allocate channel ch1 type DISK;
+  allocate channel ch2 type DISK;
+  restore controlfile;
+set newname for datafile 1 TO 'C:\ORACLE\ORADATA\MIAFISNB\DATAFILE\SYSTEM01.DBF';
+set newname for datafile 2 TO 'C:\ORACLE\ORADATA\MIAFISNB\DATAFILE\DF_RBS_R_01_01.DBF';
+set newname for datafile 3 TO 'C:\ORACLE\ORADATA\MIAFISNB\DATAFILE\USERS01.DBF';
+set newname for datafile 4 TO 'C:\ORACLE\ORADATA\MIAFISNB\DATAFILE\TEMP01.DBF';
+set newname for datafile 5 TO 'C:\ORACLE\ORADATA\MIAFISNB\DATAFILE\DF_GBK_D_01_01.DBF';
+set newname for datafile 6 TO 'C:\ORACLE\ORADATA\MIAFISNB\DATAFILE\DF_GBK_I_01_01.DBF';
+set newname for datafile 7 TO 'C:\ORACLE\ORADATA\MIAFISNB\DATAFILE\DF_BDI_D_01_01.DBF';
+set newname for datafile 8 TO 'C:\ORACLE\ORADATA\MIAFISNB\DATAFILE\DF_BDI_I_01_01.DBF';
+set newname for datafile 9 TO 'C:\ORACLE\ORADATA\MIAFISNB\DATAFILE\DF_BDI_B_01_01.DBF';
+set newname for datafile 10 TO 'C:\ORACLE\ORADATA\MIAFISNB\DATAFILE\DF_CRP_D_01_01.DBF';
+set newname for datafile 11 TO 'C:\ORACLE\ORADATA\MIAFISNB\DATAFILE\DF_CRP_I_01_01.DBF';
+set newname for datafile 12 TO 'C:\ORACLE\ORADATA\MIAFISNB\DATAFILE\DF_DGT_D_01_01.DBF';
+set newname for datafile 13 TO 'C:\ORACLE\ORADATA\MIAFISNB\DATAFILE\DF_DGT_I_01_01.DBF';
+set newname for datafile 14 TO 'C:\ORACLE\ORADATA\MIAFISNB\DATAFILE\DF_GBK_B_01_01.DBF';
+set newname for datafile 15 TO 'C:\ORACLE\ORADATA\MIAFISNB\DATAFILE\DF_AFISMAIN_D_03_01.DBF';
+set newname for datafile 16 TO 'C:\ORACLE\ORADATA\MIAFISNB\DATAFILE\DF_AFISMAIN_I_02_01.DBF';
+set newname for datafile 17 TO 'C:\ORACLE\ORADATA\MIAFISNB\DATAFILE\DF_BDI_D_02_01.DBF';
+set newname for datafile 18 TO 'C:\ORACLE\ORADATA\MIAFISNB\DATAFILE\TS_CRM_D_01_01.DBF';
+set newname for datafile 19 TO 'C:\ORACLE\ORADATA\MIAFISNB\DATAFILE\TS_CRM_I_01_01.DBF';
+set newname for datafile 20 TO 'C:\ORACLE\ORADATA\MIAFISNB\DATAFILE\DF_BDI_I_02_01.DBF';
+set newname for datafile 21 TO 'C:\ORACLE\ORADATA\MIAFISNB\DATAFILE\DF_CIV_D_02_01.DBF';
+set newname for datafile 22 TO 'C:\ORACLE\ORADATA\MIAFISNB\DATAFILE\DF_CIV_I_02_01.DBF';
+set newname for datafile 23 TO 'C:\ORACLE\ORADATA\MIAFISNB\DATAFILE\DF_CFB_D_01_01.DBF';
+set newname for datafile 24 TO 'C:\ORACLE\ORADATA\MIAFISNB\DATAFILE\DF_CFB_I_01_01.DBF';
+set newname for datafile 25 TO 'C:\ORACLE\ORADATA\MIAFISNB\DATAFILE\DF_AFISMAN_D_01_01.DBF';
+set newname for datafile 26 TO 'C:\ORACLE\ORADATA\MIAFISNB\DATAFILE\DF_AFISMAN_I_01_01.DBF';
+set newname for datafile 27 TO 'C:\ORACLE\ORADATA\MIAFISNB\DATAFILE\DF_AFISTEMP_D_01_01.DBF';
+set newname for datafile 28 TO 'C:\ORACLE\ORADATA\MIAFISNB\DATAFILE\DF_AFISTEMP_I_01_01.DBF';
+set newname for datafile 29 TO 'C:\ORACLE\ORADATA\MIAFISNB\DATAFILE\DF_AFISMAN_B_01_01.DBF';
+set newname for datafile 30 TO 'C:\ORACLE\ORADATA\MIAFISNB\DATAFILE\DF_CRM_D_02_01.DBF';
+set newname for datafile 31 TO 'C:\ORACLE\ORADATA\MIAFISNB\DATAFILE\DF_WFL_D_01_01.DBF';
+set newname for datafile 32 TO 'C:\ORACLE\ORADATA\MIAFISNB\DATAFILE\DF_WFL_I_01_01.DBF';
+set newname for datafile 33 TO 'C:\ORACLE\ORADATA\MIAFISNB\DATAFILE\DF_IDT_D_01_01.DBF';
+set newname for datafile 34 TO 'C:\ORACLE\ORADATA\MIAFISNB\DATAFILE\DF_IDT_I_01_01.DBF';
+set newname for datafile 35 TO 'C:\ORACLE\ORADATA\MIAFISNB\DATAFILE\DF_SQLNAV_D_01_01.DBF';
+set newname for datafile 36 TO 'C:\ORACLE\ORADATA\MIAFISNB\DATAFILE\DF_CRM_I_02_01.DBF';
+set newname for datafile 37 TO 'C:\ORACLE\ORADATA\MIAFISNB\DATAFILE\DF_CIV_D_01_01.DBF';
+set newname for datafile 38 TO 'C:\ORACLE\ORADATA\MIAFISNB\DATAFILE\DF_CIV_I_01_01.DBF';
+set newname for datafile 39 TO 'C:\ORACLE\ORADATA\MIAFISNB\DATAFILE\DF_MIG_D_01_01.DBF';
+set newname for datafile 40 TO 'C:\ORACLE\ORADATA\MIAFISNB\DATAFILE\DF_MIG_I_01_01.DBF';
+set newname for datafile 41 TO 'C:\ORACLE\ORADATA\MIAFISNB\DATAFILE\DF_IDCIVIL_DATA_01.DBF';
+set newname for datafile 42 TO 'C:\ORACLE\ORADATA\MIAFISNB\DATAFILE\DF_IDCIVIL_INDX_01.DBF';
+set newname for datafile 43 TO 'C:\ORACLE\ORADATA\MIAFISNB\DATAFILE\DF_CRP_D_02_01.DBF';
+set newname for datafile 44 TO 'C:\ORACLE\ORADATA\MIAFISNB\DATAFILE\DF_CRP_I_02_01.DBF';
+set newname for datafile 45 TO 'C:\ORACLE\ORADATA\MIAFISNB\DATAFILE\DF_DGT_D_02_01.DBF';
+set newname for datafile 46 TO 'C:\ORACLE\ORADATA\MIAFISNB\DATAFILE\DF_DGT_I_02_01.DBF';
+set newname for datafile 47 TO 'C:\ORACLE\ORADATA\MIAFISNB\DATAFILE\DF_IDT_D_02_01.DBF';
+set newname for datafile 48 TO 'C:\ORACLE\ORADATA\MIAFISNB\DATAFILE\DF_IDT_I_02_01.DBF';
+set newname for datafile 49 TO 'C:\ORACLE\ORADATA\MIAFISNB\DATAFILE\DF_MIG_D_02_01.DBF';
+set newname for datafile 50 TO 'C:\ORACLE\ORADATA\MIAFISNB\DATAFILE\DF_MIG_I_02_01.DBF';
+set newname for datafile 51 TO 'C:\ORACLE\ORADATA\MIAFISNB\DATAFILE\DF_WFL_D_02_01.DBF';
+set newname for datafile 52 TO 'C:\ORACLE\ORADATA\MIAFISNB\DATAFILE\DF_BDI_B_0002_01.DBF';
+set newname for datafile 53 TO 'C:\ORACLE\ORADATA\MIAFISNB\DATAFILE\DF_BDI_B_0003_01.DBF';
+set newname for datafile 54 TO 'C:\ORACLE\ORADATA\MIAFISNB\DATAFILE\DF_WFL_I_02_01.DBF';
+set newname for datafile 55 TO 'C:\ORACLE\ORADATA\MIAFISNB\DATAFILE\DF_AFISMAIN_D_02_01.DBF';
+set newname for datafile 56 TO 'C:\ORACLE\ORADATA\MIAFISNB\DATAFILE\DF_AFISMAIN_D_02_02.DBF';
+set newname for datafile 57 TO 'C:\ORACLE\ORADATA\MIAFISNB\DATAFILE\DF_IMG_D_01_01.DBF';
+set newname for datafile 58 TO 'C:\ORACLE\ORADATA\MIAFISNB\DATAFILE\DF_IMG_I_01_01.DBF';
+set newname for datafile 59 TO 'C:\ORACLE\ORADATA\MIAFISNB\DATAFILE\DF_LAT_D_01_01.DBF';
+set newname for datafile 60 TO 'C:\ORACLE\ORADATA\MIAFISNB\DATAFILE\DF_LAT_D_02_01.DBF';
+set newname for datafile 61 TO 'C:\ORACLE\ORADATA\MIAFISNB\DATAFILE\DF_LAT_I_01_01.DBF';
+set newname for datafile 62 TO 'C:\ORACLE\ORADATA\MIAFISNB\DATAFILE\DF_LAT_I_02_01.DBF';
+set newname for datafile 63 TO 'C:\ORACLE\ORADATA\MIAFISNB\DATAFILE\DF_IDT_L_01_01.DBF';
+set newname for datafile 64 TO 'C:\ORACLE\ORADATA\MIAFISNB\DATAFILE\DF_IDT_D_03_01.DBF';
+set newname for datafile 65 TO 'C:\ORACLE\ORADATA\MIAFISNB\DATAFILE\DF_IDT_I_03_01.DBF';
+set newname for datafile 66 TO 'C:\ORACLE\ORADATA\MIAFISNB\DATAFILE\DF_CIV_L_01_01.DBF';
+set newname for datafile 67 TO 'C:\ORACLE\ORADATA\MIAFISNB\DATAFILE\DF_CRM_L_01_01.DBF';
+set newname for datafile 68 TO 'C:\ORACLE\ORADATA\MIAFISNB\DATAFILE\DF_MCR_D_01_01.DBF';
+set newname for datafile 69 TO 'C:\ORACLE\ORADATA\MIAFISNB\DATAFILE\DF_MCR_I_01_01.DBF';
+set newname for datafile 70 TO 'C:\ORACLE\ORADATA\MIAFISNB\DATAFILE\DF_IPE_D_01_01.DBF';
+set newname for datafile 71 TO 'C:\ORACLE\ORADATA\MIAFISNB\DATAFILE\DF_IPE_I_01_01.DBF';
+set newname for datafile 72 TO 'C:\ORACLE\ORADATA\MIAFISNB\DATAFILE\DF_OBT_D_01_01.DBF';
+set newname for datafile 73 TO 'C:\ORACLE\ORADATA\MIAFISNB\DATAFILE\DF_OBT_I_01_01.DBF';
+set newname for datafile 74 TO 'C:\ORACLE\ORADATA\MIAFISNB\DATAFILE\DF_JPA_D_01_01.DBF';
+
+  restore database;
+  alter database  mount;
+  recover database;
+  sql "alter database rename file ''d:\oracle\oradata\miafis\redo\redo01.log'' to ''C:\oracle\oradata\miafisnb\redo\REDO01.log'' ";
+  sql "alter database rename file ''d:\oracle\oradata\miafis\redo\redo02.log'' to ''C:\oracle\oradata\miafisnb\redo\REDO02.log'' ";
+  sql "alter database rename file ''d:\oracle\oradata\miafis\redo\redo03.log'' to ''C:\oracle\oradata\miafisnb\redo\REDO03.log'' ";
+  alter database open resetlogs;
+  release channel ch1;
+  release channel ch2;
+}
+
+SQL "ALTER TABLESPACE TEMP ADD TEMPFILE ''C:\ORACLE\ORADATA\MIAFISNB\DATAFILE\TEMP01.DBF'' size 100m REUSE";

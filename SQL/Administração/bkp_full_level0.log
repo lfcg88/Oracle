@@ -1,0 +1,81 @@
+
+Recovery Manager: Release 9.2.0.8.0 - Production
+
+Copyright (c) 1995, 2002, Oracle Corporation.  All rights reserved.
+
+RMAN> @/pub/bkp_oracle/script/connect.rman
+2> connect target / 
+3> connect catalog rman/rman
+4> **end-of-file**
+5> list backup;
+6> exit
+connected to target database: ORCL (DBID=1168313823)
+
+connected to recovery catalog database
+
+
+List of Backup Sets
+===================
+
+BS Key  Type LV Size       Device Type Elapsed Time Completion Time
+------- ---- -- ---------- ----------- ------------ ---------------
+461     Full    5G         DISK        00:08:57     11-NOV-08      
+        BP Key: 462   Status: AVAILABLE   Tag: DB_FULL_LEVEL0
+        Piece Name: /pub/bkp_oracle/rman/ORCL_%I_level0_10_1_0ajvep7p.bkp
+  List of Datafiles in backup set 461
+  File LV Type Ckp SCN    Ckp Time  Name
+  ---- -- ---- ---------- --------- ----
+  1       Full 5976289977941 11-NOV-08 /u01/app/oracle/oradata/orcl/system01.dbf
+  2       Full 5976289977941 11-NOV-08 /u01/app/oracle/oradata/orcl/undotbs01.dbf
+  3       Full 5976289977941 11-NOV-08 /u01/app/oracle/oradata/orcl/cwmlite01.dbf
+  4       Full 5976289977941 11-NOV-08 /u01/app/oracle/oradata/orcl/drsys01.dbf
+  5       Full 5976289977941 11-NOV-08 /u01/app/oracle/oradata/orcl/example01.dbf
+  6       Full 5976289977941 11-NOV-08 /u01/app/oracle/oradata/orcl/indx01.dbf
+  7       Full 5976289977941 11-NOV-08 /u01/app/oracle/oradata/orcl/odm01.dbf
+  8       Full 5976289977941 11-NOV-08 /u01/app/oracle/oradata/orcl/tools01.dbf
+  9       Full 5976289977941 11-NOV-08 /u01/app/oracle/oradata/orcl/users01.dbf
+  10      Full 5976289977941 11-NOV-08 /u01/app/oracle/oradata/orcl/xdb01.dbf
+  11      Full 5976289977941 11-NOV-08 /u01/app/oracle/oradata/orcl/TBS_DATA_TEMP_SAFIT01.dbf
+  12      Full 5976289977941 11-NOV-08 /u01/app/oracle/oradata/orcl/TBS_DATA_TEMP_SAFIT02.dbf
+  13      Full 5976289977941 11-NOV-08 /u01/app/oracle/oradata/orcl/TBS_RECUPERA_TEMP.dbf
+  14      Full 5976289977941 11-NOV-08 /u01/app/oracle/oradata/orcl/TBS_SAPR_DATA_01.dbf
+  15      Full 5976289977941 11-NOV-08 /u01/app/oracle/oradata/orcl/TBS_SAPR_IDX_01.dbf
+  16      Full 5976289977941 11-NOV-08 /u01/app/oracle/oradata/orcl/TBS_SCP_DATA_01.dbf
+  17      Full 5976289977941 11-NOV-08 /u01/app/oracle/oradata/orcl/TBS_SCP_IDX_01.dbf
+  18      Full 5976289977941 11-NOV-08 /u01/app/oracle/oradata/orcl/USR_TBS_01.dbf
+  19      Full 5976289977941 11-NOV-08 /u01/app/oracle/oradata/orcl/USR_TBS_02.dbf
+  20      Full 5976289977941 11-NOV-08 /u01/app/oracle/oradata/orcl/TBS_DATA_PDM_01.dbf
+  21      Full 5976289977941 11-NOV-08 /u01/app/oracle/oradata/orcl/oem_repository.dbf
+  22      Full 5976289977941 11-NOV-08 /u01/app/oracle/oradata/orcl/TBS_DATA_BDUP_REPLICA_01.dbf
+  23      Full 5976289977941 11-NOV-08 /u01/app/oracle/oradata/orcl/TBS_DATA_PERFSTAT1.dbf
+  24      Full 5976289977941 11-NOV-08 /u01/app/oracle/oradata/orcl/TESTE.dbf
+  25      Full 5976289977941 11-NOV-08 /u01/app/oracle/oradata/orcl/GIS_DATA_BUSS01.dbf
+  26      Full 5976289977941 11-NOV-08 /u01/app/oracle/oradata/orcl/GIS_DATA_GEOM01.dbf
+  27      Full 5976289977941 11-NOV-08 /u01/app/oracle/oradata/orcl/GIS_DATA_IDXS01.dbf
+  28      Full 5976289977941 11-NOV-08 /u01/app/oracle/oradata/orcl/GIS_DATA_RASTER01.dbf
+  29      Full 5976289977941 11-NOV-08 /u01/app/oracle/oradata/orcl/MAPS.dbf
+  30      Full 5976289977941 11-NOV-08 /u01/app/oracle/oradata/orcl/SDE.dbf
+  31      Full 5976289977941 11-NOV-08 /u01/app/oracle/oradata/orcl/TBS_PATRIMONIO_DATA_01.dbf
+  32      Full 5976289977941 11-NOV-08 /u01/app/oracle/oradata/orcl/TBS_CONTING_DATA_01.dbf
+  33      Full 5976289977941 11-NOV-08 /u01/app/oracle/oradata/orcl/TBS_DATA_OEM_01.dbf
+  34      Full 5976289977941 11-NOV-08 /u01/app/oracle/oradata/orcl/TBS_RMAN_01.dbf
+
+BS Key  Size       Device Type Elapsed Time Completion Time
+------- ---------- ----------- ------------ ---------------
+501     569K       DISK        00:00:01     11-NOV-08      
+        BP Key: 502   Status: AVAILABLE   Tag: ARCHIVED_LOGS
+        Piece Name: /pub/bkp_oracle/rman/ORCL_%I_arch_11_1_0bjvepor.bkp
+
+  List of Archived Logs in backup set 501
+  Thrd Seq     Low SCN    Low Time  Next SCN   Next Time
+  ---- ------- ---------- --------- ---------- ---------
+  1    476     5976289977931 11-NOV-08 5976289979265 11-NOV-08
+
+BS Key  Type LV Size       Device Type Elapsed Time Completion Time
+------- ---- -- ---------- ----------- ------------ ---------------
+505     Full    1M         DISK        00:00:01     11-NOV-08      
+        BP Key: 506   Status: AVAILABLE   Tag: 
+        Piece Name: /u01/app/oracle/product/9.2.0/dbs/c-1168313823-20081111-02
+  SPFILE Included: Modification time: 14-MAR-08
+
+Recovery Manager complete.

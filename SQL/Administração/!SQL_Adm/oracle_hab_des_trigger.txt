@@ -1,0 +1,32 @@
+conn sysadm/hcm#9prd@hcm9prd;
+conn fpw/riskofpersonal@oraprod;
+
+select 'alter trigger '||trigger_name||' disable;'
+from user_triggers;
+
+select 'alter trigger '||trigger_name||' enable;'
+from user_triggers;
+
+select distinct(status) from user_triggers;
+select distinct(status) from all_triggers;
+
+exec sp_verifica_interface;
+
+select trigger_name from user_triggers where status = 'ENABLED';
+
+alter trigger fpw.TG_OCO_DEL_FORPONTO disable;
+alter trigger fpw.TG_OCO_DEL_FORPONTO enable;
+
+
+
+select 'alter trigger sysadm.'||trigger_name||' disable;'
+from all_triggers
+where owner = 'SYSADM';
+
+select 'alter trigger FPW.'||trigger_name||' disable;'
+from all_triggers
+where owner = 'FPW';
+
+
+
+

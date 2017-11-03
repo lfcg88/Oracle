@@ -1,0 +1,7 @@
+- Create a new password file: 
+
+orapwd file=orapwSID password=oracle entries=5
+
+- If the password file already exists: 
+
+orapwd file=orapwSID password=oracle entries=5 FORCE=Y

@@ -1,0 +1,621 @@
+===================
+gerando relatorio
+================
+
+
+SELECT 
+   output  
+FROM    
+   TABLE
+   (dbms_workload_repository.awr_report_text 
+      (37933856,1,2900,2911 )
+   );
+
+
+
+ASH Report   ==>  ashrpt.sql
+adviser          ==>   addmrpt.sql.sql
+awr               ==>    awrrpt.sql
+                     ==>    awrsqrpt.sql
+
+
+
+
+
+
+
+
+
+===============================
+
+Find time ranges of load spikes: Average Active Sessions (AAS)
+
+aas-per-hour.sql (AWR)
+See also the AAS example above.
+
+column sample_hour format a16
+select
+   to_char(round(sub1.sample_time, 'HH24'), 'YYYY-MM-DD HH24:MI') as sample_hour,
+   round(avg(sub1.on_cpu),1) as cpu_avg,
+   round(avg(sub1.waiting),1) as wait_avg,
+   round(avg(sub1.active_sessions),1) as act_avg,
+   round( (variance(sub1.active_sessions)/avg(sub1.active_sessions)),1) as act_var_mean
+from
+   ( -- sub1: one row per second, the resolution of SAMPLE_TIME
+     select
+        sample_id,
+        sample_time,
+        sum(decode(session_state, 'ON CPU', 1, 0))  as on_cpu,
+        sum(decode(session_state, 'WAITING', 1, 0)) as waiting,
+        count(*) as active_sessions
+     from
+        dba_hist_active_sess_history
+     where
+        sample_time > sysdate - (&hours/24)
+     group by
+        sample_id,
+        sample_time
+   ) sub1
+group by
+   round(sub1.sample_time, 'HH24')
+order by
+   round(sub1.sample_time, 'HH24')
+;
+
+aas-per-min.sql (ASH)
+See also the AAS example above.
+
+column sample_minute format a16
+select
+   to_char(round(sub1.sample_time, 'MI'), 'YYYY-MM-DD HH24:MI') as sample_minute,
+   round(avg(sub1.on_cpu),1) as cpu_avg,
+   round(avg(sub1.waiting),1) as wait_avg,
+   round(avg(sub1.active_sessions),1) as act_avg,
+   round( (variance(sub1.active_sessions)/avg(sub1.active_sessions)),1) as act_var_mean
+from
+   ( -- sub1: one row per second, the resolution of SAMPLE_TIME
+     select
+        sample_id,
+        sample_time,
+        sum(decode(session_state, 'ON CPU', 1, 0))  as on_cpu,
+        sum(decode(session_state, 'WAITING', 1, 0)) as waiting,
+        count(*) as active_sessions
+     from
+        v$active_session_history
+     where
+        sample_time > sysdate - (&minutes/1440)
+     group by
+        sample_id,
+        sample_time
+   ) sub1
+group by
+   round(sub1.sample_time, 'MI')
+order by
+   round(sub1.sample_time, 'MI')
+;
+
+aas-per-min-awr.sql (AWR)
+See also the AAS example above.
+
+column sample_minute format a16
+select
+   to_char(round(sub1.sample_time, 'MI'), 'YYYY-MM-DD HH24:MI') as sample_minute,
+   round(avg(sub1.on_cpu),1) as cpu_avg,
+   round(avg(sub1.waiting),1) as wait_avg,
+   round(avg(sub1.active_sessions),1) as act_avg,
+   round( (variance(sub1.active_sessions)/avg(sub1.active_sessions)),1) as act_var_mean
+from
+   ( -- sub1: one row per sampled ASH observation second
+     select
+        sample_id,
+        sample_time,
+        sum(decode(session_state, 'ON CPU', 1, 0))  as on_cpu,
+        sum(decode(session_state, 'WAITING', 1, 0)) as waiting,
+        count(*) as active_sessions
+     from
+        dba_hist_active_sess_history
+     where
+        sample_time > sysdate - (&minutes/1440)
+     group by
+        sample_id,
+        sample_time
+   ) sub1
+group by
+   round(sub1.sample_time, 'MI')
+order by
+   round(sub1.sample_time, 'MI')
+;
+
+aas-exact.sql (AWR)
+column BEGIN_HOUR format a16
+select
+   stat_start.snap_id,
+   to_char(snap.begin_interval_time,'YYYY-MM-DD HH24:MI') as begin_hour,
+   -- DB time is in units of centiseconds in DBA_HIST_SYSSTAT.VALUE
+   round( (stat_end.value - stat_start.value)/100 , 0) as seconds_per_hour,
+   -- also assumes hourly snapshots, hence divided by 3600
+   round( (stat_end.value - stat_start.value)/(100*3600) , 1) as aas
+from
+   dba_hist_sysstat stat_start,
+   dba_hist_sysstat stat_end,
+   dba_hist_snapshot snap
+where
+   -- assumes the snap_id at the end of the interval is 
+   -- one greater than the snap_id at teh start ofthe interval
+   --
+   stat_end.snap_id = stat_start.snap_id + 1
+and
+   -- otherwise, we join stat_end and stat_start
+   -- on exact matches of the remaining PK columns
+   --
+   ( stat_end.dbid = stat_start.dbid
+     and
+     stat_end.instance_number = stat_start.instance_number
+     and
+     stat_end.stat_name = stat_start.stat_name
+   )
+and
+   -- filter for the statistic we are interested in
+   --
+   stat_end.stat_name = 'DB time'
+and
+   -- join stat_start to snap on FK
+   -- 
+   ( stat_start.snap_id = snap.snap_id
+     and
+     stat_start.dbid = snap.dbid
+     and
+     stat_start.instance_number = snap.instance_number
+   )
+order by
+   stat_start.snap_id
+;
+Find specific problem SQLs: Sort by aggregated statistics
+find-expensive.sql (AWR)
+See also the aggregate example above. 
+
+This script looks at three metrics only, but it is easy to use other metrics stored by the DBA_HIST_SQLSTAT table. For the order-by clause, I suggest using the numeric column position style so that it is easy to change interactively.
+
+-- gets most expensive queries 
+-- (by time spent, change "order by" to use another metric)
+-- after a specific date
+select
+   sub.sql_id,
+   sub.seconds_since_date,
+   sub.execs_since_date,
+   sub.gets_since_date
+from
+   ( -- sub to sort before rownum
+     select
+        sql_id,
+        round(sum(elapsed_time_delta)/1000000) as seconds_since_date,
+        sum(executions_delta) as execs_since_date,
+        sum(buffer_gets_delta) as gets_since_date
+     from
+        dba_hist_snapshot natural join dba_hist_sqlstat
+     where
+        begin_interval_time > to_date('&&start_YYYYMMDD','YYYY-MM-DD')
+     group by
+        sql_id
+     order by
+        2 desc
+   ) sub
+where
+   rownum < 30
+;
+Find specific problem SQLs: Non-uniform statistics
+high-var-sql.sql (AWR)
+See also the high-variance example above.
+
+-- high-var-sql.sql
+undefine days_back
+select
+   sub1.sql_id,
+   round( avg(sub1.seconds_per_hour) ) as avg_seconds_per_hour,
+   round( variance(sub1.seconds_per_hour)/avg(sub1.seconds_per_hour) ) as var_over_mean,
+   count(*) as ct
+from
+   ( -- sub1
+     select
+        snap_id,
+        sql_id,
+        elapsed_time_delta/1000000 as seconds_per_hour
+     from
+        dba_hist_snapshot natural join dba_hist_sqlstat
+     where
+        -- look at recent history only
+        begin_interval_time > sysdate - &&days_back;
+     and
+        -- must have executions to be interesting
+        executions_delta > 0
+   ) sub1
+group by 
+   sub1.sql_id
+having 
+   -- only queries that consume 10 seconds per hour on the average
+   avg(sub1.seconds_per_hour) > 10
+and 
+   -- only queries that run 50% of the time
+   -- assumes hourly snapshots too
+   count(*) > ( &&days_back * 24) * 0.50
+order by
+   3
+;
+
+undefine days_back
+Characterize a problem SQL's behavior over time
+sql-stat-hist.sql (AWR)
+See also example scenarios 1, 2, 3, and 4 above.
+
+-- gets basic DBA_HIST_SQLSTAT data for a single sql_id
+-- assumes that each AWR snap is one-hour (used in names, not math)
+column BEGIN_HOUR format a16
+
+select
+   snap_id,
+   to_char(begin_interval_time,'YYYY-MM-DD HH24:MI') as begin_hour,
+   executions_delta as execs_per_hour,
+   buffer_gets_delta as gets_per_hour,
+   round(buffer_gets_delta/executions_delta) as gets_per_exec,
+   round(elapsed_time_delta/1000000) as seconds_per_hour
+from
+   dba_hist_snapshot natural join dba_hist_sqlstat
+where
+   begin_interval_time between to_date('&start_hour', 'YYYY-MM-DD HH24:MI')
+                           and to_date('&end_hour',   'YYYY-MM-DD HH24:MI')
+and
+   sql_id = '&sql_id'
+and
+   executions_delta > 0
+order by
+   snap_id
+;
+
+
+
+
+==============================================
+
+Get the top 100 queries by total number of disk_reads_delta
+
+
+SELECT *
+FROM   (SELECT   SQL_ID,
+                 SUM(disk_reads_delta) AS "Disk Reads"
+        FROM     DBA_HIST_SQLSTAT S
+        WHERE    SNAP_ID > 209
+                 AND SNAP_ID <= 210
+               --  AND S.MODULE = 'ClaimCenter'
+        GROUP BY SQL_ID
+        HAVING   SUM(disk_reads_delta) >= 0
+        ORDER BY 2 DESC) DERIVED_TABLE
+WHERE  ROWNUM <= 100;
+
+
+Get the top 100 queries by total number of disk_reads_delta by execution
+
+
+SELECT *
+FROM   (SELECT   SQL_ID,
+                 CASE SUM(EXECUTIONS_DELTA)
+                   WHEN 0 THEN 0
+                   ELSE SUM(disk_reads_delta) / SUM(EXECUTIONS_DELTA)
+                 END AS "Disk Reads/Execution"
+        FROM     DBA_HIST_SQLSTAT S
+        WHERE    SNAP_ID > 14152
+                 AND SNAP_ID <= 14153
+             --    AND S.MODULE = 'ClaimCenter'
+        GROUP BY SQL_ID
+        HAVING   CASE SUM(EXECUTIONS_DELTA)
+                   WHEN 0 THEN 0
+                   ELSE SUM(disk_reads_delta) / SUM(EXECUTIONS_DELTA)
+                 END >= 0
+        ORDER BY 2 DESC) DERIVED_TABLE
+WHERE  ROWNUM <= 100;
+
+
+
+-- Get the top 100 queries (mergeJoinQueries) by total number of disk_reads_delta
+SELECT *
+FROM   (SELECT   SQL_ID,
+                 SUM(disk_reads_delta) AS "Disk Reads"
+        FROM     DBA_HIST_SQLSTAT S
+        WHERE    SNAP_ID > 209
+                 AND SNAP_ID <= 210
+                 AND S.MODULE = 'ClaimCenter'
+                 AND EXISTS (SELECT *
+                             FROM   DBA_HIST_SQL_PLAN P
+                             WHERE  S.SQL_ID = P.SQL_ID
+                                    AND S.PLAN_HASH_VALUE = P.PLAN_HASH_VALUE
+                                    AND P.OPERATION = 'MERGE JOIN')
+        GROUP BY SQL_ID
+        HAVING   SUM(disk_reads_delta) >= 0
+        ORDER BY 2 DESC) DERIVED_TABLE
+WHERE  ROWNUM <= 100;
+
+Get the top 100 queries (mergeJoinQueries) by total number of disk_reads_delta by execution
+SELECT *
+FROM   (SELECT   SQL_ID,
+                 CASE SUM(EXECUTIONS_DELTA)
+                   WHEN 0 THEN 0
+                   ELSE SUM(disk_reads_delta) / SUM(EXECUTIONS_DELTA)
+                 END AS "Buffer Gets/Execution"
+        FROM     DBA_HIST_SQLSTAT S
+        WHERE    SNAP_ID > 209
+                 AND SNAP_ID <= 210
+                 AND S.MODULE = 'ClaimCenter'
+                 AND EXISTS (SELECT *
+                             FROM   DBA_HIST_SQL_PLAN P
+                             WHERE  S.SQL_ID = P.SQL_ID
+                                    AND S.PLAN_HASH_VALUE = P.PLAN_HASH_VALUE
+                                    AND P.OPERATION = 'MERGE JOIN')
+        GROUP BY SQL_ID
+        HAVING   CASE SUM(EXECUTIONS_DELTA)
+                   WHEN 0 THEN 0
+                   ELSE SUM(disk_reads_delta) / SUM(EXECUTIONS_DELTA)
+                 END >= 0
+        ORDER BY 2 DESC) DERIVED_TABLE
+WHERE  ROWNUM <= 100;
+
+
+
+-- logical_reads, physical_reads, physical_writes by segment (tablespace, table, object_type).
+select n.owner , n.tablespace_name,
+       case when n.object_type = 'TABLE' then n.object_name
+            when n.object_type = 'INDEX' then (SELECT table_name from dba_indexes WHERE index_name = n.object_name AND owner = n.owner)
+            when n.object_type = 'LOB' then (SELECT table_name from dba_lobs WHERE segment_name = n.object_name AND owner = n.owner)
+                                       else 'N/A' end as Table_name,
+       n.object_name, n.object_type, r.logical_reads,
+       round(r.logical_reads_ratio * 100, 2) logical_reads_ratio,
+       r.physical_reads,
+       round(r.physical_reads_ratio * 100, 2) physical_reads_ratio,
+       r.physical_writes,
+       round(r.physical_writes_ratio * 100, 2) physical_writes_ratio
+from dba_hist_seg_stat_obj n,
+     (select *
+      from (select e.dataobj#, e.obj#, e.dbid,
+                   sum(e.logical_reads_delta) logical_reads,
+                   ratio_to_report(sum(e.logical_reads_delta)) over () logical_reads_ratio,
+                   sum(e.physical_reads_delta) physical_reads,
+                   ratio_to_report(sum(e.physical_reads_delta)) over () physical_reads_ratio,
+                   sum(e.physical_writes_delta) physical_writes,
+                   ratio_to_report(sum(e.physical_writes_delta)) over () physical_writes_ratio
+            from dba_hist_seg_stat e
+            where e.snap_id > 14152 and
+                  e.snap_id <= 14153 
+            group by e.dataobj#,
+		     e.obj#,
+		     e.dbid
+	    having sum(e.logical_reads_delta)  > 0 or
+                   sum(e.physical_reads_delta)  > 0 or
+                   sum(e.physical_writes_delta) > 0
+            order by logical_reads desc) d
+   ) r
+where n.dataobj# = r.dataobj# and
+      n.obj# = r.obj# and
+      n.dbid     = r.dbid  -- and
+     -- n.owner = 'MKTG'
+order by logical_reads desc;
+
+
+-- logical_reads, physical_reads, physical_writes by tablespace and table.
+SELECT owner, tablespace_name, table_name,    sum(logical_reads) as "LOGICAL READS",
+       sum(logical_reads_ratio) as logical_reads_ratio,    sum(physical_reads) as "PHYSICAL READS",
+       sum(physical_reads_ratio) as physical_reads_ratio,    sum(physical_writes) as "PHYSICAL WRITES",
+       sum(physical_writes_ratio) as physical_writes_ratio
+FROM (
+select n.owner, n.tablespace_name,
+       case when n.object_type = 'TABLE' then n.object_name
+            when n.object_type = 'INDEX' then (SELECT table_name from dba_indexes WHERE index_name = n.object_name)
+            when n.object_type = 'LOB' then (SELECT table_name from dba_lobs WHERE segment_name = n.object_name)
+                       		       else 'N/A' end as Table_name,
+       n.object_name, n.object_type,  r.logical_reads,  round(r.logical_reads_ratio * 100, 2) logical_reads_ratio,
+       r.physical_reads,  round(r.physical_reads_ratio * 100, 2) physical_reads_ratio,   r.physical_writes,
+       round(r.physical_writes_ratio * 100, 2) physical_writes_ratio
+  from dba_hist_seg_stat_obj n,
+       (select *
+        from (select e.dataobj#, e.obj#, e.dbid,  sum(e.logical_reads_delta) logical_reads,
+                     ratio_to_report(sum(e.logical_reads_delta)) over () logical_reads_ratio,
+                     sum(e.physical_reads_delta) physical_reads,
+                     ratio_to_report(sum(e.physical_reads_delta)) over () physical_reads_ratio,
+                     sum(e.physical_writes_delta) physical_writes,
+                     ratio_to_report(sum(e.physical_writes_delta)) over () physical_writes_ratio
+              from dba_hist_seg_stat e
+              where e.snap_id > 209 and e.snap_id <= 210
+              group by e.dataobj#, e.obj#, e.dbid
+              having sum(e.logical_reads_delta)   > 0 or  sum(e.physical_reads_delta)  > 0 or  sum(e.physical_writes_delta) > 0
+              order by logical_reads desc) d
+         ) r
+ where n.dataobj# = r.dataobj#
+   and n.obj#     = r.obj#
+   and n.dbid     = r.dbid
+ --  AND n.owner = 'MKTG'
+) c
+group by owner, tablespace_name, table_name
+ order by 4 desc;
+
+
+Capturing query plans with row source info 
+
+======================
+dbms_xplan.display_awr
+=======================
+
+select m.*
+, ' select * from table(dbms_xplan.display_awr('||''''||sql_id||''''||'));'
+from 
+( select
+   sub.sql_id,
+   sub.seconds_since_date,
+   sub.execs_since_date,
+   sub.gets_since_date
+from
+   ( -- sub to sort before rownum
+     select
+        sql_id,
+        round(sum(elapsed_time_delta)/1000000) as seconds_since_date,
+        sum(executions_delta) as execs_since_date,
+        sum(buffer_gets_delta) as gets_since_date
+     from
+        dba_hist_snapshot natural join dba_hist_sqlstat
+     where
+        begin_interval_time >= to_date('08/09/2011 10','DD/MM/YYYY HH24') AND begin_interval_time < to_date('08/09/2011 11','DD/MM/YYYY HH24')
+     group by
+        sql_id
+     order by
+        2 desc
+   ) sub
+where
+   rownum < 30
+) m
+
+=============================
+SELECT s.sql_id, t.* 
+FROM dba_hist_sqlstat s, TABLE(dbms_xplan.display_cursor(s.sql_id, null, 'ALLSTATS')) t 
+WHERE 
+snap_id >  14152  AND snap_id <= 14153;
+
+
+
+
+
+
+SELECT s.sql_id, t.* 
+FROM dba_hist_sqlstat s, TABLE(dbms_xplan.display_cursor(s.sql_id, null, 'ALLSTATS')) t 
+WHERE 
+---module = ‘ClaimCenter' AND 
+    s.sql_id IN 
+	(SELECT sql_id 
+	 FROM v$sql_plan_statistics_all) AND 
+    snap_id >  14152  AND snap_id <= 1453;
+
+
+
+
+P================================
+
+
+Display a list of snapshots
+
+set lines 100 pages 999
+select	snap_id
+,	snap_level
+,	to_char(begin_interval_time, 'dd/mm/yy hh24:mi:ss') begin
+from	dba_hist_snapshot 
+order by 1
+/
+
+============================
+  
+To see the snapshot interval and retention period
+col snap_interval format a30
+col retention format a30
+select	snap_interval
+,	retention
+from	dba_hist_wr_control
+/
+col snap_interval format a30
+col retention format a30
+select	snap_interval
+,	retention
+from	dba_hist_wr_control
+/
+  
+===========================
+
+Change the snapshot interval
+Note. This example changes it to 30 minutes
+
+exec dbms_workload_repository.modify_snapshot_settings (interval => 30)
+exec dbms_workload_repository.modify_snapshot_settings (interval => 30)
+  
+
+===========================
+
+Change the retention period
+Note. This example changes it to two weeks (14 days)
+
+exec dbms_workload_repository.modify_snapshot_settings (retention => 14*24*60)
+exec dbms_workload_repository.modify_snapshot_settings (retention => 14*24*60)
+  
+
+===========================
+
+Manually take a snapshot
+exec dbms_workload_repository.create_snapshot
+exec dbms_workload_repository.create_snapshot
+  
+List all baselines
+
+
+set lines 100
+col baseline_name format a40
+select	baseline_id
+,	baseline_name
+,	start_snap_id
+,	end_snap_id 
+from	dba_hist_baseline
+order by 1
+/
+  
+
+===========================
+
+Create a baseline
+exec dbms_workload_repository.create_baseline (<start snap>, <endsnap>,'<name>')
+exec dbms_workload_repository.create_baseline (<start snap>, <endsnap>,'<name>')
+
+
+===========================
+  
+Remove a baseline
+exec dbms_workload_repository.drop_baseline('<baseline name>')
+exec dbms_workload_repository.drop_baseline('<baseline name>')
+  
+
+===========================
+
+Enable/Disable automatic snapshots
+Note. This job is enabled by default
+
+exec dbms_scheduler.enable('GATHER_STATS_JOB')
+ex
+ 
+and to disable...
+
+exec dbms_scheduler.disable('GATHER_STATS_JOB')
+
+  
+
+===========================
+
+Time model queries
+System time model
+
+set lines 100 pages 999
+select	stat_name
+,	value
+from	v$sys_time_model
+order by value desc
+/
+set lines 100 pages 999
+select	stat_name
+,	value
+from	v$sys_time_model
+order by value desc
+/
+
+
+===========================
+ 
+Session time model
+
+set lines 100 pages 999
+select	stat_name
+,	value
+from	v$sess_time_model
+where	sid = '&sid'
+order by value desc
+/
+ 
+

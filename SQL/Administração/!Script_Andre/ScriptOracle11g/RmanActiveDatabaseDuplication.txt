@@ -1,0 +1,105 @@
+
+
+
+Let’s learn how to use the active database duplication technique by duplicating a database on the same server. This means, of course, that you must have different datafile names for the target and the duplicate database.
+
+Use the following steps to perform the network-enabled duplication of a database:
+
+1. Add the name of the duplicate instance, which is test1 in this example, to the listener.ora file on the host of the source database.
+
+SID_LIST_LISTENER =
+(SID_DESC =
+(GLOBAL_DBNAME = prod1)
+(ORACLE_HOME = /u01/app/oracle/product/10.1g/)
+(SID_NAME =prod1)
+)
+(SID_DESC =
+(GLOBAL_DBNAME = test1)
+(ORACLE_HOME = /u01/app/oracle/product/11.1/)
+(SID_NAME =test1)
+)
+)
+
+2. Restart or reload the listener after making the changes shown here. Make sure you also update the tnsnames.ora file with the information about the duplicate database, test1
+
+test1 =
+(DESCRIPTION =
+(ADDRESS_LIST =
+(ADDRESS = (PROTOCOL = TCP)(HOST = prod1)(PORT = 1521))
+)
+(CONNECT_DATA =
+(SERVER = DEDICATED)
+(SERVICE_NAME = test1)
+)
+)
+
+3. When you execute the duplicate database command with the spfile clause, you must have already started the auxiliary instance with a text-based initialization parameter file. Create an initialization parameter file for the duplicate databases with just the db_name parameter in it. 
+
+The new database will use the db_file_name_convert and the log_file_name_convert parameters in the duplicate database command to specify filenames. 
+
+The text-based initialization parameter file for the duplicate database then will contain just one parameter:
+
+db_name=test1
+
+
+Since I specify the spfile clause in the duplicate database command, RMAN will copy the source database’s SPFILE to the server hosting the auxiliary instance, make changes to the initialization parameters according to the parameter settings specified in the spfile clause, and then restart the auxiliary instance with the modified SPFILE.
+
+4. Create a password file to connect to the auxiliary instance during the database duplication. The password you specify for SYSDBA in the password file must be
+the same as the password in the source database.
+
+$ orapwd file=orapwtest1 password=<sys_pwd> entries=20 ignorecase=n
+
+You can also specify the password file clause in the duplicate database statement to copy the source database’s password file to the target database.
+
+5. Start the auxiliary instance in the nomount mode, as shown here:
+
+$ sqlplus /nolog
+SQL> connect sys/sammyy1 as sysdba
+Connected to an idle instance
+SQL> startup nomount
+Oracle Instance started.
+Total System Global Area 113246208 bytes
+Fixed Size 1218004 bytes
+Variable Size 58722860 bytes
+Database Buffers 50331648 bytes
+Redo Buffers 2973696 bytes
+SQL>
+
+
+6. Connect to the target database using the RMAN client. The source database must be running in the archivelog mode for you to duplicate it.
+
+$rman target sys/sammyy1@eleven
+connected to target database: ELEVEN (DBID=3481681133)
+
+7. Once you connect to the target database, establish a connection to the
+auxiliary instance, as shown here:
+
+RMAN> connect auxiliary sys/sammyy1@test1
+connected to auxiliary database: TEST1 (not mounted)
+RMAN>
+
+
+8. Issue the duplicate target database command to create the duplicate database. The from active database clause tells RMAN to copy the source datafiles over the network to create the duplicate database.
+
+
+RMAN> duplicate target database
+2> to test1
+3> from active database
+4> spfile
+5> parameter_value_convert '/u01/app/oracle/eleven','/u10/app/oracle/test1'
+6> set log_file_name_convert '/u05/app/oracle/eleven', '/u10/app/oracle/test1'
+7> db_file_name_convert '/u10/app/oracle/eleven', '/u10/app/oracle/test1';
+
+When you issue the duplicate target database command, RMAN updates the SPFILE of the duplicate database using the values you supply through the parameter_name_convert and the set clauses. RMAN then starts the auxiliary instance using this SPFILE and starts copying the source datafiles over the network. After it completes the copying of the datafiles, RMAN performs a recovery of the duplicate database and opens it.
+
+
+During the database duplication, RMAN
+
+¦ Copies the datafiles
+¦ Doesn’t copy the flash recovery area files
+¦ Copies the archived redo logs if they are necessary for the duplication
+¦ Copies the SPFILE to the server where you are creating the duplicate database, if you specify the spfile clause
+¦ Copies the password file if you specify the password file clause
+¦ Re-creates the control files
+¦ Re-creates the tempfiles in the directory you specify with the db_create_file_dest parameter
+¦ Re-creates the online redo logs

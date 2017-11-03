@@ -1,0 +1,28 @@
+
+The following exercise shows how to use the SQL Tuning Advisor to get
+recommendations for fixing a SQL statement to improve its performance.
+
+
+In this example, use the ADDM finding with the highest impact as the source of the
+SQL statement that you want the SQL Tuning Advisor to tune. Here are the steps:
+
+1. On the Database Home page, click the finding with the highest impact on
+database time.
+2. The SQL Details page appears. Click Schedule SQL Tuning Advisor.
+3. Click Submit on the Scheduler Advisor page that appears.
+4. When the advisor task is completed, the database displays the recommendations.
+Click Implement if you want to adopt the recommendations.
+5. Click Yes on the Confirmation page. This will create a new SQL profile to
+improve the performance of the statement that the advisor is tuning.
+6. Once you implement the SQL Profile that the advisor recommends, access
+the Performance page after the database executes the tuned SQL statement
+the next time, to view the benefits of the tuning.
+
+
+You can view information about the recent runs of the Automatic SQL Tuning
+task by going to the Automated Maintenance Tasks page. On the Database Control
+home page, click the Server tab. Under the Tasks section in the Server page, click
+the Automated Maintenance Tasks link. You’ll see all predefined tasks on the
+Automated Maintenance Tasks page. Click either the Automatic SQL Tuning task
+or the most recent execution icon to get to the Automatic SQL Tuning Result
+Summary page.

@@ -1,0 +1,65 @@
+BEGIN
+DBMS_SCHEDULER.CREATE_JOB (
+   job_name        => 'ATUALIZA_ESTATISTICAS',
+   job_type        => 'PLSQL_BLOCK',
+   enabled         => TRUE,
+   auto_drop       => FALSE,
+   start_date      => to_date ('30/08/2014 21:00', 'dd/mm/yyyy hh24:mi'),
+   repeat_interval => 'FREQ=WEEKLY;INTERVAL=1',
+   job_action =>
+      'DECLARE
+          v_conexao   utl_smtp.connection;
+		  v_usuario   varchar2 (50):=''alarme-ti@ongrace.com'';
+		  v_senha     varchar2 (50):=''ins&2014'';
+          v_de        varchar2 (50):=''alarme-ti@ongrace.com'';
+          v_para      varchar2 (50):=''alarme-ti@ongrace.com'';
+          v_crlf      varchar2 (2) := chr(13)||chr(10);
+          v_mensagem  varchar2 (500);
+         
+        BEGIN
+          DBMS_STATS.GATHER_DATABASE_STATS (
+              estimate_percent => 100,
+              method_opt       => ''FOR ALL COLUMNS SIZE AUTO'',
+              degree           => 2,
+              cascade          => TRUE,
+              gather_sys       => TRUE,
+              no_invalidate    => TRUE);
+			  
+           v_conexao := utl_smtp.open_connection (''smtp.ongrace.com'', 587);
+           utl_smtp.helo (v_conexao, ''smtp.ongrace.com'');
+		   utl_smtp.command(v_conexao, ''AUTH LOGIN'');
+		   --utl_smtp.command(v_conexao, v_usuario);
+           --utl_smtp.command(v_conexao, v_senha);
+		   utl_smtp.command( v_conexao, utl_raw.cast_to_varchar2( utl_encode.base64_encode( utl_raw.cast_to_raw( v_usuario ))) ); 
+		   utl_smtp.command( v_conexao, utl_raw.cast_to_varchar2( utl_encode.base64_encode( utl_raw.cast_to_raw( v_senha ))) ); 
+           utl_smtp.mail (v_conexao, v_de);
+           utl_smtp.rcpt (v_conexao, v_para);
+           v_mensagem := ''From: '' || v_de || v_crlf ||
+                         ''Subject: '' || ''Estatisticas DBPROD '' || v_crlf ||
+                         ''To: '' || v_para || v_crlf ||
+                         '''' || v_crlf || ''Atualizacao de Estatisticas DBPROD encerrada com sucesso as: '' ||
+                         to_char (sysdate, ''DD/MM/YYYY HH24:MI:SS'') || ''.'';
+           utl_smtp.data (v_conexao, v_mensagem);
+           utl_smtp.quit (v_conexao);
+        EXCEPTION
+           WHEN OTHERS THEN
+              v_conexao := utl_smtp.open_connection (''smtp.ongrace.com'', 587);
+              utl_smtp.helo (v_conexao, ''smtp.ongrace.com'');
+			  utl_smtp.command(v_conexao, ''AUTH'', ''LOGIN'');
+			  --utl_smtp.command(v_conexao, v_usuario);
+              --utl_smtp.command(v_conexao, v_senha);
+		      utl_smtp.command( v_conexao, utl_raw.cast_to_varchar2( utl_encode.base64_encode( utl_raw.cast_to_raw( v_usuario ))) ); 
+		      utl_smtp.command( v_conexao, utl_raw.cast_to_varchar2( utl_encode.base64_encode( utl_raw.cast_to_raw( v_senha ))) ); 
+              utl_smtp.mail (v_conexao, v_de);
+              utl_smtp.rcpt (v_conexao, v_para);
+              v_mensagem := ''From: '' || v_de || v_crlf ||
+                            ''Subject: '' || ''Falha Atualizacao Estatisticas DBPROD '' || v_crlf ||
+                            ''To: '' || v_para || v_crlf ||
+                            '''' || v_crlf || ''Atualizacao de Estatisticas DBPROD encerrada com falha as: '' ||
+                            to_char (sysdate, ''DD/MM/YYYY HH24:MI:SS'') || ''.'' || v_crlf || v_crlf ||
+                            ''Erro Oracle: '' || sqlerrm || '''';
+              utl_smtp.data (v_conexao, v_mensagem);
+              utl_smtp.quit (v_conexao);
+        END;');
+END;
+/

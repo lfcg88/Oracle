@@ -1,0 +1,18 @@
+
+Recovery Manager: Release 9.2.0.4.0 - Production
+
+Copyright (c) 1995, 2002, Oracle Corporation.  All rights reserved.
+
+RMAN> connect catalog rman/rman@metdb01
+2> connect target /
+3> reset database;
+4> exit;
+connected to recovery catalog database
+
+connected to target database: GRPLAN (DBID=3880388427)
+
+new incarnation of database registered in recovery catalog
+starting full resync of recovery catalog
+full resync complete
+
+Recovery Manager complete.

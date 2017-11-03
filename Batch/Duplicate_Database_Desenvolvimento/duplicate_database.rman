@@ -1,0 +1,95 @@
+connect target SYS/alcap0ne@miafis;
+connect catalog rmann/senharman@rcvcat;
+connect auxiliary /@miafisnb;
+
+run { 
+# Horário máximo
+   set until time '07/22/2004 20:00:00';
+       #Allocate the channel for the duplicate work   
+      Allocate auxiliary channel ch1 type disk;  
+      Allocate auxiliary channel ch2 type disk;  
+      Allocate auxiliary channel ch3 type disk;  
+#set the new file names and locations for all datafiles  
+SET NEWNAME FOR DATAFILE 1 TO 'C:\ORACLE\ORADATA\MIAFISNB\DATAFILE\SYSTEM01.DBF';                                                                                                                         
+SET NEWNAME FOR DATAFILE 2 TO 'C:\ORACLE\ORADATA\MIAFISNB\DATAFILE\DF_RBS_R_01_01.DBF';                                                                                                                   
+SET NEWNAME FOR DATAFILE 3 TO 'C:\ORACLE\ORADATA\MIAFISNB\DATAFILE\USERS01.DBF';                                                                                                                          
+SET NEWNAME FOR DATAFILE 4 TO 'C:\ORACLE\ORADATA\MIAFISNB\DATAFILE\TEMP01.DBF';                                                                                                                           
+SET NEWNAME FOR DATAFILE 5 TO 'C:\ORACLE\ORADATA\MIAFISNB\DATAFILE\DF_GBK_D_01_01.DBF';                                                                                                                   
+SET NEWNAME FOR DATAFILE 6 TO 'C:\ORACLE\ORADATA\MIAFISNB\DATAFILE\DF_GBK_I_01_01.DBF';                                                                                                                   
+SET NEWNAME FOR DATAFILE 7 TO 'C:\ORACLE\ORADATA\MIAFISNB\DATAFILE\DF_BDI_D_01_01.DBF';                                                                                                                   
+SET NEWNAME FOR DATAFILE 8 TO 'C:\ORACLE\ORADATA\MIAFISNB\DATAFILE\DF_BDI_I_01_01.DBF';                                                                                                                   
+SET NEWNAME FOR DATAFILE 9 TO 'C:\ORACLE\ORADATA\MIAFISNB\DATAFILE\DF_BDI_B_01_01.DBF';                                                                                                                   
+SET NEWNAME FOR DATAFILE 10 TO 'C:\ORACLE\ORADATA\MIAFISNB\DATAFILE\DF_CRP_D_01_01.DBF';                                                                                                                  
+SET NEWNAME FOR DATAFILE 11 TO 'C:\ORACLE\ORADATA\MIAFISNB\DATAFILE\DF_CRP_I_01_01.DBF';                                                                                                                  
+SET NEWNAME FOR DATAFILE 12 TO 'C:\ORACLE\ORADATA\MIAFISNB\DATAFILE\DF_DGT_D_01_01.DBF';                                                                                                                  
+SET NEWNAME FOR DATAFILE 13 TO 'C:\ORACLE\ORADATA\MIAFISNB\DATAFILE\DF_DGT_I_01_01.DBF';                                                                                                                  
+SET NEWNAME FOR DATAFILE 14 TO 'C:\ORACLE\ORADATA\MIAFISNB\DATAFILE\DF_GBK_B_01_01.DBF';                                                                                                                  
+SET NEWNAME FOR DATAFILE 15 TO 'C:\ORACLE\ORADATA\MIAFISNB\DATAFILE\DF_AFISMAIN_D_03_01.DBF';                                                                                                             
+SET NEWNAME FOR DATAFILE 16 TO 'C:\ORACLE\ORADATA\MIAFISNB\DATAFILE\DF_AFISMAIN_I_02_01.DBF';                                                                                                             
+SET NEWNAME FOR DATAFILE 17 TO 'C:\ORACLE\ORADATA\MIAFISNB\DATAFILE\DF_BDI_D_02_01.DBF';                                                                                                                  
+SET NEWNAME FOR DATAFILE 18 TO 'C:\ORACLE\ORADATA\MIAFISNB\DATAFILE\TS_CRM_D_01_01.DBF';                                                                                                                  
+SET NEWNAME FOR DATAFILE 19 TO 'C:\ORACLE\ORADATA\MIAFISNB\DATAFILE\TS_CRM_I_01_01.DBF';                                                                                                                  
+SET NEWNAME FOR DATAFILE 20 TO 'C:\ORACLE\ORADATA\MIAFISNB\DATAFILE\DF_BDI_I_02_01.DBF';                                                                                                                  
+SET NEWNAME FOR DATAFILE 21 TO 'C:\ORACLE\ORADATA\MIAFISNB\DATAFILE\DF_CIV_D_02_01.DBF';                                                                                                                  
+SET NEWNAME FOR DATAFILE 22 TO 'C:\ORACLE\ORADATA\MIAFISNB\DATAFILE\DF_CIV_I_02_01.DBF';                                                                                                                  
+SET NEWNAME FOR DATAFILE 23 TO 'C:\ORACLE\ORADATA\MIAFISNB\DATAFILE\DF_CFB_D_01_01.DBF';                                                                                                                  
+SET NEWNAME FOR DATAFILE 24 TO 'C:\ORACLE\ORADATA\MIAFISNB\DATAFILE\DF_CFB_I_01_01.DBF';                                                                                                                  
+SET NEWNAME FOR DATAFILE 25 TO 'C:\ORACLE\ORADATA\MIAFISNB\DATAFILE\DF_AFISMAN_D_01_01.DBF';                                                                                                              
+SET NEWNAME FOR DATAFILE 26 TO 'C:\ORACLE\ORADATA\MIAFISNB\DATAFILE\DF_AFISMAN_I_01_01.DBF';                                                                                                              
+SET NEWNAME FOR DATAFILE 27 TO 'C:\ORACLE\ORADATA\MIAFISNB\DATAFILE\DF_AFISTEMP_D_01_01.DBF';                                                                                                             
+SET NEWNAME FOR DATAFILE 28 TO 'C:\ORACLE\ORADATA\MIAFISNB\DATAFILE\DF_AFISTEMP_I_01_01.DBF';                                                                                                             
+SET NEWNAME FOR DATAFILE 29 TO 'C:\ORACLE\ORADATA\MIAFISNB\DATAFILE\DF_AFISMAN_B_01_01.DBF';                                                                                                              
+SET NEWNAME FOR DATAFILE 30 TO 'C:\ORACLE\ORADATA\MIAFISNB\DATAFILE\DF_CRM_D_02_01.DBF';                                                                                                                  
+SET NEWNAME FOR DATAFILE 31 TO 'C:\ORACLE\ORADATA\MIAFISNB\DATAFILE\DF_WFL_D_01_01.DBF';                                                                                                                  
+SET NEWNAME FOR DATAFILE 32 TO 'C:\ORACLE\ORADATA\MIAFISNB\DATAFILE\DF_WFL_I_01_01.DBF';                                                                                                                  
+SET NEWNAME FOR DATAFILE 33 TO 'C:\ORACLE\ORADATA\MIAFISNB\DATAFILE\DF_IDT_D_01_01.DBF';                                                                                                                  
+SET NEWNAME FOR DATAFILE 34 TO 'C:\ORACLE\ORADATA\MIAFISNB\DATAFILE\DF_IDT_I_01_01.DBF';                                                                                                                  
+SET NEWNAME FOR DATAFILE 35 TO 'C:\ORACLE\ORADATA\MIAFISNB\DATAFILE\DF_SQLNAV_D_01_01.DBF';                                                                                                               
+SET NEWNAME FOR DATAFILE 36 TO 'C:\ORACLE\ORADATA\MIAFISNB\DATAFILE\DF_CRM_I_02_01.DBF';                                                                                                                  
+SET NEWNAME FOR DATAFILE 37 TO 'C:\ORACLE\ORADATA\MIAFISNB\DATAFILE\DF_CIV_D_01_01.DBF';                                                                                                                  
+SET NEWNAME FOR DATAFILE 38 TO 'C:\ORACLE\ORADATA\MIAFISNB\DATAFILE\DF_CIV_I_01_01.DBF';                                                                                                                  
+SET NEWNAME FOR DATAFILE 39 TO 'C:\ORACLE\ORADATA\MIAFISNB\DATAFILE\DF_MIG_D_01_01.DBF';                                                                                                                  
+SET NEWNAME FOR DATAFILE 40 TO 'C:\ORACLE\ORADATA\MIAFISNB\DATAFILE\DF_MIG_I_01_01.DBF';                                                                                                                  
+SET NEWNAME FOR DATAFILE 43 TO 'C:\ORACLE\ORADATA\MIAFISNB\DATAFILE\DF_CRP_D_02_01.DBF';                                                                                                                  
+SET NEWNAME FOR DATAFILE 44 TO 'C:\ORACLE\ORADATA\MIAFISNB\DATAFILE\DF_CRP_I_02_01.DBF';                                                                                                                  
+SET NEWNAME FOR DATAFILE 45 TO 'C:\ORACLE\ORADATA\MIAFISNB\DATAFILE\DF_DGT_D_02_01.DBF';                                                                                                                  
+SET NEWNAME FOR DATAFILE 46 TO 'C:\ORACLE\ORADATA\MIAFISNB\DATAFILE\DF_DGT_I_02_01.DBF';                                                                                                                  
+SET NEWNAME FOR DATAFILE 47 TO 'C:\ORACLE\ORADATA\MIAFISNB\DATAFILE\DF_IDT_D_02_01.DBF';                                                                                                                  
+SET NEWNAME FOR DATAFILE 48 TO 'C:\ORACLE\ORADATA\MIAFISNB\DATAFILE\DF_IDT_I_02_01.DBF';                                                                                                                  
+SET NEWNAME FOR DATAFILE 49 TO 'C:\ORACLE\ORADATA\MIAFISNB\DATAFILE\DF_MIG_D_02_01.DBF';                                                                                                                  
+SET NEWNAME FOR DATAFILE 50 TO 'C:\ORACLE\ORADATA\MIAFISNB\DATAFILE\DF_MIG_I_02_01.DBF';                                                                                                                  
+SET NEWNAME FOR DATAFILE 51 TO 'C:\ORACLE\ORADATA\MIAFISNB\DATAFILE\DF_WFL_D_02_01.DBF';                                                                                                                  
+SET NEWNAME FOR DATAFILE 52 TO 'C:\ORACLE\ORADATA\MIAFISNB\DATAFILE\DF_BDI_B_0002_01.DBF';                                                                                                                
+SET NEWNAME FOR DATAFILE 53 TO 'C:\ORACLE\ORADATA\MIAFISNB\DATAFILE\DF_BDI_B_0003_01.DBF';                                                                                                                
+SET NEWNAME FOR DATAFILE 54 TO 'C:\ORACLE\ORADATA\MIAFISNB\DATAFILE\DF_WFL_I_02_01.DBF';                                                                                                                  
+SET NEWNAME FOR DATAFILE 55 TO 'C:\ORACLE\ORADATA\MIAFISNB\DATAFILE\DF_AFISMAIN_D_02_01.DBF';                                                                                                             
+SET NEWNAME FOR DATAFILE 56 TO 'C:\ORACLE\ORADATA\MIAFISNB\DATAFILE\DF_AFISMAIN_D_02_02.DBF';                                                                                                             
+SET NEWNAME FOR DATAFILE 57 TO 'C:\ORACLE\ORADATA\MIAFISNB\DATAFILE\DF_IMG_D_01_01.DBF';                                                                                                                  
+SET NEWNAME FOR DATAFILE 58 TO 'C:\ORACLE\ORADATA\MIAFISNB\DATAFILE\DF_IMG_I_01_01.DBF';                                                                                                                  
+SET NEWNAME FOR DATAFILE 59 TO 'C:\ORACLE\ORADATA\MIAFISNB\DATAFILE\DF_LAT_D_01_01.DBF';                                                                                                                  
+SET NEWNAME FOR DATAFILE 60 TO 'C:\ORACLE\ORADATA\MIAFISNB\DATAFILE\DF_LAT_D_02_01.DBF';                                                                                                                  
+SET NEWNAME FOR DATAFILE 61 TO 'C:\ORACLE\ORADATA\MIAFISNB\DATAFILE\DF_LAT_I_01_01.DBF';                                                                                                                  
+SET NEWNAME FOR DATAFILE 62 TO 'C:\ORACLE\ORADATA\MIAFISNB\DATAFILE\DF_LAT_I_02_01.DBF';                                                                                                                  
+SET NEWNAME FOR DATAFILE 63 TO 'C:\ORACLE\ORADATA\MIAFISNB\DATAFILE\DF_IDT_L_01_01.DBF';                                                                                                                  
+SET NEWNAME FOR DATAFILE 64 TO 'C:\ORACLE\ORADATA\MIAFISNB\DATAFILE\DF_IDT_D_03_01.DBF';                                                                                                                  
+SET NEWNAME FOR DATAFILE 65 TO 'C:\ORACLE\ORADATA\MIAFISNB\DATAFILE\DF_IDT_I_03_01.DBF';                                                                                                                  
+SET NEWNAME FOR DATAFILE 66 TO 'C:\ORACLE\ORADATA\MIAFISNB\DATAFILE\DF_CIV_L_01_01.DBF';                                                                                                                  
+SET NEWNAME FOR DATAFILE 67 TO 'C:\ORACLE\ORADATA\MIAFISNB\DATAFILE\DF_CRM_L_01_01.DBF';                                                                                                                  
+SET NEWNAME FOR DATAFILE 68 TO 'C:\ORACLE\ORADATA\MIAFISNB\DATAFILE\DF_MCR_D_01_01.DBF';                                                                                                                  
+SET NEWNAME FOR DATAFILE 69 TO 'C:\ORACLE\ORADATA\MIAFISNB\DATAFILE\DF_MCR_I_01_01.DBF';                                                                                                                  
+SET NEWNAME FOR DATAFILE 70 TO 'C:\ORACLE\ORADATA\MIAFISNB\DATAFILE\DF_IPE_D_01_01.DBF';                                                                                                                  
+SET NEWNAME FOR DATAFILE 71 TO 'C:\ORACLE\ORADATA\MIAFISNB\DATAFILE\DF_IPE_I_01_01.DBF';                                                                                                                  
+SET NEWNAME FOR DATAFILE 72 TO 'C:\ORACLE\ORADATA\MIAFISNB\DATAFILE\DF_OBT_D_01_01.DBF';                                                                                                                  
+SET NEWNAME FOR DATAFILE 73 TO 'C:\ORACLE\ORADATA\MIAFISNB\DATAFILE\DF_OBT_I_01_01.DBF';                                                                                                                  
+SET NEWNAME FOR DATAFILE 74 TO 'C:\ORACLE\ORADATA\MIAFISNB\DATAFILE\DF_JPA_D_01_01.DBF';                                                                                                                  
+SET NEWNAME FOR DATAFILE 75 TO 'C:\ORACLE\ORADATA\MIAFISNB\DATAFILE\DF_LIVEREORGDEMO_01.DBF';                                                                                                             
+SET NEWNAME FOR DATAFILE 76 TO 'C:\ORACLE\ORADATA\MIAFISNB\DATAFILE\DF_LIVEREORGDEMO_02.DBF';                                                                                                             
+
+    #Duplicate the database 
+    DUPLICATE TARGET DATABASE TO MIAFISNB
+     #Create three redo logs for the duplicated database 
+        LOGFILE
+         GROUP 1 ('C:\ORACLE\ORADATA\MIAFISNB\Redo\REDO01.LOG') SIZE 1024K,   
+         GROUP 2 ('C:\ORACLE\ORADATA\MIAFISNB\Redo\REDO02.LOG') SIZE 1024K,   
+         GROUP 3 ('C:\ORACLE\ORADATA\MIAFISNB\Redo\REDO03.LOG') SIZE 1024K;
+  }  

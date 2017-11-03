@@ -1,0 +1,1 @@
+sqlplus /nolog @recover_standby_database.sql

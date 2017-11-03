@@ -1,0 +1,13 @@
+export PERFLAB_INTERNAL="/ as sysdba"
+
+export PERFLAB_USER="sh/sh"
+
+export PERFLAB_PID=/tmp/perflabpids
+
+export PERFLAB_NOISE_STREAM=2
+
+export PERFLAB_NOISE_SAMPLE=1000
+
+export PERFLAB_SQLTUNE_STREAM=14
+
+export PERFLAB_SQLTUNE_SAMPLE=1000

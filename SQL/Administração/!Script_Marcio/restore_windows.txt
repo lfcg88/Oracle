@@ -1,0 +1,233 @@
+Windows 
+######################################
+Servidor - Kerigma / Instancia - ORCL
+######################################
+
+###################
+Diretório de backup
+###################
+
+S:\ORACLE\BACKUP\
+
+#################################################
+Servidor - Máquina Criada para Teste
+#################################################
+
+#####################
+Váriaveis de ambiente
+#####################
+
+set ORACLE_HOME=C:\app\oracle\product\11.2.0\dbhome_1
+set ORACLE_SID=orcl
+
+###################
+Diretório de backup
+###################
+
+C:\Users\mbsilva\Desktop\Nova pasta\backup
+
+########################
+Diretório dos datafiles
+########################
+
+C:\app\oracle\oradata\ORCL
+
+##################
+Diretório do init
+##################
+
+c:\app\oracle\product\11.2.0\dbhome_1\database\initorcl.ora
+
+################
+Conteudo do init 
+Alterar o caminho dos parâmetros abaixo para os novos diretórios de acordo com o servidor
+################
+audit_file_dest="C:\app\oracle\ADUMP"
+control_files=C:\app\oracle\ORADATA\ORCL\CONTROL01.CTL, C:\app\oracle\ORADATA\ORCL\CONTROL02.CTL, C:\app\oracle\ORADATA\ORCL\CONTROL03.CTL
+core_dump_dest=C:\app\oracle\ADMIN\ORCL\CDUMP
+log_archive_dest_1='LOCATION=C:\app\oracle\flash_recovery\'
+diagnostic_dest=C:\app\ORACLE
+
+################################################################################################################
+Alterar também os parâmetros de memória configurando-os de acordo com a configuração de memória do novo servidor
+################################################################################################################
+pga_aggregate_target=0
+sga_target=0
+memory_max_target=1024M
+memory_target=1024M
+
+
+######################################################################
+Criar o serviço da instância ORCL, através do utilitário oradim.exe
+######################################################################
+
+%ORACLE_HOME%\BIN\oradim -new -sid ORCL -intpwd TESTE -pfile c:\app\oracle\product\11.2.0\dbhome_1\dbs\initorcl.ora
+
+
+######################################################
+Iniciando o procedimento de restore e recover do banco
+######################################################
+
+rman target / 
+
+startup nomount pfile=c:\app\oracle\product\11.2.0\dbhome_1\dbs\initorcl.ora
+
+restore controlfile from 'C:\Users\mbsilva\Desktop\Nova pasta\backup\RMAN_ORCL_Wed_02_04_2015\CONTROL_ORCL_02_04_2015_12_AFPUD13F_1_1.CTL';
+
+ALTER DATABASE MOUNT;
+
+run {
+crosscheck backup;
+delete noprompt expired backup; 
+crosscheck archivelog all;
+delete noprompt expired archivelog all;
+}
+
+list backup;
+
+catalog start with 'C:\Users\mbsilva\Desktop\Nova pasta\backup\';
+
+list backup of database;
+
+list backup of archivelog all;
+
+LIST BACKUP SUMMARY;
+
+#################################################################################################################################################
+Caso não consiga recuperar a tablespace system, verificar a incarnação do banco de dados e retorna-la para a mesma de produção, nosso caso a "1"
+#################################################################################################################################################
+
+list incarnation;
+
+reset database to incarnation 1;
+
+####################################################################
+Mostra informações dos arquivos necessários para o restore e recover
+####################################################################
+
+restore database preview;
+recover database preview;
+
+
+######################################################################
+Renomeia os datafiles, executa o restore e o recover do banco de dados
+######################################################################
+
+select 'SET NEWNAME FOR DATAFILE ' || file_id || ' TO ''c:\app\oracle\oradata\' || substr(file_name,19,35) || ''';'
+from dba_data_files
+order by file_id;
+
+select 'SET NEWNAME FOR TEMPFILE ' || file_id || ' TO ''c:\app\oracle\oradata\' || substr(file_name,19,35) || ''';'
+from dba_temp_files
+order by file_id;
+
+
+
+run
+{
+allocate channel c1 device type disk;
+allocate channel c2 device type disk;
+allocate channel c3 device type disk;
+SET NEWNAME FOR DATAFILE 1 TO 'c:\app\oracle\oradata\ORCL\SYSTEM01.DBF';
+SET NEWNAME FOR DATAFILE 2 TO 'c:\app\oracle\oradata\ORCL\SYSAUX01.DBF';
+SET NEWNAME FOR DATAFILE 4 TO 'c:\app\oracle\oradata\ORCL\USERS01.DAT';
+SET NEWNAME FOR DATAFILE 5 TO 'c:\app\oracle\oradata\ORCL\UNDOTBSNEW01.DBF';
+SET NEWNAME FOR DATAFILE 7 TO 'c:\app\oracle\oradata\ORCL\TS_IPAS_DATA_01.DAT';
+SET NEWNAME FOR DATAFILE 8 TO 'c:\app\oracle\oradata\ORCL\TS_IPAS_INDEX_01.DAT';
+SET NEWNAME FOR DATAFILE 9 TO 'c:\app\oracle\oradata\ORCL\TS_IPAS_DATA_02.DAT';
+SET NEWNAME FOR DATAFILE 10 TO 'c:\app\oracle\oradata\ORCL\TS_IPAS_AUX_01.DAT';
+SET NEWNAME FOR DATAFILE 11 TO 'c:\app\oracle\oradata\ORCL\TS_IPAS_INDEX_02.DAT';
+SET NEWNAME FOR DATAFILE 14 TO 'c:\app\oracle\oradata\ORCL\TS_IPAS_DATA_03.DAT';
+SET NEWNAME FOR DATAFILE 15 TO 'c:\app\oracle\oradata\ORCL\TS_IPAS_DATA_04.DAT';
+SET NEWNAME FOR DATAFILE 16 TO 'c:\app\oracle\oradata\ORCL\TS_IPAS_INDEX_03.DAT';
+SET NEWNAME FOR TEMPFILE 1 TO 'c:\app\oracle\oradata\ORCL\TEMP01.DBF';
+SQL "alter database rename file ''C:\ORACLE\ORADATA\ORCL\REDO01A'' to ''C:\APP\ORACLE\ORADATA\ORCL\REDO01A''";
+SQL "alter database rename file ''C:\ORACLE\ORADATA\ORCL\REDO01B'' to ''C:\APP\ORACLE\ORADATA\ORCL\REDO01B''";
+SQL "alter database rename file ''C:\ORACLE\ORADATA\ORCL\REDO04A'' to ''C:\APP\ORACLE\ORADATA\ORCL\REDO04A''";
+SQL "alter database rename file ''C:\ORACLE\ORADATA\ORCL\REDO04B'' to ''C:\APP\ORACLE\ORADATA\ORCL\REDO04B''";
+SQL "alter database rename file ''C:\ORACLE\ORADATA\ORCL\REDO05A'' to ''C:\APP\ORACLE\ORADATA\ORCL\REDO05A''";
+SQL "alter database rename file ''C:\ORACLE\ORADATA\ORCL\REDO05B'' to ''C:\APP\ORACLE\ORADATA\ORCL\REDO05B''";
+SQL "alter database rename file ''C:\ORACLE\ORADATA\ORCL\REDO06A'' to ''C:\APP\ORACLE\ORADATA\ORCL\REDO06A''";
+SQL "alter database rename file ''C:\ORACLE\ORADATA\ORCL\REDO06B'' to ''C:\APP\ORACLE\ORADATA\ORCL\REDO06B''";
+SQL "alter database rename file ''C:\ORACLE\ORADATA\ORCL\REDO07A'' to ''C:\APP\ORACLE\ORADATA\ORCL\REDO07A''";
+SQL "alter database rename file ''C:\ORACLE\ORADATA\ORCL\REDO07B'' to ''C:\APP\ORACLE\ORADATA\ORCL\REDO07B''";
+SQL "alter database rename file ''C:\ORACLE\ORADATA\ORCL\REDO08A'' to ''C:\APP\ORACLE\ORADATA\ORCL\REDO08A''";
+SQL "alter database rename file ''C:\ORACLE\ORADATA\ORCL\REDO08B'' to ''C:\APP\ORACLE\ORADATA\ORCL\REDO08B''";
+SQL "alter database rename file ''C:\ORACLE\ORADATA\ORCL\REDO09A'' to ''C:\APP\ORACLE\ORADATA\ORCL\REDO09A''";
+SQL "alter database rename file ''C:\ORACLE\ORADATA\ORCL\REDO09B'' to ''C:\APP\ORACLE\ORADATA\ORCL\REDO09B''";
+SQL "alter database rename file ''C:\ORACLE\ORADATA\ORCL\REDO10A'' to ''C:\APP\ORACLE\ORADATA\ORCL\REDO10A''";
+SQL "alter database rename file ''C:\ORACLE\ORADATA\ORCL\REDO10B'' to ''C:\APP\ORACLE\ORADATA\ORCL\REDO10B''";
+SQL "alter database rename file ''C:\ORACLE\ORADATA\ORCL\REDO02A'' to ''C:\APP\ORACLE\ORADATA\ORCL\REDO02A''";
+SQL "alter database rename file ''C:\ORACLE\ORADATA\ORCL\REDO02B'' to ''C:\APP\ORACLE\ORADATA\ORCL\REDO02B''";
+SQL "alter database rename file ''C:\ORACLE\ORADATA\ORCL\REDO03A'' to ''C:\APP\ORACLE\ORADATA\ORCL\REDO03A''";
+SQL "alter database rename file ''C:\ORACLE\ORADATA\ORCL\REDO03B'' to ''C:\APP\ORACLE\ORADATA\ORCL\REDO03B''";
+RESTORE DATABASE;
+SWITCH DATAFILE ALL;
+SWITCH TEMPFILE ALL;
+}
+RECOVER DATABASE;
+
+
+#################################################
+Abrir o banco e resetar os logs e criar o spfile
+#################################################
+
+alter database open resetlogs;
+
+Caso ao executar o open no banco de dados, você receba o erro abaixo:
+
+ERRO na linha 4:
+ORA-19755: nÒo foi possÝvel abrir o arquivo de rastreamento de alteraþ§es
+ORA-19750: arquivo de rastreamento de alteraþ§es:
+'C:\ORACLE\ORADATA\ORCL\CHANGETRACKING\RMAN_CHANGE_TRACK.F'
+ORA-27041: nÒo Ú possÝvel abrir arquivo
+OSD-04002: nÒo Ú possÝvel abrir arquivo
+O/S-Error: (OS 3) O sistema nÒo pode encontrar o caminho especificado.
+
+Temos que alterar o nome do arquivo de rastreamento de alterações ou desabilitar o rastreamento:
+
+SQL> ALTER DATABASE RENAME FILE 'C:\ORACLE\ORADATA\ORCL\CHANGETRACKING\RMAN_CHANGE_TRACK.F' TO 'C:\APP\ORACLE\ORADATA\ORCL\RMAN_CHANGE_TRACK.F';
+
+Banco de dados alterado.
+
+ 
+SQL> alter database disable block change tracking;
+
+#### Criar o spfile #####
+
+create spfile from pfile;
+
+SHUTDOWN IMMEDIATE;
+
+####################################
+Recriar o catalogo do banco de dados
+Obs: usando o sqlplus
+####################################
+
+STARTUP UPGRADE
+
+@c:\app\oracle\product\11.2.0\dbhome_1\rdbms\admin\catupgrd.sql
+
+STARTUP
+
+########################################
+Verificar se existem objetos invalidos
+########################################
+
+select count(*) 
+  from dba_objects
+ where status = 'INVALID';
+
+#############################################
+Caso exista, recompilar os objetos inválidos
+#############################################
+
+@c:\app\oracle\product\11.2.0\dbhome_1\rdbms\admin\utlrp.sql
+
+select count(*) 
+  from dba_objects
+ where status = 'INVALID';
+
+#########################################
+FIM - Executar um backup full do banco de dados
+#########################################

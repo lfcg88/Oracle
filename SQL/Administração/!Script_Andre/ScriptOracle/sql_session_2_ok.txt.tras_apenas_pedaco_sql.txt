@@ -1,0 +1,11 @@
+COLUMN username FORMAT a10 
+BREAK ON username ON sid 
+SELECT /*+ RULE */ NVL(v0.username,v0.type) username, v0.sid sid, v1.sql_text 
+FROM v$session v0, v$sqltext v1 
+WHERE v0.username IS NOT NULL 
+AND DECODE(v0.sql_hash_value,0,v0.prev_hash_value,v0.sql_hash_value) = v1.hash_value 
+AND DECODE(v0.sql_address,'00',v0.prev_sql_addr,v0.sql_address) = v1.address 
+ AND v0.status = 'ACTIVE' 
+ORDER BY 1,2,piece; 
+CLEAR BREAKS 
+COLUMN USERNAME CLEAR 

@@ -1,0 +1,233 @@
+
+Gerenciador de Recuperação: Liberar 8.1.7.4.1 - Production
+
+RMAN> connect target /@miafisdp;
+2> connect catalog rman/senharman@rcvcat;
+3> #connect auxiliary /@miafisdp;
+4> 
+5> run
+6>   {   allocate  channel ch1 type disk; 
+7>       allocate  channel ch2 type disk; 
+8>       allocate  channel ch3 type disk; 
+9>       set until time '09/02/2003 19:00:00'; 
+10>       restore controlfile;
+11>       sql "alter database mount clone database";
+12>       set newname for datafile 1 to 'E:\ORACLE\ORADATA\MIAFISDP\DATAFILE\SYSTEM01.DBF';
+13>       set newname for datafile 2 to 'E:\ORACLE\ORADATA\MIAFISDP\DATAFILE\DF_RBS_R_01_01.DBF';
+14>       set newname for datafile 35 to 'E:\ORACLE\ORADATA\MIAFISDP\DATAFILE\DF_SQLNAV_D_01_01.DBF';
+15>       restore tablespace system, ts_rbs_r_01, TS_SQLNAV_D_01; 
+16>       sql "alter database datafile 1,2,35 online"; 
+17>       sql "alter database datafile 3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20 offline drop";
+18>       sql "alter database datafile 21,22,23,24,25,26,27,28,29,30,31,32,33,34,36,37,38,39,40 offline drop";
+19>       sql "alter database datafile 41,42,43,44,45,46,47,48,49,50,51,52,53,54,55,56,57,58,59,60 offline drop";
+20>       sql "alter database datafile 61,62 offline drop";
+21>       switch datafile all;
+22>       recover database skip forever tablespace
+23> IDCIVIL_DATA,
+24> IDCIVIL_INDX,
+25> TEMP,
+26> TS_AFISMAIN_B_01,
+27> TS_AFISMAIN_D_01,
+28> TS_AFISMAIN_D_02,
+29> TS_AFISMAIN_D_03,
+30> TS_AFISMAIN_I_01,
+31> TS_AFISMAIN_I_02,
+32> TS_AFISTEMP_D_01,
+33> TS_AFISTEMP_I_01,
+34> TS_BDI_B_0002,
+35> 
+36> TS_BDI_B_0003,
+37> TS_BDI_B_01,
+38> TS_BDI_D_01,
+39> TS_BDI_D_02,
+40> TS_BDI_I_01,
+41> TS_BDI_I_02,
+42> TS_CFB_D_01,
+43> TS_CFB_I_01,
+44> TS_CIV_D_01,
+45> TS_CIV_D_02,
+46> TS_CIV_I_01,
+47> TS_CIV_I_02,
+48> TS_CRM_D_01,
+49> 
+50> TS_CRM_D_02,
+51> TS_CRM_I_01,
+52> TS_CRM_I_02,
+53> TS_CRP_D_01,
+54> TS_CRP_D_02,
+55> TS_CRP_I_01,
+56> TS_CRP_I_02,
+57> TS_DGT_D_01,
+58> TS_DGT_D_02,
+59> TS_DGT_I_01,
+60> TS_DGT_I_02,
+61> TS_GBK_B_01,
+62> TS_GBK_D_01,
+63> 
+64> TS_GBK_I_01,
+65> TS_IDT_D_01,
+66> TS_IDT_D_02,
+67> TS_IDT_I_01,
+68> TS_IDT_I_02,
+69> TS_INT_D_01,
+70> TS_INT_I_01,
+71> TS_LAT_D_01,
+72> TS_LAT_D_02,
+73> TS_LAT_I_01,
+74> TS_LAT_I_02,
+75> TS_MIG_D_01,
+76> TS_MIG_D_02,
+77> 
+78> TS_MIG_I_01,
+79> TS_MIG_I_02,
+80> #TS_SQLNAV_D_01,
+81> TS_WFL_D_01,
+82> TS_WFL_D_02,
+83> TS_WFL_I_01,
+84> TS_WFL_I_02,
+85> USERS;
+86>    sql "alter database open resetlogs";
+87> 
+88>    release channel ch1; 
+89>    release channel ch2; 
+90>    release channel ch3; 
+91> }   
+92> 
+RMAN-06006: conectado ao banco de dados de destino: MIAFIS (not mounted)
+
+RMAN-06008: conectado ao banco de dados do catálogo de recuperação
+
+RMAN-03022: compilando comando: allocate
+RMAN-03023: executando comando: allocate
+RMAN-08030: canal alocado: ch1
+RMAN-08500: canal ch1: sid=11 devtype=DISK
+
+RMAN-03022: compilando comando: allocate
+RMAN-03023: executando comando: allocate
+RMAN-08030: canal alocado: ch2
+RMAN-08500: canal ch2: sid=12 devtype=DISK
+
+RMAN-03022: compilando comando: allocate
+RMAN-03023: executando comando: allocate
+RMAN-08030: canal alocado: ch3
+RMAN-08500: canal ch3: sid=13 devtype=DISK
+
+RMAN-03022: compilando comando: set
+
+RMAN-03022: compilando comando: restore
+
+RMAN-03022: compilando comando: IRESTORE
+RMAN-03023: executando comando: IRESTORE
+RMAN-08021: canal ch1: restaurar arquivo de controle
+RMAN-08505: nome do arquivo de saída=E:\ORACLE\ORADATA\MIAFISDP\CF\CONTROL01.CTL
+RMAN-08025: canal ch1: cópia do arquivo de controle foi copiada
+RMAN-08506: nome do arquivo de entrada=E:\ORACLE\BACKUP\MIAFIS\BACKUP_CF_20030209_210525.CTL
+RMAN-08501: nome do arquivo de saída =E:\ORACLE\ORADATA\MIAFISDP\CF\CONTROL01.CTL recid=0 stamp=0
+RMAN-08058: duplicar arquivo de controle
+RMAN-08506: nome do arquivo de entrada=E:\ORACLE\ORADATA\MIAFISDP\CF\CONTROL01.CTL
+RMAN-08505: nome do arquivo de saída=E:\ORACLE\ORADATA\MIAFISDP\CF\CONTROL02.CTL
+RMAN-08505: nome do arquivo de saída=E:\ORACLE\ORADATA\MIAFISDP\CF\CONTROL03.CTL
+
+RMAN-03022: compilando comando: sql
+RMAN-06162: instrução sql: alter database mount clone database
+RMAN-03023: executando comando: sql
+
+RMAN-03022: compilando comando: set
+
+RMAN-03022: compilando comando: set
+
+RMAN-03022: compilando comando: set
+
+RMAN-03022: compilando comando: restore
+
+RMAN-03022: compilando comando: IRESTORE
+RMAN-03023: executando comando: IRESTORE
+RMAN-08016: canal ch2: iniciando restauração de conjunto de backups de arquivo de dados
+RMAN-08502: set_count=861 set_stamp=503357243 creation_time=08/29/2003 21:27:23
+RMAN-08089: canal ch2: especificando arquivo(s) de dados para restauração a partir do conjunto de backups
+RMAN-08523: restaurando arquivo de dados 00035 para E:\ORACLE\ORADATA\MIAFISDP\DATAFILE\DF_SQLNAV_D_01_01.DBF
+RMAN-08016: canal ch1: iniciando restauração de conjunto de backups de arquivo de dados
+RMAN-08502: set_count=860 set_stamp=503356857 creation_time=08/29/2003 21:20:57
+RMAN-08089: canal ch1: especificando arquivo(s) de dados para restauração a partir do conjunto de backups
+RMAN-08523: restaurando arquivo de dados 00001 para E:\ORACLE\ORADATA\MIAFISDP\DATAFILE\SYSTEM01.DBF
+RMAN-08523: restaurando arquivo de dados 00002 para E:\ORACLE\ORADATA\MIAFISDP\DATAFILE\DF_RBS_R_01_01.DBF
+RMAN-08023: canal ch2: restaurada parte do backup 1
+RMAN-08511: handle da parte=E:\ORACLE\BACKUP\MIAFIS\D0_MIAFIS_861_1_20032908_210512.BAK tag=LVL0 parâms=NULL
+RMAN-08024: canal ch2: restaurar inteiro
+RMAN-08023: canal ch1: restaurada parte do backup 1
+RMAN-08511: handle da parte=E:\ORACLE\BACKUP\MIAFIS\D0_MIAFIS_860_1_20032908_210512.BAK tag=LVL0 parâms=NULL
+RMAN-08024: canal ch1: restaurar inteiro
+
+RMAN-03022: compilando comando: sql
+RMAN-06162: instrução sql: alter database datafile 1,2,35 online
+RMAN-03023: executando comando: sql
+
+RMAN-03022: compilando comando: sql
+RMAN-06162: instrução sql: alter database datafile 3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20 offline drop
+RMAN-03023: executando comando: sql
+
+RMAN-03022: compilando comando: sql
+RMAN-06162: instrução sql: alter database datafile 21,22,23,24,25,26,27,28,29,30,31,32,33,34,36,37,38,39,40 offline drop
+RMAN-03023: executando comando: sql
+
+RMAN-03022: compilando comando: sql
+RMAN-06162: instrução sql: alter database datafile 41,42,43,44,45,46,47,48,49,50,51,52,53,54,55,56,57,58,59,60 offline drop
+RMAN-03023: executando comando: sql
+
+RMAN-03022: compilando comando: sql
+RMAN-06162: instrução sql: alter database datafile 61,62 offline drop
+RMAN-03023: executando comando: sql
+
+RMAN-03022: compilando comando: switch
+
+RMAN-03022: compilando comando: recover
+
+RMAN-03022: compilando comando: recover(1)
+
+RMAN-03022: compilando comando: recover(2)
+RMAN-03023: executando comando: recover(2)
+RMAN-08039: canal ch1: iniciando restauração de conjunto de backups de arquivo de dados incremental
+RMAN-08502: set_count=864 set_stamp=503615863 creation_time=09/01/2003 21:17:43
+RMAN-08089: canal ch1: especificando arquivo(s) de dados para restauração a partir do conjunto de backups
+RMAN-08509: destino para restauração do arquivo de dados 00001: E:\ORACLE\ORADATA\MIAFISDP\DATAFILE\SYSTEM01.DBF
+RMAN-08509: destino para restauração do arquivo de dados 00002: E:\ORACLE\ORADATA\MIAFISDP\DATAFILE\DF_RBS_R_01_01.DBF
+RMAN-08039: canal ch2: iniciando restauração de conjunto de backups de arquivo de dados incremental
+RMAN-08502: set_count=865 set_stamp=503616237 creation_time=09/01/2003 21:23:57
+RMAN-08089: canal ch2: especificando arquivo(s) de dados para restauração a partir do conjunto de backups
+RMAN-08509: destino para restauração do arquivo de dados 00035: E:\ORACLE\ORADATA\MIAFISDP\DATAFILE\DF_SQLNAV_D_01_01.DBF
+RMAN-08023: canal ch1: restaurada parte do backup 1
+RMAN-08511: handle da parte=E:\ORACLE\BACKUP\MIAFIS\D1_MIAFIS_864_1_20030109_210726.BAK tag=LVL1 parâms=NULL
+RMAN-08024: canal ch1: restaurar inteiro
+RMAN-08023: canal ch2: restaurada parte do backup 1
+RMAN-08511: handle da parte=E:\ORACLE\BACKUP\MIAFIS\D1_MIAFIS_865_1_20030109_210726.BAK tag=LVL1 parâms=NULL
+RMAN-08024: canal ch2: restaurar inteiro
+
+RMAN-03022: compilando comando: recover(3)
+RMAN-03023: executando comando: recover(3)
+RMAN-08054: iniciar recuperação de meios físicos
+
+RMAN-03022: compilando comando: recover(4)
+RMAN-06050: archivelog thread 1 seqüência 507 já está no disco como arquivo D:\ORACLE\ORADATA\MIAFIS\ARCHIVE\MIAFIST001S00507.ARC
+RMAN-06050: archivelog thread 1 seqüência 508 já está no disco como arquivo D:\ORACLE\ORADATA\MIAFIS\ARCHIVE\MIAFIST001S00508.ARC
+RMAN-03023: executando comando: recover(4)
+RMAN-08515: archivelog nome do arquivo=D:\ORACLE\ORADATA\MIAFIS\ARCHIVE\MIAFIST001S00507.ARC thread=1 seqüência=507
+RMAN-08515: archivelog nome do arquivo=D:\ORACLE\ORADATA\MIAFIS\ARCHIVE\MIAFIST001S00508.ARC thread=1 seqüência=508
+RMAN-08055: recuperação completa dos meios físicos
+
+RMAN-03022: compilando comando: sql
+RMAN-06162: instrução sql: alter database open resetlogs
+RMAN-03023: executando comando: sql
+
+RMAN-03022: compilando comando: release
+RMAN-03023: executando comando: release
+RMAN-08031: canal liberado: ch1
+
+RMAN-03022: compilando comando: release
+RMAN-03023: executando comando: release
+RMAN-08031: canal liberado: ch2
+
+RMAN-03022: compilando comando: release
+RMAN-03023: executando comando: release
+RMAN-08031: canal liberado: ch3
+
+Gerenciador de Recuperação completo.

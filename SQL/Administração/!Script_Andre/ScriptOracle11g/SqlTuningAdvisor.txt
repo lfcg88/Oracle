@@ -1,0 +1,69 @@
++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+To disable the automatic SQL tuning advisor task, just replace the ENABLE procedure 
+with the DISABLE procedure, as shown here:
++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+begin
+dbms_auto_task_admin.disable (
+client_name => 'sql tuning advisor',
+operation => 'NULL',
+window_name='NULL');
+end;
+
++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+You can enable the automatic SQL tuning advisor task using the ENABLE procedure, as shown here:
++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+begin
+dbms_auto_task_admin.enable (
+client_name => 'sql tuning advisor',
+operation => 'NULL',
+window_name='NULL');
+end;
+
+
++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+Shows how to configure an automatic SQL tuning task to automatically accept 
+SQL profiles recommendations made by the SQL Tuning Advisor:
++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+begin
+dbms_sqltune.set_tuning_task_parameters(
+task_name => 'SYS_AUTO_SQL_TUNING_PROG',
+ parameter => 'accept_sql_profiles', value => 'true');
+end;
+
+
++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+Geração do relatorio relcioanado aultima execução do "automatic SQL tuning task"
++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+begin
+:test_report :=dbms_sqltune.report_auto_tuning_task (
+ type => 'text',
+level => 'typical',
+ section => 'all');
+ end;
+SQL> /
+
+SQL>
+print :test_report
+
+
+
+++++++++++++++++++++++++++++++++++++++++++++++++++++
+list of all the SQL Tuning Advisor task executions:
++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+SQL> select execution_)name, status, execution_start,
+execution_end
+from dba_advisor_executions
+where task_name='SYS_AUTO_SQL_TUNING_TASK';
+
+
+For example, you can use the following statement to get a list of all the SQL
+Tuning Advisor task executions:
+SQL> select execution_)name, status, execution_start,
+execution_end
+from dba_advisor_executions
+where task_name='SYS_AUTO_SQL_TUNING_TASK';
+

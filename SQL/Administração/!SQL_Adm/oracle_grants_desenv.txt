@@ -1,0 +1,17 @@
+grant select on sys.v_$session to rl_desenv;
+grant select on sys.v_$process to rl_desenv;
+grant select on sys.v_$sess_io to rl_desenv;
+grant select on sys.v_$session_wait to rl_desenv;
+grant select on sys.v_$session_event to rl_desenv;
+grant select on sys.v_$access to rl_desenv;
+grant select on sys.v_$sessstat to rl_desenv;
+GRANT SELECT ON SYS.V_$SESSTAT TO RL_DESENV;
+
+grant select on sys.v_$statname to rl_desenv;
+grant select on sys.v_$open_cursor to rl_desenv;
+grant select on sys.v_$sql to rl_desenv;
+grant select on sys.v_$lock to rl_desenv;
+grant select on sys.v_$session_longops to rl_desenv;
+grant select on sys.v_$transaction to rl_desenv;
+grant select on sys.v_$rollname to rl_desenv;
+grant select on sys.v_$sqltext_with_newlines to rl_desenv;

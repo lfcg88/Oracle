@@ -1,0 +1,3 @@
+create or replace synonym SGPB_PROC.POSIC_RGNAL_DSTAQ
+  for SGPB.POSIC_RGNAL_DSTAQ;
+

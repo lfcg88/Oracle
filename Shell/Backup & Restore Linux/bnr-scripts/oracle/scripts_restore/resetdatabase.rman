@@ -1,0 +1,4 @@
+connect catalog rman/rman@rcvcat
+connect target /
+reset database;
+exit;

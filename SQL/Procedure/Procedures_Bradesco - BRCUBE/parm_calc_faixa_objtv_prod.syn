@@ -1,0 +1,3 @@
+create or replace synonym SGPB_PROC.PARM_CALC_FAIXA_OBJTV_PROD
+  for SGPB.PARM_CALC_FAIXA_OBJTV_PROD;
+

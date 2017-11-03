@@ -1,0 +1,28 @@
+
+
+accept loja prompt "Digite a Loja .....: "
+
+
+set echo off
+set feedback off
+set heading off
+set pagesize 5000
+set serveroutput on size 1000000
+--set termout off
+set verify off
+set trimspool on
+SET LINESIZE 99
+
+column d1 format A100 word_wrapped
+
+
+spool C:\exp_&loja..sh
+
+select 'exp vilaroab/alex file='||username||'.dmp log='||username||'.log direct=y recordlength=40960000 owner='||username||chr(10)||'compress '||username||'.dmp' AS d1
+from dba_users 
+where username LIKE '%&loja%'  
+  and username not like '%PRI%'
+order by username
+
+
+

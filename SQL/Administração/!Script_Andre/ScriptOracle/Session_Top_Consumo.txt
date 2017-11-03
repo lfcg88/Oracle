@@ -1,0 +1,105 @@
+SELECT 
+       'Top Physical I/O Process' CATEGORY,
+       SID,
+       USERNAME,
+       ROUND(100 * TOTAL_USER_IO/TOTAL_IO,2) PCT_USED
+FROM
+(SELECT b.SID SID,
+        nvl(b.USERNAME,p.NAME) USERNAME,
+        sum(VALUE) TOTAL_USER_IO
+FROM sys.V_$STATNAME c,  
+     sys.V_$SESSTAT a,
+     sys.V_$SESSION b,
+     sys.v_$bgprocess p
+WHERE a.STATISTIC#=c.STATISTIC# and 
+      p.paddr (+) = b.paddr and
+      b.SID=a.SID AND 
+      c.NAME in ('physical reads','physical writes',
+                 'physical reads direct','physical reads direct (lob)',
+                 'physical writes direct','physical writes direct (lob)') 
+GROUP BY b.SID, nvl(b.USERNAME,p.name)
+ORDER BY 3 DESC),
+(select sum(value) TOTAL_IO 
+from   sys.V_$STATNAME c, 
+       sys.V_$SESSTAT a 
+WHERE  a.STATISTIC#=c.STATISTIC# and 
+       c.NAME in ('physical reads','physical writes',
+                 'physical reads direct','physical reads direct (lob)',
+                 'physical writes direct','physical writes direct (lob)'))
+WHERE ROWNUM < 2
+UNION ALL
+SELECT 'Top Logical I/O Process',
+       SID,
+       USERNAME,
+       ROUND(100 * TOTAL_USER_IO/TOTAL_IO,2) PCT_USED
+FROM
+(SELECT b.SID SID,
+        nvl(b.USERNAME,p.NAME) USERNAME,
+        sum(VALUE) TOTAL_USER_IO
+FROM sys.V_$STATNAME c,  
+     sys.V_$SESSTAT a,
+     sys.V_$SESSION b,
+     sys.v_$bgprocess p
+WHERE a.STATISTIC#=c.STATISTIC# and 
+      p.paddr (+) = b.paddr and
+      b.SID=a.SID AND 
+      c.NAME in ('consistent gets','db block gets') 
+GROUP BY b.SID, nvl(b.USERNAME,p.name)
+ORDER BY 3 DESC),
+(select sum(value) TOTAL_IO 
+from   sys.V_$STATNAME c, 
+       sys.V_$SESSTAT a 
+WHERE  a.STATISTIC#=c.STATISTIC# and 
+       c.NAME in ('consistent gets','db block gets'))
+WHERE ROWNUM < 2
+UNION ALL
+SELECT 'Top Memory Process',
+       SID,
+       USERNAME,
+       ROUND(100 * TOTAL_USER_MEM/TOTAL_MEM,2)
+FROM
+(SELECT b.SID SID,
+        nvl(b.USERNAME,p.NAME) USERNAME,
+        sum(VALUE) TOTAL_USER_MEM
+FROM    sys.V_$STATNAME c,  
+        sys.V_$SESSTAT a,
+        sys.V_$SESSION b,
+        sys.v_$bgprocess p
+WHERE a.STATISTIC#=c.STATISTIC# and 
+      p.paddr (+) = b.paddr and
+      b.SID=a.SID AND 
+      c.NAME in ('session pga memory','session uga memory')  
+GROUP BY b.SID, nvl(b.USERNAME,p.name)
+ORDER BY 3 DESC),
+(select sum(value) TOTAL_MEM 
+from sys.V_$STATNAME c, 
+     sys.V_$SESSTAT a 
+WHERE a.STATISTIC#=c.STATISTIC# and 
+      c.NAME in ('session pga memory','session uga memory') )
+WHERE ROWNUM < 2
+UNION ALL
+SELECT 'Top CPU Process',
+       SID,
+       USERNAME,
+       ROUND(100 * TOTAL_USER_CPU/GREATEST(TOTAL_CPU,1),2)
+FROM
+(SELECT b.SID SID,
+        nvl(b.USERNAME,p.NAME) USERNAME,
+       sum(VALUE) TOTAL_USER_CPU
+FROM   sys.V_$STATNAME c,  
+       sys.V_$SESSTAT a,
+       sys.V_$SESSION b,
+       sys.v_$bgprocess p
+WHERE a.STATISTIC#=c.STATISTIC# and 
+      p.paddr (+) = b.paddr and
+      b.SID=a.SID AND 
+      c.NAME = 'CPU used by this session'   
+GROUP BY b.SID, nvl(b.USERNAME,p.name)
+ORDER BY 3 DESC),
+(select sum(value) TOTAL_CPU 
+from    sys.V_$STATNAME c, 
+        sys.V_$SESSTAT a 
+WHERE   a.STATISTIC#=c.STATISTIC# and 
+        c.NAME = 'CPU used by this session'  )
+WHERE ROWNUM < 2
+

@@ -1,0 +1,2 @@
+del d:\backup\MIAFIS.bkf
+NTBACKUP.EXE backup "@d:\backup\selecao_de_backup.bks" /n "BACKUP SOURCE SAFE E BD ORACLE" /d "BACKUP SOURCE SAFE E BD ORACLE" /v:yes /r:no /rs:no /hc:off /m normal /j "BACKUP MIAFIS" /l:s /f "D:\Backup\MIAFIS.bkf"

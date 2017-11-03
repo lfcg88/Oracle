@@ -1,0 +1,12 @@
+select 'alter system kill session ''' || sid || ', ' || serial# || '''' || ' imediate'  
+  from v$session 
+ where username = ‘SCHEMA’;
+
+se não cair, matar o processo v$process.spid, no sistema operacional com o comando: kill -9 <spid> 
+
+select 'kill -9 ' || spid
+  from ( select spid from v$process
+ minus
+         select spid 
+           from v$process, v$session
+          where addr = paddr );

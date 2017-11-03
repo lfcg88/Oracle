@@ -1,0 +1,1 @@
+select ERROR_INSTANCE_ID, SUGGESTED_ACTION from dba_outstanding_alerts;

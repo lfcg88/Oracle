@@ -1,0 +1,161 @@
+set serveroutput on
+-- heavy.sql -- find sql that is heavy for your system
+--
+-- find expensive sql that is still in the SGA.
+-- will not work in oracle-7. set schema and clob prevents this
+-- should work using any user that has select privileges
+-- on v$sqlarea and v$sqltext
+-- The user will also need the correct privileges on the
+-- schema objects used in the explain statements.
+-- The user will also need to have a plan_table in his curent schema
+--
+-- An interesting improvement might be to switch to the userid
+-- that executes the statement:
+-- select password into opwd from all_users where username = x;
+-- alter user x identified by donut;
+-- connect x/donut;
+-- alter user x identified by values opwd;
+--
+-- The table heavy_err will be used to store sql that was NOT
+-- correctly explained for some reason.
+create table heavy_err (user_name   varchar2(30),
+                        schema_name varchar2(30),
+                        sqltxt      clob,
+                        disk_reads  number,
+                        executions  number
+                       );
+-- Heavy sql will end up in table heavy_sql
+create table heavy_sql   (user_name   varchar2(30),
+                          schema_name varchar2(30),
+                          sqltxt      clob,
+                          disk_reads  number,
+                          executions  number
+                         );
+--
+declare
+ sqlcnt number := 0;
+ sqltxt varchar2(32000);
+ sqladr raw(4);
+ cursor heavy_io is select address, executions, disk_reads,
+                           parsing_user_id, parsing_schema_id
+                    from v$sqlarea
+                    where disk_reads > 1
+                    and   upper(sql_text) like 'SELECT%'
+                    and   disk_reads -nvl(executions,999999) > 10;
+ heavy_io_rec heavy_io%ROWTYPE;
+ cursor sqlparts (adr raw) is
+                    select piece, sql_text
+                    from v$sqltext
+                    where address = adr
+                    order by piece;
+ sqlparts_rec sqlparts%ROWTYPE;
+ explain_txt varchar2(32100);
+ explain_cmd varchar2(100):= 'explain plan into ';
+ explain_table varchar2(50);
+ explain_cr  number;                  -- the explain cursor
+ cursor fullscans is select count(*) 
+                     from plan_table
+                     where options like '%FULL%'
+                     and   operation like '%TABLE%';
+ fullscans_rec fullscans%ROWTYPE;
+ cursor schema (id number) is 
+                     select username
+                     from all_users
+                     where user_id = id;
+ schema_name      schema%ROWTYPE;
+ user_name        schema%ROWTYPE;
+ alter_schema_txt varchar2(80);
+ alter_schema_cmd varchar2(40):='alter session set current_schema = ';
+ start_schema     schema%ROWTYPE;
+ start_username   schema%ROWTYPE;
+ cur_username     schema%ROWTYPE;
+ res number;
+ heavy number:=0;
+ errors number:=0;
+begin
+  dbms_output.enable (80000);
+  start_schema.username   := sys_context('USERENV','CURRENT_SCHEMA');
+  start_username.username := sys_context('USERENV','CURRENT_USER');
+  explain_table:=start_schema.username||'.plan_table';
+  explain_cr := dbms_sql.open_cursor;
+  delete from plan_table;
+  for heavy_io_rec in heavy_io
+  loop
+    sqltxt:='';
+    sqlcnt:=sqlcnt + 1;
+    for sqlparts_rec in sqlparts (heavy_io_rec.address)
+    loop
+      sqltxt:= sqltxt || sqlparts_rec.sql_text;
+    end loop;
+    --
+    -- got complete statement now; explain it
+    --
+    
+    --
+    if length(sqltxt) > 5 then -- could already be out of the pool
+      begin
+        --
+        -- begin in my own schema
+        --
+        open schema (heavy_io_rec.parsing_schema_id);
+        fetch schema into schema_name;
+        close schema;
+        open schema (heavy_io_rec.parsing_user_id);
+        fetch schema into user_name;
+        close schema;
+        --
+        explain_txt:=alter_schema_cmd || schema_name.username;
+        dbms_sql.parse   (explain_cr, explain_txt, dbms_sql.native);
+        res:= dbms_sql.execute (explain_cr);
+        --
+        -- in parsing users schema now
+        --
+        explain_txt:=explain_cmd || explain_table||' for '|| sqltxt;
+        dbms_sql.parse   (explain_cr, explain_txt, dbms_sql.native);
+        res:= dbms_sql.execute (explain_cr);
+        --
+        --
+        open fullscans;
+        fetch fullscans into fullscans_rec;
+        close fullscans;
+        if fullscans_rec.count > 0 then
+          insert into heavy_sql (user_name, schema_name, sqltxt, disk_reads, executions)
+               values (user_name.username, schema_name.username, sqltxt,
+                         heavy_io_rec.disk_reads,heavy_io_rec.executions);
+           heavy:= heavy + 1;
+           dbms_output.put_line ('schema '||schema_name.username||
+                                  ' user '||user_name.username||
+                                  ' disk '||heavy_io_rec.disk_reads||
+                                  ' exec '||heavy_io_rec.executions);
+           -- for sqlparts_rec in sqlparts (heavy_io_rec.address)
+           -- loop
+             -- dbms_output.put_line (sqlparts_rec.sql_text);
+           -- end loop;
+           -- dbms_output.put_line ('/');
+        end if;
+        explain_txt:= alter_schema_cmd || start_schema.username;
+        dbms_sql.parse   (explain_cr, explain_txt, dbms_sql.native);
+        res:= dbms_sql.execute (explain_cr);
+      exception
+      when others then
+        dbms_output.put_line (SQLERRM);
+        dbms_output.put_line ('while running');
+        dbms_output.put_line (substr (explain_txt,1,250));
+        dbms_output.put_line ('in schema '||schema_name.username||
+                                  ' user '||user_name.username);
+        alter_schema_txt:= alter_schema_cmd || start_schema.username;
+        dbms_sql.parse   (explain_cr, alter_schema_txt, dbms_sql.native);
+        res:= dbms_sql.execute (explain_cr);
+        insert into heavy_err (user_name, schema_name, sqltxt, disk_reads, executions)
+             values (user_name.username, schema_name.username, sqltxt,
+                       heavy_io_rec.disk_reads,heavy_io_rec.executions);
+        errors:= errors + 1;
+      end;
+    end if;
+  end loop;
+  dbms_sql.close_cursor(explain_cr);
+  dbms_output.put_line ('end '||sqlcnt||' sql processed '|| heavy||' heavy; '||
+                                                           errors||' errors');
+end;
+/
+

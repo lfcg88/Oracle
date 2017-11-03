@@ -1,0 +1,39 @@
+/**********************************************************************
+ * File:	parm.sql
+ * Type:	SQL*Plus script
+ * Author:	Tim Gorman (Evergreen Database Technologies, Inc.)
+ * Date:	30-Jun-98
+ *
+ * Description:
+ *	Report against the X$ tables which displays information about
+ *	documented and un-documented "init.ora" parameters, similar
+ *	to the Server Manager SHOW PARAMETER command.
+ *
+ * Modifications:
+ *********************************************************************/
+col parameter format a50 word_wrapped
+col description format a20 word_wrapped
+col dflt format a5 word_wrapped
+select	rpad(i.ksppinm, 35) || ' = ' || v.ksppstvl parameter,
+	i.ksppdesc description,
+	v.ksppstdf dflt,
+decode(bitand(ksppiflg/256,1),1,'TRUE','FALSE')  sesmod,
+  decode(
+    bitand(ksppiflg/65536,3),
+    1,'IMMEDIATE',
+    2,'DEFERRED',
+    3,'IMMEDIATE',
+    'FALSE'
+  )  sysmod
+--,
+--  ksppdesc  description
+--
+from	sys.x_$ksppi		i,
+	sys.x_$ksppcv	v
+where	v.indx = i.indx
+and	v.inst_id = i.inst_id
+and	i.ksppinm like '%' || '&name' || '%'
+order by i.ksppinm
+/
+
+

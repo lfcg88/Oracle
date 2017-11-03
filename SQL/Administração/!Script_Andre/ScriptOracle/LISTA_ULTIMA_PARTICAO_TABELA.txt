@@ -1,0 +1,8 @@
+set long 30;
+select substr(tp.TABLE_OWNER,1,25) "Owner", tp.TABLE_NAME,
+substr(tp.PARTITION_NAME,1,28) "Partition name", tp.HIGH_VALUE,
+substr(tp.TABLESPACE_NAME,1,28) "Tablespace" from dba_tab_partitions tp
+where tp.PARTITION_NAME = (select max(x.partition_name) from dba_tab_partitions x
+  where x.table_owner = tp.table_owner and x.table_name = tp.table_name)
+and tp.table_owner <> 'SYSTEM'
+order by table_owner, table_name, partition_name; 

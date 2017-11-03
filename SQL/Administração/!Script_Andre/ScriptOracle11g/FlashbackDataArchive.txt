@@ -1,0 +1,138 @@
+
++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+to find out which users have the flashback archive administer privilege.
++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+SQL> select * from dba_sys_privs where privilege like '%FLASH%';
+
+GRANTEE PRIVILEGE ADM
+----------- --------------------- ----
+SYS FLASHBACK ANY TABLE NO
+DBA FLASHBACK ANY TABLE YES
+DBA FLASHBACK ARCHIVE ADMINISTER YES
+SQL>
+
++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+You grant the flashback archive administer privilege to a user as follows:
++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+
+SQL> grant flashback archive administer to hr;
+Grant succeeded.
+
+
+
++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+how to create a flashback data archive in the FLASH_TBS1 tablespace:
++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+SQL> create flashback data archive flash1
+tablespace flash_tbs1
+retention 4 year;
+Flashback Data Archive created.
+
++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+If you want to limit the archive to only a part of the tablespace
++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+SQL> create flashback data archive flash2
+tablespace flash_tbs1
+quota 2000m
+retention 4 year;
+Flashback Data Archive created.
+
+
+
++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+drop a flashback data archive, as shown here:
++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+SQL> drop flashback archive flash1;
+
+
++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+alter flashback archive
++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+SQL> alter flashback archive flash1 set default # makes flash1 the default archive
+
+SQL> alter flashback archive flash1 add tablespace
+flash_tbs1 # adds space to the flashback archive
+
+SQL> alter flashback archive flash1 modify tablespace
+flash_tbs1 quota 10G; # changes the quota for the archive
+
+SQL> alter flashback archive flash1
+modify retention 2 year; # changes the archive retention time
+
+SQL> alter flashback tablespace flash1 add tablespace flash_tbs2; #adds a tablespace to an archive
+SQL> alter flashback tablespace flash1 remove tablespace flash_tbs2; #removes a tablespace from an archive
+
+SQL> alter flashback archive flash1 purge all; # purges all archived data
+
+SQL> alter flashback archive flash1 purge before timestamp (systimestamp - interval '2' day); # purges data older than 2 days
+
+SQL> alter flashback archive flash1 purge before scn 123456; # purges all data before the specified SCN
+
+
+
++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+You enable a table for flashback logging by including the flashback archive clause 
++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+ create table test1 (
+name varchar2(30),
+ address varchar2(50))
+ flashback archive fla4;
+
+alter table employees
+flashback archive flash2;
+
++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+You can disable flashback archiving 
++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+SQL> alter table employees no flashback archive;
+
+
+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+DBA_FLASHBACK_ARCHIVE_TABLES view to find out information about all tables that are enabled for flashback data archiving, 
+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+SQL> select * from dba_flashback_archive_tables;
+
+TABLE_NAME OWNER FLASHBACK_ARCH_NAME ARCH_TABLE_NAM
+----------- ------ ------------------- -------------------
+EMPLOYEES HR FLASH1 SYS_FBA_HIST_70313
+
+
+
++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+Accessing Older Data You can use an as_of clause in your select statement 
++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+SQL> select transaction_number, doctor_name, count
+from patient_info as of
+timestamp to_timestamp ('2007-01-01 00:00:00',
+'YYYY-MM-DD HH23:MI:SS');
+
++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+Use the versions between timestamp clause as shown here to get values during a time interval that you specify
++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+SQL> select * from patient_info
+versions between timestamp
+to_timestamp('2008-01-01 00:00:00','YYYY-MM-DD HH23:MI:SS')
+and maxvalue
+where name ='ALAPATI';
+
+SQL> select * from patient_info
+versions between timestamp
+to_timestamp ('2008-01-01 00:00:00',
+'YYYY-MM-DD HH24:MI:SS')
+and
+to_timestamp ('2008-06-01 00:00:00',
+'YYYY-MM-DD HH24:MI:SS')
+where name='ALAPATI';
+
+

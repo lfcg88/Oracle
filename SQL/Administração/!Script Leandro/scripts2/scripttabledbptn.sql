@@ -1,0 +1,3978 @@
+CREATE TABLE PTN_PEDIDO1
+(
+  COD_PEDIDO        NUMBER(38)                  NOT NULL,
+  COD_SITUACAO      VARCHAR2(2 BYTE)            NOT NULL,
+  NUM_PEDIDO        VARCHAR2(9 BYTE),
+  DT_DEPOSITO       DATE                        NOT NULL,
+  COD_NATUREZA      VARCHAR2(2 BYTE),
+  CD_TIPO_PEDIDO    CHAR(1 BYTE)                NOT NULL,
+  TITULO            CLOB,
+  DT_FASE_NACIONAL  DATE
+)
+TABLESPACE TBS_DADOS_INFORMIX
+PCTUSED    40
+PCTFREE    10
+INITRANS   1
+MAXTRANS   255
+STORAGE    (
+            INITIAL          64K
+            MINEXTENTS       1
+            MAXEXTENTS       2147483645
+            PCTINCREASE      0
+            FREELISTS        1
+            FREELIST GROUPS  1
+            BUFFER_POOL      DEFAULT
+           )
+NOLOGGING 
+NOCOMPRESS 
+LOB (TITULO) STORE AS 
+      ( TABLESPACE  TBS_DADOS_INFORMIX 
+        ENABLE      STORAGE IN ROW
+        CHUNK       8192
+        PCTVERSION  0
+        NOCACHE
+        NOLOGGING
+        STORAGE    (
+                    INITIAL          64K
+                    MINEXTENTS       1
+                    MAXEXTENTS       2147483645
+                    PCTINCREASE      0
+                    FREELISTS        1
+                    FREELIST GROUPS  1
+                    BUFFER_POOL      DEFAULT
+                   )
+      )
+NOCACHE
+NOPARALLEL
+MONITORING;
+
+
+CREATE TABLE ACERTO
+(
+  COD_PESSOA  NUMBER(38)                        NOT NULL
+)
+TABLESPACE TBS_DADOS_INFORMIX
+PCTUSED    40
+PCTFREE    10
+INITRANS   1
+MAXTRANS   255
+STORAGE    (
+            INITIAL          64K
+            MINEXTENTS       1
+            MAXEXTENTS       2147483645
+            PCTINCREASE      0
+            FREELISTS        1
+            FREELIST GROUPS  1
+            BUFFER_POOL      DEFAULT
+           )
+NOLOGGING 
+NOCOMPRESS 
+NOCACHE
+NOPARALLEL
+MONITORING;
+
+
+CREATE TABLE ACERTO_PFPJ
+(
+  COD_PESSOA  NUMBER(38)                        NOT NULL
+)
+TABLESPACE TBS_DADOS_INFORMIX
+PCTUSED    40
+PCTFREE    10
+INITRANS   1
+MAXTRANS   255
+STORAGE    (
+            INITIAL          64K
+            MINEXTENTS       1
+            MAXEXTENTS       2147483645
+            PCTINCREASE      0
+            FREELISTS        1
+            FREELIST GROUPS  1
+            BUFFER_POOL      DEFAULT
+           )
+NOLOGGING 
+NOCOMPRESS 
+NOCACHE
+NOPARALLEL
+MONITORING;
+
+
+CREATE TABLE ACERTO_PROCURADOR
+(
+  COD_PEDIDO  NUMBER(38)                        NOT NULL
+)
+TABLESPACE TBS_DADOS_INFORMIX
+PCTUSED    40
+PCTFREE    10
+INITRANS   1
+MAXTRANS   255
+STORAGE    (
+            INITIAL          64K
+            MINEXTENTS       1
+            MAXEXTENTS       2147483645
+            PCTINCREASE      0
+            FREELISTS        1
+            FREELIST GROUPS  1
+            BUFFER_POOL      DEFAULT
+           )
+NOLOGGING 
+NOCOMPRESS 
+NOCACHE
+NOPARALLEL
+MONITORING;
+
+
+CREATE TABLE ACERTO_REQ
+(
+  CD_PEDIDO  NUMBER(38)
+)
+TABLESPACE TBS_DADOS_INFORMIX
+PCTUSED    40
+PCTFREE    10
+INITRANS   1
+MAXTRANS   255
+STORAGE    (
+            INITIAL          64K
+            MINEXTENTS       1
+            MAXEXTENTS       2147483645
+            PCTINCREASE      0
+            FREELISTS        1
+            FREELIST GROUPS  1
+            BUFFER_POOL      DEFAULT
+           )
+NOLOGGING 
+NOCOMPRESS 
+NOCACHE
+NOPARALLEL
+MONITORING;
+
+
+CREATE TABLE ACERTO_UF1
+(
+  COD_PESSOA  NUMBER(38)
+)
+TABLESPACE TBS_DADOS_INFORMIX
+PCTUSED    40
+PCTFREE    10
+INITRANS   1
+MAXTRANS   255
+STORAGE    (
+            INITIAL          64K
+            MINEXTENTS       1
+            MAXEXTENTS       2147483645
+            PCTINCREASE      0
+            FREELISTS        1
+            FREELIST GROUPS  1
+            BUFFER_POOL      DEFAULT
+           )
+NOLOGGING 
+NOCOMPRESS 
+NOCACHE
+NOPARALLEL
+MONITORING;
+
+
+CREATE TABLE AUX_DI_PEDIDO
+(
+  COD_PEDIDO        NUMBER(38)                  NOT NULL,
+  COD_SITUACAO      VARCHAR2(2 BYTE)            NOT NULL,
+  NUM_PEDIDO        VARCHAR2(9 BYTE),
+  DT_DEPOSITO       DATE,
+  COD_NATUREZA      VARCHAR2(2 BYTE),
+  CD_TIPO_PEDIDO    CHAR(1 BYTE)                NOT NULL,
+  TITULO            CLOB,
+  DT_FASE_NACIONAL  DATE
+)
+TABLESPACE TBS_DADOS_INFORMIX
+PCTUSED    40
+PCTFREE    10
+INITRANS   1
+MAXTRANS   255
+STORAGE    (
+            INITIAL          64K
+            MINEXTENTS       1
+            MAXEXTENTS       2147483645
+            PCTINCREASE      0
+            FREELISTS        1
+            FREELIST GROUPS  1
+            BUFFER_POOL      DEFAULT
+           )
+NOLOGGING 
+NOCOMPRESS 
+LOB (TITULO) STORE AS 
+      ( TABLESPACE  TBS_DADOS_INFORMIX 
+        ENABLE      STORAGE IN ROW
+        CHUNK       8192
+        PCTVERSION  0
+        NOCACHE
+        NOLOGGING
+        STORAGE    (
+                    INITIAL          64K
+                    MINEXTENTS       1
+                    MAXEXTENTS       2147483645
+                    PCTINCREASE      0
+                    FREELISTS        1
+                    FREELIST GROUPS  1
+                    BUFFER_POOL      DEFAULT
+                   )
+      )
+NOCACHE
+NOPARALLEL
+MONITORING;
+
+
+CREATE TABLE AUX_RPI
+(
+  NUM_RPI         NUMBER(38)                    NOT NULL,
+  DT_PUBLICA_PTN  DATE                          NOT NULL
+)
+TABLESPACE TBS_DADOS_INFORMIX
+PCTUSED    40
+PCTFREE    10
+INITRANS   1
+MAXTRANS   255
+STORAGE    (
+            INITIAL          64K
+            MINEXTENTS       1
+            MAXEXTENTS       2147483645
+            PCTINCREASE      0
+            FREELISTS        1
+            FREELIST GROUPS  1
+            BUFFER_POOL      DEFAULT
+           )
+NOLOGGING 
+NOCOMPRESS 
+NOCACHE
+NOPARALLEL
+MONITORING;
+
+
+CREATE TABLE CLASSIF_DESC
+(
+  COD_CLASSIFICACAO  NUMBER(38)                 NOT NULL,
+  DES_CLASSIFICACAO  VARCHAR2(2000 BYTE),
+  LAST_UPDATE        DATE                       NOT NULL
+)
+TABLESPACE TBS_DADOS_INFORMIX
+PCTUSED    40
+PCTFREE    10
+INITRANS   1
+MAXTRANS   255
+STORAGE    (
+            INITIAL          64K
+            MINEXTENTS       1
+            MAXEXTENTS       2147483645
+            PCTINCREASE      0
+            FREELISTS        1
+            FREELIST GROUPS  1
+            BUFFER_POOL      DEFAULT
+           )
+NOLOGGING 
+NOCOMPRESS 
+NOCACHE
+NOPARALLEL
+MONITORING;
+
+
+CREATE TABLE CLASSIF_DESC2
+(
+  COD_CLASSIFICACAO  NUMBER(38)                 NOT NULL,
+  DES_CLASSIFICACAO  CLOB,
+  LAST_UPDATE        DATE                       NOT NULL
+)
+TABLESPACE TBS_DADOS_INFORMIX
+PCTUSED    40
+PCTFREE    10
+INITRANS   1
+MAXTRANS   255
+STORAGE    (
+            INITIAL          64K
+            MINEXTENTS       1
+            MAXEXTENTS       2147483645
+            PCTINCREASE      0
+            FREELISTS        1
+            FREELIST GROUPS  1
+            BUFFER_POOL      DEFAULT
+           )
+NOLOGGING 
+NOCOMPRESS 
+LOB (DES_CLASSIFICACAO) STORE AS 
+      ( TABLESPACE  TBS_DADOS_INFORMIX 
+        ENABLE      STORAGE IN ROW
+        CHUNK       8192
+        PCTVERSION  0
+        NOCACHE
+        NOLOGGING
+        STORAGE    (
+                    INITIAL          64K
+                    MINEXTENTS       1
+                    MAXEXTENTS       2147483645
+                    PCTINCREASE      0
+                    FREELISTS        1
+                    FREELIST GROUPS  1
+                    BUFFER_POOL      DEFAULT
+                   )
+      )
+NOCACHE
+NOPARALLEL
+MONITORING;
+
+
+CREATE TABLE CRP_CARGA_ERRO
+(
+  DH_ERRO          DATE,
+  NO_SQL_ERR       NUMBER(38),
+  NO_ISAM_ERR      NUMBER(38),
+  TX_ERRO          VARCHAR2(70 BYTE),
+  NM_PROCEDURE     VARCHAR2(18 BYTE),
+  TX_ERRO_NEGOCIO  VARCHAR2(100 BYTE)
+)
+TABLESPACE TBS_DADOS_INFORMIX
+PCTUSED    40
+PCTFREE    10
+INITRANS   1
+MAXTRANS   255
+STORAGE    (
+            INITIAL          64K
+            MINEXTENTS       1
+            MAXEXTENTS       2147483645
+            PCTINCREASE      0
+            FREELISTS        1
+            FREELIST GROUPS  1
+            BUFFER_POOL      DEFAULT
+           )
+NOLOGGING 
+NOCOMPRESS 
+NOCACHE
+NOPARALLEL
+MONITORING;
+
+
+CREATE TABLE CRP_PAIS
+(
+  COD_PAIS   VARCHAR2(2 BYTE)                   NOT NULL,
+  NOME_PAIS  VARCHAR2(60 BYTE)                  NOT NULL
+)
+TABLESPACE TBS_DADOS_INFORMIX
+PCTUSED    40
+PCTFREE    10
+INITRANS   1
+MAXTRANS   255
+STORAGE    (
+            INITIAL          64K
+            MINEXTENTS       1
+            MAXEXTENTS       2147483645
+            PCTINCREASE      0
+            FREELISTS        1
+            FREELIST GROUPS  1
+            BUFFER_POOL      DEFAULT
+           )
+NOLOGGING 
+NOCOMPRESS 
+NOCACHE
+NOPARALLEL
+MONITORING;
+
+
+CREATE TABLE CRP_PES_INVENTOR
+(
+  COD_PESSOA     NUMBER(38)                     NOT NULL,
+  NUM_CGC_CPF    VARCHAR2(14 BYTE),
+  TIPO_PESSOA    CHAR(1 BYTE),
+  NOME_COMPLETO  VARCHAR2(200 BYTE)             NOT NULL
+)
+TABLESPACE TBS_DADOS_INFORMIX
+PCTUSED    40
+PCTFREE    10
+INITRANS   1
+MAXTRANS   255
+STORAGE    (
+            INITIAL          64K
+            MINEXTENTS       1
+            MAXEXTENTS       2147483645
+            PCTINCREASE      0
+            FREELISTS        1
+            FREELIST GROUPS  1
+            BUFFER_POOL      DEFAULT
+           )
+NOLOGGING 
+NOCOMPRESS 
+NOCACHE
+NOPARALLEL
+MONITORING;
+
+
+CREATE TABLE CRP_PES_PROCURADOR
+(
+  COD_PESSOA     NUMBER(38)                     NOT NULL,
+  NUM_CGC_CPF    VARCHAR2(14 BYTE),
+  TIPO_PESSOA    CHAR(1 BYTE),
+  NOME_COMPLETO  VARCHAR2(200 BYTE)             NOT NULL
+)
+TABLESPACE TBS_DADOS_INFORMIX
+PCTUSED    40
+PCTFREE    10
+INITRANS   1
+MAXTRANS   255
+STORAGE    (
+            INITIAL          64K
+            MINEXTENTS       1
+            MAXEXTENTS       2147483645
+            PCTINCREASE      0
+            FREELISTS        1
+            FREELIST GROUPS  1
+            BUFFER_POOL      DEFAULT
+           )
+NOLOGGING 
+NOCOMPRESS 
+NOCACHE
+NOPARALLEL
+MONITORING;
+
+
+CREATE TABLE CRP_PES_REQUERENTE
+(
+  COD_PESSOA     NUMBER(38)                     NOT NULL,
+  NUM_CGC_CPF    VARCHAR2(14 BYTE),
+  TIPO_PESSOA    CHAR(1 BYTE),
+  NOME_COMPLETO  VARCHAR2(200 BYTE)             NOT NULL
+)
+TABLESPACE TBS_DADOS_INFORMIX
+PCTUSED    40
+PCTFREE    10
+INITRANS   1
+MAXTRANS   255
+STORAGE    (
+            INITIAL          64K
+            MINEXTENTS       1
+            MAXEXTENTS       2147483645
+            PCTINCREASE      0
+            FREELISTS        1
+            FREELIST GROUPS  1
+            BUFFER_POOL      DEFAULT
+           )
+NOLOGGING 
+NOCOMPRESS 
+NOCACHE
+NOPARALLEL
+MONITORING;
+
+
+CREATE TABLE CRP_PFPJ1
+(
+  COD_PESSOA  NUMBER(38)                        NOT NULL
+)
+TABLESPACE TBS_DADOS_INFORMIX
+PCTUSED    40
+PCTFREE    10
+INITRANS   1
+MAXTRANS   255
+STORAGE    (
+            INITIAL          64K
+            MINEXTENTS       1
+            MAXEXTENTS       2147483645
+            PCTINCREASE      0
+            FREELISTS        1
+            FREELIST GROUPS  1
+            BUFFER_POOL      DEFAULT
+           )
+NOLOGGING 
+NOCOMPRESS 
+NOCACHE
+NOPARALLEL
+MONITORING;
+
+
+CREATE TABLE CRP_RPI
+(
+  NUM_RPI         NUMBER(38)                    NOT NULL,
+  DT_PUBLICA_PTN  DATE                          NOT NULL
+)
+TABLESPACE TBS_DADOS_INFORMIX
+PCTUSED    40
+PCTFREE    10
+INITRANS   1
+MAXTRANS   255
+STORAGE    (
+            INITIAL          64K
+            MINEXTENTS       1
+            MAXEXTENTS       2147483645
+            PCTINCREASE      0
+            FREELISTS        1
+            FREELIST GROUPS  1
+            BUFFER_POOL      DEFAULT
+           )
+NOLOGGING 
+NOCOMPRESS 
+NOCACHE
+NOPARALLEL
+MONITORING;
+
+
+CREATE TABLE CRP_UF
+(
+  COD_UF   VARCHAR2(2 BYTE)                     NOT NULL,
+  NOME_UF  VARCHAR2(20 BYTE)                    NOT NULL
+)
+TABLESPACE TBS_DADOS_INFORMIX
+PCTUSED    40
+PCTFREE    10
+INITRANS   1
+MAXTRANS   255
+STORAGE    (
+            INITIAL          64K
+            MINEXTENTS       1
+            MAXEXTENTS       2147483645
+            PCTINCREASE      0
+            FREELISTS        1
+            FREELIST GROUPS  1
+            BUFFER_POOL      DEFAULT
+           )
+NOLOGGING 
+NOCOMPRESS 
+NOCACHE
+NOPARALLEL
+MONITORING;
+
+
+CREATE TABLE DI_PEDIDO
+(
+  COD_PEDIDO        NUMBER(38)                  NOT NULL,
+  COD_SITUACAO      VARCHAR2(2 BYTE)            NOT NULL,
+  NUM_PEDIDO        VARCHAR2(9 BYTE),
+  DT_DEPOSITO       DATE,
+  COD_NATUREZA      VARCHAR2(2 BYTE),
+  CD_TIPO_PEDIDO    CHAR(1 BYTE)                NOT NULL,
+  TITULO            CLOB,
+  DT_FASE_NACIONAL  DATE
+)
+TABLESPACE TBS_DADOS_INFORMIX
+PCTUSED    40
+PCTFREE    10
+INITRANS   1
+MAXTRANS   255
+STORAGE    (
+            INITIAL          64K
+            MINEXTENTS       1
+            MAXEXTENTS       2147483645
+            PCTINCREASE      0
+            FREELISTS        1
+            FREELIST GROUPS  1
+            BUFFER_POOL      DEFAULT
+           )
+NOLOGGING 
+NOCOMPRESS 
+LOB (TITULO) STORE AS 
+      ( TABLESPACE  TBS_DADOS_INFORMIX 
+        ENABLE      STORAGE IN ROW
+        CHUNK       8192
+        PCTVERSION  0
+        NOCACHE
+        NOLOGGING
+        STORAGE    (
+                    INITIAL          64K
+                    MINEXTENTS       1
+                    MAXEXTENTS       2147483645
+                    PCTINCREASE      0
+                    FREELISTS        1
+                    FREELIST GROUPS  1
+                    BUFFER_POOL      DEFAULT
+                   )
+      )
+NOCACHE
+NOPARALLEL
+MONITORING;
+
+
+CREATE TABLE DI_PEDIDO2
+(
+  COD_PEDIDO        NUMBER(38)                  NOT NULL,
+  COD_SITUACAO      VARCHAR2(2 BYTE)            NOT NULL,
+  NUM_PEDIDO        VARCHAR2(9 BYTE),
+  DT_DEPOSITO       DATE,
+  COD_NATUREZA      VARCHAR2(2 BYTE),
+  CD_TIPO_PEDIDO    CHAR(1 BYTE)                NOT NULL,
+  TITULO            CLOB,
+  DT_FASE_NACIONAL  DATE
+)
+TABLESPACE TBS_DADOS_INFORMIX
+PCTUSED    40
+PCTFREE    10
+INITRANS   1
+MAXTRANS   255
+STORAGE    (
+            INITIAL          64K
+            MINEXTENTS       1
+            MAXEXTENTS       2147483645
+            PCTINCREASE      0
+            FREELISTS        1
+            FREELIST GROUPS  1
+            BUFFER_POOL      DEFAULT
+           )
+NOLOGGING 
+NOCOMPRESS 
+LOB (TITULO) STORE AS 
+      ( TABLESPACE  TBS_DADOS_INFORMIX 
+        ENABLE      STORAGE IN ROW
+        CHUNK       8192
+        PCTVERSION  0
+        NOCACHE
+        NOLOGGING
+        STORAGE    (
+                    INITIAL          64K
+                    MINEXTENTS       1
+                    MAXEXTENTS       2147483645
+                    PCTINCREASE      0
+                    FREELISTS        1
+                    FREELIST GROUPS  1
+                    BUFFER_POOL      DEFAULT
+                   )
+      )
+NOCACHE
+NOPARALLEL
+MONITORING;
+
+
+CREATE TABLE DSN_CLASSIF_DESC
+(
+  COD_CLASSIFICACAO  NUMBER(38)                 NOT NULL,
+  DES_CLASSIFICACAO  CLOB,
+  LAST_UPDATE        DATE                       NOT NULL
+)
+TABLESPACE TBS_DADOS_INFORMIX
+PCTUSED    40
+PCTFREE    10
+INITRANS   1
+MAXTRANS   255
+STORAGE    (
+            INITIAL          64K
+            MINEXTENTS       1
+            MAXEXTENTS       2147483645
+            PCTINCREASE      0
+            FREELISTS        1
+            FREELIST GROUPS  1
+            BUFFER_POOL      DEFAULT
+           )
+NOLOGGING 
+NOCOMPRESS 
+LOB (DES_CLASSIFICACAO) STORE AS 
+      ( TABLESPACE  TBS_DADOS_INFORMIX 
+        ENABLE      STORAGE IN ROW
+        CHUNK       8192
+        PCTVERSION  0
+        NOCACHE
+        NOLOGGING
+        STORAGE    (
+                    INITIAL          64K
+                    MINEXTENTS       1
+                    MAXEXTENTS       2147483645
+                    PCTINCREASE      0
+                    FREELISTS        1
+                    FREELIST GROUPS  1
+                    BUFFER_POOL      DEFAULT
+                   )
+      )
+NOCACHE
+NOPARALLEL
+MONITORING;
+
+
+CREATE TABLE ETX_LISTS
+(
+  LIST_NAME    VARCHAR2(255 BYTE),
+  SLOB_HANDLE  BLOB
+)
+TABLESPACE TBS_DADOS_INFORMIX
+PCTUSED    40
+PCTFREE    10
+INITRANS   1
+MAXTRANS   255
+STORAGE    (
+            INITIAL          64K
+            MINEXTENTS       1
+            MAXEXTENTS       2147483645
+            PCTINCREASE      0
+            FREELISTS        1
+            FREELIST GROUPS  1
+            BUFFER_POOL      DEFAULT
+           )
+NOLOGGING 
+NOCOMPRESS 
+LOB (SLOB_HANDLE) STORE AS 
+      ( TABLESPACE  TBS_DADOS_INFORMIX 
+        ENABLE      STORAGE IN ROW
+        CHUNK       8192
+        PCTVERSION  0
+        NOCACHE
+        NOLOGGING
+        STORAGE    (
+                    INITIAL          64K
+                    MINEXTENTS       1
+                    MAXEXTENTS       2147483645
+                    PCTINCREASE      0
+                    FREELISTS        1
+                    FREELIST GROUPS  1
+                    BUFFER_POOL      DEFAULT
+                   )
+      )
+NOCACHE
+NOPARALLEL
+MONITORING;
+
+
+CREATE TABLE PING
+(
+  NUM_IMAGEM  NUMBER(38),
+  NOM_GIF     BLOB
+)
+TABLESPACE TBS_DADOS_INFORMIX
+PCTUSED    40
+PCTFREE    10
+INITRANS   1
+MAXTRANS   255
+STORAGE    (
+            INITIAL          64K
+            MINEXTENTS       1
+            MAXEXTENTS       2147483645
+            PCTINCREASE      0
+            FREELISTS        1
+            FREELIST GROUPS  1
+            BUFFER_POOL      DEFAULT
+           )
+NOLOGGING 
+NOCOMPRESS 
+LOB (NOM_GIF) STORE AS 
+      ( TABLESPACE  TBS_DADOS_INFORMIX 
+        ENABLE      STORAGE IN ROW
+        CHUNK       8192
+        PCTVERSION  0
+        NOCACHE
+        NOLOGGING
+        STORAGE    (
+                    INITIAL          64K
+                    MINEXTENTS       1
+                    MAXEXTENTS       2147483645
+                    PCTINCREASE      0
+                    FREELISTS        1
+                    FREELIST GROUPS  1
+                    BUFFER_POOL      DEFAULT
+                   )
+      )
+NOCACHE
+NOPARALLEL
+MONITORING;
+
+
+CREATE TABLE PROFINT
+(
+  DESCLOGIN          VARCHAR2(10 BYTE)          NOT NULL,
+  COD_INTERNACIONAL  CHAR(15 BYTE)
+)
+TABLESPACE TBS_DADOS_INFORMIX
+PCTUSED    40
+PCTFREE    10
+INITRANS   1
+MAXTRANS   255
+STORAGE    (
+            INITIAL          64K
+            MINEXTENTS       1
+            MAXEXTENTS       2147483645
+            PCTINCREASE      0
+            FREELISTS        1
+            FREELIST GROUPS  1
+            BUFFER_POOL      DEFAULT
+           )
+NOLOGGING 
+NOCOMPRESS 
+NOCACHE
+NOPARALLEL
+MONITORING;
+
+
+CREATE TABLE PTN_CARGA_WEB
+(
+  CD_PEDIDO  NUMBER(38)                         NOT NULL
+)
+TABLESPACE TBS_DADOS_INFORMIX
+PCTUSED    40
+PCTFREE    10
+INITRANS   1
+MAXTRANS   255
+STORAGE    (
+            INITIAL          64K
+            MINEXTENTS       1
+            MAXEXTENTS       2147483645
+            PCTINCREASE      0
+            FREELISTS        1
+            FREELIST GROUPS  1
+            BUFFER_POOL      DEFAULT
+           )
+NOLOGGING 
+NOCOMPRESS 
+NOCACHE
+NOPARALLEL
+MONITORING;
+
+
+CREATE TABLE PTN_CARGA_WEB_TESTE
+(
+  CD_PEDIDO  NUMBER(38)
+)
+TABLESPACE TBS_DADOS_INFORMIX
+PCTUSED    40
+PCTFREE    10
+INITRANS   1
+MAXTRANS   255
+STORAGE    (
+            INITIAL          64K
+            MINEXTENTS       1
+            MAXEXTENTS       2147483645
+            PCTINCREASE      0
+            FREELISTS        1
+            FREELIST GROUPS  1
+            BUFFER_POOL      DEFAULT
+           )
+NOLOGGING 
+NOCOMPRESS 
+NOCACHE
+NOPARALLEL
+MONITORING;
+
+
+CREATE TABLE PTN_CLASSIF
+(
+  COD_CLASSIFICACAO   NUMBER(38)                NOT NULL,
+  COD_INTERNACIONAL   VARCHAR2(15 BYTE)         NOT NULL,
+  NUM_VERSAO          NUMBER(38)                NOT NULL,
+  CD_SISTEMA_CLASSIF  VARCHAR2(2 BYTE)          NOT NULL
+)
+TABLESPACE TBS_DADOS_INFORMIX
+PCTUSED    40
+PCTFREE    10
+INITRANS   1
+MAXTRANS   255
+STORAGE    (
+            INITIAL          64K
+            MINEXTENTS       1
+            MAXEXTENTS       2147483645
+            PCTINCREASE      0
+            FREELISTS        1
+            FREELIST GROUPS  1
+            BUFFER_POOL      DEFAULT
+           )
+NOLOGGING 
+NOCOMPRESS 
+NOCACHE
+NOPARALLEL
+MONITORING;
+
+
+CREATE TABLE PTN_CLASSIF2
+(
+  COD_CLASSIFICACAO   NUMBER(38)                NOT NULL,
+  COD_INTERNACIONAL   VARCHAR2(15 BYTE)         NOT NULL,
+  NUM_VERSAO          NUMBER(38)                NOT NULL,
+  CD_SISTEMA_CLASSIF  VARCHAR2(2 BYTE)          NOT NULL
+)
+TABLESPACE TBS_DADOS_INFORMIX
+PCTUSED    40
+PCTFREE    10
+INITRANS   1
+MAXTRANS   255
+STORAGE    (
+            INITIAL          64K
+            MINEXTENTS       1
+            MAXEXTENTS       2147483645
+            PCTINCREASE      0
+            FREELISTS        1
+            FREELIST GROUPS  1
+            BUFFER_POOL      DEFAULT
+           )
+NOLOGGING 
+NOCOMPRESS 
+NOCACHE
+NOPARALLEL
+MONITORING;
+
+
+CREATE TABLE PTN_CLASSIF_DESC
+(
+  COD_CLASSIFICACAO  NUMBER(38)                 NOT NULL,
+  DES_CLASSIFICACAO  CLOB,
+  LAST_UPDATE        DATE                       NOT NULL
+)
+TABLESPACE TBS_DADOS_INFORMIX
+PCTUSED    40
+PCTFREE    10
+INITRANS   1
+MAXTRANS   255
+STORAGE    (
+            INITIAL          64K
+            MINEXTENTS       1
+            MAXEXTENTS       2147483645
+            PCTINCREASE      0
+            FREELISTS        1
+            FREELIST GROUPS  1
+            BUFFER_POOL      DEFAULT
+           )
+NOLOGGING 
+NOCOMPRESS 
+LOB (DES_CLASSIFICACAO) STORE AS 
+      ( TABLESPACE  TBS_DADOS_INFORMIX 
+        ENABLE      STORAGE IN ROW
+        CHUNK       8192
+        PCTVERSION  0
+        NOCACHE
+        NOLOGGING
+        STORAGE    (
+                    INITIAL          64K
+                    MINEXTENTS       1
+                    MAXEXTENTS       2147483645
+                    PCTINCREASE      0
+                    FREELISTS        1
+                    FREELIST GROUPS  1
+                    BUFFER_POOL      DEFAULT
+                   )
+      )
+NOCACHE
+NOPARALLEL
+MONITORING;
+
+
+CREATE TABLE PTN_CLASSIF_DESC2
+(
+  COD_CLASSIFICACAO  NUMBER(38)                 NOT NULL,
+  DES_CLASSIFICACAO  CLOB,
+  LAST_UPDATE        DATE                       NOT NULL
+)
+TABLESPACE TBS_DADOS_INFORMIX
+PCTUSED    40
+PCTFREE    10
+INITRANS   1
+MAXTRANS   255
+STORAGE    (
+            INITIAL          64K
+            MINEXTENTS       1
+            MAXEXTENTS       2147483645
+            PCTINCREASE      0
+            FREELISTS        1
+            FREELIST GROUPS  1
+            BUFFER_POOL      DEFAULT
+           )
+NOLOGGING 
+NOCOMPRESS 
+LOB (DES_CLASSIFICACAO) STORE AS 
+      ( TABLESPACE  TBS_DADOS_INFORMIX 
+        ENABLE      STORAGE IN ROW
+        CHUNK       8192
+        PCTVERSION  0
+        NOCACHE
+        NOLOGGING
+        STORAGE    (
+                    INITIAL          64K
+                    MINEXTENTS       1
+                    MAXEXTENTS       2147483645
+                    PCTINCREASE      0
+                    FREELISTS        1
+                    FREELIST GROUPS  1
+                    BUFFER_POOL      DEFAULT
+                   )
+      )
+NOCACHE
+NOPARALLEL
+MONITORING;
+
+
+CREATE TABLE PTN_CLASSIF_PEDIDO
+(
+  COD_PEDIDO         NUMBER(38)                 NOT NULL,
+  COD_CLASSIFICACAO  NUMBER(38)                 NOT NULL,
+  DT_CLASSIFICACAO   DATE                       NOT NULL,
+  ORDEM_PEDIDO       NUMBER(38)                 NOT NULL
+)
+TABLESPACE TBS_DADOS_INFORMIX
+PCTUSED    40
+PCTFREE    10
+INITRANS   1
+MAXTRANS   255
+STORAGE    (
+            INITIAL          64K
+            MINEXTENTS       1
+            MAXEXTENTS       2147483645
+            PCTINCREASE      0
+            FREELISTS        1
+            FREELIST GROUPS  1
+            BUFFER_POOL      DEFAULT
+           )
+NOLOGGING 
+NOCOMPRESS 
+NOCACHE
+NOPARALLEL
+MONITORING;
+
+
+CREATE TABLE PTN_DESPACHO
+(
+  COD_PEDIDO        NUMBER(38)                  NOT NULL,
+  CD_TIPO_DESPACHO  NUMBER(38)                  NOT NULL,
+  NUM_RPI           NUMBER(38)                  NOT NULL,
+  TEXTO_DESPACHO    CLOB
+)
+TABLESPACE TBS_DADOS_INFORMIX
+PCTUSED    40
+PCTFREE    10
+INITRANS   1
+MAXTRANS   255
+STORAGE    (
+            INITIAL          64K
+            MINEXTENTS       1
+            MAXEXTENTS       2147483645
+            PCTINCREASE      0
+            FREELISTS        1
+            FREELIST GROUPS  1
+            BUFFER_POOL      DEFAULT
+           )
+NOLOGGING 
+NOCOMPRESS 
+LOB (TEXTO_DESPACHO) STORE AS 
+      ( TABLESPACE  TBS_DADOS_INFORMIX 
+        ENABLE      STORAGE IN ROW
+        CHUNK       8192
+        PCTVERSION  0
+        NOCACHE
+        NOLOGGING
+        STORAGE    (
+                    INITIAL          64K
+                    MINEXTENTS       1
+                    MAXEXTENTS       2147483645
+                    PCTINCREASE      0
+                    FREELISTS        1
+                    FREELIST GROUPS  1
+                    BUFFER_POOL      DEFAULT
+                   )
+      )
+NOCACHE
+NOPARALLEL
+MONITORING;
+
+
+CREATE TABLE PTN_DESPACHO3
+(
+  COD_PEDIDO        NUMBER(38)                  NOT NULL,
+  CD_TIPO_DESPACHO  NUMBER(38)                  NOT NULL,
+  NUM_RPI           NUMBER(38)                  NOT NULL,
+  TEXTO_DESPACHO    LONG
+)
+TABLESPACE TBS_DADOS_INFORMIX
+PCTUSED    40
+PCTFREE    10
+INITRANS   1
+MAXTRANS   255
+STORAGE    (
+            INITIAL          64K
+            MINEXTENTS       1
+            MAXEXTENTS       2147483645
+            PCTINCREASE      0
+            FREELISTS        1
+            FREELIST GROUPS  1
+            BUFFER_POOL      DEFAULT
+           )
+NOLOGGING 
+NOCOMPRESS 
+NOCACHE
+NOPARALLEL
+MONITORING;
+
+
+CREATE TABLE PTN_PEDIDO3
+(
+  COD_PEDIDO        NUMBER(38)                  NOT NULL,
+  COD_SITUACAO      CHAR(2 BYTE)                NOT NULL,
+  NUM_PEDIDO        CHAR(9 BYTE),
+  DT_DEPOSITO       DATE                        NOT NULL,
+  COD_NATUREZA      CHAR(2 BYTE),
+  CD_TIPO_PEDIDO    CHAR(1 BYTE)                NOT NULL,
+  TITULO            LONG,
+  DT_FASE_NACIONAL  DATE
+)
+TABLESPACE TBS_DADOS_INFORMIX
+PCTUSED    40
+PCTFREE    10
+INITRANS   1
+MAXTRANS   255
+STORAGE    (
+            INITIAL          64K
+            MINEXTENTS       1
+            MAXEXTENTS       2147483645
+            PCTINCREASE      0
+            FREELISTS        1
+            FREELIST GROUPS  1
+            BUFFER_POOL      DEFAULT
+           )
+NOLOGGING 
+NOCOMPRESS 
+NOCACHE
+NOPARALLEL
+MONITORING;
+
+
+CREATE TABLE PTN_RESUMO_PEDIDO3
+(
+  COD_PEDIDO   NUMBER(38)                       NOT NULL,
+  RESUMO       LONG,
+  NUM_PEDIDO   CHAR(9 BYTE),
+  LAST_UPDATE  DATE                             NOT NULL
+)
+TABLESPACE TBS_DADOS_INFORMIX
+PCTUSED    40
+PCTFREE    10
+INITRANS   1
+MAXTRANS   255
+STORAGE    (
+            INITIAL          64K
+            MINEXTENTS       1
+            MAXEXTENTS       2147483645
+            PCTINCREASE      0
+            FREELISTS        1
+            FREELIST GROUPS  1
+            BUFFER_POOL      DEFAULT
+           )
+NOLOGGING 
+NOCOMPRESS 
+NOCACHE
+NOPARALLEL
+MONITORING;
+
+
+CREATE TABLE CRP_PJ_AUXILIAR
+(
+  CD_PFPJ             NUMBER(38)                NOT NULL,
+  NO_INSCRI_MUNICIP   CHAR(20 BYTE),
+  NO_INSCRI_ESTADUA   CHAR(20 BYTE),
+  NO_CAIXA_POSTAL     CHAR(20 BYTE),
+  CD_RAMO_ATIVID      NUMBER(38),
+  CD_MICRO_EMPRESA    CHAR(1 BYTE),
+  CD_CONTROL_LEI9279  CHAR(1 BYTE),
+  CD_REGISTR_JUNTA    CHAR(10 BYTE),
+  DT_REGISTR_JUNTA    DATE,
+  NO_REGISTR_JUNTA    CHAR(15 BYTE),
+  DT_PUBLICA_DOU      DATE
+)
+TABLESPACE TBS_DADOS_INFORMIX
+PCTUSED    40
+PCTFREE    10
+INITRANS   1
+MAXTRANS   255
+STORAGE    (
+            INITIAL          64K
+            MINEXTENTS       1
+            MAXEXTENTS       2147483645
+            PCTINCREASE      0
+            FREELISTS        1
+            FREELIST GROUPS  1
+            BUFFER_POOL      DEFAULT
+           )
+NOLOGGING 
+NOCOMPRESS 
+NOCACHE
+NOPARALLEL
+MONITORING;
+
+
+CREATE TABLE PAG_IPAS
+(
+  NUMPROTOCOLO    VARCHAR2(30 BYTE),
+  NUMNOSSONUMERO  VARCHAR2(25 BYTE),
+  DATA_PAG        DATE,
+  VLRTOTALGUIA    VARCHAR2(12 BYTE)             NOT NULL,
+  VLRSERVICOGUIA  VARCHAR2(12 BYTE)             NOT NULL,
+  CODSERVICO      NUMBER(38),
+  CODTIPOOBJETO   NUMBER(38)
+)
+TABLESPACE TBS_DADOS_INFORMIX
+PCTUSED    40
+PCTFREE    10
+INITRANS   1
+MAXTRANS   255
+STORAGE    (
+            INITIAL          64K
+            MINEXTENTS       1
+            MAXEXTENTS       2147483645
+            PCTINCREASE      0
+            FREELISTS        1
+            FREELIST GROUPS  1
+            BUFFER_POOL      DEFAULT
+           )
+NOLOGGING 
+NOCOMPRESS 
+NOCACHE
+NOPARALLEL
+MONITORING;
+
+
+CREATE TABLE PTN_DESPACHO2
+(
+  COD_PEDIDO        NUMBER(38)                  NOT NULL,
+  CD_TIPO_DESPACHO  NUMBER(38)                  NOT NULL,
+  NUM_RPI           NUMBER(38)                  NOT NULL,
+  TEXTO_DESPACHO    LONG
+)
+TABLESPACE TBS_DADOS_INFORMIX
+PCTUSED    40
+PCTFREE    10
+INITRANS   1
+MAXTRANS   255
+STORAGE    (
+            INITIAL          64K
+            MINEXTENTS       1
+            MAXEXTENTS       2147483645
+            PCTINCREASE      0
+            FREELISTS        1
+            FREELIST GROUPS  1
+            BUFFER_POOL      DEFAULT
+           )
+NOLOGGING 
+NOCOMPRESS 
+NOCACHE
+NOPARALLEL
+MONITORING;
+
+
+CREATE TABLE PTN_DESPACHO1
+(
+  COD_PEDIDO        NUMBER(38)                  NOT NULL,
+  CD_TIPO_DESPACHO  NUMBER(38)                  NOT NULL,
+  NUM_RPI           NUMBER(38)                  NOT NULL,
+  TEXTO_DESPACHO    CLOB
+)
+TABLESPACE TBS_DADOS_INFORMIX
+PCTUSED    40
+PCTFREE    10
+INITRANS   1
+MAXTRANS   255
+STORAGE    (
+            INITIAL          64K
+            MINEXTENTS       1
+            MAXEXTENTS       2147483645
+            PCTINCREASE      0
+            FREELISTS        1
+            FREELIST GROUPS  1
+            BUFFER_POOL      DEFAULT
+           )
+NOLOGGING 
+NOCOMPRESS 
+LOB (TEXTO_DESPACHO) STORE AS 
+      ( TABLESPACE  TBS_DADOS_INFORMIX 
+        ENABLE      STORAGE IN ROW
+        CHUNK       8192
+        PCTVERSION  0
+        NOCACHE
+        NOLOGGING
+        STORAGE    (
+                    INITIAL          64K
+                    MINEXTENTS       1
+                    MAXEXTENTS       2147483645
+                    PCTINCREASE      0
+                    FREELISTS        1
+                    FREELIST GROUPS  1
+                    BUFFER_POOL      DEFAULT
+                   )
+      )
+NOCACHE
+NOPARALLEL
+MONITORING;
+
+
+CREATE TABLE PTN_INID_DESPACH
+(
+  CD_TIPO_DESPACH  NUMBER(38)                   NOT NULL,
+  CD_INID          NUMBER(38)                   NOT NULL,
+  CD_OBRIGAT       CHAR(1 BYTE)                 NOT NULL
+)
+TABLESPACE TBS_DADOS_INFORMIX
+PCTUSED    40
+PCTFREE    10
+INITRANS   1
+MAXTRANS   255
+STORAGE    (
+            INITIAL          64K
+            MINEXTENTS       1
+            MAXEXTENTS       2147483645
+            PCTINCREASE      0
+            FREELISTS        1
+            FREELIST GROUPS  1
+            BUFFER_POOL      DEFAULT
+           )
+NOLOGGING 
+NOCOMPRESS 
+NOCACHE
+NOPARALLEL
+MONITORING;
+
+
+CREATE TABLE PTN_INVENTOR
+(
+  COD_PEDIDO         NUMBER(38)                 NOT NULL,
+  COD_INVENTOR       NUMBER(38)                 NOT NULL,
+  ORDEM_IMPORTANCIA  NUMBER(38)                 NOT NULL,
+  ANONIMATO          CHAR(1 BYTE)               NOT NULL
+)
+TABLESPACE TBS_DADOS_INFORMIX
+PCTUSED    40
+PCTFREE    10
+INITRANS   1
+MAXTRANS   255
+STORAGE    (
+            INITIAL          64K
+            MINEXTENTS       1
+            MAXEXTENTS       2147483645
+            PCTINCREASE      0
+            FREELISTS        1
+            FREELIST GROUPS  1
+            BUFFER_POOL      DEFAULT
+           )
+NOLOGGING 
+NOCOMPRESS 
+NOCACHE
+NOPARALLEL
+MONITORING;
+
+
+CREATE TABLE PTN_INVENTOR_CNPQ
+(
+  COD_CPF       VARCHAR2(18 BYTE)               NOT NULL,
+  COD_REGISTRO  VARCHAR2(18 BYTE)               NOT NULL,
+  NOM_PESSOA    VARCHAR2(60 BYTE)               NOT NULL,
+  URL_LATTES    VARCHAR2(255 BYTE)              NOT NULL
+)
+TABLESPACE TBS_DADOS_INFORMIX
+PCTUSED    40
+PCTFREE    10
+INITRANS   1
+MAXTRANS   255
+STORAGE    (
+            INITIAL          64K
+            MINEXTENTS       1
+            MAXEXTENTS       2147483645
+            PCTINCREASE      0
+            FREELISTS        1
+            FREELIST GROUPS  1
+            BUFFER_POOL      DEFAULT
+           )
+NOLOGGING 
+NOCOMPRESS 
+NOCACHE
+NOPARALLEL
+MONITORING;
+
+
+CREATE TABLE PTN_LEI_PATENTE
+(
+  NUM_LEI             VARCHAR2(10 BYTE)         NOT NULL,
+  DT_INICIO_VIGENCIA  DATE                      NOT NULL,
+  DT_TERMINO_VIGENCI  DATE
+)
+TABLESPACE TBS_DADOS_INFORMIX
+PCTUSED    40
+PCTFREE    10
+INITRANS   1
+MAXTRANS   255
+STORAGE    (
+            INITIAL          64K
+            MINEXTENTS       1
+            MAXEXTENTS       2147483645
+            PCTINCREASE      0
+            FREELISTS        1
+            FREELIST GROUPS  1
+            BUFFER_POOL      DEFAULT
+           )
+NOLOGGING 
+NOCOMPRESS 
+NOCACHE
+NOPARALLEL
+MONITORING;
+
+
+CREATE TABLE PTN_NATUREZA
+(
+  COD_NATUREZA  VARCHAR2(2 BYTE)                NOT NULL,
+  DES_NATUREZA  VARCHAR2(50 BYTE)               NOT NULL
+)
+TABLESPACE TBS_DADOS_INFORMIX
+PCTUSED    40
+PCTFREE    10
+INITRANS   1
+MAXTRANS   255
+STORAGE    (
+            INITIAL          64K
+            MINEXTENTS       1
+            MAXEXTENTS       2147483645
+            PCTINCREASE      0
+            FREELISTS        1
+            FREELIST GROUPS  1
+            BUFFER_POOL      DEFAULT
+           )
+NOLOGGING 
+NOCOMPRESS 
+NOCACHE
+NOPARALLEL
+MONITORING;
+
+
+CREATE TABLE PTN_PCT
+(
+  COD_PEDIDO  NUMBER(38)                        NOT NULL,
+  NUM_PCT     VARCHAR2(13 BYTE)                 NOT NULL,
+  DT_PCT      DATE                              NOT NULL,
+  CD_OMPI     VARCHAR2(14 BYTE),
+  DT_OMPI     DATE
+)
+TABLESPACE TBS_DADOS_INFORMIX
+PCTUSED    40
+PCTFREE    10
+INITRANS   1
+MAXTRANS   255
+STORAGE    (
+            INITIAL          64K
+            MINEXTENTS       1
+            MAXEXTENTS       2147483645
+            PCTINCREASE      0
+            FREELISTS        1
+            FREELIST GROUPS  1
+            BUFFER_POOL      DEFAULT
+           )
+NOLOGGING 
+NOCOMPRESS 
+NOCACHE
+NOPARALLEL
+MONITORING;
+
+
+CREATE TABLE PTN_PEDIDO
+(
+  COD_PEDIDO        NUMBER(38)                  NOT NULL,
+  COD_SITUACAO      VARCHAR2(2 BYTE)            NOT NULL,
+  NUM_PEDIDO        VARCHAR2(9 BYTE),
+  DT_DEPOSITO       DATE,
+  COD_NATUREZA      VARCHAR2(2 BYTE),
+  CD_TIPO_PEDIDO    CHAR(1 BYTE)                NOT NULL,
+  TITULO            CLOB,
+  DT_FASE_NACIONAL  DATE
+)
+TABLESPACE TBS_DADOS_INFORMIX
+PCTUSED    40
+PCTFREE    10
+INITRANS   1
+MAXTRANS   255
+STORAGE    (
+            INITIAL          64K
+            MINEXTENTS       1
+            MAXEXTENTS       2147483645
+            PCTINCREASE      0
+            FREELISTS        1
+            FREELIST GROUPS  1
+            BUFFER_POOL      DEFAULT
+           )
+NOLOGGING 
+NOCOMPRESS 
+LOB (TITULO) STORE AS 
+      ( TABLESPACE  TBS_DADOS_INFORMIX 
+        ENABLE      STORAGE IN ROW
+        CHUNK       8192
+        PCTVERSION  0
+        NOCACHE
+        NOLOGGING
+        STORAGE    (
+                    INITIAL          64K
+                    MINEXTENTS       1
+                    MAXEXTENTS       2147483645
+                    PCTINCREASE      0
+                    FREELISTS        1
+                    FREELIST GROUPS  1
+                    BUFFER_POOL      DEFAULT
+                   )
+      )
+NOCACHE
+NOPARALLEL
+MONITORING;
+
+
+CREATE TABLE PTN_PEDIDO2
+(
+  COD_PEDIDO      NUMBER(38),
+  COD_SITUACAO    VARCHAR2(2 BYTE),
+  NUM_PEDIDO      VARCHAR2(9 BYTE),
+  DT_DEPOSITO     DATE,
+  COD_NATUREZA    VARCHAR2(2 BYTE),
+  CD_TIPO_PEDIDO  CHAR(1 BYTE),
+  TITULO          CLOB
+)
+TABLESPACE TBS_DADOS_INFORMIX
+PCTUSED    40
+PCTFREE    10
+INITRANS   1
+MAXTRANS   255
+STORAGE    (
+            INITIAL          64K
+            MINEXTENTS       1
+            MAXEXTENTS       2147483645
+            PCTINCREASE      0
+            FREELISTS        1
+            FREELIST GROUPS  1
+            BUFFER_POOL      DEFAULT
+           )
+NOLOGGING 
+NOCOMPRESS 
+LOB (TITULO) STORE AS 
+      ( TABLESPACE  TBS_DADOS_INFORMIX 
+        ENABLE      STORAGE IN ROW
+        CHUNK       8192
+        PCTVERSION  0
+        NOCACHE
+        NOLOGGING
+        STORAGE    (
+                    INITIAL          64K
+                    MINEXTENTS       1
+                    MAXEXTENTS       2147483645
+                    PCTINCREASE      0
+                    FREELISTS        1
+                    FREELIST GROUPS  1
+                    BUFFER_POOL      DEFAULT
+                   )
+      )
+NOCACHE
+NOPARALLEL
+MONITORING;
+
+
+CREATE TABLE PTN_PRIORIDADE
+(
+  COD_PEDIDO         NUMBER(38)                 NOT NULL,
+  NUM_PEDIDO_ORIGEM  CHAR(15 BYTE)              NOT NULL,
+  DT_PEDIDO_ORIGEM   DATE                       NOT NULL,
+  COD_PAIS           VARCHAR2(2 BYTE)           NOT NULL
+)
+TABLESPACE TBS_DADOS_INFORMIX
+PCTUSED    40
+PCTFREE    10
+INITRANS   1
+MAXTRANS   255
+STORAGE    (
+            INITIAL          64K
+            MINEXTENTS       1
+            MAXEXTENTS       2147483645
+            PCTINCREASE      0
+            FREELISTS        1
+            FREELIST GROUPS  1
+            BUFFER_POOL      DEFAULT
+           )
+NOLOGGING 
+NOCOMPRESS 
+NOCACHE
+NOPARALLEL
+MONITORING;
+
+
+CREATE TABLE PTN_PROCURADOR
+(
+  COD_PEDIDO      NUMBER(38)                    NOT NULL,
+  COD_PROCURADOR  NUMBER(38)                    NOT NULL,
+  DT_INICIO       DATE                          NOT NULL,
+  DT_TERMINO      DATE
+)
+TABLESPACE TBS_DADOS_INFORMIX
+PCTUSED    40
+PCTFREE    10
+INITRANS   1
+MAXTRANS   255
+STORAGE    (
+            INITIAL          64K
+            MINEXTENTS       1
+            MAXEXTENTS       2147483645
+            PCTINCREASE      0
+            FREELISTS        1
+            FREELIST GROUPS  1
+            BUFFER_POOL      DEFAULT
+           )
+NOLOGGING 
+NOCOMPRESS 
+NOCACHE
+NOPARALLEL
+MONITORING;
+
+
+CREATE TABLE PTN_RENUMERACAO
+(
+  CD_PEDIDO_DERIVAD  NUMBER(38)                 NOT NULL,
+  NO_PEDIDO_ORIGEM   VARCHAR2(9 BYTE)           NOT NULL
+)
+TABLESPACE TBS_DADOS_INFORMIX
+PCTUSED    40
+PCTFREE    10
+INITRANS   1
+MAXTRANS   255
+STORAGE    (
+            INITIAL          64K
+            MINEXTENTS       1
+            MAXEXTENTS       2147483645
+            PCTINCREASE      0
+            FREELISTS        1
+            FREELIST GROUPS  1
+            BUFFER_POOL      DEFAULT
+           )
+NOLOGGING 
+NOCOMPRESS 
+NOCACHE
+NOPARALLEL
+MONITORING;
+
+
+CREATE TABLE PTN_REQUERENTE
+(
+  COD_PEDIDO         NUMBER(38)                 NOT NULL,
+  COD_REQUERENTE     NUMBER(38)                 NOT NULL,
+  DT_INICIO          DATE                       NOT NULL,
+  DT_TERMINO         DATE,
+  ORDEM_IMPORTANCIA  NUMBER(38)                 NOT NULL
+)
+TABLESPACE TBS_DADOS_INFORMIX
+PCTUSED    40
+PCTFREE    10
+INITRANS   1
+MAXTRANS   255
+STORAGE    (
+            INITIAL          64K
+            MINEXTENTS       1
+            MAXEXTENTS       2147483645
+            PCTINCREASE      0
+            FREELISTS        1
+            FREELIST GROUPS  1
+            BUFFER_POOL      DEFAULT
+           )
+NOLOGGING 
+NOCOMPRESS 
+NOCACHE
+NOPARALLEL
+MONITORING;
+
+
+CREATE TABLE PTN_RESUMO_PEDIDO1
+(
+  COD_PEDIDO   NUMBER(38)                       NOT NULL,
+  RESUMO       CLOB,
+  NUM_PEDIDO   VARCHAR2(9 BYTE),
+  LAST_UPDATE  DATE                             NOT NULL
+)
+TABLESPACE TBS_DADOS_INFORMIX
+PCTUSED    40
+PCTFREE    10
+INITRANS   1
+MAXTRANS   255
+STORAGE    (
+            INITIAL          64K
+            MINEXTENTS       1
+            MAXEXTENTS       2147483645
+            PCTINCREASE      0
+            FREELISTS        1
+            FREELIST GROUPS  1
+            BUFFER_POOL      DEFAULT
+           )
+NOLOGGING 
+NOCOMPRESS 
+LOB (RESUMO) STORE AS 
+      ( TABLESPACE  TBS_DADOS_INFORMIX 
+        ENABLE      STORAGE IN ROW
+        CHUNK       8192
+        PCTVERSION  0
+        NOCACHE
+        NOLOGGING
+        STORAGE    (
+                    INITIAL          64K
+                    MINEXTENTS       1
+                    MAXEXTENTS       2147483645
+                    PCTINCREASE      0
+                    FREELISTS        1
+                    FREELIST GROUPS  1
+                    BUFFER_POOL      DEFAULT
+                   )
+      )
+NOCACHE
+NOPARALLEL
+MONITORING;
+
+
+CREATE TABLE PTN_RESUMO_PEDIDO2
+(
+  COD_PEDIDO   NUMBER(38),
+  RESUMO       CLOB,
+  NUM_PEDIDO   VARCHAR2(9 BYTE),
+  LAST_UPDATE  DATE
+)
+TABLESPACE TBS_DADOS_INFORMIX
+PCTUSED    40
+PCTFREE    10
+INITRANS   1
+MAXTRANS   255
+STORAGE    (
+            INITIAL          64K
+            MINEXTENTS       1
+            MAXEXTENTS       2147483645
+            PCTINCREASE      0
+            FREELISTS        1
+            FREELIST GROUPS  1
+            BUFFER_POOL      DEFAULT
+           )
+NOLOGGING 
+NOCOMPRESS 
+LOB (RESUMO) STORE AS 
+      ( TABLESPACE  TBS_DADOS_INFORMIX 
+        ENABLE      STORAGE IN ROW
+        CHUNK       8192
+        PCTVERSION  0
+        NOCACHE
+        NOLOGGING
+        STORAGE    (
+                    INITIAL          64K
+                    MINEXTENTS       1
+                    MAXEXTENTS       2147483645
+                    PCTINCREASE      0
+                    FREELISTS        1
+                    FREELIST GROUPS  1
+                    BUFFER_POOL      DEFAULT
+                   )
+      )
+NOCACHE
+NOPARALLEL
+MONITORING;
+
+
+CREATE TABLE PTN_SITUACAO
+(
+  COD_SITUACAO  VARCHAR2(2 BYTE)                NOT NULL,
+  DES_SITUACAO  VARCHAR2(30 BYTE)               NOT NULL
+)
+TABLESPACE TBS_DADOS_INFORMIX
+PCTUSED    40
+PCTFREE    10
+INITRANS   1
+MAXTRANS   255
+STORAGE    (
+            INITIAL          64K
+            MINEXTENTS       1
+            MAXEXTENTS       2147483645
+            PCTINCREASE      0
+            FREELISTS        1
+            FREELIST GROUPS  1
+            BUFFER_POOL      DEFAULT
+           )
+NOLOGGING 
+NOCOMPRESS 
+NOCACHE
+NOPARALLEL
+MONITORING;
+
+
+CREATE TABLE PTN_VINCULO_PEDIDO
+(
+  CD_PEDIDO_ORIGEM   NUMBER(38)                 NOT NULL,
+  CD_PEDIDO_DERIVAD  NUMBER(38)                 NOT NULL,
+  DT_VINCULO         DATE,
+  CD_VINCULO         CHAR(1 BYTE)               NOT NULL
+)
+TABLESPACE TBS_DADOS_INFORMIX
+PCTUSED    40
+PCTFREE    10
+INITRANS   1
+MAXTRANS   255
+STORAGE    (
+            INITIAL          64K
+            MINEXTENTS       1
+            MAXEXTENTS       2147483645
+            PCTINCREASE      0
+            FREELISTS        1
+            FREELIST GROUPS  1
+            BUFFER_POOL      DEFAULT
+           )
+NOLOGGING 
+NOCOMPRESS 
+NOCACHE
+NOPARALLEL
+MONITORING;
+
+
+CREATE TABLE REQUERENTE_AUX
+(
+  COD_PEDIDO         NUMBER(38)                 NOT NULL,
+  COD_REQUERENTE     NUMBER(38)                 NOT NULL,
+  DT_INICIO          DATE                       NOT NULL,
+  DT_TERMINO         DATE,
+  ORDEM_IMPORTANCIA  NUMBER(38)                 NOT NULL
+)
+TABLESPACE TBS_DADOS_INFORMIX
+PCTUSED    40
+PCTFREE    10
+INITRANS   1
+MAXTRANS   255
+STORAGE    (
+            INITIAL          64K
+            MINEXTENTS       1
+            MAXEXTENTS       2147483645
+            PCTINCREASE      0
+            FREELISTS        1
+            FREELIST GROUPS  1
+            BUFFER_POOL      DEFAULT
+           )
+NOLOGGING 
+NOCOMPRESS 
+NOCACHE
+NOPARALLEL
+MONITORING;
+
+
+CREATE TABLE RESULT_PROFINT
+(
+  DESCLOGIN   VARCHAR2(10 BYTE)                 NOT NULL,
+  COD_PEDIDO  NUMBER(38)                        NOT NULL
+)
+TABLESPACE TBS_DADOS_INFORMIX
+PCTUSED    40
+PCTFREE    10
+INITRANS   1
+MAXTRANS   255
+STORAGE    (
+            INITIAL          64K
+            MINEXTENTS       1
+            MAXEXTENTS       2147483645
+            PCTINCREASE      0
+            FREELISTS        1
+            FREELIST GROUPS  1
+            BUFFER_POOL      DEFAULT
+           )
+NOLOGGING 
+NOCOMPRESS 
+NOCACHE
+NOPARALLEL
+MONITORING;
+
+
+CREATE TABLE SEM_INVENTOR2
+(
+  COD_PESSOA  NUMBER(38)
+)
+TABLESPACE TBS_DADOS_INFORMIX
+PCTUSED    40
+PCTFREE    10
+INITRANS   1
+MAXTRANS   255
+STORAGE    (
+            INITIAL          64K
+            MINEXTENTS       1
+            MAXEXTENTS       2147483645
+            PCTINCREASE      0
+            FREELISTS        1
+            FREELIST GROUPS  1
+            BUFFER_POOL      DEFAULT
+           )
+NOLOGGING 
+NOCOMPRESS 
+NOCACHE
+NOPARALLEL
+MONITORING;
+
+
+CREATE TABLE CRP_MOVIMENTACAO
+(
+  CD_MOVIMEN          NUMBER(10),
+  CD_UNIDADE_ORGANIZ  NUMBER(38),
+  DH_MOVIMEN          DATE,
+  NM_LOGIN_DESTINO    VARCHAR2(8 BYTE),
+  NM_LOGIN            VARCHAR2(8 BYTE),
+  TX_OBSERVA          CLOB,
+  NO_CHAVE            VARCHAR2(15 BYTE),
+  CD_SISTEMA          NUMBER(38),
+  CD_CHAVE            NUMBER(38),
+  CD_PRIORID          VARCHAR2(1 BYTE),
+  DH_RECEBIMENTO      DATE,
+  NM_LOGIN_RECEBE     VARCHAR2(8 BYTE),
+  CD_PFPJ_EXTERNA     NUMBER(38),
+  CD_VINCULO_EXTERNA  NUMBER(38),
+  TX_IDENTIF_EXTERNA  VARCHAR2(25 BYTE),
+  TRANSITO            VARCHAR2(1 BYTE),
+  VIRTUAL             VARCHAR2(1 BYTE)
+)
+TABLESPACE TBS_DADOS_INFORMIX
+PCTUSED    40
+PCTFREE    10
+INITRANS   1
+MAXTRANS   255
+STORAGE    (
+            INITIAL          64K
+            MINEXTENTS       1
+            MAXEXTENTS       2147483645
+            PCTINCREASE      0
+            FREELISTS        1
+            FREELIST GROUPS  1
+            BUFFER_POOL      DEFAULT
+           )
+NOLOGGING 
+NOCOMPRESS 
+LOB (TX_OBSERVA) STORE AS 
+      ( TABLESPACE  TBS_DADOS_INFORMIX 
+        ENABLE      STORAGE IN ROW
+        CHUNK       8192
+        PCTVERSION  0
+        NOCACHE
+        NOLOGGING
+        STORAGE    (
+                    INITIAL          64K
+                    MINEXTENTS       1
+                    MAXEXTENTS       2147483645
+                    PCTINCREASE      0
+                    FREELISTS        1
+                    FREELIST GROUPS  1
+                    BUFFER_POOL      DEFAULT
+                   )
+      )
+NOCACHE
+NOPARALLEL
+MONITORING;
+
+
+CREATE TABLE PTN_IMAGEM_PEDIDO
+(
+  COD_PEDIDO  NUMBER(38),
+  IMG_PEDIDO  BLOB
+)
+TABLESPACE TBS_DADOS_INFORMIX
+PCTUSED    40
+PCTFREE    10
+INITRANS   1
+MAXTRANS   255
+STORAGE    (
+            INITIAL          64K
+            MINEXTENTS       1
+            MAXEXTENTS       2147483645
+            PCTINCREASE      0
+            FREELISTS        1
+            FREELIST GROUPS  1
+            BUFFER_POOL      DEFAULT
+           )
+NOLOGGING 
+NOCOMPRESS 
+LOB (IMG_PEDIDO) STORE AS 
+      ( TABLESPACE  TBS_DADOS_INFORMIX 
+        ENABLE      STORAGE IN ROW
+        CHUNK       8192
+        PCTVERSION  0
+        NOCACHE
+        NOLOGGING
+        STORAGE    (
+                    INITIAL          64K
+                    MINEXTENTS       1
+                    MAXEXTENTS       2147483645
+                    PCTINCREASE      0
+                    FREELISTS        1
+                    FREELIST GROUPS  1
+                    BUFFER_POOL      DEFAULT
+                   )
+      )
+NOCACHE
+NOPARALLEL
+MONITORING;
+
+
+CREATE TABLE CRP_PFPJ3
+(
+  COD_PESSOA  NUMBER(38)                        NOT NULL
+)
+TABLESPACE TBS_DADOS_INFORMIX
+PCTUSED    40
+PCTFREE    10
+INITRANS   1
+MAXTRANS   255
+STORAGE    (
+            INITIAL          64K
+            MINEXTENTS       1
+            MAXEXTENTS       2147483645
+            PCTINCREASE      0
+            FREELISTS        1
+            FREELIST GROUPS  1
+            BUFFER_POOL      DEFAULT
+           )
+NOLOGGING 
+NOCOMPRESS 
+NOCACHE
+NOPARALLEL
+MONITORING;
+
+
+CREATE TABLE MRC_APOSTILA
+(
+  CD_PROCESS          NUMBER(10)                NOT NULL,
+  DS_APOSTIL          VARCHAR2(255 BYTE)        NOT NULL,
+  DH_INICIO_APOSTIL   TIMESTAMP(6)              NOT NULL,
+  DT_TERMINO_APOSTIL  DATE,
+  NM_LOGIN            VARCHAR2(8 BYTE)
+)
+TABLESPACE TBS_DADOS_INFORMIX
+PCTUSED    40
+PCTFREE    10
+INITRANS   1
+MAXTRANS   255
+STORAGE    (
+            INITIAL          64K
+            MINEXTENTS       1
+            MAXEXTENTS       2147483645
+            PCTINCREASE      0
+            FREELISTS        1
+            FREELIST GROUPS  1
+            BUFFER_POOL      DEFAULT
+           )
+NOLOGGING 
+NOCOMPRESS 
+NOCACHE
+NOPARALLEL
+MONITORING;
+
+
+CREATE TABLE LOGIN
+(
+  SEQUENCIAL     NUMBER(38)                     NOT NULL,
+  LOGIN          CHAR(8 BYTE)                   NOT NULL,
+  NM_PROFIS      VARCHAR2(160 BYTE),
+  STATUS_LOGIN   CHAR(1 BYTE),
+  SIGLA_UNIDADE  CHAR(15 BYTE)
+)
+TABLESPACE TBS_DADOS_INFORMIX
+PCTUSED    40
+PCTFREE    10
+INITRANS   1
+MAXTRANS   255
+STORAGE    (
+            INITIAL          64K
+            MINEXTENTS       1
+            MAXEXTENTS       2147483645
+            PCTINCREASE      0
+            FREELISTS        1
+            FREELIST GROUPS  1
+            BUFFER_POOL      DEFAULT
+           )
+NOLOGGING 
+NOCOMPRESS 
+NOCACHE
+NOPARALLEL
+MONITORING;
+
+
+CREATE TABLE PTN_RESUMO_PEDIDO
+(
+  COD_PEDIDO   NUMBER(38),
+  RESUMO       CLOB,
+  NUM_PEDIDO   VARCHAR2(9 BYTE),
+  LAST_UPDATE  DATE
+)
+TABLESPACE TBS_DADOS_INFORMIX
+PCTUSED    40
+PCTFREE    10
+INITRANS   1
+MAXTRANS   255
+STORAGE    (
+            INITIAL          64K
+            MINEXTENTS       1
+            MAXEXTENTS       2147483645
+            PCTINCREASE      0
+            FREELISTS        1
+            FREELIST GROUPS  1
+            BUFFER_POOL      DEFAULT
+           )
+NOLOGGING 
+NOCOMPRESS 
+LOB (RESUMO) STORE AS 
+      ( TABLESPACE  TBS_DADOS_INFORMIX 
+        ENABLE      STORAGE IN ROW
+        CHUNK       8192
+        PCTVERSION  10
+        NOCACHE
+        NOLOGGING
+        STORAGE    (
+                    INITIAL          64K
+                    MINEXTENTS       1
+                    MAXEXTENTS       2147483645
+                    PCTINCREASE      0
+                    FREELISTS        1
+                    FREELIST GROUPS  1
+                    BUFFER_POOL      DEFAULT
+                   )
+      )
+NOCACHE
+NOPARALLEL
+MONITORING;
+
+
+CREATE TABLE MRC_OUTRO_DOCUMEN
+(
+  CD_PETICAO        NUMBER(38)                  NOT NULL,
+  DS_OUTRO_DOCUMEN  VARCHAR2(255 BYTE)
+)
+TABLESPACE TBS_DADOS_INFORMIX
+PCTUSED    40
+PCTFREE    10
+INITRANS   1
+MAXTRANS   255
+STORAGE    (
+            INITIAL          64K
+            MINEXTENTS       1
+            MAXEXTENTS       2147483645
+            PCTINCREASE      0
+            FREELISTS        1
+            FREELIST GROUPS  1
+            BUFFER_POOL      DEFAULT
+           )
+NOLOGGING 
+NOCOMPRESS 
+NOCACHE
+NOPARALLEL
+MONITORING;
+
+
+CREATE TABLE PTN_TIPO_DESPACHO
+(
+  CD_TIPO_DESPACHO   NUMBER(38),
+  NUM_LEI            VARCHAR2(10 BYTE),
+  COD_DESPACHO_RPI   VARCHAR2(8 BYTE),
+  DES_TIPO_DESPACHO  VARCHAR2(1000 BYTE)
+)
+TABLESPACE TBS_DADOS_INFORMIX
+PCTUSED    40
+PCTFREE    10
+INITRANS   1
+MAXTRANS   255
+STORAGE    (
+            INITIAL          64K
+            MINEXTENTS       1
+            MAXEXTENTS       2147483645
+            PCTINCREASE      0
+            FREELISTS        1
+            FREELIST GROUPS  1
+            BUFFER_POOL      DEFAULT
+           )
+NOLOGGING 
+NOCOMPRESS 
+NOCACHE
+NOPARALLEL
+MONITORING;
+
+
+CREATE UNIQUE INDEX P_ACERTO ON ACERTO
+(COD_PESSOA)
+NOLOGGING
+TABLESPACE TBS_DADOS_INFORMIX
+PCTFREE    10
+INITRANS   2
+MAXTRANS   255
+STORAGE    (
+            INITIAL          64K
+            MINEXTENTS       1
+            MAXEXTENTS       2147483645
+            PCTINCREASE      0
+            FREELISTS        1
+            FREELIST GROUPS  1
+            BUFFER_POOL      DEFAULT
+           )
+NOPARALLEL;
+
+
+CREATE UNIQUE INDEX U138_133 ON AUX_DI_PEDIDO
+(COD_PEDIDO)
+NOLOGGING
+TABLESPACE TBS_DADOS_INFORMIX
+PCTFREE    10
+INITRANS   2
+MAXTRANS   255
+STORAGE    (
+            INITIAL          64K
+            MINEXTENTS       1
+            MAXEXTENTS       2147483645
+            PCTINCREASE      0
+            FREELISTS        1
+            FREELIST GROUPS  1
+            BUFFER_POOL      DEFAULT
+           )
+NOPARALLEL;
+
+
+CREATE UNIQUE INDEX U137_130 ON AUX_RPI
+(NUM_RPI)
+NOLOGGING
+TABLESPACE TBS_DADOS_INFORMIX
+PCTFREE    10
+INITRANS   2
+MAXTRANS   255
+STORAGE    (
+            INITIAL          64K
+            MINEXTENTS       1
+            MAXEXTENTS       2147483645
+            PCTINCREASE      0
+            FREELISTS        1
+            FREELIST GROUPS  1
+            BUFFER_POOL      DEFAULT
+           )
+NOPARALLEL;
+
+
+CREATE UNIQUE INDEX U103_10 ON CLASSIF_DESC2
+(COD_CLASSIFICACAO)
+NOLOGGING
+TABLESPACE TBS_DADOS_INFORMIX
+PCTFREE    10
+INITRANS   2
+MAXTRANS   255
+STORAGE    (
+            INITIAL          64K
+            MINEXTENTS       1
+            MAXEXTENTS       2147483645
+            PCTINCREASE      0
+            FREELISTS        1
+            FREELIST GROUPS  1
+            BUFFER_POOL      DEFAULT
+           )
+NOPARALLEL;
+
+
+CREATE UNIQUE INDEX U107_26 ON CRP_PAIS
+(COD_PAIS)
+NOLOGGING
+TABLESPACE TBS_DADOS_INFORMIX
+PCTFREE    10
+INITRANS   2
+MAXTRANS   255
+STORAGE    (
+            INITIAL          64K
+            MINEXTENTS       1
+            MAXEXTENTS       2147483645
+            PCTINCREASE      0
+            FREELISTS        1
+            FREELIST GROUPS  1
+            BUFFER_POOL      DEFAULT
+           )
+NOPARALLEL;
+
+
+CREATE UNIQUE INDEX U_CRP_PAIS1 ON CRP_PAIS
+(NOME_PAIS)
+NOLOGGING
+TABLESPACE TBS_DADOS_INFORMIX
+PCTFREE    10
+INITRANS   2
+MAXTRANS   255
+STORAGE    (
+            INITIAL          64K
+            MINEXTENTS       1
+            MAXEXTENTS       2147483645
+            PCTINCREASE      0
+            FREELISTS        1
+            FREELIST GROUPS  1
+            BUFFER_POOL      DEFAULT
+           )
+NOPARALLEL;
+
+
+CREATE UNIQUE INDEX U128_103 ON CRP_PES_INVENTOR
+(COD_PESSOA)
+NOLOGGING
+TABLESPACE TBS_DADOS_INFORMIX
+PCTFREE    10
+INITRANS   2
+MAXTRANS   255
+STORAGE    (
+            INITIAL          64K
+            MINEXTENTS       1
+            MAXEXTENTS       2147483645
+            PCTINCREASE      0
+            FREELISTS        1
+            FREELIST GROUPS  1
+            BUFFER_POOL      DEFAULT
+           )
+NOPARALLEL;
+
+
+CREATE UNIQUE INDEX U118_64 ON CRP_PES_PROCURADOR
+(COD_PESSOA)
+NOLOGGING
+TABLESPACE TBS_DADOS_INFORMIX
+PCTFREE    10
+INITRANS   2
+MAXTRANS   255
+STORAGE    (
+            INITIAL          64K
+            MINEXTENTS       1
+            MAXEXTENTS       2147483645
+            PCTINCREASE      0
+            FREELISTS        1
+            FREELIST GROUPS  1
+            BUFFER_POOL      DEFAULT
+           )
+NOPARALLEL;
+
+
+CREATE UNIQUE INDEX U127_100 ON CRP_PES_REQUERENTE
+(COD_PESSOA)
+NOLOGGING
+TABLESPACE TBS_DADOS_INFORMIX
+PCTFREE    10
+INITRANS   2
+MAXTRANS   255
+STORAGE    (
+            INITIAL          64K
+            MINEXTENTS       1
+            MAXEXTENTS       2147483645
+            PCTINCREASE      0
+            FREELISTS        1
+            FREELIST GROUPS  1
+            BUFFER_POOL      DEFAULT
+           )
+NOPARALLEL;
+
+
+CREATE UNIQUE INDEX U163_180 ON CRP_PFPJ1
+(COD_PESSOA)
+NOLOGGING
+TABLESPACE TBS_DADOS_INFORMIX
+PCTFREE    10
+INITRANS   2
+MAXTRANS   255
+STORAGE    (
+            INITIAL          64K
+            MINEXTENTS       1
+            MAXEXTENTS       2147483645
+            PCTINCREASE      0
+            FREELISTS        1
+            FREELIST GROUPS  1
+            BUFFER_POOL      DEFAULT
+           )
+NOPARALLEL;
+
+
+CREATE UNIQUE INDEX U109_33 ON CRP_RPI
+(NUM_RPI)
+NOLOGGING
+TABLESPACE TBS_DADOS_INFORMIX
+PCTFREE    10
+INITRANS   2
+MAXTRANS   255
+STORAGE    (
+            INITIAL          64K
+            MINEXTENTS       1
+            MAXEXTENTS       2147483645
+            PCTINCREASE      0
+            FREELISTS        1
+            FREELIST GROUPS  1
+            BUFFER_POOL      DEFAULT
+           )
+NOPARALLEL;
+
+
+CREATE UNIQUE INDEX U108_30 ON CRP_UF
+(COD_UF)
+NOLOGGING
+TABLESPACE TBS_DADOS_INFORMIX
+PCTFREE    10
+INITRANS   2
+MAXTRANS   255
+STORAGE    (
+            INITIAL          64K
+            MINEXTENTS       1
+            MAXEXTENTS       2147483645
+            PCTINCREASE      0
+            FREELISTS        1
+            FREELIST GROUPS  1
+            BUFFER_POOL      DEFAULT
+           )
+NOPARALLEL;
+
+
+CREATE UNIQUE INDEX U_CRP_UF1 ON CRP_UF
+(NOME_UF)
+NOLOGGING
+TABLESPACE TBS_DADOS_INFORMIX
+PCTFREE    10
+INITRANS   2
+MAXTRANS   255
+STORAGE    (
+            INITIAL          64K
+            MINEXTENTS       1
+            MAXEXTENTS       2147483645
+            PCTINCREASE      0
+            FREELISTS        1
+            FREELIST GROUPS  1
+            BUFFER_POOL      DEFAULT
+           )
+NOPARALLEL;
+
+
+CREATE UNIQUE INDEX U106_20 ON DI_PEDIDO
+(COD_PEDIDO)
+NOLOGGING
+TABLESPACE TBS_DADOS_INFORMIX
+PCTFREE    10
+INITRANS   2
+MAXTRANS   255
+STORAGE    (
+            INITIAL          64K
+            MINEXTENTS       1
+            MAXEXTENTS       2147483645
+            PCTINCREASE      0
+            FREELISTS        1
+            FREELIST GROUPS  1
+            BUFFER_POOL      DEFAULT
+           )
+NOPARALLEL;
+
+
+CREATE INDEX I_DI_PEDIDO01 ON DI_PEDIDO
+(DT_DEPOSITO)
+NOLOGGING
+TABLESPACE TBS_DADOS_INFORMIX
+PCTFREE    10
+INITRANS   2
+MAXTRANS   255
+STORAGE    (
+            INITIAL          64K
+            MINEXTENTS       1
+            MAXEXTENTS       2147483645
+            PCTINCREASE      0
+            FREELISTS        1
+            FREELIST GROUPS  1
+            BUFFER_POOL      DEFAULT
+           )
+NOPARALLEL;
+
+
+CREATE INDEX I_DI_PEDIDO02 ON DI_PEDIDO
+(NUM_PEDIDO)
+NOLOGGING
+TABLESPACE TBS_DADOS_INFORMIX
+PCTFREE    10
+INITRANS   2
+MAXTRANS   255
+STORAGE    (
+            INITIAL          64K
+            MINEXTENTS       1
+            MAXEXTENTS       2147483645
+            PCTINCREASE      0
+            FREELISTS        1
+            FREELIST GROUPS  1
+            BUFFER_POOL      DEFAULT
+           )
+NOPARALLEL;
+
+
+CREATE UNIQUE INDEX U156_161 ON DI_PEDIDO2
+(COD_PEDIDO)
+NOLOGGING
+TABLESPACE TBS_DADOS_INFORMIX
+PCTFREE    10
+INITRANS   2
+MAXTRANS   255
+STORAGE    (
+            INITIAL          64K
+            MINEXTENTS       1
+            MAXEXTENTS       2147483645
+            PCTINCREASE      0
+            FREELISTS        1
+            FREELIST GROUPS  1
+            BUFFER_POOL      DEFAULT
+           )
+NOPARALLEL;
+
+
+CREATE UNIQUE INDEX U139_138 ON DSN_CLASSIF_DESC
+(COD_CLASSIFICACAO)
+NOLOGGING
+TABLESPACE TBS_DADOS_INFORMIX
+PCTFREE    10
+INITRANS   2
+MAXTRANS   255
+STORAGE    (
+            INITIAL          64K
+            MINEXTENTS       1
+            MAXEXTENTS       2147483645
+            PCTINCREASE      0
+            FREELISTS        1
+            FREELIST GROUPS  1
+            BUFFER_POOL      DEFAULT
+           )
+NOPARALLEL;
+
+
+CREATE UNIQUE INDEX CARGA_WEB1 ON PTN_CARGA_WEB
+(CD_PEDIDO)
+NOLOGGING
+TABLESPACE TBS_DADOS_INFORMIX
+PCTFREE    10
+INITRANS   2
+MAXTRANS   255
+STORAGE    (
+            INITIAL          64K
+            MINEXTENTS       1
+            MAXEXTENTS       2147483645
+            PCTINCREASE      0
+            FREELISTS        1
+            FREELIST GROUPS  1
+            BUFFER_POOL      DEFAULT
+           )
+NOPARALLEL;
+
+
+CREATE UNIQUE INDEX U115_54 ON PTN_CLASSIF
+(COD_CLASSIFICACAO)
+NOLOGGING
+TABLESPACE TBS_DADOS_INFORMIX
+PCTFREE    10
+INITRANS   2
+MAXTRANS   255
+STORAGE    (
+            INITIAL          64K
+            MINEXTENTS       1
+            MAXEXTENTS       2147483645
+            PCTINCREASE      0
+            FREELISTS        1
+            FREELIST GROUPS  1
+            BUFFER_POOL      DEFAULT
+           )
+NOPARALLEL;
+
+
+CREATE INDEX IDX_PTN_CLASSIF01 ON PTN_CLASSIF
+(COD_INTERNACIONAL)
+NOLOGGING
+TABLESPACE TBS_DADOS_INFORMIX
+PCTFREE    10
+INITRANS   2
+MAXTRANS   255
+STORAGE    (
+            INITIAL          64K
+            MINEXTENTS       1
+            MAXEXTENTS       2147483645
+            PCTINCREASE      0
+            FREELISTS        1
+            FREELIST GROUPS  1
+            BUFFER_POOL      DEFAULT
+           )
+NOPARALLEL;
+
+
+CREATE UNIQUE INDEX U102_4 ON PTN_CLASSIF2
+(COD_CLASSIFICACAO)
+NOLOGGING
+TABLESPACE TBS_DADOS_INFORMIX
+PCTFREE    10
+INITRANS   2
+MAXTRANS   255
+STORAGE    (
+            INITIAL          64K
+            MINEXTENTS       1
+            MAXEXTENTS       2147483645
+            PCTINCREASE      0
+            FREELISTS        1
+            FREELIST GROUPS  1
+            BUFFER_POOL      DEFAULT
+           )
+NOPARALLEL;
+
+
+CREATE INDEX IDX_CLASSIF ON PTN_CLASSIF2
+(COD_INTERNACIONAL)
+NOLOGGING
+TABLESPACE TBS_DADOS_INFORMIX
+PCTFREE    10
+INITRANS   2
+MAXTRANS   255
+STORAGE    (
+            INITIAL          64K
+            MINEXTENTS       1
+            MAXEXTENTS       2147483645
+            PCTINCREASE      0
+            FREELISTS        1
+            FREELIST GROUPS  1
+            BUFFER_POOL      DEFAULT
+           )
+NOPARALLEL;
+
+
+CREATE UNIQUE INDEX U116_60 ON PTN_CLASSIF_DESC
+(COD_CLASSIFICACAO)
+NOLOGGING
+TABLESPACE TBS_DADOS_INFORMIX
+PCTFREE    10
+INITRANS   2
+MAXTRANS   255
+STORAGE    (
+            INITIAL          64K
+            MINEXTENTS       1
+            MAXEXTENTS       2147483645
+            PCTINCREASE      0
+            FREELISTS        1
+            FREELIST GROUPS  1
+            BUFFER_POOL      DEFAULT
+           )
+NOPARALLEL;
+
+
+CREATE UNIQUE INDEX U104_13 ON PTN_CLASSIF_DESC2
+(COD_CLASSIFICACAO)
+NOLOGGING
+TABLESPACE TBS_DADOS_INFORMIX
+PCTFREE    10
+INITRANS   2
+MAXTRANS   255
+STORAGE    (
+            INITIAL          64K
+            MINEXTENTS       1
+            MAXEXTENTS       2147483645
+            PCTINCREASE      0
+            FREELISTS        1
+            FREELIST GROUPS  1
+            BUFFER_POOL      DEFAULT
+           )
+NOPARALLEL;
+
+
+CREATE UNIQUE INDEX U122_78 ON PTN_CLASSIF_PEDIDO
+(COD_PEDIDO, COD_CLASSIFICACAO)
+NOLOGGING
+TABLESPACE TBS_DADOS_INFORMIX
+PCTFREE    10
+INITRANS   2
+MAXTRANS   255
+STORAGE    (
+            INITIAL          64K
+            MINEXTENTS       1
+            MAXEXTENTS       2147483645
+            PCTINCREASE      0
+            FREELISTS        1
+            FREELIST GROUPS  1
+            BUFFER_POOL      DEFAULT
+           )
+NOPARALLEL;
+
+
+CREATE INDEX IDX_PTN_CLASSIF_PED01 ON PTN_CLASSIF_PEDIDO
+(COD_PEDIDO)
+NOLOGGING
+TABLESPACE TBS_DADOS_INFORMIX
+PCTFREE    10
+INITRANS   2
+MAXTRANS   255
+STORAGE    (
+            INITIAL          64K
+            MINEXTENTS       1
+            MAXEXTENTS       2147483645
+            PCTINCREASE      0
+            FREELISTS        1
+            FREELIST GROUPS  1
+            BUFFER_POOL      DEFAULT
+           )
+NOPARALLEL;
+
+
+CREATE UNIQUE INDEX U105_16 ON PTN_DESPACHO
+(COD_PEDIDO, CD_TIPO_DESPACHO, NUM_RPI)
+NOLOGGING
+TABLESPACE TBS_DADOS_INFORMIX
+PCTFREE    10
+INITRANS   2
+MAXTRANS   255
+STORAGE    (
+            INITIAL          64K
+            MINEXTENTS       1
+            MAXEXTENTS       2147483645
+            PCTINCREASE      0
+            FREELISTS        1
+            FREELIST GROUPS  1
+            BUFFER_POOL      DEFAULT
+           )
+NOPARALLEL;
+
+
+CREATE UNIQUE INDEX U160_167 ON PTN_DESPACHO1
+(COD_PEDIDO, CD_TIPO_DESPACHO, NUM_RPI)
+NOLOGGING
+TABLESPACE TBS_DADOS_INFORMIX
+PCTFREE    10
+INITRANS   2
+MAXTRANS   255
+STORAGE    (
+            INITIAL          64K
+            MINEXTENTS       1
+            MAXEXTENTS       2147483645
+            PCTINCREASE      0
+            FREELISTS        1
+            FREELIST GROUPS  1
+            BUFFER_POOL      DEFAULT
+           )
+NOPARALLEL;
+
+
+CREATE UNIQUE INDEX P_PTN_INID_DESPACH ON PTN_INID_DESPACH
+(CD_TIPO_DESPACH, CD_INID)
+NOLOGGING
+TABLESPACE TBS_DADOS_INFORMIX
+PCTFREE    10
+INITRANS   2
+MAXTRANS   255
+STORAGE    (
+            INITIAL          64K
+            MINEXTENTS       1
+            MAXEXTENTS       2147483645
+            PCTINCREASE      0
+            FREELISTS        1
+            FREELIST GROUPS  1
+            BUFFER_POOL      DEFAULT
+           )
+NOPARALLEL;
+
+
+CREATE UNIQUE INDEX U114_49 ON PTN_INVENTOR
+(COD_PEDIDO, COD_INVENTOR)
+NOLOGGING
+TABLESPACE TBS_DADOS_INFORMIX
+PCTFREE    10
+INITRANS   2
+MAXTRANS   255
+STORAGE    (
+            INITIAL          64K
+            MINEXTENTS       1
+            MAXEXTENTS       2147483645
+            PCTINCREASE      0
+            FREELISTS        1
+            FREELIST GROUPS  1
+            BUFFER_POOL      DEFAULT
+           )
+NOPARALLEL;
+
+
+CREATE UNIQUE INDEX U110_36 ON PTN_LEI_PATENTE
+(NUM_LEI)
+NOLOGGING
+TABLESPACE TBS_DADOS_INFORMIX
+PCTFREE    10
+INITRANS   2
+MAXTRANS   255
+STORAGE    (
+            INITIAL          64K
+            MINEXTENTS       1
+            MAXEXTENTS       2147483645
+            PCTINCREASE      0
+            FREELISTS        1
+            FREELIST GROUPS  1
+            BUFFER_POOL      DEFAULT
+           )
+NOPARALLEL;
+
+
+CREATE UNIQUE INDEX U112_43 ON PTN_NATUREZA
+(COD_NATUREZA)
+NOLOGGING
+TABLESPACE TBS_DADOS_INFORMIX
+PCTFREE    10
+INITRANS   2
+MAXTRANS   255
+STORAGE    (
+            INITIAL          64K
+            MINEXTENTS       1
+            MAXEXTENTS       2147483645
+            PCTINCREASE      0
+            FREELISTS        1
+            FREELIST GROUPS  1
+            BUFFER_POOL      DEFAULT
+           )
+NOPARALLEL;
+
+
+CREATE UNIQUE INDEX U113_46 ON PTN_PCT
+(COD_PEDIDO, NUM_PCT)
+NOLOGGING
+TABLESPACE TBS_DADOS_INFORMIX
+PCTFREE    10
+INITRANS   2
+MAXTRANS   255
+STORAGE    (
+            INITIAL          64K
+            MINEXTENTS       1
+            MAXEXTENTS       2147483645
+            PCTINCREASE      0
+            FREELISTS        1
+            FREELIST GROUPS  1
+            BUFFER_POOL      DEFAULT
+           )
+NOPARALLEL;
+
+
+CREATE UNIQUE INDEX U135_120 ON PTN_PEDIDO
+(COD_PEDIDO)
+NOLOGGING
+TABLESPACE TBS_DADOS_INFORMIX
+PCTFREE    10
+INITRANS   2
+MAXTRANS   255
+STORAGE    (
+            INITIAL          64K
+            MINEXTENTS       1
+            MAXEXTENTS       2147483645
+            PCTINCREASE      0
+            FREELISTS        1
+            FREELIST GROUPS  1
+            BUFFER_POOL      DEFAULT
+           )
+NOPARALLEL;
+
+
+CREATE INDEX IDX_PTN_PEDIDO01 ON PTN_PEDIDO
+(DT_DEPOSITO)
+NOLOGGING
+TABLESPACE TBS_DADOS_INFORMIX
+PCTFREE    10
+INITRANS   2
+MAXTRANS   255
+STORAGE    (
+            INITIAL          64K
+            MINEXTENTS       1
+            MAXEXTENTS       2147483645
+            PCTINCREASE      0
+            FREELISTS        1
+            FREELIST GROUPS  1
+            BUFFER_POOL      DEFAULT
+           )
+NOPARALLEL;
+
+
+CREATE INDEX IDX_PTN_PEDIDO02 ON PTN_PEDIDO
+(NUM_PEDIDO)
+NOLOGGING
+TABLESPACE TBS_DADOS_INFORMIX
+PCTFREE    10
+INITRANS   2
+MAXTRANS   255
+STORAGE    (
+            INITIAL          64K
+            MINEXTENTS       1
+            MAXEXTENTS       2147483645
+            PCTINCREASE      0
+            FREELISTS        1
+            FREELIST GROUPS  1
+            BUFFER_POOL      DEFAULT
+           )
+NOPARALLEL;
+
+
+CREATE UNIQUE INDEX C_PTN_PEDIDO111 ON PTN_PEDIDO1
+(COD_PEDIDO)
+NOLOGGING
+TABLESPACE TBS_DADOS_INFORMIX
+PCTFREE    10
+INITRANS   2
+MAXTRANS   255
+STORAGE    (
+            INITIAL          64K
+            MINEXTENTS       1
+            MAXEXTENTS       2147483645
+            PCTINCREASE      0
+            FREELISTS        1
+            FREELIST GROUPS  1
+            BUFFER_POOL      DEFAULT
+           )
+NOPARALLEL;
+
+
+CREATE INDEX IDX_PTN_PRIORID01 ON PTN_PRIORIDADE
+(NUM_PEDIDO_ORIGEM)
+NOLOGGING
+TABLESPACE TBS_DADOS_INFORMIX
+PCTFREE    10
+INITRANS   2
+MAXTRANS   255
+STORAGE    (
+            INITIAL          64K
+            MINEXTENTS       1
+            MAXEXTENTS       2147483645
+            PCTINCREASE      0
+            FREELISTS        1
+            FREELIST GROUPS  1
+            BUFFER_POOL      DEFAULT
+           )
+NOPARALLEL;
+
+
+CREATE INDEX IDX_PTN_PRIORID02 ON PTN_PRIORIDADE
+(COD_PAIS, DT_PEDIDO_ORIGEM)
+NOLOGGING
+TABLESPACE TBS_DADOS_INFORMIX
+PCTFREE    10
+INITRANS   2
+MAXTRANS   255
+STORAGE    (
+            INITIAL          64K
+            MINEXTENTS       1
+            MAXEXTENTS       2147483645
+            PCTINCREASE      0
+            FREELISTS        1
+            FREELIST GROUPS  1
+            BUFFER_POOL      DEFAULT
+           )
+NOPARALLEL;
+
+
+CREATE UNIQUE INDEX U124_87 ON PTN_PROCURADOR
+(COD_PEDIDO, COD_PROCURADOR, DT_INICIO)
+NOLOGGING
+TABLESPACE TBS_DADOS_INFORMIX
+PCTFREE    10
+INITRANS   2
+MAXTRANS   255
+STORAGE    (
+            INITIAL          64K
+            MINEXTENTS       1
+            MAXEXTENTS       2147483645
+            PCTINCREASE      0
+            FREELISTS        1
+            FREELIST GROUPS  1
+            BUFFER_POOL      DEFAULT
+           )
+NOPARALLEL;
+
+
+CREATE UNIQUE INDEX U125_91 ON PTN_REQUERENTE
+(COD_PEDIDO, COD_REQUERENTE, DT_INICIO)
+NOLOGGING
+TABLESPACE TBS_DADOS_INFORMIX
+PCTFREE    10
+INITRANS   2
+MAXTRANS   255
+STORAGE    (
+            INITIAL          64K
+            MINEXTENTS       1
+            MAXEXTENTS       2147483645
+            PCTINCREASE      0
+            FREELISTS        1
+            FREELIST GROUPS  1
+            BUFFER_POOL      DEFAULT
+           )
+NOPARALLEL;
+
+
+CREATE UNIQUE INDEX U162_177 ON PTN_RESUMO_PEDIDO1
+(COD_PEDIDO)
+NOLOGGING
+TABLESPACE TBS_DADOS_INFORMIX
+PCTFREE    10
+INITRANS   2
+MAXTRANS   255
+STORAGE    (
+            INITIAL          64K
+            MINEXTENTS       1
+            MAXEXTENTS       2147483645
+            PCTINCREASE      0
+            FREELISTS        1
+            FREELIST GROUPS  1
+            BUFFER_POOL      DEFAULT
+           )
+NOPARALLEL;
+
+
+CREATE UNIQUE INDEX U111_40 ON PTN_SITUACAO
+(COD_SITUACAO)
+NOLOGGING
+TABLESPACE TBS_DADOS_INFORMIX
+PCTFREE    10
+INITRANS   2
+MAXTRANS   255
+STORAGE    (
+            INITIAL          64K
+            MINEXTENTS       1
+            MAXEXTENTS       2147483645
+            PCTINCREASE      0
+            FREELISTS        1
+            FREELIST GROUPS  1
+            BUFFER_POOL      DEFAULT
+           )
+NOPARALLEL;
+
+
+CREATE UNIQUE INDEX U_PTN_SITUACAO ON PTN_SITUACAO
+(DES_SITUACAO)
+NOLOGGING
+TABLESPACE TBS_DADOS_INFORMIX
+PCTFREE    10
+INITRANS   2
+MAXTRANS   255
+STORAGE    (
+            INITIAL          64K
+            MINEXTENTS       1
+            MAXEXTENTS       2147483645
+            PCTINCREASE      0
+            FREELISTS        1
+            FREELIST GROUPS  1
+            BUFFER_POOL      DEFAULT
+           )
+NOPARALLEL;
+
+
+CREATE INDEX IDX_PTN_VINC_PED01 ON PTN_VINCULO_PEDIDO
+(CD_PEDIDO_ORIGEM, CD_PEDIDO_DERIVAD)
+NOLOGGING
+TABLESPACE TBS_DADOS_INFORMIX
+PCTFREE    10
+INITRANS   2
+MAXTRANS   255
+STORAGE    (
+            INITIAL          64K
+            MINEXTENTS       1
+            MAXEXTENTS       2147483645
+            PCTINCREASE      0
+            FREELISTS        1
+            FREELIST GROUPS  1
+            BUFFER_POOL      DEFAULT
+           )
+NOPARALLEL;
+
+
+CREATE UNIQUE INDEX U136_125 ON REQUERENTE_AUX
+(COD_PEDIDO, COD_REQUERENTE, DT_INICIO)
+NOLOGGING
+TABLESPACE TBS_DADOS_INFORMIX
+PCTFREE    10
+INITRANS   2
+MAXTRANS   255
+STORAGE    (
+            INITIAL          64K
+            MINEXTENTS       1
+            MAXEXTENTS       2147483645
+            PCTINCREASE      0
+            FREELISTS        1
+            FREELIST GROUPS  1
+            BUFFER_POOL      DEFAULT
+           )
+NOPARALLEL;
+
+
+CREATE INDEX I_SEM_INVENTOR2 ON SEM_INVENTOR2
+(COD_PESSOA)
+NOLOGGING
+TABLESPACE TBS_DADOS_INFORMIX
+PCTFREE    10
+INITRANS   2
+MAXTRANS   255
+STORAGE    (
+            INITIAL          64K
+            MINEXTENTS       1
+            MAXEXTENTS       2147483645
+            PCTINCREASE      0
+            FREELISTS        1
+            FREELIST GROUPS  1
+            BUFFER_POOL      DEFAULT
+           )
+NOPARALLEL;
+
+
+CREATE TABLE CRP_ENDERECO
+(
+  COD_PESSOA      NUMBER(38)                    NOT NULL,
+  NOM_LOGRADOURO  VARCHAR2(200 BYTE),
+  NOM_BAIRRO      VARCHAR2(30 BYTE),
+  NOM_CIDADE      VARCHAR2(30 BYTE),
+  COD_UF          VARCHAR2(2 BYTE),
+  COD_PAIS        VARCHAR2(2 BYTE),
+  NUM_CEP         VARCHAR2(15 BYTE),
+  NUM_TELEFONE    VARCHAR2(20 BYTE),
+  NUM_FAX         VARCHAR2(20 BYTE),
+  NOM_EMAIL       VARCHAR2(255 BYTE)
+)
+TABLESPACE TBS_DADOS_INFORMIX
+PCTUSED    40
+PCTFREE    10
+INITRANS   1
+MAXTRANS   255
+STORAGE    (
+            INITIAL          64K
+            MINEXTENTS       1
+            MAXEXTENTS       2147483645
+            PCTINCREASE      0
+            FREELISTS        1
+            FREELIST GROUPS  1
+            BUFFER_POOL      DEFAULT
+           )
+NOLOGGING 
+NOCOMPRESS 
+NOCACHE
+NOPARALLEL
+MONITORING;
+
+
+CREATE UNIQUE INDEX U134_118 ON CRP_ENDERECO
+(COD_PESSOA)
+NOLOGGING
+TABLESPACE TBS_DADOS_INFORMIX
+PCTFREE    10
+INITRANS   2
+MAXTRANS   255
+STORAGE    (
+            INITIAL          64K
+            MINEXTENTS       1
+            MAXEXTENTS       2147483645
+            PCTINCREASE      0
+            FREELISTS        1
+            FREELIST GROUPS  1
+            BUFFER_POOL      DEFAULT
+           )
+NOPARALLEL;
+
+
+ALTER TABLE PTN_PEDIDO1 ADD (
+  CONSTRAINT CK_CD_TIPO_PEDIDO
+ CHECK (cd_tipo_pedido IN ('P' ,'D' )));
+
+ALTER TABLE PTN_PEDIDO1 ADD (
+  CONSTRAINT C_PTN_PEDIDO111
+ PRIMARY KEY
+ (COD_PEDIDO)
+    USING INDEX 
+    TABLESPACE TBS_DADOS_INFORMIX
+    PCTFREE    10
+    INITRANS   2
+    MAXTRANS   255
+    STORAGE    (
+                INITIAL          64K
+                MINEXTENTS       1
+                MAXEXTENTS       2147483645
+                PCTINCREASE      0
+                FREELISTS        1
+                FREELIST GROUPS  1
+               ));
+
+
+ALTER TABLE ACERTO ADD (
+  CONSTRAINT P_ACERTO
+ PRIMARY KEY
+ (COD_PESSOA)
+    USING INDEX 
+    TABLESPACE TBS_DADOS_INFORMIX
+    PCTFREE    10
+    INITRANS   2
+    MAXTRANS   255
+    STORAGE    (
+                INITIAL          64K
+                MINEXTENTS       1
+                MAXEXTENTS       2147483645
+                PCTINCREASE      0
+                FREELISTS        1
+                FREELIST GROUPS  1
+               ));
+
+
+ALTER TABLE AUX_DI_PEDIDO ADD (
+  CONSTRAINT PEDIDO1
+ CHECK (cd_tipo_pedido in ('P','D')));
+
+ALTER TABLE AUX_DI_PEDIDO ADD (
+  CONSTRAINT U138_133
+ PRIMARY KEY
+ (COD_PEDIDO)
+    USING INDEX 
+    TABLESPACE TBS_DADOS_INFORMIX
+    PCTFREE    10
+    INITRANS   2
+    MAXTRANS   255
+    STORAGE    (
+                INITIAL          64K
+                MINEXTENTS       1
+                MAXEXTENTS       2147483645
+                PCTINCREASE      0
+                FREELISTS        1
+                FREELIST GROUPS  1
+               ));
+
+
+ALTER TABLE AUX_RPI ADD (
+  CONSTRAINT U137_130
+ PRIMARY KEY
+ (NUM_RPI)
+    USING INDEX 
+    TABLESPACE TBS_DADOS_INFORMIX
+    PCTFREE    10
+    INITRANS   2
+    MAXTRANS   255
+    STORAGE    (
+                INITIAL          64K
+                MINEXTENTS       1
+                MAXEXTENTS       2147483645
+                PCTINCREASE      0
+                FREELISTS        1
+                FREELIST GROUPS  1
+               ));
+
+
+ALTER TABLE CLASSIF_DESC ADD (
+  CONSTRAINT U133_115
+ PRIMARY KEY
+ (COD_CLASSIFICACAO) DISABLE);
+
+
+ALTER TABLE CLASSIF_DESC2 ADD (
+  CONSTRAINT U103_10
+ PRIMARY KEY
+ (COD_CLASSIFICACAO)
+    USING INDEX 
+    TABLESPACE TBS_DADOS_INFORMIX
+    PCTFREE    10
+    INITRANS   2
+    MAXTRANS   255
+    STORAGE    (
+                INITIAL          64K
+                MINEXTENTS       1
+                MAXEXTENTS       2147483645
+                PCTINCREASE      0
+                FREELISTS        1
+                FREELIST GROUPS  1
+               ));
+
+
+ALTER TABLE CRP_PAIS ADD (
+  CONSTRAINT U107_26
+ PRIMARY KEY
+ (COD_PAIS)
+    USING INDEX 
+    TABLESPACE TBS_DADOS_INFORMIX
+    PCTFREE    10
+    INITRANS   2
+    MAXTRANS   255
+    STORAGE    (
+                INITIAL          64K
+                MINEXTENTS       1
+                MAXEXTENTS       2147483645
+                PCTINCREASE      0
+                FREELISTS        1
+                FREELIST GROUPS  1
+               ));
+
+ALTER TABLE CRP_PAIS ADD (
+  CONSTRAINT U_CRP_PAIS1
+ UNIQUE (NOME_PAIS)
+    USING INDEX 
+    TABLESPACE TBS_DADOS_INFORMIX
+    PCTFREE    10
+    INITRANS   2
+    MAXTRANS   255
+    STORAGE    (
+                INITIAL          64K
+                MINEXTENTS       1
+                MAXEXTENTS       2147483645
+                PCTINCREASE      0
+                FREELISTS        1
+                FREELIST GROUPS  1
+               ));
+
+
+ALTER TABLE CRP_PES_INVENTOR ADD (
+  CONSTRAINT C_PES_INVENTOR1
+ CHECK (tipo_pessoa is null or (tipo_pessoa in ('F','J'))));
+
+ALTER TABLE CRP_PES_INVENTOR ADD (
+  CONSTRAINT U128_103
+ PRIMARY KEY
+ (COD_PESSOA)
+    USING INDEX 
+    TABLESPACE TBS_DADOS_INFORMIX
+    PCTFREE    10
+    INITRANS   2
+    MAXTRANS   255
+    STORAGE    (
+                INITIAL          64K
+                MINEXTENTS       1
+                MAXEXTENTS       2147483645
+                PCTINCREASE      0
+                FREELISTS        1
+                FREELIST GROUPS  1
+               ));
+
+
+ALTER TABLE CRP_PES_PROCURADOR ADD (
+  CONSTRAINT C_PES_PROCURADOR1
+ CHECK (tipo_pessoa is null or (tipo_pessoa in ('F','J'))));
+
+ALTER TABLE CRP_PES_PROCURADOR ADD (
+  CONSTRAINT U118_64
+ PRIMARY KEY
+ (COD_PESSOA)
+    USING INDEX 
+    TABLESPACE TBS_DADOS_INFORMIX
+    PCTFREE    10
+    INITRANS   2
+    MAXTRANS   255
+    STORAGE    (
+                INITIAL          64K
+                MINEXTENTS       1
+                MAXEXTENTS       2147483645
+                PCTINCREASE      0
+                FREELISTS        1
+                FREELIST GROUPS  1
+               ));
+
+
+ALTER TABLE CRP_PES_REQUERENTE ADD (
+  CONSTRAINT U127_100
+ PRIMARY KEY
+ (COD_PESSOA)
+    USING INDEX 
+    TABLESPACE TBS_DADOS_INFORMIX
+    PCTFREE    10
+    INITRANS   2
+    MAXTRANS   255
+    STORAGE    (
+                INITIAL          64K
+                MINEXTENTS       1
+                MAXEXTENTS       2147483645
+                PCTINCREASE      0
+                FREELISTS        1
+                FREELIST GROUPS  1
+               ));
+
+
+ALTER TABLE CRP_PFPJ1 ADD (
+  CONSTRAINT U163_180
+ PRIMARY KEY
+ (COD_PESSOA)
+    USING INDEX 
+    TABLESPACE TBS_DADOS_INFORMIX
+    PCTFREE    10
+    INITRANS   2
+    MAXTRANS   255
+    STORAGE    (
+                INITIAL          64K
+                MINEXTENTS       1
+                MAXEXTENTS       2147483645
+                PCTINCREASE      0
+                FREELISTS        1
+                FREELIST GROUPS  1
+               ));
+
+
+ALTER TABLE CRP_RPI ADD (
+  CONSTRAINT U109_33
+ PRIMARY KEY
+ (NUM_RPI)
+    USING INDEX 
+    TABLESPACE TBS_DADOS_INFORMIX
+    PCTFREE    10
+    INITRANS   2
+    MAXTRANS   255
+    STORAGE    (
+                INITIAL          64K
+                MINEXTENTS       1
+                MAXEXTENTS       2147483645
+                PCTINCREASE      0
+                FREELISTS        1
+                FREELIST GROUPS  1
+               ));
+
+
+ALTER TABLE CRP_UF ADD (
+  CONSTRAINT U108_30
+ PRIMARY KEY
+ (COD_UF)
+    USING INDEX 
+    TABLESPACE TBS_DADOS_INFORMIX
+    PCTFREE    10
+    INITRANS   2
+    MAXTRANS   255
+    STORAGE    (
+                INITIAL          64K
+                MINEXTENTS       1
+                MAXEXTENTS       2147483645
+                PCTINCREASE      0
+                FREELISTS        1
+                FREELIST GROUPS  1
+               ));
+
+ALTER TABLE CRP_UF ADD (
+  CONSTRAINT U_CRP_UF1
+ UNIQUE (NOME_UF)
+    USING INDEX 
+    TABLESPACE TBS_DADOS_INFORMIX
+    PCTFREE    10
+    INITRANS   2
+    MAXTRANS   255
+    STORAGE    (
+                INITIAL          64K
+                MINEXTENTS       1
+                MAXEXTENTS       2147483645
+                PCTINCREASE      0
+                FREELISTS        1
+                FREELIST GROUPS  1
+               ));
+
+
+ALTER TABLE DI_PEDIDO ADD (
+  CONSTRAINT C_DI_PEDIDO1
+ CHECK (cd_tipo_pedido in ('P','D')));
+
+ALTER TABLE DI_PEDIDO ADD (
+  CONSTRAINT U106_20
+ PRIMARY KEY
+ (COD_PEDIDO)
+    USING INDEX 
+    TABLESPACE TBS_DADOS_INFORMIX
+    PCTFREE    10
+    INITRANS   2
+    MAXTRANS   255
+    STORAGE    (
+                INITIAL          64K
+                MINEXTENTS       1
+                MAXEXTENTS       2147483645
+                PCTINCREASE      0
+                FREELISTS        1
+                FREELIST GROUPS  1
+               ));
+
+
+ALTER TABLE DI_PEDIDO2 ADD (
+  CONSTRAINT C156_165
+ CHECK (cd_tipo_pedido in ('P','D')));
+
+ALTER TABLE DI_PEDIDO2 ADD (
+  CONSTRAINT U156_161
+ PRIMARY KEY
+ (COD_PEDIDO)
+    USING INDEX 
+    TABLESPACE TBS_DADOS_INFORMIX
+    PCTFREE    10
+    INITRANS   2
+    MAXTRANS   255
+    STORAGE    (
+                INITIAL          64K
+                MINEXTENTS       1
+                MAXEXTENTS       2147483645
+                PCTINCREASE      0
+                FREELISTS        1
+                FREELIST GROUPS  1
+               ));
+
+
+ALTER TABLE DSN_CLASSIF_DESC ADD (
+  CONSTRAINT U139_138
+ PRIMARY KEY
+ (COD_CLASSIFICACAO)
+    USING INDEX 
+    TABLESPACE TBS_DADOS_INFORMIX
+    PCTFREE    10
+    INITRANS   2
+    MAXTRANS   255
+    STORAGE    (
+                INITIAL          64K
+                MINEXTENTS       1
+                MAXEXTENTS       2147483645
+                PCTINCREASE      0
+                FREELISTS        1
+                FREELIST GROUPS  1
+               ));
+
+
+ALTER TABLE PTN_CLASSIF ADD (
+  CONSTRAINT C_PTN_CLASSIF1
+ CHECK (cd_sistema_classif in ('DI','PI')));
+
+ALTER TABLE PTN_CLASSIF ADD (
+  CONSTRAINT U115_54
+ PRIMARY KEY
+ (COD_CLASSIFICACAO)
+    USING INDEX 
+    TABLESPACE TBS_DADOS_INFORMIX
+    PCTFREE    10
+    INITRANS   2
+    MAXTRANS   255
+    STORAGE    (
+                INITIAL          64K
+                MINEXTENTS       1
+                MAXEXTENTS       2147483645
+                PCTINCREASE      0
+                FREELISTS        1
+                FREELIST GROUPS  1
+               ));
+
+
+ALTER TABLE PTN_CLASSIF2 ADD (
+  CONSTRAINT C_PTN_CLASSIF2
+ CHECK (cd_sistema_classif in ('DI','PI')));
+
+ALTER TABLE PTN_CLASSIF2 ADD (
+  CONSTRAINT U102_4
+ PRIMARY KEY
+ (COD_CLASSIFICACAO)
+    USING INDEX 
+    TABLESPACE TBS_DADOS_INFORMIX
+    PCTFREE    10
+    INITRANS   2
+    MAXTRANS   255
+    STORAGE    (
+                INITIAL          64K
+                MINEXTENTS       1
+                MAXEXTENTS       2147483645
+                PCTINCREASE      0
+                FREELISTS        1
+                FREELIST GROUPS  1
+               ));
+
+
+ALTER TABLE PTN_CLASSIF_DESC ADD (
+  CONSTRAINT U116_60
+ PRIMARY KEY
+ (COD_CLASSIFICACAO)
+    USING INDEX 
+    TABLESPACE TBS_DADOS_INFORMIX
+    PCTFREE    10
+    INITRANS   2
+    MAXTRANS   255
+    STORAGE    (
+                INITIAL          64K
+                MINEXTENTS       1
+                MAXEXTENTS       2147483645
+                PCTINCREASE      0
+                FREELISTS        1
+                FREELIST GROUPS  1
+               ));
+
+
+ALTER TABLE PTN_CLASSIF_DESC2 ADD (
+  CONSTRAINT U104_13
+ PRIMARY KEY
+ (COD_CLASSIFICACAO)
+    USING INDEX 
+    TABLESPACE TBS_DADOS_INFORMIX
+    PCTFREE    10
+    INITRANS   2
+    MAXTRANS   255
+    STORAGE    (
+                INITIAL          64K
+                MINEXTENTS       1
+                MAXEXTENTS       2147483645
+                PCTINCREASE      0
+                FREELISTS        1
+                FREELIST GROUPS  1
+               ));
+
+
+ALTER TABLE PTN_CLASSIF_PEDIDO ADD (
+  CONSTRAINT U122_78
+ PRIMARY KEY
+ (COD_PEDIDO, COD_CLASSIFICACAO)
+    USING INDEX 
+    TABLESPACE TBS_DADOS_INFORMIX
+    PCTFREE    10
+    INITRANS   2
+    MAXTRANS   255
+    STORAGE    (
+                INITIAL          64K
+                MINEXTENTS       1
+                MAXEXTENTS       2147483645
+                PCTINCREASE      0
+                FREELISTS        1
+                FREELIST GROUPS  1
+               ));
+
+
+ALTER TABLE PTN_DESPACHO ADD (
+  CONSTRAINT U105_16
+ PRIMARY KEY
+ (COD_PEDIDO, CD_TIPO_DESPACHO, NUM_RPI)
+    USING INDEX 
+    TABLESPACE TBS_DADOS_INFORMIX
+    PCTFREE    10
+    INITRANS   2
+    MAXTRANS   255
+    STORAGE    (
+                INITIAL          64K
+                MINEXTENTS       1
+                MAXEXTENTS       2147483645
+                PCTINCREASE      0
+                FREELISTS        1
+                FREELIST GROUPS  1
+               ));
+
+
+ALTER TABLE PTN_DESPACHO3 ADD (
+  PRIMARY KEY
+ (COD_PEDIDO, CD_TIPO_DESPACHO, NUM_RPI)
+    USING INDEX 
+    TABLESPACE TBS_DADOS_INFORMIX
+    PCTFREE    10
+    INITRANS   2
+    MAXTRANS   255
+    STORAGE    (
+                INITIAL          64K
+                MINEXTENTS       1
+                MAXEXTENTS       2147483645
+                PCTINCREASE      0
+                FREELISTS        1
+                FREELIST GROUPS  1
+               ));
+
+
+ALTER TABLE PTN_PEDIDO3 ADD (
+  PRIMARY KEY
+ (COD_PEDIDO)
+    USING INDEX 
+    TABLESPACE TBS_DADOS_INFORMIX
+    PCTFREE    10
+    INITRANS   2
+    MAXTRANS   255
+    STORAGE    (
+                INITIAL          64K
+                MINEXTENTS       1
+                MAXEXTENTS       2147483645
+                PCTINCREASE      0
+                FREELISTS        1
+                FREELIST GROUPS  1
+               ));
+
+
+ALTER TABLE PTN_RESUMO_PEDIDO3 ADD (
+  PRIMARY KEY
+ (COD_PEDIDO)
+    USING INDEX 
+    TABLESPACE TBS_DADOS_INFORMIX
+    PCTFREE    10
+    INITRANS   2
+    MAXTRANS   255
+    STORAGE    (
+                INITIAL          64K
+                MINEXTENTS       1
+                MAXEXTENTS       2147483645
+                PCTINCREASE      0
+                FREELISTS        1
+                FREELIST GROUPS  1
+               ));
+
+
+ALTER TABLE PTN_DESPACHO2 ADD (
+  PRIMARY KEY
+ (COD_PEDIDO, CD_TIPO_DESPACHO, NUM_RPI)
+    USING INDEX 
+    TABLESPACE TBS_DADOS_INFORMIX
+    PCTFREE    10
+    INITRANS   2
+    MAXTRANS   255
+    STORAGE    (
+                INITIAL          64K
+                MINEXTENTS       1
+                MAXEXTENTS       2147483645
+                PCTINCREASE      0
+                FREELISTS        1
+                FREELIST GROUPS  1
+               ));
+
+
+ALTER TABLE PTN_DESPACHO1 ADD (
+  CONSTRAINT U160_167
+ PRIMARY KEY
+ (COD_PEDIDO, CD_TIPO_DESPACHO, NUM_RPI)
+    USING INDEX 
+    TABLESPACE TBS_DADOS_INFORMIX
+    PCTFREE    10
+    INITRANS   2
+    MAXTRANS   255
+    STORAGE    (
+                INITIAL          64K
+                MINEXTENTS       1
+                MAXEXTENTS       2147483645
+                PCTINCREASE      0
+                FREELISTS        1
+                FREELIST GROUPS  1
+               ));
+
+
+ALTER TABLE PTN_INID_DESPACH ADD (
+  CONSTRAINT C_PTN_INID_DESP1
+ CHECK (cd_obrigat in ('S','N')));
+
+ALTER TABLE PTN_INID_DESPACH ADD (
+  CONSTRAINT P_PTN_INID_DESPACH
+ PRIMARY KEY
+ (CD_TIPO_DESPACH, CD_INID)
+    USING INDEX 
+    TABLESPACE TBS_DADOS_INFORMIX
+    PCTFREE    10
+    INITRANS   2
+    MAXTRANS   255
+    STORAGE    (
+                INITIAL          64K
+                MINEXTENTS       1
+                MAXEXTENTS       2147483645
+                PCTINCREASE      0
+                FREELISTS        1
+                FREELIST GROUPS  1
+               ));
+
+
+ALTER TABLE PTN_INVENTOR ADD (
+  CONSTRAINT U114_49
+ PRIMARY KEY
+ (COD_PEDIDO, COD_INVENTOR)
+    USING INDEX 
+    TABLESPACE TBS_DADOS_INFORMIX
+    PCTFREE    10
+    INITRANS   2
+    MAXTRANS   255
+    STORAGE    (
+                INITIAL          64K
+                MINEXTENTS       1
+                MAXEXTENTS       2147483645
+                PCTINCREASE      0
+                FREELISTS        1
+                FREELIST GROUPS  1
+               ));
+
+
+ALTER TABLE PTN_LEI_PATENTE ADD (
+  CONSTRAINT U110_36
+ PRIMARY KEY
+ (NUM_LEI)
+    USING INDEX 
+    TABLESPACE TBS_DADOS_INFORMIX
+    PCTFREE    10
+    INITRANS   2
+    MAXTRANS   255
+    STORAGE    (
+                INITIAL          64K
+                MINEXTENTS       1
+                MAXEXTENTS       2147483645
+                PCTINCREASE      0
+                FREELISTS        1
+                FREELIST GROUPS  1
+               ));
+
+
+ALTER TABLE PTN_NATUREZA ADD (
+  CONSTRAINT U112_43
+ PRIMARY KEY
+ (COD_NATUREZA)
+    USING INDEX 
+    TABLESPACE TBS_DADOS_INFORMIX
+    PCTFREE    10
+    INITRANS   2
+    MAXTRANS   255
+    STORAGE    (
+                INITIAL          64K
+                MINEXTENTS       1
+                MAXEXTENTS       2147483645
+                PCTINCREASE      0
+                FREELISTS        1
+                FREELIST GROUPS  1
+               ));
+
+
+ALTER TABLE PTN_PCT ADD (
+  CONSTRAINT U113_46
+ PRIMARY KEY
+ (COD_PEDIDO, NUM_PCT)
+    USING INDEX 
+    TABLESPACE TBS_DADOS_INFORMIX
+    PCTFREE    10
+    INITRANS   2
+    MAXTRANS   255
+    STORAGE    (
+                INITIAL          64K
+                MINEXTENTS       1
+                MAXEXTENTS       2147483645
+                PCTINCREASE      0
+                FREELISTS        1
+                FREELIST GROUPS  1
+               ));
+
+
+ALTER TABLE PTN_PEDIDO ADD (
+  CONSTRAINT C_PTN_PEDIDO1
+ CHECK (cd_tipo_pedido in ('P','D')));
+
+ALTER TABLE PTN_PEDIDO ADD (
+  CONSTRAINT U135_120
+ PRIMARY KEY
+ (COD_PEDIDO)
+    USING INDEX 
+    TABLESPACE TBS_DADOS_INFORMIX
+    PCTFREE    10
+    INITRANS   2
+    MAXTRANS   255
+    STORAGE    (
+                INITIAL          64K
+                MINEXTENTS       1
+                MAXEXTENTS       2147483645
+                PCTINCREASE      0
+                FREELISTS        1
+                FREELIST GROUPS  1
+               ));
+
+
+ALTER TABLE PTN_PROCURADOR ADD (
+  CONSTRAINT U124_87
+ PRIMARY KEY
+ (COD_PEDIDO, COD_PROCURADOR, DT_INICIO)
+    USING INDEX 
+    TABLESPACE TBS_DADOS_INFORMIX
+    PCTFREE    10
+    INITRANS   2
+    MAXTRANS   255
+    STORAGE    (
+                INITIAL          64K
+                MINEXTENTS       1
+                MAXEXTENTS       2147483645
+                PCTINCREASE      0
+                FREELISTS        1
+                FREELIST GROUPS  1
+               ));
+
+
+ALTER TABLE PTN_REQUERENTE ADD (
+  CONSTRAINT U125_91
+ PRIMARY KEY
+ (COD_PEDIDO, COD_REQUERENTE, DT_INICIO)
+    USING INDEX 
+    TABLESPACE TBS_DADOS_INFORMIX
+    PCTFREE    10
+    INITRANS   2
+    MAXTRANS   255
+    STORAGE    (
+                INITIAL          64K
+                MINEXTENTS       1
+                MAXEXTENTS       2147483645
+                PCTINCREASE      0
+                FREELISTS        1
+                FREELIST GROUPS  1
+               ));
+
+
+ALTER TABLE PTN_RESUMO_PEDIDO1 ADD (
+  CONSTRAINT U162_177
+ PRIMARY KEY
+ (COD_PEDIDO)
+    USING INDEX 
+    TABLESPACE TBS_DADOS_INFORMIX
+    PCTFREE    10
+    INITRANS   2
+    MAXTRANS   255
+    STORAGE    (
+                INITIAL          64K
+                MINEXTENTS       1
+                MAXEXTENTS       2147483645
+                PCTINCREASE      0
+                FREELISTS        1
+                FREELIST GROUPS  1
+               ));
+
+
+ALTER TABLE PTN_SITUACAO ADD (
+  CONSTRAINT U111_40
+ PRIMARY KEY
+ (COD_SITUACAO)
+    USING INDEX 
+    TABLESPACE TBS_DADOS_INFORMIX
+    PCTFREE    10
+    INITRANS   2
+    MAXTRANS   255
+    STORAGE    (
+                INITIAL          64K
+                MINEXTENTS       1
+                MAXEXTENTS       2147483645
+                PCTINCREASE      0
+                FREELISTS        1
+                FREELIST GROUPS  1
+               ));
+
+ALTER TABLE PTN_SITUACAO ADD (
+  CONSTRAINT U_PTN_SITUACAO
+ UNIQUE (DES_SITUACAO)
+    USING INDEX 
+    TABLESPACE TBS_DADOS_INFORMIX
+    PCTFREE    10
+    INITRANS   2
+    MAXTRANS   255
+    STORAGE    (
+                INITIAL          64K
+                MINEXTENTS       1
+                MAXEXTENTS       2147483645
+                PCTINCREASE      0
+                FREELISTS        1
+                FREELIST GROUPS  1
+               ));
+
+
+ALTER TABLE REQUERENTE_AUX ADD (
+  CONSTRAINT U136_125
+ PRIMARY KEY
+ (COD_PEDIDO, COD_REQUERENTE, DT_INICIO)
+    USING INDEX 
+    TABLESPACE TBS_DADOS_INFORMIX
+    PCTFREE    10
+    INITRANS   2
+    MAXTRANS   255
+    STORAGE    (
+                INITIAL          64K
+                MINEXTENTS       1
+                MAXEXTENTS       2147483645
+                PCTINCREASE      0
+                FREELISTS        1
+                FREELIST GROUPS  1
+               ));
+
+
+ALTER TABLE CRP_PFPJ3 ADD (
+  PRIMARY KEY
+ (COD_PESSOA)
+    USING INDEX 
+    TABLESPACE TBS_DADOS_INFORMIX
+    PCTFREE    10
+    INITRANS   2
+    MAXTRANS   255
+    STORAGE    (
+                INITIAL          64K
+                MINEXTENTS       1
+                MAXEXTENTS       2147483645
+                PCTINCREASE      0
+                FREELISTS        1
+                FREELIST GROUPS  1
+               ));
+
+
+ALTER TABLE CRP_ENDERECO ADD (
+  CONSTRAINT U134_118
+ PRIMARY KEY
+ (COD_PESSOA)
+    USING INDEX 
+    TABLESPACE TBS_DADOS_INFORMIX
+    PCTFREE    10
+    INITRANS   2
+    MAXTRANS   255
+    STORAGE    (
+                INITIAL          64K
+                MINEXTENTS       1
+                MAXEXTENTS       2147483645
+                PCTINCREASE      0
+                FREELISTS        1
+                FREELIST GROUPS  1
+               ));
+
+
+ALTER TABLE PTN_CLASSIF_PEDIDO ADD (
+  CONSTRAINT R122_183 
+ FOREIGN KEY (COD_CLASSIFICACAO) 
+ REFERENCES PTN_CLASSIF (COD_CLASSIFICACAO));
+
+
+ALTER TABLE CRP_ENDERECO ADD (
+  CONSTRAINT F_CRP_ENDERE01 
+ FOREIGN KEY (COD_UF) 
+ REFERENCES CRP_UF (COD_UF));
+
+ALTER TABLE CRP_ENDERECO ADD (
+  CONSTRAINT F_CRP_ENDERE02 
+ FOREIGN KEY (COD_PAIS) 
+ REFERENCES CRP_PAIS (COD_PAIS));

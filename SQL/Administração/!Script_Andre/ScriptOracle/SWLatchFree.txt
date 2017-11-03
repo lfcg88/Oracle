@@ -1,0 +1,16 @@
+
+
+col event form a15
+col sid form 999
+col user form a10
+col PGM form a30
+col LATCH form a25
+select event,w.sid "SID", s.username "USER", l.name "LATCH", s.program "PGM", 
+       w.p1,w.p2,w.p3,l.gets,l.misses,l.sleeps,l.IMMEDIATE_GETS,l.IMMEDIATE_MISSES
+from  v$latch l, v$session s, v$session_wait w
+where event like '%latch%'
+  and s.sid = w.sid
+  and l.latch# = w.p2
+  and l.sleeps > 0
+/
+

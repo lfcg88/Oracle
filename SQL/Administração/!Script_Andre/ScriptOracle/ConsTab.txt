@@ -1,0 +1,119 @@
+
+
+rem =========================================================================
+rem 
+rem                     concols.sql
+rem 
+rem     Copyright (C) Oriole Software, 2000
+rem 
+rem     Downloaded from http://www.oriolecorp.com
+rem 
+rem     This script for Oracle database administration is free software; you
+rem     can redistribute it and/or modify it under the terms of the GNU General
+rem     Public License as published by the Free Software Foundation; either
+rem     version 2 of the License, or any later version.
+rem 
+rem     This script is distributed in the hope that it will be useful,
+rem     but WITHOUT ANY WARRANTY; without even the implied warranty of
+rem     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+rem     GNU General Public License for more details.
+rem 
+rem     You should have received a copy of the GNU General Public License
+rem     along with this program; if not, write to the Free Software
+rem     Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+rem 
+rem =========================================================================
+--
+--  This function returns the columns which are subject to constraints, as
+--  a string and is used in the script TABCONS to give details of constraints
+--  on tables.
+--  It accepts as parameters, the constraint name, the maximum allowed length
+--  of the  output string (default 55) and the separator character default (/).
+--  If the output exceeds the length allowed, this is indicated by '/...'
+--
+
+create or replace function concols
+(pi_constraint    in varchar2
+,pi_string_length in number := 55
+,pi_sepchar       in varchar2 := ' / ')
+RETURN varchar2 as
+
+  cursor c1 is
+    select ucc.column_name
+      from user_cons_columns ucc
+     where ucc.constraint_name like upper(concols.pi_constraint)
+     order by ucc.position;
+   v_errm   varchar2(2000);          -- Holds SQLERRM
+   v_string varchar2(2000);          -- Return string
+begin
+  FOR r1 IN c1
+    LOOP
+-- If given string length is exceeded, show indicator and stop
+      IF   nvl(length(v_string),0)+length(r1.column_name)+length(pi_sepchar)
+                                                          < pi_string_length
+      THEN v_string := v_string||pi_sepchar||r1.column_name;
+      ELSE v_string := v_string||' /...';
+           exit;
+      END IF;
+    END LOOP;
+-- Remove first separator from string
+    v_string := ltrim(v_string,pi_sepchar);
+    IF v_string is null
+    THEN v_string := 'Constraint "'||concols.pi_constraint||'" does not exist';
+    END IF;
+RETURN v_string;
+exception
+  when others then v_errm := sqlerrm;
+                   dbms_output.put_line('CONCOLS: '||v_errm);
+end concols;
+/
+
+
+
+
+rem =========================================================================
+rem 
+rem                     tabcons.sql
+rem 
+rem     Copyright (C) Oriole Software, 2000
+rem 
+rem     Downloaded from http://www.oriolecorp.com
+rem 
+rem     This script for Oracle database administration is free software; you
+rem     can redistribute it and/or modify it under the terms of the GNU General
+rem     Public License as published by the Free Software Foundation; either
+rem     version 2 of the License, or any later version.
+rem 
+rem     This script is distributed in the hope that it will be useful,
+rem     but WITHOUT ANY WARRANTY; without even the implied warranty of
+rem     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+rem     GNU General Public License for more details.
+rem 
+rem     You should have received a copy of the GNU General Public License
+rem     along with this program; if not, write to the Free Software
+rem     Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+rem 
+rem =========================================================================
+--
+-- This script gives full details of each constraint, its type and the column(s)
+-- it comprises, for a specified table or all the user's tables.
+-- N.B. It requires that the function CONCOLS has already been compiled.
+--
+set echo off
+accept tabname default '%' -
+prompt 'Press Enter for all tables or enter a table name: '
+
+select uc.table_name||' | '||
+       uc.constraint_name||' | '||
+       decode(uc.constraint_type
+             ,'C','chk'
+             ,'P','pk'
+             ,'R','fk'
+             ,'U','unique'
+             ,'V','with check option')||' | '||
+       concols(uc.constraint_name) "Table | Constr | Type | Cols"
+  from user_constraints uc
+ where uc.table_name like upper('&tabname')
+ order by uc.table_name, uc.constraint_name
+/
+

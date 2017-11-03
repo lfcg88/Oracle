@@ -1,0 +1,126 @@
+Create, Run, Stop, Copy, and Drop a Job
+Oracle RAC Cluster Tips by Burleson Consulting
+ 
+
+This is an excerpt from the bestselling book Oracle Grid & Real Application Clusters.  To get immediate access to the code depot of working RAC scripts, buy it directly from the publisher and save more than 30%.
+
+
+--------------------------------------------------------------------------------
+
+Like Program, when a Job is created, it is disabled by default.  A Job must be specifically enabled so it will become active and scheduled.
+
+A job can be created with the following four formats:
+
+* With Program, With Schedule  
+
+* With Program, Without Schedule
+
+* Without Program, With Schedule
+
+* Without Program, Without Schedule
+
+Example 1:
+
+The following can be used to create a job using a predefined Program and Schedule:
+
+BEGIN
+DBMS_SCHEDULER.CREATE_JOB
+(
+ job_name                    => `BACKUP_JOB_01`,
+ program_name            => `BACKUP_PROGRAM`,
+ schedule_name            => `BACKUP_SCHEDULE`);
+END;
+/
+
+Example 2:
+
+The following can be used to create a job using a predefined Program without a predefined Schedule: 
+
+BEGIN
+DBMS_SCHEDULER.CREATE_JOB
+(
+ job_name                    => `BACKUP_JOB_02`,
+ program_name            => `BACKUP_PROGRAM`,
+ start_date        => `TRUNC(SYSDATE)+23/24`,
+ repeat_interval => `FREQ=WEEKLY; BYDAY=SUN` );
+END;
+/
+
+Example 3:
+
+The following can be used to create a job using a predefined Schedule without a predefined Program:
+
+BEGIN
+DBMS_SCHEDULER.CREATE_JOB
+(
+ job_name                    => `BACKUP_JOB_03`,
+ schedule_name            => `BACKUP_SCHEDULE`,
+ job_type                      => `EXECUTABLE`,
+ job_action       => `/dba/scripts/weekly_backup.sh`
+);
+END;
+/
+
+Example 4:
+
+The following can be used to create a job without a predefined Program and Schedule:
+
+BEGIN
+DBMS_SCHEDULER.CREATE_JOB
+(
+ job_name                    => `BACKUP_JOB_04`,
+ job_type                      => `EXECUTABLE`,
+ job_action       => `/dba/scripts/weekly_backup.sh`,
+ start_date        => `TRUNC(SYSDATE)+23/24`
+ repeat_interval => `FREQ=WEEKLY; BYDAY=SUN`
+);
+END;
+/
+
+The following is the syntax to run, stop, copy, and drop a job:
+
+DBMS_SCHEDULER.RUN_JOB
+(  job_name                  in varchar2 );
+DBMS_SCHEDULER.STOP_JOB
+( job_name                   in varchar2,
+ force               in Boolean default false );
+
+The copy_job procedure copies all attributes of an existing job to a new job.
+
+DBMS_SCHEDULER.COPY_JOB
+(
+ old_job                       in varchar2,
+ new_job                      in varchar2);
+
+DBMS_SCHEDULER.DROP_JOB
+(
+ job_name                    in varchar2,
+ force               in Boolean default false
+);
+
+Create Job Class
+
+A Job Class defines a category of jobs that share common resource usage requirements.  A Job Class is associated with two attributes: the resource consumer group, which defines a set of user sessions that have common resource processing requirements; and a database service name, which defines the instance to which the job class belongs.  Each job belongs to a single job class at any given time.  By associating a Job with a Job Class, the amount of resources a Job can use during its execution can be managed. 
+
+The syntax to create a Job Class is:
+
+DBMS_SCHEDULER.CREATE_JOB_CLASS
+(
+ job_class_name                       in varchar2,
+ resource_consumer_group       in varchar2 default null,
+ service                         in varchar2 default null,
+ log_purge_policy                     in varchar2 default null,
+ comments                                in varchar2 default null
+);
+
+By default, the Scheduler log table entries are not purged. The log_purge_policy defines the policy for purging the log table entries. 
+
+Data Dictionary Views
+
+The following SQL script provides a list of data dictionary views used to monitor the Scheduler’s activities:
+
+SQL> select table_name, comments
+   2 from   dict
+   3 where table_name like 'DBA%SCHEDULER%'
+   4 order by table_name;
+

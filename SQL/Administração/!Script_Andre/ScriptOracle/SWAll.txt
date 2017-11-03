@@ -1,0 +1,128 @@
+rem =========================================================================
+rem 
+rem                     monwaits.sql
+rem 
+rem     Copyright (C) Oriole Software, 1998
+rem 
+rem     This program is free software; you can redistribute it and/or modify
+rem     it under the terms of the GNU General Public License as published by
+rem     the Free Software Foundation; either version 2 of the License, or
+rem     any later version.
+rem 
+rem     This program is distributed in the hope that it will be useful,
+rem     but WITHOUT ANY WARRANTY; without even the implied warranty of
+rem     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+rem     GNU General Public License for more details.
+rem 
+rem     You should have received a copy of the GNU General Public License
+rem     along with this program; if not, write to the Free Software
+rem     Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+rem 
+rem =========================================================================
+rem
+rem *********** antes de usar execute o script inswait8 (cudidado)
+rem # Current waits (slow !)
+rem
+rem -------------------------------------------------------------------------
+rem
+spool c:\seswion_wait
+select substr('Table ' || u.name || '.' || o.name || 
+            decode(x.class, 1, '/Data blk', 4, '/Seg hdr', '')
+             || ' (wait time  =  ' || to_char(w.wait_time) || ') : '
+             || a.sql_text, 1, 200)
+from v$session_wait w, 
+     v$session s, 
+     sys.uet$ ue, 
+     sys.wait_info$ x, 
+     sys.tab$ t, 
+     sys.obj$ o, 
+     sys.user$ u, 
+     v$sqlarea a
+where s.sid = w.sid
+  and s.username is not null
+  and s.audsid != userenv('SESSIONID')
+  and w.event = 'buffer busy waits'
+  and w.p1 = ue.file#
+  and w.p2 between ue.block# and ue.block#+ue.length-1
+  and w.p1 = x.dbafil
+  and w.p2 = x.dbablk
+  and t.file# = ue.segfile#
+  and t.block# = ue.segblock#
+  and t.obj# = o.obj#
+  and o.owner# = u.user#
+  and s.sql_address = a.address
+  and s.sql_hash_value = a.hash_value
+union
+select substr('Index ' || u.name || '.' || o.name || ' on ' || ot.name || 
+              decode(x.class, 1, '/Data blk', 4, '/Seg hdr', '')
+           || ' (wait time  =  ' || to_char(w.wait_time) || ') : '
+           || a.sql_text, 1, 200)
+from v$session_wait w, 
+     v$session s, 
+     sys.uet$ ue, 
+     sys.wait_info$ x, 
+     sys.ind$ i, 
+     sys.obj$ o, 
+     sys.user$ u, 
+     sys.obj$ ot, 
+     v$sqlarea a
+where s.sid = w.sid
+  and s.username is not null
+  and s.audsid != userenv('SESSIONID')
+  and w.event = 'buffer busy waits'
+  and w.p1 = ue.file#
+  and w.p2 between ue.block# and ue.block#+ue.length-1
+  and w.p1 = x.dbafil
+  and w.p2 = x.dbablk
+  and i.file# = ue.segfile#
+  and i.block# = ue.segblock#
+  and i.obj# = o.obj#
+  and o.owner# = u.user#
+  and i.bo# = ot.obj#
+  and s.sql_address = a.address
+  and s.sql_hash_value = a.hash_value
+ union
+select substr('RBS ' || u.name || ' (wait time  =  '
+              || to_char(w.wait_time) || ') : '
+              || a.sql_text, 1, 200)
+from v$session_wait w, 
+     v$session s, 
+     sys.uet$ ue, 
+     sys.undo$ u, 
+     v$sqlarea a
+where s.sid = w.sid
+  and s.username is not null
+  and s.audsid != userenv('SESSIONID')
+  and w.event = 'buffer busy waits'
+  and w.p1 = ue.file#
+  and w.p2 between ue.block# and ue.block#+ue.length-1
+  and u.file# = ue.segfile#
+  and u.block# = ue.segblock#
+  and s.sql_address = a.address
+  and s.sql_hash_value = a.hash_value
+union
+select substr(w.event || ' (wait time  =  ' || to_char(w.wait_time) || ') : '
+       || a.sql_text, 1, 200)
+from v$session_wait w, 
+     v$session s, 
+     v$sqlarea a
+where s.sid = w.sid
+  and s.username is not null
+  and s.audsid != userenv('SESSIONID')
+  and w.event in('enqueue', 'free buffer waits', 
+                 'db file scattered read', 'db file parallel write','direct path write','direct path read')
+  and s.sql_address = a.address
+  and s.sql_hash_value = a.hash_value
+union
+select substr('latch free (wait time  =  ' || to_char(w.wait_time) || ') : '
+               || l.name, 1, 200)
+from v$session_wait w, 
+     v$session s, 
+     v$latch l
+where s.sid = w.sid
+  and s.username is not null
+  and s.audsid != userenv('SESSIONID')
+  and w.event = 'latch free'
+  and w.p2 = l.latch#
+/
+spool off

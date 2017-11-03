@@ -1,0 +1,215 @@
+/**********************************************************************
+ * File:	run_top_stmt2.sql
+ * Type:	SQL*Plus script
+ * Author:	Tim Gorman (Evergreen Database Technologies, Inc.)
+ * Date:	04-Oct-99
+ *
+ * Description:
+ *	Script to execute TOP_STMT2 report using an "anonymous PL/SQL
+ *	block", instead of as a stored procedure...
+ *
+ * Modifications:
+ *	TGorman	21may01	adapted from "top_stmt2.sql" and "run_top_stmt2.sql"
+ *********************************************************************/
+set serveroutput on size 1000000 feedback off trimspool on termout off
+col instance new_value V_INSTANCE noprint
+select  lower(replace(t.instance,chr(0),'')) instance
+from    v$thread        t,
+        v$parameter     p
+where   p.name = 'thread'
+and     t.thread# = to_number(decode(p.value,'0','1',p.value));
+-- spool top_stmt2_&&V_INSTANCE
+spool c:\temp\top_stmt2
+
+declare
+	--
+	in_top_count		number := 20;
+	in_max_disk_reads	number := 10;
+	in_max_buffer_gets	number := 10;
+	--
+	cursor get_top_stmts(in_dr in number, in_bg in number)
+	is
+	select	/*+ rule */
+		 substr(sql_text, 1, 100) sql_text,
+		 min(address) address,
+		 sum(abs(disk_reads)) disk_reads,
+		 sum(abs(buffer_gets)) buffer_gets,
+		 sum(abs(sorts)) sorts,
+		 sum(abs(executions)) executions,
+		 sum(abs(loads)) loads,
+		 count(*) cnt,
+		 ((sum(abs(disk_reads))*100)+sum(abs(buffer_gets)))/1000 factor
+	from	 sys.v_$sqlarea
+	group by substr(sql_text, 1, 100)
+	having	 sum(abs(disk_reads)) > in_dr
+	and	 sum(abs(buffer_gets)) > in_bg
+	order by factor desc;
+	--
+	cursor get_text (in_addr in raw)
+	is
+	select /*+ rule */
+		piece,
+		sql_text
+	from	sys.v_$sqltext
+	where	address = in_addr
+	order by piece;
+	--
+	v_open_time	varchar2(30);
+	v_text_lines	integer;
+	v_length	integer;
+	n		integer;
+	v_tot_logr	integer;
+	v_tot_phyr	integer;
+	v_hit_ratio	number;
+	--
+begin
+--
+select /*+ rule */
+	to_number(a.value) + to_number(b.value),
+	to_number(c.value)
+into	v_tot_logr,
+	v_tot_phyr
+from	sys.v_$sysstat	a,
+	sys.v_$sysstat	b,
+	sys.v_$sysstat	c
+where	a.name = 'db block gets'
+and	b.name = 'consistent gets'
+and	c.name = 'physical reads';
+--
+if v_tot_logr > 0 then
+	--
+	v_hit_ratio := round((1 - (v_tot_phyr / v_tot_logr)) * 100, 2);
+	--
+else
+	--
+	v_hit_ratio := 0;
+	--
+end if;
+--
+select /*+ rule */
+	to_char(t.open_time, 'MM/DD/YY HH24:MI:SS')
+into	v_open_time
+from	sys.v_$thread		t,
+	sys.v_$parameter	p
+where	p.name = 'thread'
+and	t.thread# = decode(to_number(p.value), 0, 1, to_number(p.value));
+--
+for a in get_top_stmts(in_max_disk_reads, in_max_buffer_gets) loop
+	--
+	if get_top_stmts%rowcount > in_top_count then
+		--
+		exit;
+		--
+	end if;
+	--
+	if get_top_stmts%rowcount > 1 then
+		--
+		dbms_output.put_line(chr(12));
+		--
+	end if;
+	--
+	dbms_output.put_line(rpad('Date: ',30) ||
+			to_char(sysdate, 'MM/DD/YY HH24:MI:SS') ||
+			lpad('Page ' ||
+			     to_char(get_top_stmts%rowcount,'990'),25));
+	dbms_output.put_line(rpad('Database startup: ',30) ||
+			v_open_time);
+	dbms_output.put_line(rpad('Total Logical Reads: ', 23) ||
+			to_char(v_tot_logr,'999,999,999,999,999,990'));
+	dbms_output.put_line(rpad('Total Physical Reads: ', 23) ||
+			to_char(v_tot_phyr,'999,999,999,999,999,990') ||
+			lpad('("Hit Ratio":', 16) ||
+			to_char(v_hit_ratio, '990.00') || '%)');
+	dbms_output.put_line('.');
+	--
+	dbms_output.put_line('SQL Statement Text');
+	dbms_output.put_line('------------------');
+	--
+	v_text_lines := 0;
+	for s in get_text(a.address) loop
+		--
+		dbms_output.put_line(rpad(to_char(s.piece),6) || s.sql_text);
+		--
+		v_text_lines := v_text_lines + 1;
+		--
+	end loop;
+	--
+	if a.cnt > 1 then
+		--
+		dbms_output.put_line('.');
+		if a.cnt = 2 then
+			dbms_output.put_line('NOTE: There is one other' ||
+				' (similar) version of this statement;');
+			dbms_output.put_line('====  Stats summarized over both'
+				|| ' versions in V$SQLAREA.');
+		else
+			dbms_output.put_line('NOTE: There are ' ||
+				(a.cnt - 1) ||
+				' other (similar) versions of this statement;');
+			dbms_output.put_line('====  Stats summarized over all '
+				|| a.cnt || ' versions in V$SQLAREA.');
+		end if;
+		--
+	end if;
+	--
+	if v_text_lines = 0 then
+		--
+		v_text_lines := 0;
+		v_length := length(a.sql_text);
+		n := 1;
+		loop
+			--
+			dbms_output.put_line(rpad(v_text_lines,6) ||
+				substr(a.sql_text,n,64));
+			--
+			v_text_lines := v_text_lines + 1;
+			n := n + 64;
+			exit when n >= v_length;
+			--
+		end loop;
+		--
+	end if;
+	--
+	dbms_output.put_line('.');
+	dbms_output.put_line(':' ||
+				lpad('Disk ',14) ||
+				lpad('Buffer',18) ||
+				lpad(' ',10) ||
+				lpad(' ',10) ||
+				lpad(' ',10) ||
+				lpad('Load',12));
+	dbms_output.put_line(':' ||
+				lpad('Reads',14) ||
+				lpad('Gets',18) ||
+				lpad('Sorts',10) ||
+				lpad('Runs',10) ||
+				lpad('Loads',10) ||
+				lpad('Factor',12));
+	dbms_output.put_line(':' ||
+				lpad('-----',14) ||
+				lpad('------',18) ||
+				lpad('-----',10) ||
+				lpad('----',10) ||
+				lpad('-----',10) ||
+				lpad('------',12));
+	dbms_output.put_line(':' ||
+		lpad(ltrim(to_char(a.disk_reads,'999,999,990')),14) ||
+		lpad(ltrim(to_char(a.buffer_gets,'999,999,999,990')),18) ||
+		lpad(ltrim(to_char(a.sorts,'999,990')),10) ||
+		lpad(ltrim(to_char(a.executions,'999,990')),10) ||
+		lpad(ltrim(to_char(a.loads,'999,990')),10) ||
+		lpad(ltrim(to_char(a.factor,'99999990.0')),12));
+	dbms_output.put_line(':' ||
+		lpad('('||ltrim(to_char(round((a.disk_reads/v_tot_phyr)*100,3),
+				   '990.000'))||'%)',14) ||
+		lpad('('||ltrim(to_char(round((a.buffer_gets/v_tot_logr)*100,3),
+				   '990.000'))||'%)',18));
+	--
+end loop;
+--
+end;
+/
+
+spool off
+set feedback 6 termout on
+-- ed top_stmt2_&&V_INSTANCE..lst

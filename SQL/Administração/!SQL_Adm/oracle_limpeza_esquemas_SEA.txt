@@ -1,0 +1,12 @@
+drop user goldencross cascade;
+drop user his_transacao cascade;
+drop user imp_golden cascade;
+drop user ambgolden cascade;
+drop user frontend cascade;
+
+
+
+spool c:\purge.sql
+select 'purge tablespace '||tablespace_name||';' from dba_tablespaces;
+spool off
+@c:\purge

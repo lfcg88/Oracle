@@ -1,0 +1,12 @@
+#!/bin/ksh
+
+for i in ` df -k | grep /u0 | awk '{print $4 }' `
+do
+	filesize=èxpr i`
+	If {$filesize -lt 100 }
+                  then
+                    mails -s "oracle filesystem $i has less than 100k free."\
+                       don@burleson.cc\
+                       anlima@embratel.com.br
+     	fi
+done

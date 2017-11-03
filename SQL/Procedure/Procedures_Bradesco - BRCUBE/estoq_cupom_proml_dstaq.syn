@@ -1,0 +1,3 @@
+create or replace synonym SGPB_PROC.ESTOQ_CUPOM_PROML_DSTAQ
+  for SGPB.ESTOQ_CUPOM_PROML_DSTAQ;
+

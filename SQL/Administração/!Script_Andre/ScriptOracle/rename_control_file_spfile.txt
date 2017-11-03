@@ -1,0 +1,89 @@
+
+try this:
+1 create pfile=init.ora from spfile
+2. add one more member in init.ora
+3. shutdown database
+4. copy controlfile to new location you specified in init.ora
+5. startup pfile=init.ora
+6. re-recreate spfile 
+
+=======================================
+
+
+Converting between PFILES and SPFILES:
+
+One can easily migrate from a PFILE to SPFILE or vice versa. Execute 
+the following commands from a user with SYSDBA or SYSOPER privileges:
+
+
+SQL> CREATE PFILE FROM SPFILE; 
+SQL> CREATE SPFILE FROM PFILE;
+One can also specify a non-default location for either (or both) the 
+PFILE and SPFILE parameters. Look at this example:
+
+SQL> CREATE SPFILE='/oradata/spfileORCL.ora' from 
+PFILE='/oradata/initORCL.ora';
+
+Here is an alternative procedure for changing SPFILE parameter values 
+using the above method:
+
+Export the SPFILE with: CREATE PFILE='pfilename' FROM SPFILE = 
+'spfilename'; 
+Edit the resulting PFILE with a text editor 
+Shutdown and startup the database with the PFILE option: STARTUP 
+PFILE=filename 
+Recreate the SPFILE with: CREATE SPFILE='spfilename' FROM 
+PFILE='pfilename'; 
+On the next startup, use STARTUP without the PFILE parameter and the 
+new SPFILE will be used.
+
+
+===================================
+
+
+Working with Control files
+Oracle recommends the following method to change the control file path 
+or name.
+
+From SQL*Plus:
+
+SQL> create pfile from spfile;
+ 
+File created.
+ 
+SQL> shutdown;
+Database closed.
+Database dismounted.
+ORACLE instance shut down.
+
+OS command prompt:
+
+[oracle@amzone db1]$ vi initdb1.ora 
+              --manually modify the paths of the controlfile or rename 
+them in init.ora.
+[oracle@amzone db1]$ cp control01.ctl control01.org  
+              --making a backup copy, just in case.
+[oracle@amzone db1]$ mv control01.ctl db1_01.ctl
+[oracle@amzone db1]$ mv control02.ctl db1_02.ctl
+[oracle@amzone db1]$ mv control03.ctl db1_03.ctl
+[oracle@amzone dbs]$ mv spfiledb1.ora spfilexxx.ora  
+              --delete/move the spfile.
+
+Go back to the SQL*Plus session and start the database:
+
+SQL> startup pfile= '/home/oracle/product/10.1.0/db1/dbs/initdb1.ora';
+ORACLE instance started.
+ 
+Total System Global Area  146800640 bytes
+Fixed Size                   777836 bytes
+Variable Size             124789140 bytes
+Database Buffers           20971520 bytes
+Redo Buffers                 262144 bytes
+Database mounted.
+Database opened.
+
+SQL> create spfile from pfile;
+ 
+File created.
+
+Shutdown and restart the database to check on the SPFILE usage.

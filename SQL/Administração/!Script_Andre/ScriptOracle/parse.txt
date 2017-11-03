@@ -1,0 +1,121 @@
+set serveroutput on size 20000
+set pagesize 100
+set linesize 150
+set feedback off
+set echo off
+
+
+
+spool c:\parse_teste54654.lst
+
+SELECT round(100 * (1 - A.hard_parses/B.executions),2)   " % No Hard Parse "
+  FROM
+       (select value hard_parses
+          from v$sysstat 
+         where name = 'parse count (hard)' ) A 
+      ,(select value executions
+          from v$sysstat 
+         where name = 'execute count' )      B
+/
+
+
+declare
+   vtotcpu number;
+   vtotcpuparse number;
+begin
+  select sum(value) into vtotcpu
+   from v$sesstat   ss,
+        v$statname   sn
+  where ss.value > 0
+   and sn.statistic# = ss.statistic#
+   and sn.name in ('CPU used by this session');
+  select sum(value) into vtotcpuparse
+   from v$sesstat   ss,
+        v$statname   sn
+  where ss.value > 0
+   and sn.statistic# = ss.statistic#
+   and sn.name in ('parse time cpu');
+  dbms_output.put_line('                                                                      ');
+  dbms_output.put_line('                                                                      ');
+  dbms_output.put_line('    Total Cpu                Total Cpu Parse         % Cpu Parse      '); 
+  dbms_output.put_line('    ---------                ---------------         ------------      '); 
+--
+  dbms_output.put_line(to_char(vtotcpu,'999,999,999,999')||lpad(to_char(vtotcpuparse,'999,999,999,999'),26)
+                       ||lpad(to_char(round(100*(vtotcpuparse/vtotcpu),2),'999.99'),20));
+  -- dbms_output.put_line('    Total Cpu          => '|| to_char(vtotcpu,'999,999,999,999'));
+ -- dbms_output.put_line('    Total Cpu Parse    =>  '|| to_char(vtotcpuparse,'999,999,999,999'));
+ -- dbms_output.put_line('    % Cpu Parse        =>  '|| to_char(round(100*(vtotcpuparse/vtotcpu),2),'999.99')||'%');
+ End;
+/
+
+  
+col username format a20     heading "Username"
+col sid      format 9999999 heading "Sid"
+
+select a.username,a.sid,a.value "parse count (hard)",b.value "execute count",round(100 * (1 - a.value/b.value),2) " % no hard parse",c.value "cpu parse",round(100*(c.value/d.value),2) "% Cpu Hard Parse"
+from 
+ ( select nvl(s.username, 'SYS') username,
+   to_char(s.sid) sid,
+   sn.name,
+   ss.value
+   from v$sesstat   ss,
+        v$statname   sn,
+        v$session   s
+   where ss.sid = s.sid
+-- and ss.sid in (157,88)
+   and ss.value > 0
+   and sn.statistic# = ss.statistic#
+   and sn.name in ('parse count (hard)')
+   and nvl(s.username, 'SYS') = decode(upper('&&usr'), '', nvl(s.username, 'SYS'), upper('&&usr'))
+ ) a,
+ ( select nvl(s.username, 'SYS') username,
+   to_char(s.sid) sid,
+   sn.name,
+   ss.value
+   from v$sesstat   ss,
+        v$statname   sn,
+        v$session   s
+   where ss.sid = s.sid
+-- and ss.sid in (157,88)
+   and ss.value > 0
+   and sn.statistic# = ss.statistic#
+   and sn.name in ('execute count')
+   and nvl(s.username, 'SYS') = decode(upper('&&usr'), '', nvl(s.username, 'SYS'), upper('&&usr'))
+ ) b,
+( select nvl(s.username, 'SYS') username,
+   to_char(s.sid) sid,
+   sn.name,
+   ss.value
+   from v$sesstat   ss,
+        v$statname   sn,
+        v$session   s
+   where ss.sid = s.sid
+-- and ss.sid in (157,88)
+   and ss.value > 0
+   and sn.statistic# = ss.statistic#
+   and sn.name in ('parse time cpu')
+   and nvl(s.username, 'SYS') = decode(upper('&&usr'), '', nvl(s.username, 'SYS'), upper('&&usr'))
+ ) c,
+ ( select nvl(s.username, 'SYS') username,
+   to_char(s.sid) sid,
+   sn.name,
+   ss.value
+   from v$sesstat   ss,
+        v$statname   sn,
+        v$session   s
+   where ss.sid = s.sid
+-- and ss.sid in (157,88)
+   and ss.value > 0
+   and sn.statistic# = ss.statistic#
+   and sn.name in ('CPU used by this session')
+   and nvl(s.username, 'SYS') = decode(upper('&&usr'), '', nvl(s.username, 'SYS'), upper('&&usr'))
+ ) d
+where a.sid=b.sid 
+and   b.sid=c.sid
+and   c.sid=d.sid
+order by 3 desc
+/
+
+spool off
+
+--ed c:\parse_teste54654.lst

@@ -1,0 +1,26 @@
+
+SET PAGESIZE 1000
+SET LINESIZE 140
+
+spool c:\cont_linhas.sql
+
+set head off
+set echo off
+
+select 'select '||''''||rpad( table_name,40 ,' ') ||'  --->   '||''''||'||'||' count(*) from '||OWNER||'.'||table_name||';'
+from all_tables where owner='EFORM'
+order by table_name
+/
+
+spool off
+
+SET LINESIZE 90
+
+spool c:\resultado_linhas.txt
+
+@c:\cont_linhas.sql
+
+spool off
+
+
+

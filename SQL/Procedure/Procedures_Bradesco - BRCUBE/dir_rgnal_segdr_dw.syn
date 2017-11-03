@@ -1,0 +1,3 @@
+create or replace synonym SGPB_PROC.DIR_RGNAL_SEGDR_DW
+  for DWCO.DIR_RGNAL_SEGDR;
+

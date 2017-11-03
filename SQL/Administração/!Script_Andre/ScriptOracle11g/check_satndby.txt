@@ -1,0 +1,33 @@
+echo .
+echo .
+read -p "Entre com o banco primário: " BANCOPRIMARIO
+read -p "Entre com o banco secundário: " BANCOSECUNDARIO
+read -s -p "Entre com a senha do SYS: " SENHASYS
+
+
+echo .
+echo BANCO PRIMARIO = $BANCOPRIMARIO
+echo BANCO STANDBY = $BANCOSECUNDARIO
+
+
+PRI=`sqlplus -s sys/$SENHASYS@$BANCOPRIMARIO as sysdba <<EOF
+select max(SEQUENCE#) as PRIMARIO from v\\$archived_log;
+EOF`
+
+
+STB=`sqlplus -s sys/$SENHASYS@$BANCOSECUNDARIO as sysdba <<EOF
+select lhmax AS STANDBY
+from (select thread# thrd, max(sequence#) almax
+  	  from v\\$archived_log
+  	  where resetlogs_change#=(select resetlogs_change# from v\\$database)
+  	  group by thread#) al,
+  	 (select thread# thrd, max(sequence#) lhmax
+  	  from v\\$log_history
+  	  where first_time=(select max(first_time) from v\\$log_history)
+  	  group by thread#) lh
+  where al.thrd = lh.thrd;
+EOF`
+
+
+echo $PRI
+echo $STB

@@ -1,0 +1,220 @@
+/*
+This script will generate a script to create all rollback segments of a database.
+ 
+   
+Product Name, Product Version
+ Oracle Server, 7.3 to 9.2.0  
+Platform  Platform Independent 
+Date Created  21-Feb-1995 
+   
+Instructions  
+Execution Environment:
+     SQL, SQL*Plus
+
+Access Privileges:
+     Requires DBA access privileges to be executed.
+
+Usage:
+     sqlplus sys/<password> 
+
+Instructions:
+     Copy the script to a file and execute it from SQL*Plus.
+
+	 
+PROOFREAD THIS SCRIPT BEFORE USING IT! Due to differences in the way text 
+editors, e-mail packages, and operating systems handle text formatting (spaces, 
+tabs, and carriage returns), this script may not be in an executable state
+when you first receive it. Check over the script to ensure that errors of
+this type are corrected.
+
+ 
+   
+Description  
+The following is a script that when run will generate another script that will
+include all the create rollback segments in the database.  The remarks should
+be reviewed carefully before running this script.
+
+ 
+   
+References  
+ 
+
+ 
+   
+Script
+*/
+  
+REM
+REM                    SCRIPT FOR CREATING ROLLBACK SEGMENTS
+REM
+REM This script must be run by a user with the DBA role.
+REM
+REM Running this script will in turn create a script to build the database
+REM rollback segments.  The created script is called create_rollback_segs.sql
+REM and can be run by any user with the DBA role or with the 'CREATE
+REM ROLLBACK SEGMENT' system privilege.
+REM
+REM NOTE:  This script will NOT capture the optimal storage for
+REM a rollback segment that is offline.
+REM
+REM NOTE:  The rollback segments must be manually brought back online after
+REM running the create_rollback_segs.sql script.
+REM
+REM Only preliminary testing of this script was performed.  Be sure to test
+REM it completely before relying on it.
+REM
+
+set verify off
+set feedback off
+set termout off
+set echo off
+set pagesize 0
+
+set termout on
+select 'Creating rollback segment build script...' from dual;
+set termout off
+
+create table rb_temp (lineno NUMBER, rb_name varchar2(30),
+                    text varchar2(800))
+/
+
+DECLARE
+   CURSOR rb_cursor IS select segment_name,
+                              tablespace_name,
+                              decode (owner, 'PUBLIC', 'PUBLIC ', NULL),
+                              segment_id,
+                              initial_extent,
+                              next_extent,
+                              min_extents,
+                              max_extents,
+                              status
+                       from sys.dba_rollback_segs
+                              where segment_name <> 'SYSTEM';
+   CURSOR rb_optimal (r_no number) IS select usn,
+                               decode(optsize, null, 'NULL', to_char(optsize))
+                        from sys.v_$rollstat
+                               where usn=r_no;
+   lv_segment_name        sys.dba_rollback_segs.segment_name%TYPE;
+   lv_tablespace_name     sys.dba_rollback_segs.tablespace_name%TYPE;
+   lv_owner               VARCHAR2(10);
+   lv_segment_id          sys.dba_rollback_segs.segment_id%TYPE;
+   lv_initial_extent      sys.dba_rollback_segs.initial_extent%TYPE;
+   lv_next_extent         sys.dba_rollback_segs.next_extent%TYPE;
+   lv_min_extents         sys.dba_rollback_segs.min_extents%TYPE;
+   lv_max_extents         sys.dba_rollback_segs.max_extents%TYPE;
+   lv_status              sys.dba_rollback_segs.status%TYPE;
+   lv_usn                 sys.v_$rollstat.usn%TYPE;
+   lv_optsize             VARCHAR2(40);
+   lv_string              VARCHAR2(800);
+   lv_lineno            number := 0;
+
+   procedure write_out(p_line INTEGER, p_name VARCHAR2, p_string VARCHAR2) is
+   begin
+       insert into rb_temp (lineno, rb_name, text) values
+              (p_line, p_name, p_string);
+   end;
+
+BEGIN
+  OPEN rb_cursor;
+  LOOP
+     FETCH rb_cursor INTO lv_segment_name,
+                          lv_tablespace_name,
+                          lv_owner,
+                          lv_segment_id,
+                          lv_initial_extent,
+                          lv_next_extent,
+                          lv_min_extents,
+                          lv_max_extents,
+                          lv_status;
+     EXIT WHEN rb_cursor%NOTFOUND;
+      lv_lineno := 1;
+  OPEN rb_optimal(lv_segment_id);
+  LOOP
+     FETCH rb_optimal INTO lv_usn,
+                           lv_optsize;
+     EXIT WHEN rb_optimal%NOTFOUND;
+  END LOOP;
+  CLOSE rb_optimal;
+if lv_status = 'ONLINE' then
+lv_string:='CREATE ' || lv_owner || 'ROLLBACK SEGMENT ' ||
+             lower(lv_segment_name);
+write_out(lv_lineno, lv_segment_name, lv_string);
+lv_lineno := lv_lineno + 1;
+lv_string:='TABLESPACE ' || lower(lv_tablespace_name);
+write_out(lv_lineno, lv_segment_name, lv_string);
+lv_lineno := lv_lineno + 1;
+lv_string:='STORAGE ' || '(INITIAL ' || lv_initial_extent || ' NEXT ' ||
+             lv_next_extent || ' MINEXTENTS ' || lv_min_extents ||
+             ' MAXEXTENTS ' || lv_max_extents ||
+             ' OPTIMAL ' || lv_optsize || ')' ;
+write_out(lv_lineno, lv_segment_name, lv_string);
+lv_lineno := lv_lineno + 1;
+lv_string:='/';
+write_out(lv_lineno, lv_segment_name, lv_string);
+else
+lv_string:='CREATE ' || lv_owner || 'ROLLBACK SEGMENT ' ||
+             lower(lv_segment_name);
+write_out(lv_lineno, lv_segment_name, lv_string);
+lv_lineno := lv_lineno + 1;
+lv_string:='TABLESPACE ' || lower(lv_tablespace_name);
+write_out(lv_lineno, lv_segment_name, lv_string);
+lv_lineno := lv_lineno + 1;
+lv_string:='STORAGE ' || '(INITIAL ' || lv_initial_extent || ' NEXT ' ||
+             lv_next_extent || ' MINEXTENTS ' || lv_min_extents ||
+             ' MAXEXTENTS ' || lv_max_extents || ')' ;
+write_out(lv_lineno, lv_segment_name, lv_string);
+lv_lineno := lv_lineno + 1;
+lv_string:='/';
+write_out(lv_lineno, lv_segment_name, lv_string);
+end if;
+lv_lineno := lv_lineno + 1;
+lv_string:='                                                  ';
+write_out(lv_lineno, lv_segment_name, lv_string);
+END LOOP;
+  CLOSE rb_cursor;
+END;
+/
+
+spool c:\create_rollback_segs.sql
+
+set heading off
+col text format a80 word_wrap
+
+select   text
+from     rb_temp
+order by rb_name, lineno;
+
+spool off;
+
+Drop table rb_temp;
+
+-- exit
+
+
+/*
+
+==============
+Sample Output: 
+==============
+
+CREATE ROLLBACK SEGMENT r01                                                     
+TABLESPACE rbs                                                                  
+STORAGE (INITIAL 512000 NEXT 512000 MINEXTENTS 2 MAXEXTENTS 2147483645 
+OPTIMAL NULL)                                                                   
+                                                         
+                                                                               
+                                                                                
+CREATE ROLLBACK SEGMENT r02                                                     
+TABLESPACE rbs                                                                  
+STORAGE (INITIAL 512000 NEXT 512000 MINEXTENTS 2 MAXEXTENTS 2147483645
+OPTIMAL NULL)                                                                   
+                                                
+*/
+          
+
+
+ 
+   
+   
+
+ 

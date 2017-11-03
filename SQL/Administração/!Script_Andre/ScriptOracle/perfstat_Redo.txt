@@ -1,0 +1,120 @@
+--
+-- Hit Sort
+--
+set serveroutput on size 1000000
+accept vDataInicio prompt 'Informe a Data Inicial (dd/mm/yyyy) =>  ';
+accept vDataFim    prompt 'Informe a Data Final   (dd/mm/yyyy) =>  ';
+accept vIntervalo NUMBER FORMAT '99' DEFAULT '0' prompt 'Intervalo em Horas             (HH) =>  ';
+DECLARE
+-- teste number;
+ vData varchar2(10);
+ vphyrds number;
+-- vHoras number;
+ vphywrts number;
+-- vdata_inicio date;
+-- vdata_fim date;
+-- 
+ bsnap_id number;
+ bsnap_time date;
+ vsnap_id number;
+ vsnap_time date;
+ vasnap_id number;
+ vasnap_time date;
+--
+Cursor c_periodo_hn (pinicio varchar2,pfim varchar2) IS
+  SELECT snap_id,snap_time
+  FROM 
+     stats$snapshot   
+  WHERE 
+     snap_time >= to_date(pinicio,'dd/mm/yyyy') and  snap_time < (to_date(pfim,'dd/mm/yyyy')+1/12)
+ORDER BY snap_time;   
+--  group by   to_char(snap_time,'DD/MM/YYYY HH24');
+--
+--
+-- 
+Function Cal_Dif_estatisticas (i_name varchar2,bsnap_id number,esnap_id number) RETURN number is
+      cursor SY (i_snap_id number) is
+      select value
+        from stats$sysstat
+       where snap_id         = i_snap_id
+           and name            = i_name;
+      eval number;
+      bval number;
+      begin
+         /* Get start value */
+         open SY (bsnap_id); fetch SY into bval;
+         if SY%notfound then
+            raise_application_error
+			(-20100,'Missing start value for statistic: '||i_name);
+         end if; close SY;
+
+         /* Get end value */
+         open SY (esnap_id); fetch SY into eval;
+         if SY%notfound then
+            raise_application_error
+			(-20100,'Missing end value for statistic: '||i_name);
+         end if; close SY;
+
+         /* Return difference */
+         return eval - bval;
+   end ;
+--
+-- Procedure Imprimir 
+--
+Procedure Imprime_Statisticas(pinicio_snap_time date,pfim_snap_time date,pinicio_snap_id number ,pfim_snap_id number) 
+Is 
+ vRedo number;
+-- vQuantMemo number;
+-- vHitSortMem number;
+Begin
+--
+    vRedo     := Cal_Dif_Estatisticas('redo size',pinicio_snap_id,pfim_snap_id);
+  --  vQuantMemo     := Cal_Dif_Estatisticas('redo size',pinicio_snap_id,pfim_snap_id);
+  --  vHitSortMem    := round((vQuantMemo/(vQuantDisk+vQuantMemo))*100,2);
+    Dbms_Output.Put_Line(To_char(pinicio_snap_time,'dd/mm/yy hh24:mi')||' A '||To_char(pfim_snap_time,'dd/mm/yy hh24:mi')||' ==> '||vRedo );
+End; 
+--
+--
+--
+--
+Function Det_Data(psnap_id number) return date is
+vdata date;
+Begin
+  select snap_time into vdata
+  from stats$snapshot
+  where snap_id= psnap_id;
+Return(vdata);
+End;
+--
+--
+-- vData varchar2(10);
+-- vphyrds number;
+-- vphywrts number;
+--
+Begin
+--
+If not c_periodo_hn%ISOPEN then open c_periodo_hn('&vDataInicio','&vDataFim'); end if;
+fetch c_periodo_hn into bsnap_id, bsnap_time;
+while true Loop
+  Fetch c_periodo_hn Into vsnap_id, vsnap_time;
+  If c_periodo_hn%NOTFOUND then
+     close c_periodo_hn;
+     exit;
+  End if;
+--  If to_char(vsnap_time,'dd/mm/yyyy:hh24mi') <= to_char(bsnap_time+(12/24),'dd/mm/yyyy:hh24mi') Then
+    If to_char(vsnap_time,'dd/mm/yyyy:hh24mi') >= to_char(bsnap_time+(&vIntervalo/24),'dd/mm/yyyy:hh24mi') Then
+      Imprime_Statisticas(bsnap_time,vsnap_time,bsnap_id,vsnap_id);
+--    Imprime_Statisticas(bsnap_time,vasnap_time,bsnap_id,vasnap_id);
+    bsnap_time := vsnap_time;
+    bsnap_id   := vsnap_id;
+  End If;
+End Loop;
+--    
+-- End If;
+End ;
+/
+
+
+
+
+

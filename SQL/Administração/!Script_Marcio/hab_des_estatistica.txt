@@ -1,0 +1,28 @@
+### Habilitar ###
+DBMS_STATS.GATHER_DATABASE_STATS (estimate_percent=>100, cascade=>true);
+ 
+### Selecionar estatisticas de uma tabela ###
+ 
+SELECT STATTYPE_LOCKED FROM DBA_TAB_STATISTICS WHERE TABLE_NAME like 'ET%';
+select * FROM DBA_TAB_STATISTICS WHERE TABLE_NAME like 'ET%';
+ 
+### Desabilitar estatistica automatica do Oracle 11G ###
+BEGIN
+  DBMS_AUTO_TASK_ADMIN.ENABLE(
+    client_name => 'auto optimizer stats collection',
+    operation => NULL,
+    window_name => NULL);
+END;
+ 
+### Deletar estatistica para uma tabela ###
+ 
+BEGIN
+DBMS_STATS.DELETE_TABLE_STATS (
+OWNNAME=>'DWSISNISTRO',
+TABLE_NAME=> 'ET_EMPRESA');
+END;
+### Desabilitar Estatistica para uma tabela ###
+ 
+SELECT 'DBMS_STATS.LOCK_TABLE_STATS (ownname=> '''||OWNER||''',tabname=>'||''''||OBJECT_NAME||''');'
+FROM DBA_OBJECTS
+WHERE OBJECT_NAME LIKE 'ET%' AND OWNER = 'DWSINISTRO';

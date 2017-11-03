@@ -1,0 +1,126 @@
+REM
+REM DBAToolZ NOTE:
+REM	This script was obtained from DBAToolZ.com
+REM	It's configured to work with SQL Directory (SQLDIR).
+REM	SQLDIR is a utility that allows easy organization and
+REM	execution of SQL*Plus scripts using user-friendly menu.
+REM	Visit DBAToolZ.com for more details and free SQL scripts.
+REM
+REM 
+REM File:
+REM 	s_db_ext1.sql
+REM
+REM <SQLDIR_GRP>SEGMENT</SQLDIR_GRP>
+REM 
+REM Author:
+REM	Mark Gurry		MGURRY		?
+REM 	Vitaliy Mogilevskiy	VMOGILEV	(vit100gain@earthlink.net)
+REM 
+REM Purpose:
+REM	<SQLDIR_TXT>
+REM	1.
+REM	   Lists all objects with the NUMBER of EXTENTS more than
+REM	   parameter supplied.  Useful for finding objects with
+REM	   huge number of extents which need to be reorganized.
+REM	2. 
+REM	   Gives you a list of all    
+REM	   database objects that will fail when they attempt to throw their next extent
+REM	   due to a lack of a free extent that is of sufficient size in the same
+REM	   tablespace as where the object resides    
+REM	3.
+REM	   Segments that Are Sitting on the Maximum Extents Allowable
+REM	</SQLDIR_TXT>
+REM	
+REM Usage:
+REM	s_db_ext1.sql
+REM 
+REM Example:
+REM	s_db_ext1.sql
+REM
+REM
+REM History:
+REM	??-??-????	MGURRY		Created
+REM	08-01-1998	VMOGILEV	Revised and added to DBATOOLZ library
+REM
+REM
+
+set heading on
+set pagesize 60
+set linesize 132
+set verify off
+
+column segment_name format a35
+column tablespace_name format a10          heading 'TS|Name'
+column owner           format a10          heading 'Owner'
+column next_extent     format 999,999,999  heading 'Next|Extent|KB'
+column extents         format 9999999      heading 'Total # Of|Extents'
+column max_extents     format 99999999999  heading 'Max # Of|Extents'
+
+accept no_extents number prompt 'Enter max extent number :'
+
+spool s_db_ext.tmp
+doc
+    Author: Vitaliy Mogilevskiy   
+
+    Lists all objects with the NUMBER of EXTENTS more than
+    parameter supplied.  Useful for finding objects with
+    huge number of extents which need to be reorganized.
+
+#
+
+select e.owner
+,      e.segment_name
+,      e.segment_type
+,      e.tablespace_name
+,      e.next_extent/1024 next_extent
+,      e.extents
+,      e.max_extents 
+from dba_segments e
+where extents > &no_extents
+and segment_type != 'ROLLBACK'
+order by e.tablespace_name, e.segment_name
+/
+doc
+
+    Author:  Mark Gurry 
+             (revised by Vitaliy Mogilevskiy
+                   - got rid of UNION
+                   - got rig of joins to DBA_TABLES, DBA_CLUSTERS, ...
+                     since NEXT_EXTENT is already available in DBA_SEGMENTS)
+
+
+    The next output is not strictly tuning, but it gives you a list of all    
+    database objects that will fail when they attempt to throw their next extent
+    due to a lack of a free extent that is of sufficient size in the same
+    tablespace as where the object resides. If the problem happens to occur 
+    on a dictionary table, the whole database can potentially freeze, which I
+    suppose is response related. 
+
+#
+set pagesize 60
+                           
+-- ttitle 'Database Objects that will have Trouble Throwing Extents'
+
+SELECT seg.owner
+,      seg.segment_name
+,      seg.segment_type
+,      seg.tablespace_name
+,      seg.next_extent/1024 next_extent
+   FROM dba_segments seg
+WHERE  seg.next_extent IS NOT NULL
+AND    NOT EXISTS
+            (select tablespace_name
+               from dba_free_space free
+              where free.tablespace_name =  seg.tablespace_name
+                and bytes               >=  seg.next_extent     )
+/
+
+prompt
+prompt 'Segments that Are Sitting on the Maximum Extents Allowable '
+
+select  owner, segment_name, segment_type, extents, max_extents
+ from   dba_segments
+where   extents = max_extents
+/
+
+spool off

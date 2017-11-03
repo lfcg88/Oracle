@@ -1,0 +1,13 @@
+No arquivo oratab (na máquina SUN fica em /var/opt/oracle, na máquina HP fica em /etc)
+ a última coluna de cada linha (Y/N) indica se a instância irá start/stop automaticamente.
+Se estiver com Y, a instância será reiniciada com o comando dbstart.
+
+Para retirar o start automático, colocar todas as linhas para N.
+
+Para subir todos os bancos usar apenas o comando dbstart ($ORACLE_HOME/bin). 
+Irá subir todas as intâncias que estiverem com Y.
+Para derrubar todos os bancos usar apenas o comando dbshut ($ORACLE_HOME/bin). 
+Irá parar todas as intâncias que estiverem com Y.
+
+
+Na máquina SUN está configurada para executar o dbstart automaticamente.

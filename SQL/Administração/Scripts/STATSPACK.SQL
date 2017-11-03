@@ -1,0 +1,1 @@
+@@C:\Oracle\Oracle8i\RDBMS\ADMIN\spreport.sql

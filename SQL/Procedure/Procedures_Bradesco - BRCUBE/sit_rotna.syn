@@ -1,0 +1,3 @@
+create or replace synonym SGPB_PROC.SIT_ROTNA
+  for DWMF.SIT_ROTNA;
+

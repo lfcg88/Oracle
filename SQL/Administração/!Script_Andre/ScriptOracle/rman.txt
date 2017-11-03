@@ -1,0 +1,783 @@
+ORACLE_HOME=/projects/product/10.2.0/db_1
+export ORACLE_HOME
+ORACLE_SID=test1
+export ORACLE_SID
+PATH=$PATH:$ORACLE_HOME/bin
+export PATH
+
+set -x
+
+RMAN_BACKUP=/projects/test_backup
+Rman_Log=$RMAN_BACKUP/"$ORACLE_SID"_backup_log
+
+touch $Rman_Log
+
+echo "\n\n ****RMAN FULL BACKUP****" >> $Rman_Log
+echo "\n rman full startup time: `date`" >> $Rman_Log
+DD=`date +%d%m%y`
+mkdir /backup/rman/datafiles_backup/bkp_${DD}
+mkdir /backup/rman/controlfile_backup/bkp_${DD}
+mkdir /backup/rman/arch_backup/bkp_${DD}
+inpi123
+172.20.1.14
+
+
+/u01/app/oracle/rman
+Rman_Log=/u01/app/oracle/rman/log
+
+sqlplus -s " /  as sysdba" <<EOF  >> $Rman_Log
+set feedback off;
+alter system archive log current
+/
+set serveroutput on
+declare
+x number;
+y number;
+begin
+select max(SEQUENCE#) into x from v\$archived_log where thread#=1;
+dbms_output.put_line('The Strat Sequence number on instance  = '||x||'');
+end;
+/
+exit
+EOF
+rman target / nocatalog log=$RMAN_BACKUP/rman_fullbackup_${DD}.log << EOF1
+change archivelog all crosscheck;
+run {
+CONFIGURE RETENTION POLICY TO REDUNDANCY 1;
+CONFIGURE DEVICE TYPE DISK PARALLELISM 2 BACKUP TYPE TO BACKUPSET;
+backup as compressed backupset incremental level 0 database tag 'TEST_FULL_BACKUP' format '/backup/rman/datafiles_backup/bkp_${DD}/%d_%s_%p';
+backup as compressed backupset archivelog all not backed up 1 times FORMAT '/backup/rman/arch_backup/bkp_${DD}/ARCH_%d_%s_%p';
+CONFIGURE CONTROLFILE AUTOBACKUP FORMAT FOR DEVICE TYPE DISK TO  '/ora_backup/rman/controlfile_backup/bkp_${DD}/%F';
+delete noprompt obsolete;
+delete noprompt archivelog all completed before 'sysdate-2';
+}
+EXIT;
+EOF1
+
+sqlplus -s "sys/xxxxxxx@TEST1 as sysdba" <<EOF2 >> $Rman_Log
+set feedback off;
+alter system archive log current
+/
+set serveroutput on
+declare
+x number;
+y number;
+begin
+select max(SEQUENCE#+1) into x from gv\$archived_log where thread#=1;
+dbms_output.put_line('The Finished Sequence number on instance 1 = '||x||'');
+sys.dbms_system.ksdwrt(2,'Note to DBA : On Instance 1 RMAN Backup Finished at '||to_char(x)||' on '||to_char(sysdate,'DD/MON/YYYY HH:MM:MI'));
+select max(SEQUENCE#+1) into y from gv\$archived_log where thread#=2;
+dbms_output.put_line('The Finished Sequence number on instance 2 = '||y||'');
+sys.dbms_system.ksdwrt(2,'Note to DBA : On Instance 2 RMAN Backup Finished at '||to_char(y)||' on '||to_char(sysdate,'DD/MON/YYYY HH:MM:MI'));
+end;
+/
+exit
+EOF2
+
+echo "\n rman fullbackup end time: `date`" >> 
+
+
++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+
+#!/bin/ksh
+
+export ORACLE_HOME=/u01/app/oracle/product/10.2.0.4
+export ORACLE_SID=$1
+
+export VDATE=$(date +”%m-%d-%Y_%H-%M-%S”)
+export BACKUP_LOG_DIR=/u99/dba/scripts/backup/log
+export BACKUP_LOG_FILE=${BACKUP_LOG_DIR}/${ORACLE_SID}_rman_${VDATE}.log
+
+export DBA=monitor@xxxx.com
+
+$ORACLE_HOME/bin/rman target / log ${BACKUP_LOG_FILE} << EOF
+connect catalog rman/rman@RMANPRD
+RUN {
+BACKUP DATABASE PLUS ARCHIVELOG DELETE INPUT;
+delete noprompt obsolete;
+}
+EXIT;
+EOF
+
+if [ -f ${BACKUP_LOG_FILE} ]; then
+egrep ‘(ERROR|error|Error|RMAN-)’ ${BACKUP_LOG_FILE} > /dev/null
+if [ $? = 0 ]; then
+RESULT_MSG=”WARNING: Errors occurred during the ${ORACLE_SID} Rman backup full.”
+mail -s “$RESULT_MSG” $DBA < ${BACKUP_LOG_FILE}
+else
+egrep ‘(Recovery Manager complete)’ ${BACKUP_LOG_FILE} > /dev/null
+if [ $? = 0 ]; then
+RESULT_MSG=”${ORACLE_SID} RMAN Backup Full Completed Successfully.”
+mail -s “$RESULT_MSG” $DBA < ${BACKUP_LOG_FILE}
+else
+RESULT_MSG=”WARNING: ${ORACLE_SID} RMAN Backup full  did not complete.”
+echo Backup process was terminated. | mail -s “$RESULT_MSG” $DBA
+fi
+fi
+fi
+
+##mail -s “Oracle ${ORACLE_SID} backup completed” monitor@xxxx.com < ${BACKUP_LOG_FILE}
+
+++++++++++++++++++++++++++++++++++++++++++++++++++++++
+usando catalog
++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+#!/bin/ksh
+
+#set -x
+
+
+SCRIPTNAME=rman_lvl_0_bkup
+
+START_DATE=`date +"%d-%b-%C%y%-H%M%S"`
+export PATH=/usr/bin:$PATH
+
+if [ $# -eq 1 ] ; then
+
+ ORACLE_SID=${1}
+else
+ echo $0 FAILED INVALID PARAMETERS.
+ echo usage: ${SCRIPTNAME} oracle-instance-name
+ echo
+ exit 1
+fi
+
+#
+# INITIALIZE THE ORACLE ENVIRONMENT
+#
+export ORACLE_SID
+export ORATAB=/etc/oratab
+export ORACLE_HOME=`awk -F: "/^${ORACLE_SID}:/ {print \\$2; exit}" $ORATAB  2>/dev/null`
+export PATH=$ORACLE_HOME/bin:$PATH
+
+#
+# INITIALIZE ALL VARIABLES
+#
+NULFILE=/dev/null
+
+TEMPDIR=/tmp
+TEMPFILE=$TEMPDIR/${SCRIPTNAME}_$$.lst
+TEMPFILE1=$TEMPDIR/${SCRIPTNAME}_$$.lst1
+TEMPFILE2=$TEMPDIR/${SCRIPTNAME}_$$.lst2
+
+RMAN_CONN_STR=BDDIP
+RMAN_USERID=catdba
+
+RMAN_PASSWD=`cat /u01/app/oracle/.dbadpwd | grep DB_CAT_DBA| awk '{print substr($2,12)}'`
+
+LOGDIR=/backup/${ORACLE_SID}/logs
+LOGFILE=$LOGDIR/${SCRIPTNAME}_$$.log
+
+BACKDIR=/backup/${ORACLE_SID}/rman
+CTLDIR=/backup/${ORACLE_SID}/rman
+
+#
+# Set the oracle library path
+#
+HOST_OS=`uname`
+if [[ $HOST_OS = 'Linux' ]]; then
+ export LD_LIBRARY_PATH=$ORACLE_HOME/lib:$LD_LIBRARY_PATH
+elif [[ $HOST_OS = 'HP-UX' ]] ; then
+ export SHLIB_PATH=$ORACLE_HOME/lib:$SHLIB_PATH
+ export LD_LIBRARY_PATH=$ORACLE_HOME/lib:$LD_LIBRARY_PATH
+elif [[ $HOST_OS = 'AIX' ]] ; then
+ export LD_LIBRARY_PATH=$ORACLE_HOME/lib:$LD_LIBRARY_PATH
+ export SHLIB_PATH=$ORACLE_HOME/lib:$SHLIB_PATH
+fi
+
+
+#
+# Remove old log files and backup files
+# Make sure that the controlfile autoback configuration is set to the following
+# CONFIGURE CONTROLFILE AUTOBACKUP FORMAT FOR DEVICE TYPE DISK TO '/backup/${ORACLE_SID}/rman/ora_cf%F';
+#
+find $LOGDIR -name "${SCRIPTNAME}*.log" -mtime +31 -exec /bin/rm -f {} \;
+find $BACKDIR -name "${ORACLE_SID}*" -mtime +2 -exec /bin/rm -f {} \;
+find $BACKDIR -name "ALO*" -mtime +2 -exec /bin/rm -f {} \;
+find $CTLDIR -name "ora_cf*" -mtime +14 -exec /bin/rm -f {} \;
+
+#
+# DETERMINE IF ORACLE INSTANCE STARTED
+#
+
+SMON=ora_smon_${ORACLE_SID}
+
+IC=`ps -ef | grep $SMON | grep -v "grep $SMON" | wc -l`
+
+if [ $IC -ne 0 ]; then
+ echo "Instance: ${ORACLE_SID} is Running! "
+
+#
+# EXECUTE BACKUP
+#
+
+STARTTIM=`date +"%a, %d %b %Y %H:%M:%S"`
+
+echo >> $LOGFILE
+echo INVOKING DATABASE BACKUP $STARTTIM. >> $LOGFILE
+echo >> $LOGFILE
+
+#
+# Get Database Version and set the COMPRESSED variable value for 10g databases
+#
+$ORACLE_HOME/bin/sqlplus -s "/ as sysdba"<< EOF > $NULFILE
+SET HEAD OFF
+SET VERIFY OFF
+SET FEEDBACK OFF
+SET TERM OFF
+SET PAGESIZE 0
+SET ECHO OFF
+SET TRIMSPOOL ON
+SPOOL $TEMPFILE
+SELECT SUBSTR(VERSION,1,INSTR(VERSION,'.',1)-1) FROM V\$INSTANCE;
+SPOOL OFF
+EXIT;
+EOF
+DB_VERSION=`cat $TEMPFILE`
+
+/bin/rm -f $TEMPFILE
+
+
+if [[ $DB_VERSION -eq '9' ]]; then
+ echo 'This is a 9i database'
+ COMPRESSED=""
+elif [[ $DB_VERSION -eq '10' ]]; then
+ echo 'This is a 10g database'
+ COMPRESSED=' as compressed backupset '
+elif [[ $DB_VERSION -eq '11' ]]; then
+ echo 'This is a 11g database'
+ COMPRESSED=' as compressed backupset '
+elif [[ $DB_VERSION -eq '8' ]]; then
+ echo 'This is a 8i database'
+ COMPRESSED=""
+else
+ echo 'Cant get the db version'
+fi
+
+
+#
+#Get the Database name to backup >> $LOGFILE
+#
+
+$ORACLE_HOME/bin/sqlplus -s "/ as sysdba"<< EOF > $NULFILE
+SET HEAD OFF
+SET TERM OFF
+SET VERIFY OFF
+SET FEEDBACK OFF
+SET PAGESIZE 0
+SET ECHO OFF
+SET TRIMSPOOL ON
+SPOOL $TEMPFILE
+SELECT NAME FROM V\$DATABASE;
+SPOOL OFF
+EXIT;
+EOF
+DBNAME=`cat $TEMPFILE`
+
+#
+# Remove the Temp file
+#
+/bin/rm -f $TEMPFILE
+
+$ORACLE_HOME/bin/sqlplus -s $RMAN_USERID/$RMAN_PASSWD@$RMAN_CONN_STR<<EOF > $NULFILE
+SET TIMING OFF
+SET HEAD OFF
+SET TERM OFF
+SET VERIFY OFF
+SET FEEDBACK OFF
+SET PAGESIZE 0
+SET ECHO OFF
+SET TRIMSPOOL ON
+SPOOL $TEMPFILE
+SELECT ltrim(rtrim(max(rbr.sequence#)))
+FROM rc_backup_redolog rbr
+WHERE rbr.db_name='$DBNAME'
+AND rbr.status='A'
+AND rbr.backup_type='L'
+AND thread#=1;
+SPOOL OFF
+EXIT;
+EOF
+SEQ1=`cat $TEMPFILE`
+echo SEQ1 is $SEQ1
+
+#
+# Remove the temp file
+#
+/bin/rm -f $TEMPFILE
+
+#
+#Get the thread count to check for RAC or Not >> $LOGFILE
+#
+$ORACLE_HOME/bin/sqlplus -s "/ as sysdba"<< EOF > $NULFILE
+SET TIMING OFF
+SET HEAD OFF
+SET TERM OFF
+SET VERIFY OFF
+SET FEEDBACK OFF
+SET PAGESIZE 0
+SET ECHO OFF
+SET TRIMSPOOL ON
+COLUMN REDO_CNT NEW_VALUE REDO_CNT FORMAT 9999999
+SELECT count(*) REDO_CNT FROM V/$THREAD;
+EXIT REDO_CNT;
+EOF
+THREAD_CNT=`echo $?`
+
+echo Number of Redo Log threads is $THREAD_CNT >> $LOGFILE
+
+if  [ $THREAD_CNT -eq 2 ]; then
+
+echo >> $LOGFILE
+echo THIS IS RAC DATABASE, GET THE ARCHIVE SEQENCE NUMBER FOR THREAD 2 >> $LOGFILE
+echo >> $LOGFILE
+
+
+#
+#Get the next Sequence Number to backup >> $LOGFILE
+#
+
+#
+#Get the next Sequence Number to backup >> $LOGFILE
+#
+$ORACLE_HOME/bin/sqlplus -s $RMAN_USERID/$RMAN_PASSWD@$RMAN_CONN_STR << EOF > $NULFILE
+SET TIMING OFF
+SET HEAD OFF
+SET TERM OFF
+SET VERIFY OFF
+SET FEEDBACK OFF
+SET PAGESIZE 0
+SET ECHO OFF
+SET TRIMSPOOL ON
+SPOOL $TEMPFILE
+SELECT ltrim(rtrim(max(rbr.sequence#)))
+FROM rc_backup_redolog rbr
+WHERE rbr.db_name='$DBNAME'
+AND rbr.status='A'
+AND rbr.backup_type='L'
+AND thread#=2;
+SPOOL OFF
+EXIT;
+EOF
+SEQ2=`cat $TEMPFILE`
+echo SEQ2 is $SEQ2
+
+fi
+
+#
+# Remove the temp file
+#
+/bin/rm -f $TEMPFILE
+
+#############################################################################################################
+
+#
+# Check if the database is in archivelog mode
+#
+$ORACLE_HOME/bin/sqlplus -s "/ as sysdba"<< EOF > $NULFILE
+SET HEAD OFF
+SET TERM OFF
+SET VERIFY OFF
+SET FEEDBACK OFF
+SET PAGESIZE 0
+SET ECHO OFF
+SET TRIMSPOOL ON
+SPOOL $TEMPFILE
+SELECT LOG_MODE FROM V\$DATABASE;
+SPOOL OFF
+EXIT;
+EOF
+ARCHMODE=`cat $TEMPFILE`
+
+#
+# Remove the Temp file
+#
+/bin/rm -f $TEMPFILE
+
+#
+# Execute RMAN backup only if the db is in Archivelog Mode
+#
+if [[ $ARCHMODE = ARCHIVELOG ]]; then
+  echo "Database: ${ORACLE_SID} is in ARCHIVELOG Mode!" >> $LOGFILE
+else
+  echo "Database: ${ORACLE_SID} is not in ARCHIVELOG Mode!" >> $LOGFILE
+  echo "Database: ${ORACLE_SID} is not in ARCHIVELOG Mode! "
+  exit 1
+fi
+
+export set NLS_DATE_FORMAT='DD-MON-YYYY HH24:MI:SS'
+
+#############################################################################################################
+if [ $THREAD_CNT -eq 2 ]; then
+$ORACLE_HOME/bin/rman target / <<EOF >> $LOGFILE
+SET ECHO ON;
+connect catalog $RMAN_USERID/$RMAN_PASSWD@$RMAN_CONN_STR
+run {
+allocate channel channel1 type disk format '$BACKDIR/%d_t%t_s%s_LVL_0';
+backup $COMPRESSED
+incremental level 0
+FILESPERSET 5
+tag ${DBNAME}_INC_LVL_0
+(database);
+
+}
+
+EOF
+
+RC=$?
+else
+$ORACLE_HOME/bin/rman target / <<EOF >> $LOGFILE
+SET ECHO ON;
+connect catalog $RMAN_USERID/$RMAN_PASSWD@$RMAN_CONN_STR
+run {
+allocate channel channel1 type disk format '$BACKDIR/%d_t%t_s%s_LVL_0';
+backup $COMPRESSED
+incremental level 0
+FILESPERSET 5
+tag ${DBNAME}_INC_LVL_0
+(database);
+
+backup $COMPRESSED
+format '$BACKDIR/ALO_%d_%s_%t'
+(archivelog from sequence=${SEQ1} thread=1 DELETE INPUT);
+
+release channel channel1;
+}
+
+EOF
+
+RC=$?
+fi
+
+
+#############################################################################################################
+
+DB=`cat $LOGFILE | grep -i "connected to target database" | awk '{print $7}' | tr -d '()'`
+
+ENDTIM=`date +"%H:%M:%S"`
+
+echo >> $LOGFILE
+echo BACKUP LEVEL 0 COMPLETE $ENDTIM. $DB. >> $LOGFILE
+echo >> $LOGFILE
+
+#
+# SET RETURN CODE BASED ON LOG FILE CONTENTS.
+#
+
+SC=`cat $LOGFILE | grep -i "error message stack follows" | wc -l`
+
+if [ $RC -eq 0 -a $SC -eq 0 ]; then
+SHELLRC=0
+else
+echo $0 FAILED WITH AN ORACLE RECOVERY MANAGER ERROR. SYNOPSIS WRITEN TO STDOUT. EXIT WITH RC=1 >> $LOGFILE
+echo >> $LOGFILE
+
+echo ERROR MSG: $0 FAILED WITH AN ORACLE RECOVERY MANAGER ERROR ON HOST `hostname`
+echo LOG FILE: $LOGFILE
+echo RC: 1
+
+SHELLRC=1
+fi
+
+#
+# ORACLE NOT AVAILABLE EXIT SETTING APPROPRIATE RETURN CODE.
+#
+else
+echo $0 FAILED ORACLE INSTANCE ${ORACLE_SID} NOT AVAILABLE. SYNOPSIS WRITEN TO STDOUT. EXIT WITH RC=1 > $LOGFILE
+echo >> $LOGFILE
+
+echo ERROR MSG: $0 FAILED ORACLE INSTANCE ${ORACLE_SID} NOT AVAILABLE ON HOST `hostname`
+echo LOG FILE: $LOGFILE
+echo RC: 1
+
+SHELLRC=1
+fi
+
+#
+# EXIT SETTING APPROPRIATE RETURN CODE
+#
+
+echo exit $SHELLRC >> $LOGFILE
+
+
+
+
+
+
+++++++++++++++++++++++++++++++++++++++++++++++++++++++
+++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+sem catalog
+
++++++++++++++++++++++++++++++++++++++++++++++++++++++
+++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+#!/bin/ksh
+
+#set -x
+
+
+SCRIPTNAME=rman_lvl_0_bkup
+
+START_DATE=`date +"%d-%b-%C%y%-H%M%S"`
+export PATH=/usr/bin:$PATH
+
+if [ $# -eq 1 ] ; then
+
+ ORACLE_SID=${1}
+else
+ echo $0 FAILED INVALID PARAMETERS.
+ echo usage: ${SCRIPTNAME} oracle-instance-name
+ echo
+ exit 1
+fi
+
+#
+# INITIALIZE THE ORACLE ENVIRONMENT
+#
+export ORACLE_SID
+export ORATAB=/etc/oratab
+export ORACLE_HOME=`awk -F: "/^${ORACLE_SID}:/ {print \\$2; exit}" $ORATAB  2>/dev/null`
+export PATH=$ORACLE_HOME/bin:$PATH
+
+#
+# INITIALIZE ALL VARIABLES
+#
+NULFILE=/dev/null
+
+TEMPDIR=/tmp
+TEMPFILE=$TEMPDIR/${SCRIPTNAME}_$$.lst
+TEMPFILE1=$TEMPDIR/${SCRIPTNAME}_$$.lst1
+TEMPFILE2=$TEMPDIR/${SCRIPTNAME}_$$.lst2
+
+#RMAN_CONN_STR=BDDIP
+#RMAN_USERID=catdba
+
+RMAN_PASSWD=`cat /u01/app/oracle/.dbadpwd | grep DB_CAT_DBA| awk '{print substr($2,12)}'`
+
+LOGDIR=/backup/${ORACLE_SID}/logs
+LOGFILE=$LOGDIR/${SCRIPTNAME}_$$.log
+
+BACKDIR=/backup/${ORACLE_SID}/rman
+CTLDIR=/backup/${ORACLE_SID}/rman
+
+#
+# Set the oracle library path
+#
+HOST_OS=`uname`
+if [[ $HOST_OS = 'Linux' ]]; then
+ export LD_LIBRARY_PATH=$ORACLE_HOME/lib:$LD_LIBRARY_PATH
+elif [[ $HOST_OS = 'HP-UX' ]] ; then
+ export SHLIB_PATH=$ORACLE_HOME/lib:$SHLIB_PATH
+ export LD_LIBRARY_PATH=$ORACLE_HOME/lib:$LD_LIBRARY_PATH
+elif [[ $HOST_OS = 'AIX' ]] ; then
+ export LD_LIBRARY_PATH=$ORACLE_HOME/lib:$LD_LIBRARY_PATH
+ export SHLIB_PATH=$ORACLE_HOME/lib:$SHLIB_PATH
+fi
+
+
+#
+# Remove old log files and backup files
+# Make sure that the controlfile autoback configuration is set to the following
+# CONFIGURE CONTROLFILE AUTOBACKUP FORMAT FOR DEVICE TYPE DISK TO '/backup/${ORACLE_SID}/rman/ora_cf%F';
+#
+find $LOGDIR -name "${SCRIPTNAME}*.log" -mtime +31 -exec /bin/rm -f {} \;
+find $BACKDIR -name "${ORACLE_SID}*" -mtime +2 -exec /bin/rm -f {} \;
+find $BACKDIR -name "ALO*" -mtime +2 -exec /bin/rm -f {} \;
+find $CTLDIR -name "ora_cf*" -mtime +14 -exec /bin/rm -f {} \;
+
+#
+# DETERMINE IF ORACLE INSTANCE STARTED
+#
+
+SMON=ora_smon_${ORACLE_SID}
+
+IC=`ps -ef | grep $SMON | grep -v "grep $SMON" | wc -l`
+
+if [ $IC -ne 0 ]; then
+ echo "Instance: ${ORACLE_SID} is Running! "
+
+#
+# EXECUTE BACKUP
+#
+
+STARTTIM=`date +"%a, %d %b %Y %H:%M:%S"`
+
+echo >> $LOGFILE
+echo INVOKING DATABASE BACKUP $STARTTIM. >> $LOGFILE
+echo >> $LOGFILE
+
+#
+# Get Database Version and set the COMPRESSED variable value for 10g databases
+#
+$ORACLE_HOME/bin/sqlplus -s "/ as sysdba"<< EOF > $NULFILE
+SET HEAD OFF
+SET VERIFY OFF
+SET FEEDBACK OFF
+SET TERM OFF
+SET PAGESIZE 0
+SET ECHO OFF
+SET TRIMSPOOL ON
+SPOOL $TEMPFILE
+SELECT SUBSTR(VERSION,1,INSTR(VERSION,'.',1)-1) FROM V\$INSTANCE;
+SPOOL OFF
+EXIT;
+EOF
+DB_VERSION=`cat $TEMPFILE`
+
+/bin/rm -f $TEMPFILE
+
+
+if [[ $DB_VERSION -eq '9' ]]; then
+ echo 'This is a 9i database'
+ COMPRESSED=""
+elif [[ $DB_VERSION -eq '10' ]]; then
+ echo 'This is a 10g database'
+ COMPRESSED=' as compressed backupset '
+elif [[ $DB_VERSION -eq '11' ]]; then
+ echo 'This is a 11g database'
+ COMPRESSED=' as compressed backupset '
+elif [[ $DB_VERSION -eq '8' ]]; then
+ echo 'This is a 8i database'
+ COMPRESSED=""
+else
+ echo 'Cant get the db version'
+fi
+
+
+#
+#Get the Database name to backup >> $LOGFILE
+#
+
+$ORACLE_HOME/bin/sqlplus -s "/ as sysdba"<< EOF > $NULFILE
+SET HEAD OFF
+SET TERM OFF
+SET VERIFY OFF
+SET FEEDBACK OFF
+SET PAGESIZE 0
+SET ECHO OFF
+SET TRIMSPOOL ON
+SPOOL $TEMPFILE
+SELECT NAME FROM V\$DATABASE;
+SPOOL OFF
+EXIT;
+EOF
+DBNAME=`cat $TEMPFILE`
+
+#
+# Remove the Temp file
+#
+/bin/rm -f $TEMPFILE
+
+
+#############################################################################################################
+
+#
+# Check if the database is in archivelog mode
+#
+$ORACLE_HOME/bin/sqlplus -s "/ as sysdba"<< EOF > $NULFILE
+SET HEAD OFF
+SET TERM OFF
+SET VERIFY OFF
+SET FEEDBACK OFF
+SET PAGESIZE 0
+SET ECHO OFF
+SET TRIMSPOOL ON
+SPOOL $TEMPFILE
+SELECT LOG_MODE FROM V\$DATABASE;
+SPOOL OFF
+EXIT;
+EOF
+ARCHMODE=`cat $TEMPFILE`
+
+#
+# Remove the Temp file
+#
+/bin/rm -f $TEMPFILE
+
+#
+# Execute RMAN backup only if the db is in Archivelog Mode
+#
+if [[ $ARCHMODE = ARCHIVELOG ]]; then
+  echo "Database: ${ORACLE_SID} is in ARCHIVELOG Mode!" >> $LOGFILE
+else
+  echo "Database: ${ORACLE_SID} is not in ARCHIVELOG Mode!" >> $LOGFILE
+  echo "Database: ${ORACLE_SID} is not in ARCHIVELOG Mode! "
+  exit 1
+fi
+
+export set NLS_DATE_FORMAT='DD-MON-YYYY HH24:MI:SS'
+
+#############################################################################################################
+
+$ORACLE_HOME/bin/rman target / <<EOF >> $LOGFILE
+SET ECHO ON;
+connect catalog $RMAN_USERID/$RMAN_PASSWD@$RMAN_CONN_STR
+run {
+allocate channel channel1 type disk format '$BACKDIR/%d_t%t_s%s_LVL_0';
+backup $COMPRESSED
+incremental level 0
+FILESPERSET 5
+tag ${DBNAME}_INC_LVL_0
+(database);
+
+backup $COMPRESSED
+format '$BACKDIR/ALO_%d_%s_%t'
+(archivelog from sequence=${SEQ1} thread=1 DELETE INPUT);
+
+release channel channel1;
+}
+
+EOF
+
+
+
+#############################################################################################################
+
+DB=`cat $LOGFILE | grep -i "connected to target database" | awk '{print $7}' | tr -d '()'`
+
+ENDTIM=`date +"%H:%M:%S"`
+
+echo >> $LOGFILE
+echo BACKUP LEVEL 0 COMPLETE $ENDTIM. $DB. >> $LOGFILE
+echo >> $LOGFILE
+
+#
+# SET RETURN CODE BASED ON LOG FILE CONTENTS.
+#
+
+SC=`cat $LOGFILE | grep -i "error message stack follows" | wc -l`
+
+if [ $SC -eq 0 ]; then
+SHELLRC=0
+else
+echo $0 FAILED WITH AN ORACLE RECOVERY MANAGER ERROR. SYNOPSIS WRITEN TO STDOUT. EXIT WITH RC=1 >> $LOGFILE
+echo >> $LOGFILE
+
+echo ERROR MSG: $0 FAILED WITH AN ORACLE RECOVERY MANAGER ERROR ON HOST `hostname`
+echo LOG FILE: $LOGFILE
+echo RC: 1
+
+SHELLRC=1
+fi
+
+#
+# ORACLE NOT AVAILABLE EXIT SETTING APPROPRIATE RETURN CODE.
+#
+else
+echo $0 FAILED ORACLE INSTANCE ${ORACLE_SID} NOT AVAILABLE. SYNOPSIS WRITEN TO STDOUT. EXIT WITH RC=1 > $LOGFILE
+echo >> $LOGFILE
+
+echo ERROR MSG: $0 FAILED ORACLE INSTANCE ${ORACLE_SID} NOT AVAILABLE ON HOST `hostname`
+echo LOG FILE: $LOGFILE
+echo RC: 1
+
+SHELLRC=1
+fi
+
+#
+# EXIT SETTING APPROPRIATE RETURN CODE
+#
+
+echo exit $SHELLRC >> $LOGFILE

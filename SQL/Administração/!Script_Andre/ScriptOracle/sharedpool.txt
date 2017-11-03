@@ -1,0 +1,243 @@
+
+
+Rem The library cache hit ratio should be very high (98%) when SQL 
+Rem is being shared and will remain low regardless of shared pool 
+Rem sizing adjustments when SQL is chronically non-sharable.  
+Rem
+Rem Use the following query to determine the hit ratios by 
+Rem namespace in the library cache.
+Rem
+
+spool c:\sharedpool.lst
+
+SELECT namespace
+      ,(100*gethitratio ) hit_ratio
+  FROM v$librarycache
+/
+--PAUSE Press enter to continue
+--
+--
+
+column shared_pool_used  format 9,999.99
+column shared_pool_size  format 9,999.99
+column shared_pool_avail format 9,999.99
+column shared_pool_pct   format 999.99
+select 
+  sum(a.bytes)/(1024*1024) shared_pool_used, 
+  max(b.value)/(1024*1024) shared_pool_size,
+  (max(b.value)/(1024*1024))-(sum(a.bytes)/(1024*1024)) shared_pool_avail,
+  (sum(a.bytes)/max(b.value))*100 shared_pool_pct
+   from v$sgastat a, v$parameter b 
+where a.name in ( 
+'reserved stopper',             
+'table definiti',                  
+'dictionary cache',           
+'library cache',              
+'sql area',
+'PL/SQL DIANA',
+'SEQ S.O.') and
+b.name='shared_pool_size';
+
+
+
+-- Latch Free Waiters
+-- A telltale sign that the instance is suffering library cache and shared pool 
+-- problems is active latch contention with -- sessions waiting on the "latch free" wait event. 
+-- The following query will select all current sessions waiting for either the shared pool 
+-- or library cache latches.
+-- When this query selects more than 5-10% of total sessions there is likely very 
+-- serious performance degradation taking place and literal SQL may be the culprit.
+
+
+SELECT sid, event, name latch
+   FROM v$session_wait  w
+       ,v$latch         l
+  WHERE w.event = 'latch free' 
+    AND l.latch# = w.p2
+    AND l.name IN ('shared pool','library cache')
+/
+
+
+
+--CREATE OR REPLACE VIEW sql_summary (
+--   username,
+--   sharable_mem,
+--   persistent_mem,
+--   runtime_mem,
+--   user_id )
+--AS
+--SELECT
+--username, sharable_mem, persistent_mem, runtime_mem,user_id
+--FROM
+--  v$sqlarea a, dba_users b
+--WHERE
+--a.parsing_user_id = b.user_id
+--/
+
+
+SET PAGES 100 LINES 150
+BREAK ON REPORT
+COMPUTE SUM OF sharable ON REPORT
+COMPUTE SUM OF persistent ON REPORT
+COMPUTE SUM OF runtime ON REPORT
+COMPUTE SUM OF mem_sum ON REPORT
+SELECT
+username,
+SUM( sharable_mem) Sharable,
+SUM( persistent_mem) Persistent,
+SUM( runtime_mem) Runtime ,
+COUNT(*) Areas,
+SUM( sharable_mem+ persistent_mem+ runtime_mem) Mem_sum
+FROM
+(select username, sharable_mem, persistent_mem, runtime_mem
+		from sys.v_$sqlarea a, dba_users b
+		where a.parsing_user_id = b.user_id )
+-- sql_summary
+GROUP BY username
+ORDER BY 2;
+--SPOOL OFF
+--PAUSE Press enter to continue
+--CLEAR COLUMNS
+CLEAR BREAKS
+-- SET PAGES 22 LINES 80
+TTITLE OFF
+
+--
+--
+
+-- The following query displays the percentage of SQL executed that 
+-- did not incur an expensive hard parse.  Literal SQL will always 
+-- be fully parsed, so a low percentage may indicate a literal SQL 
+-- or other SQL sharing problem
+--
+
+--SELECT 100 * (1 - A.hard_parses/B.executions)   "no_hard_parse_ratio"
+--  FROM
+--       (select value hard_parses
+--          from v$sysstat 
+--         where name = 'parse count (hard)' ) A 
+--      ,(select value executions
+--          from v$sysstat 
+--         where name = 'execute count' )      B
+--
+--/
+--PAUSE Press enter to continue
+--
+--
+
+-- The following query displays the percentage of SQL executed that 
+-- did not incur an expensive hard parse.  Literal SQL will always 
+-- be fully parsed, so a low percentage may indicate a literal SQL 
+-- or other SQL sharing problem
+--
+
+SELECT round(100 * (1 - A.hard_parses/B.executions),2)   " % No Hard Parse "
+  FROM
+       (select value hard_parses
+          from v$sysstat 
+         where name = 'parse count (hard)' ) A 
+      ,(select value executions
+          from v$sysstat 
+         where name = 'execute count' )      B
+/
+
+
+set serveroutput on  size 20000
+
+declare
+   vtotcpu number;
+   vtotcpuparse number;
+begin
+  select sum(value) into vtotcpu
+   from v$sesstat   ss,
+        v$statname   sn
+  where ss.value > 0
+   and sn.statistic# = ss.statistic#
+   and sn.name in ('CPU used by this session');
+  select sum(value) into vtotcpuparse
+   from v$sesstat   ss,
+        v$statname   sn
+  where ss.value > 0
+   and sn.statistic# = ss.statistic#
+   and sn.name like '%parse%time%cpu%';
+  dbms_output.put_line('                                                                      ');
+  dbms_output.put_line('                                                                      ');
+  dbms_output.put_line('    Total Cpu                Total Cpu Parse         % Cpu Parse      '); 
+  dbms_output.put_line('    ---------                ---------------         ------------      '); 
+--
+  dbms_output.put_line(to_char(vtotcpu,'999,999,999,999')||lpad(to_char(vtotcpuparse,'999,999,999,999'),26)
+                       ||lpad(to_char(round(100*(vtotcpuparse/vtotcpu),2),'999.99'),20));
+  -- dbms_output.put_line('    Total Cpu          => '|| to_char(vtotcpu,'999,999,999,999'));
+ -- dbms_output.put_line('    Total Cpu Parse    =>  '|| to_char(vtotcpuparse,'999,999,999,999'));
+ -- dbms_output.put_line('    % Cpu Parse        =>  '|| to_char(round(100*(vtotcpuparse/vtotcpu),2),'999.99')||'%');
+ End;
+/
+
+  
+
+select a.username,a.sid,a.value "parse count (hard)",b.value "execute count",round(100 * (1 - a.value/b.value),2) " % no hard parse",c.value "cpu parse",round(100*(c.value/d.value),2) "% Cpu Hard Parse"
+from 
+ ( select nvl(s.username, 'SYS') username,
+   to_char(s.sid) sid,
+   sn.name,
+   ss.value
+   from v$sesstat   ss,
+        v$statname   sn,
+        v$session   s
+   where ss.sid = s.sid
+-- and ss.sid in (157,88)
+   and ss.value > 0
+   and sn.statistic# = ss.statistic#
+   and sn.name in ('parse count (hard)')
+   and nvl(s.username, 'SYS') = decode(upper('&&usr'), '', nvl(s.username, 'SYS'), upper('&&usr'))
+ ) a,
+ ( select nvl(s.username, 'SYS') username,
+   to_char(s.sid) sid,
+   sn.name,
+   ss.value
+   from v$sesstat   ss,
+        v$statname   sn,
+        v$session   s
+   where ss.sid = s.sid
+-- and ss.sid in (157,88)
+   and ss.value > 0
+   and sn.statistic# = ss.statistic#
+   and sn.name in ('execute count')
+   and nvl(s.username, 'SYS') = decode(upper('&&usr'), '', nvl(s.username, 'SYS'), upper('&&usr'))
+ ) b,
+( select nvl(s.username, 'SYS') username,
+   to_char(s.sid) sid,
+   sn.name,
+   ss.value
+   from v$sesstat   ss,
+        v$statname   sn,
+        v$session   s
+   where ss.sid = s.sid
+-- and ss.sid in (157,88)
+   and ss.value > 0
+   and sn.statistic# = ss.statistic#
+   and sn.name in ('parse time cpu')
+   and nvl(s.username, 'SYS') = decode(upper('&&usr'), '', nvl(s.username, 'SYS'), upper('&&usr'))
+ ) c,
+ ( select nvl(s.username, 'SYS') username,
+   to_char(s.sid) sid,
+   sn.name,
+   ss.value
+   from v$sesstat   ss,
+        v$statname   sn,
+        v$session   s
+   where ss.sid = s.sid
+-- and ss.sid in (157,88)
+   and ss.value > 0
+   and sn.statistic# = ss.statistic#
+   and sn.name in ('CPU used by this session')
+   and nvl(s.username, 'SYS') = decode(upper('&&usr'), '', nvl(s.username, 'SYS'), upper('&&usr'))
+ ) d
+where a.sid=b.sid 
+and   b.sid=c.sid
+and   c.sid=d.sid
+order by 3 desc
+/
+
+spool off
+ed c:\sharedpool.lst

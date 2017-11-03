@@ -1,0 +1,7 @@
+select count (*) from dba_tables where owner='SYSADM';
+
+select count (*) from dba_objects where owner='SYSADM';
+
+select count (*) from dba_objects where owner='FORPONTOTST';
+
+select count (*) from dba_objects where owner='NFE';

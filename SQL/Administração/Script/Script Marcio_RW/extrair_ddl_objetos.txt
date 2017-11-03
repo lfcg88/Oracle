@@ -1,0 +1,26 @@
+set pagesize 0;
+set lines 500;
+set heading off;
+set feedback off;
+SPOOL objetos.lst;
+select 'set pages 0' from dual;
+select 'set long 32000' from dual;
+select 'set lines 500' from dual;
+select 'col ddltxt format a500' from dual;
+select 'exec dbms_metadata.set_transform_param(dbms_metadata.session_transform,''SQLTERMINATOR'',true);' from dual;
+select 'set feedback off;' from dual;
+select 'spool ddlobjetos.lst' from dual;
+select 'select dbms_metadata.get_ddl ('''|| OBJECT_TYPE ||''', ''' ||
+       OBJECT_NAME || ''', ''' || owner || ''') ddltxt from dual;'
+  from dba_objects 
+ where owner IN ('POUSADA')
+   and OBJECT_TYPE IN ('PROCEDURE','FUNCTION', 'TRIGGER', 'VIEW','PACKAGE')
+   and STATUS = 'INVALID';
+select 'spool off' from dual;
+SPOOL OFF;
+/
+
+
+--EXTRAIR DDL JOBS 
+
+SELECT dbms_metadata.get_ddl('PROCOBJ','TEST_EXPDP_JOB_1', 'POUSADA') from dual;

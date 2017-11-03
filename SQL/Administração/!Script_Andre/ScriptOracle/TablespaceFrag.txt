@@ -1,0 +1,28 @@
+--
+-- Relata fragmentacao de um tabelsapce
+--
+SET SERVEROUTPUT ON SIZE 100000
+set pagesize 0
+set linesize 500
+set echo off
+--
+--
+select distinct tablespace_name
+from dba_tablespaces;
+--
+--
+accept vTablespace prompt 'Informe a Tablespace => '
+--
+--
+SET ECHO ON
+--
+SELECT BYTES/1024 "TAM.(K)",COUNT(*) "USED EXTENTS" 
+FROM DBA_EXTENTS
+WHERE TABLESPACE_NAME='&vTablespace'
+GROUP BY BYTES/1024;
+--
+--
+select BYTES/1024 "TAM.(K)",count(*) " FREE EXTENTS"
+from dba_free_space
+where tablespace_name='&vTablespace'
+GROUP BY BYTES/1024;

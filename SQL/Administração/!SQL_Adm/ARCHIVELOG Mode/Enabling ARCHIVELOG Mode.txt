@@ -1,0 +1,66 @@
+Enabling ARCHIVELOG Mode 
+
+
+SQL> SELECT LOG_MODE FROM SYS.V$DATABASE;
+
+LOG_MODE
+------------
+NOARCHIVELOG
+
+############################
+# Archive Log Destinations -benr(10/15/04)
+############################
+log_archive_dest_1='location=/u02/oradata/db/archive'
+log_archive_start=TRUE
+
+SQL> SHUTDOWM IMMEDIATE;
+
+SQL> startup mount
+ORACLE instance started.
+
+Total System Global Area  184549376 bytes
+Fixed Size                  1300928 bytes
+Variable Size             157820480 bytes
+Database Buffers           25165824 bytes
+Redo Buffers                 262144 bytes
+Database mounted.
+
+SQL> alter database archivelog;
+Database altered.
+
+SQL> alter database open;
+Database altered.
+
+
+SQL> select log_mode from v$database;
+
+LOG_MODE
+------------
+ARCHIVELOG
+
+SQL> select DEST_NAME,STATUS,DESTINATION from V$ARCHIVE_DEST;
+
+
+
+There are several system views that can provide us with information reguarding archives, such as: 
+
+
+V$DATABASE 
+Identifies whether the database is in ARCHIVELOG or NOARCHIVELOG mode and whether MANUAL (archiving mode) has been specified. 
+V$ARCHIVED_LOG 
+Displays historical archived log information from the control file. If you use a recovery catalog, the RC_ARCHIVED_LOG view contains similar information. 
+V$ARCHIVE_DEST 
+Describes the current instance, all archive destinations, and the current value, mode, and status of these destinations. 
+V$ARCHIVE_PROCESSES 
+Displays information about the state of the various archive processes for an instance. 
+V$BACKUP_REDOLOG 
+Contains information about any backups of archived logs. If you use a recovery catalog, the RC_BACKUP_REDOLOG contains similar information. 
+V$LOG 
+Displays all redo log groups for the database and indicates which need to be archived. 
+V$LOG_HISTORY 
+Contains log history information such as which logs have been archived and the SCN range for each archived log. 
+Using these tables we can verify that we are infact in ARCHIVELOG mode: 
+
+
+Learn more about managing archive redo logs in the Oracle Database Administrator's Guide: 
+

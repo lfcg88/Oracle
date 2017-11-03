@@ -1,0 +1,525 @@
+rem $DBA/crtrigs.sql
+rem
+rem This script generates another script that will include all the CREATE
+rem TRIGGER statements for those in the database.
+rem
+rem Restrictions:
+rem	1) This script has been tested for Oracle 7 and 8.0.4.
+rem	2) This script must be run by a user with the DBA role under Oracle 7.2
+rem	   or later.
+rem	3) Oracle 7.2.2.3 or later is required, since the DBMS_SQL package (in
+rem	   PL/SQL 2.2+) must exist and be executable by the current username.
+rem	4) If running on Oracle 7.2, you must comment out the below
+rem	   "set trimspool on" lines, since they are supported as of Oracle 7.3
+rem	   and later.
+rem
+rem <<<<<<<<<< Modification History >>>>>>>>>>
+rem 10/31/98	Brian Lomasky	Modify to use dynamic PL/SQL, since trigger
+rem				  bodies > 32760 chars can not be returned into
+rem				  a PL/SQL variable.  Modify brkline function
+rem				  to return partial lines and always break at
+rem				  any line feed.  Omit TLOG$* triggers.  Fix
+rem				  real_len calculation.
+rem 10/29/98	Brian Lomasky	Add additional debug info.  Add separator
+rem				  comment.  Add "show errors".  Add exit at end.
+rem				  Support Oracle8 trigger syntax.
+rem 08/13/98	Brian Lomasky	Add trimspool, fix brkline function, add "set
+rem				  define off" to created script, include trigger
+rem				  description.  Fix update bug where no trigger
+rem				  columns exist.
+rem 01/21/98	Brian Lomasky	Add SPOOL statements in created file.
+rem 01/21/98	Brian Lomasky	Added missing / to execute trigger definition.
+rem				  Create or replace each trigger.
+rem 01/08/98	Brian Lomasky	Added missing ' OF ' clause before updated
+rem				  column name.  Wrap table owner.name to new
+rem				  line for readability.
+rem 10/21/96	Brian Lomasky	Original
+rem
+set verify off
+set feedback off
+set echo off
+set pagesize 0
+set termout on
+select 'Creating trigger build script...' from dual;
+create table trig_temp (lineno NUMBER, text VARCHAR2(80));
+def q=chr(39)
+declare
+	cursor trig_col_cursor (ownr in varchar2, trigname in varchar2,
+		tabown in varchar2, tabnam in varchar2) is select
+		column_name
+		from	sys.dba_trigger_cols
+		where	trigger_owner = ownr and trigger_name = trigname and
+			table_owner = tabown and table_name = tabnam;
+
+	sqltxt			varchar2(2000);
+	cursor1			number;
+	dummy			number;
+	lv_owner		sys.dba_triggers.owner%TYPE;
+	lv_trigger_name		sys.dba_triggers.trigger_name%TYPE;
+	lv_trigger_type		sys.dba_triggers.trigger_type%TYPE;
+	lv_triggering_event	sys.dba_triggers.triggering_event%TYPE;
+	lv_table_owner		sys.dba_triggers.table_owner%TYPE;
+	lv_table_name		sys.dba_triggers.table_name%TYPE;
+	lv_referencing_names	sys.dba_triggers.referencing_names%TYPE;
+	lv_when_clause		sys.dba_triggers.when_clause%TYPE;
+	lv_status		sys.dba_triggers.status%TYPE;
+	lv_description		sys.dba_triggers.description%TYPE;
+	lv_trigger_body		varchar2(2000);
+	lv_trigger_body_len	number;
+	lv_column_name		sys.dba_trigger_cols.column_name%TYPE;
+	my_offset		number;
+	need_or			boolean;
+	comma_needed		boolean;
+	break_wanted		boolean;
+	lv_lineno		number;
+	text_length		number;
+	backwards		number;
+	max_length		number;
+	real_len		number;
+	last_break		number;
+	dash_pos		number;
+	startp			number;
+	xchar			number;
+	break_pos		number;
+	force_line		number;
+	lf_pos			number;
+	semi_pos		number;
+	offset			number;
+	out_start		number;
+	l			number;
+	bef_chars		sys.dba_triggers.description%TYPE;
+	a_lin			varchar2(80);
+	errdesc			varchar2(80);
+	prior_line		boolean;
+
+	function wri(x_lin in varchar2, x_str in varchar2,
+		x_force in number) return varchar2 is
+	begin
+		if length(x_lin) + length(x_str) > 80 then
+			lv_lineno := lv_lineno + 1;
+			insert into trig_temp values (lv_lineno, x_lin);
+			if x_force = 0 then
+				return x_str;
+			else
+				lv_lineno := lv_lineno + 1;
+				insert into trig_temp values (lv_lineno, x_str);
+				return '';
+			end if;
+		else
+			if x_force = 0 then
+				return x_lin||x_str;
+			else
+				lv_lineno := lv_lineno + 1;
+				insert into trig_temp values (
+					lv_lineno, x_lin||x_str);
+				return '';
+			end if;
+		end if;
+	end wri;
+
+	function brkline(x_lin in varchar2, x_str in varchar2) return varchar2
+	is
+	begin
+		a_lin := x_lin;
+		text_length := nvl(length(x_str), 0);
+		-- Strip off any trailing null
+		dash_pos := instr(x_str, chr(0), -1);
+		if dash_pos <> 0 then
+			text_length := dash_pos - 1;
+		end if;
+		-- Break long text field into smaller groups to print
+		if text_length = 0 then
+			return x_lin;
+		end if;
+		max_length := 80;
+		startp := 1;
+		while startp <= text_length
+		loop
+			--
+			-- See if line begins with a --
+			--
+			-- Calculate real length of line that is <= 80 chars
+			-- (taking into account that each tab will move to the
+			-- next multiple of 8)
+			offset := 0;
+			real_len := 0;
+			out_start := startp;
+			while out_start <= text_length
+			loop
+				if substr(x_str, out_start, 1) = chr(9) then
+					l := floor(real_len / 8) * 8 + 8 -
+						real_len;
+				else
+					l := 1;
+				end if;
+				if real_len + l > max_length then
+					exit;
+				end if;
+				real_len := real_len + l;
+				out_start := out_start + 1;
+			end loop;
+			last_break := 0; -- Init position of last break
+			-- Break line at next linefeed (or last space/tab,
+			-- semi-colon, "--" comment, comma, tab, 80 chars, or
+			-- end of string)
+			lf_pos := instr(substr(x_str, startp, real_len),
+				chr(10));
+			-- See if we can break at the first linefeed
+			if lf_pos > 0 then
+				-- Store break right before the linefeed
+				last_break := lf_pos - 1;
+				offset := 1; -- Skip linefeed
+				force_line := 1; -- Force line to print
+			else
+				force_line := 0; -- Don't force line to print
+				-- See which break is encountered first
+				dash_pos := instr(substr(x_str, startp,
+					real_len), chr(45) || chr(45), -1);
+				semi_pos := instr(substr(x_str, startp,
+					real_len), ';', -1);
+				break_pos := instr(substr(x_str, startp,
+					real_len), ' '||chr(9), -1);
+				-- No break at space/tab if no characters
+				-- come before it
+				if break_pos > 0 then
+					bef_chars := ltrim(substr(x_str, startp,
+						break_pos - startp + 1));
+					if bef_chars is null then
+						break_pos := 0;
+					end if;
+				end if;
+				-- Check for break at a comma
+				lf_pos := instr(substr(x_str, startp, real_len),
+					',', -1);
+				if lf_pos > last_break then
+					-- Store break right after the comma
+					last_break := lf_pos;
+					offset := 0;
+				end if;
+				if break_pos = 0 then
+					-- Check for break at a tab if no
+					-- space/tab found
+					lf_pos := instr(substr(x_str, startp,
+						real_len), chr(9), -1);
+					if lf_pos > last_break then
+						-- Store break right before the
+						-- tab
+						last_break := lf_pos - 1;
+						offset := 0;
+					end if;
+				end if;
+				if semi_pos > last_break then
+					-- Store break right after the semicolon
+					last_break := semi_pos;
+					offset := 0;
+				else
+					-- If there is a break at a semi-colon,
+					-- skip this break at the tab
+					if break_pos > last_break then
+						-- Store break right after the
+						-- space
+						last_break := break_pos;
+						-- Skip space part of the
+						-- space/tab
+						offset := 1;
+					end if;
+				end if;
+				if dash_pos > last_break then
+					-- Do not break if remainder of line <=
+					-- 80 chars
+					if text_length - startp >= real_len then
+						-- Store break right before the
+						-- dashes
+						last_break := dash_pos - 1;
+						offset := 0;
+					end if;
+				end if;
+				-- No break if rest of line is <= 80 characters
+				if real_len = text_length - startp + 1 then
+					-- Set to break at end of line
+					last_break := real_len;
+					offset := 0;
+				end if;
+			end if;
+			-- Break at the last break that was encountered
+			break_pos := last_break;
+			-- See if no break position found
+			if break_pos = 0 and force_line = 0 then
+				-- Back up to first space
+				backwards := 1;
+				-- Start looking for break at line end
+				break_pos := real_len;
+				while backwards = 1
+				loop
+					-- See if no space found
+					if break_pos <= 1 then
+						-- Break at 80 chars
+						break_pos := real_len;
+						backwards := 0;
+						exit;
+					end if;
+					-- See if we found a space
+					if substr(x_str, startp +
+						break_pos - 1, 1) = ' '
+					then
+						backwards := 0;
+						exit;
+					end if;
+					break_pos := break_pos - 1;
+				end loop;
+			end if;
+			xchar := break_pos;
+			-- Return output line
+			if xchar = 0 then
+				if offset = 0 then
+					return a_lin;
+				end if;
+			else
+				-- Set flag to indicate a prev line is in buffer
+				if force_line = 0 then
+					prior_line := true;
+				else
+					prior_line := false;
+				end if;
+				-- See if needing to wrap a long comment
+				if max_length = 78 then
+					a_lin := wri(a_lin,
+						chr(45) || chr(45) ||
+						substr(x_str, startp, xchar),
+						force_line);
+				else
+					a_lin := wri(a_lin,
+						substr(x_str, startp, xchar),
+						force_line);
+				end if;
+			end if;
+			-- See if we just found a comment line
+			if max_length = 80 then
+				if substr(ltrim(substr(x_str, startp, 132),
+					' ' || chr(9)), 1, 2) =
+					chr(45) || chr(45)
+				then
+					max_length := 78;
+				else
+					max_length := 80;
+				end if;
+			end if;
+			startp := startp + xchar + offset;
+		end loop;
+		return a_lin;
+	end brkline;
+
+begin
+	prior_line := false;
+	a_lin := '';
+	lv_lineno := 0;
+	errdesc := 'Init';
+	cursor1 := dbms_sql.open_cursor;
+	sqltxt := 'select owner,trigger_name,trigger_type,' ||
+		'triggering_event,table_owner,table_name,referencing_names,' ||
+		'when_clause,status,description,trigger_body' ||
+		' from sys.dba_triggers where substr(trigger_name,1,5) <> ' ||
+		&q || 'TLOG$' || &q || ' order by 1, 2';
+	dbms_sql.parse(cursor1, sqltxt, dbms_sql.native);
+	dbms_sql.define_column(cursor1, 1, lv_owner, 30);
+	dbms_sql.define_column(cursor1, 2, lv_trigger_name, 30);
+	dbms_sql.define_column(cursor1, 3, lv_trigger_type, 16);
+	dbms_sql.define_column(cursor1, 4, lv_triggering_event, 26);
+	dbms_sql.define_column(cursor1, 5, lv_table_owner, 30);
+	dbms_sql.define_column(cursor1, 6, lv_table_name, 30);
+	dbms_sql.define_column(cursor1, 7, lv_referencing_names, 87);
+	dbms_sql.define_column(cursor1, 8, lv_when_clause, 2000);
+	dbms_sql.define_column(cursor1, 9, lv_status, 8);
+	dbms_sql.define_column(cursor1, 10, lv_description, 2000);
+	dbms_sql.define_column_long(cursor1, 11);
+	dummy := dbms_sql.execute(cursor1);
+	loop
+		errdesc := 'fetch';
+		if dbms_sql.fetch_rows(cursor1) = 0 then
+			exit;
+		end if;
+		dbms_sql.column_value(cursor1, 1, lv_owner);
+		dbms_sql.column_value(cursor1, 2, lv_trigger_name);
+		dbms_sql.column_value(cursor1, 3, lv_trigger_type);
+		dbms_sql.column_value(cursor1, 4, lv_triggering_event);
+		dbms_sql.column_value(cursor1, 5, lv_table_owner);
+		dbms_sql.column_value(cursor1, 6, lv_table_name);
+		dbms_sql.column_value(cursor1, 7, lv_referencing_names);
+		dbms_sql.column_value(cursor1, 8, lv_when_clause);
+		dbms_sql.column_value(cursor1, 9, lv_status);
+		dbms_sql.column_value(cursor1, 10, lv_description);
+		errdesc := 'after fetch';
+		a_lin := wri(a_lin, 'rem', 1);
+		a_lin := wri(a_lin, 'rem ##################################',
+			1);
+		a_lin := wri(a_lin, 'rem', 1);
+		errdesc := 'descript';
+		-- Description can be skipped (since it is not needed to
+		-- recreate trigger)
+		a_lin := wri(a_lin, '/* Description of following trigger: ', 1);
+		errdesc := 'brkline desc';
+		a_lin := brkline(a_lin, lv_description);
+		-- See if a previous line needs to be ended
+		if prior_line then
+			a_lin := wri(a_lin, '', 1);
+			prior_line := false;
+		end if;
+		a_lin := wri(a_lin, '*/', 1);
+		a_lin := wri(a_lin, 'rem', 1);
+		errdesc := 'create or replace';
+		a_lin := wri(a_lin, 'create or replace trigger ', 0);
+		a_lin := wri(a_lin, lv_owner || '.' || lv_trigger_name, 1);
+		if substr(lv_trigger_type, 1, 6) = 'BEFORE' then
+			a_lin := wri(a_lin, ' before', 0);
+		elsif substr(lv_trigger_type, 1, 10) = 'INSTEAD OF' then
+			a_lin := wri(a_lin, ' instead of', 0);
+		else
+			a_lin := wri(a_lin, ' after', 0);
+		end if;
+		need_or := FALSE;
+		if instr(lv_triggering_event, 'INSERT') != 0 then
+			a_lin := wri(a_lin, ' INSERT', 0);
+			need_or := TRUE;
+		end if;
+		if instr(lv_triggering_event, 'UPDATE') != 0 then
+			if need_or then
+				a_lin := wri(a_lin, ' OR', 0);
+			end if;
+			need_or := TRUE;
+			-- See if updating specific column(s)
+			comma_needed := FALSE;
+			errdesc := 'trig col cursor';
+			open trig_col_cursor (lv_owner, lv_trigger_name,
+				lv_table_owner, lv_table_name);
+			loop
+				fetch trig_col_cursor into
+					lv_column_name;
+				exit when trig_col_cursor%NOTFOUND;
+				if comma_needed then
+					a_lin := wri(a_lin, ',', 0);
+				else
+					a_lin := wri(a_lin, ' UPDATE OF', 0);
+				end if;
+				a_lin := wri(a_lin, ' ' || lv_column_name, 0);
+				comma_needed := TRUE;
+			end loop;
+			close trig_col_cursor;
+			if not comma_needed then
+				a_lin := wri(a_lin, ' UPDATE', 0);
+			end if;
+		end if;
+		errdesc := 'delete';
+		if instr(lv_triggering_event, 'DELETE') != 0 then
+			if need_or then
+				a_lin := wri(a_lin, ' OR', 0);
+			end if;
+			a_lin := wri(a_lin, ' DELETE', 0);
+			need_or := TRUE;
+		end if;
+		a_lin := wri(a_lin, '', 1);
+		a_lin := wri(a_lin, ' on ', 0);
+		a_lin := wri(a_lin, lv_table_owner || '.' || lv_table_name, 1);
+		break_wanted := FALSE;
+		if nvl(lv_referencing_names, ' ') != ' ' then
+			if lv_referencing_names !=
+				'REFERENCING NEW AS NEW OLD AS OLD'
+			then
+				errdesc := 'brkline';
+				a_lin := brkline(a_lin, lv_referencing_names);
+				-- See if a previous line needs to be ended
+				if prior_line then
+					a_lin := wri(a_lin, '', 1);
+					prior_line := false;
+				end if;
+				break_wanted := TRUE;
+			end if;
+		end if;
+		errdesc := 'before row';
+		if lv_trigger_type = 'BEFORE EACH ROW' or
+			lv_trigger_type = 'AFTER EACH ROW'
+		then
+			a_lin := wri(a_lin, ' FOR EACH ROW', 0);
+			break_wanted := TRUE;
+		end if;
+		if break_wanted then
+			a_lin := wri(a_lin, ' ', 1);
+		end if;
+		errdesc := 'when';
+		if nvl(lv_when_clause, ' ') != ' ' then
+			a_lin := wri(a_lin, ' WHEN (', 0);
+			errdesc := 'brkline when';
+			a_lin := brkline(a_lin, lv_when_clause);
+			a_lin := wri(a_lin, ')', 1);
+			prior_line := false;
+		end if;
+		-- Fetch and print every 2000 bytes of the trigger body
+		my_offset := 0;
+		lv_trigger_body_len := 1;
+		while lv_trigger_body_len <> 0
+		loop
+			dbms_sql.column_value_long(cursor1, 11, 2000,
+				my_offset, lv_trigger_body,
+				lv_trigger_body_len);
+			if lv_trigger_body_len <> 0 then
+				errdesc := 'brkline body ' ||
+					to_char(my_offset);
+				a_lin := brkline(a_lin, lv_trigger_body);
+				my_offset := my_offset + 2000;
+			end if;
+		end loop;
+		-- See if a previous line needs to be ended
+		if prior_line then
+			a_lin := wri(a_lin, '', 1);
+			prior_line := false;
+		end if;
+		a_lin := wri(a_lin, '/', 1);
+		a_lin := wri(a_lin, 'show errors', 1);
+		errdesc := 'see if disabled';
+		if lv_status = 'DISABLED' then
+			errdesc := 'alter';
+			a_lin := wri(a_lin, 'alter trigger ', 0);
+			a_lin := wri(a_lin, lv_owner || '.' || lv_trigger_name,
+				0);
+			a_lin := wri(a_lin, ' DISABLE;', 1);
+		end if;
+	end loop;
+	errdesc := 'close';
+	dbms_sql.close_cursor(cursor1);
+	a_lin := wri(a_lin, 'spool off', 1);
+	a_lin := wri(a_lin, 'exit', 1);
+	commit;
+exception
+	when others then
+		rollback;
+		raise_application_error(-20000,
+			'Unexpected error on ' || lv_owner ||
+			'.' || lv_trigger_name || ':' || chr(10) ||
+			sqlerrm || chr(10) || 'After ' || errdesc || chr(10) ||
+			'Aborting...');
+end;
+/
+
+set recsep off
+set trimspool on
+set termout off
+set heading off
+spool c:\cr_trig.txt
+select 'rem cr_trig.sql' from dual;
+select 'rem' from dual;
+select 'rem ***** All database triggers for database ' || name from v$database;
+select 'rem' from dual;
+select 'set define off' from dual;
+select 'set echo on' from dual;
+select 'set feedback off' from dual;
+select 'set termout on' from dual;
+select 'set trimspool on' from dual;
+select 'set verify off' from dual;
+select 'spool cr_trig.lst' from dual;
+select text from trig_temp order by lineno;
+spool off
+drop table trig_temp;
+ed c:\cr_trig.txt
+set termout on
+select 'Created cr_trig.sql...' from dual;
+set termout off
+--exit

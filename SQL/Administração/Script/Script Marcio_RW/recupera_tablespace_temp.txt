@@ -1,0 +1,25 @@
+-- Mostre a tablespace temporária padrão do banco:
+
+select * from database_properties where property_name = 'DEFAULT_TEMP_TABLESPACE';
+
+-- Mostre a distribuição de usuários por tablespaces temporárias:
+
+select temporary_tablespace, count(*) from dba_users group by temporary_tablespace;
+
+-- Mostre onde estão os arquivos temporários:
+
+select tablespace_name, file_name from dba_temp_files;
+
+
+-- Provoque a perda eliminando o arquivo de TEMP2 pelo SO
+
+
+-- Recupere:
+
+--- Primeiro removemos a referência lógica
+
+alter database tempfile '/u01/app/oracle/oradata/orcl/temp02.dbf' drop;
+
+-- Agora, recriamos fisicamente o arquivo perdido
+
+alter tablespace temp2 add tempfile '/u01/app/oracle/oradata/orcl/temp02.dbf' size 20 m;

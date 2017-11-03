@@ -1,0 +1,16 @@
+startup nomount
+
+CREATE CONTROLFILE REUSE DATABASE orcl  RESETLOGS NOARCHIVELOG
+MAXLOGFILES 32
+MAXLOGMEMBERS 2
+MAXDATAFILES 32
+MAXINSTANCES 1
+MAXLOGHISTORY 500
+LOGFILE
+GROUP 1 '/home/oracle/app/oracle/oradata/orcl/redo01a.rdo', '/home/oracle/app/oracle/oradata/orcl/redo01b.rdo' SIZE 500M
+DATAFILE
+'/home/oracle/app/oracle/oradata/orcl/system01.dbf',
+CHARACTER SET WE8ISO8859P1
+;
+recover database;
+alter database open; 

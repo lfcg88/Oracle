@@ -1,0 +1,11 @@
+--exportando e importando dados entre diferentes plataformas--
+
+--conectado como um usuario dba 
+
+SELECT tablespace_name FROM dba_tablespaces
+
+exp system/manager FULL=y FILE=expdat.dmp
+
+--criar um banco no servidor desejado com as tablespace listadas no select acima
+
+imp system/manager FULL=y IGNORE=y FILE=expdat.dmp

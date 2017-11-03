@@ -1,0 +1,72 @@
+--run this as sys in SQL worksheet
+drop table full_sql_teste_01;
+create table full_sql_teste_01 (sql_text varchar2(1000), executions number,disk_reads number,buffer_gets number,
+sorts number,loads number,PARSING_USER_ID number);
+
+create or replace procedure p_findfullsql as
+
+v_csr number;
+v_rc number;
+v_string varchar2(2000);
+
+v_count number;
+
+
+cursor c1 is select sql_text,executions,disk_reads,buffer_gets,sorts,loads,PARSING_USER_ID 
+from v$sqlarea 
+--where lower(sql_text) like '%select%'
+;
+
+begin
+
+for x1 in c1 loop
+  delete from plan_table ;
+  commit;
+  Begin
+    v_csr := DBMS_SQL.OPEN_CURSOR; 
+    v_string := 'explain plan for ' ;
+    v_string := v_string||x1.sql_text ;
+    DBMS_SQL.PARSE(v_csr, v_string, DBMS_SQL.V7);
+    v_rc := DBMS_SQL.EXECUTE(v_csr);
+    DBMS_SQL.CLOSE_CURSOR(v_csr); 
+    Exception
+     when others then 
+      null; 
+      DBMS_SQL.CLOSE_CURSOR(v_csr);
+    End ;
+--
+  select count(*) into v_count from plan_table where options like '%FULL%' and operation like '%TABLE%' ;
+  if v_count > 0 then
+    insert into full_sql_teste_01(sql_text,executions,disk_reads,buffer_gets,sorts,loads,PARSING_USER_ID) values (x1.sql_text,x1.executions,x1.disk_reads,x1.buffer_gets,x1.sorts,x1.loads,x1.PARSING_USER_ID) ;
+    commit;
+  end if;
+end loop ;
+commit;
+end ;
+/
+
+execute p_findfullsql ;
+set pagesize 50;
+set linesize 200;
+COLUMN sql_text FORMAT a60 HEADING Text word_wrapped
+column username format a15
+----------------------------------------------
+----------  opções de ordenação --------------
+-----------------------------------------------
+Rem  1 - Nome do Usuário
+Rem  2 - Quant. de Execuções
+Rem  3 - Quant. de Leitura em Disco
+Rem  4 - Quant. Buffers Gets
+Rem  5 - Qaunt. Sort
+Rem  6 - Quant. Load
+Rem ----------------------------------------------
+--
+spool c:\finsqlfull89898.lst
+--
+select b.username,a.executions,a.disk_reads,a.buffer_gets,a.sorts,a.loads,a.sql_text from full_sql_teste_01 a,dba_users b
+where a.PARSING_USER_ID = b.USER_ID
+order by &1 desc;
+spool off
+drop table full_sql_teste_01;
+drop procedure p_findfullsql;
+ed c:\finsqlfull89898.lst

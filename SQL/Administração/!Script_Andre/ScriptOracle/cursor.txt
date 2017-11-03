@@ -1,0 +1,25 @@
+SET SERVEROUTPUT ON SIZE 100000
+
+set linesize 500
+
+accept vQuant prompt 'Informe Quantidade Limite Cursor => '
+column user_process format a15
+
+
+select
+ss.username||'('||se.sid||') ' user_process, sum(decode(name,'recursive calls',value)) "Recursive Calls",
+sum(decode(name,'opened cursors cumulative',value)) "Opened Cursors", sum(decode(name,'opened cursors current',value)) "Current Cursors"
+ from v$session ss, v$sesstat se, v$statname sn
+ where  se.statistic# = sn.statistic#
+  and (     name  like '%opened cursors current%'
+    OR name  like '%recursive calls%'
+    OR name  like '%opened cursors cumulative%')
+  and  se.sid = ss.sid
+  and ss.username is not null
+group by ss.username||'('||se.sid||') '
+having sum(decode(name,'opened cursors current',value)) > 100
+/
+
+
+
+

@@ -1,0 +1,11 @@
+BEGIN
+sys.dbms_scheduler.create_job (
+job_name => '"SYSADM"."PS_EXPURGO_PR_MAIN"',
+job_type => 'STORED_PROCEDURE',
+job_action => '"SYSADM"."P_EXPURGO_CASE"."PR_MAIN"',
+start_date =>  '11-08-12 20:00:00,000000000 AMERICA/SAO_PAULO',
+repeat_interval => 'FREQ=WEEKLY;BYDAY=SAT;BYHOUR=20;BYMINUTE=00;BYSECOND=0',
+enabled => TRUE,
+comments => 'Este job copiará as informações das tabelas abaixo para o schema PS8_HIST e em seguida apaga as informações copiadas do schema SYSADM');
+END;
+/

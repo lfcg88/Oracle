@@ -1,0 +1,438 @@
+---
+--- so funciona com perfstat no oracle 8i
+---
+---
+set serveroutput on size 1000000
+accept vDataInicio prompt 'Informe a Data Inicial (dd/mm/yyyy) =>  ';
+accept vDataFim    prompt 'Informe a Data Final   (dd/mm/yyyy) =>  ';
+accept vIntervalo NUMBER FORMAT '99' DEFAULT '0' prompt 'Intervalo em Horas             (HH) =>  ';
+accept vArquivo    prompt 'Informe Nome Arquivo de Spool                     =>  ';
+--
+-- define top_n_events = 5;
+clear break compute;
+repfooter off;
+ttitle off;
+btitle off;
+set timing off veri off space 1 flush on pause off termout on numwidth 10;
+set echo off feedback off pagesize 60 linesize 150 newpage 2 recsep off;
+set trimspool on trimout on;
+define top_n_events = 5;
+define top_n_sql = 65;
+define num_rows_per_hash=5;
+
+--
+-- Get the current database/instance information - this will be used 
+-- later in the report along with bid, eid to lookup snapshots
+
+set heading on;
+
+column inst_num  heading "Inst Num"    new_value inst_num  format 99999;
+column inst_name heading "Instance"  new_value inst_name format a12;
+column db_name   heading "DB Name"   new_value db_name   format a12;
+column dbid      heading "DB Id"     new_value dbid      format 9999999999 just c;
+select d.dbid            dbid
+     , d.name            db_name
+     , i.instance_number inst_num
+     , i.instance_name   inst_name
+  from v$database d,
+       v$instance i;
+
+variable dbid       number;
+variable inst_num   number;
+variable inst_name  varchar2(20);
+variable db_name    varchar2(20);
+begin 
+  :dbid      :=  &dbid;
+  :inst_num  :=  &inst_num; 
+  :inst_name := '&inst_name';
+  :db_name   := '&db_name';
+end;
+/
+--
+--
+--
+--  Ask for the snapshots Id's which are to be compared
+
+
+--  prompt
+--  prompt
+--  prompt Specify the Begin and End Snapshot Ids
+--  prompt ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+--  prompt Begin Snapshot Id specified: &&begin_snap
+--  prompt
+--  prompt End   Snapshot Id specified: &&end_snap
+--  prompt
+--  
+--  set termout on;
+--  variable bid   number;
+--  variable eid   number;
+--  variable versn varchar2(10);
+--  variable para  varchar2(9);
+--  variable host_name varchar2(64);
+--  begin 
+--    :bid    := &&begin_snap; 
+--    :eid    := &&end_snap;
+--    :versn  := '&versn';
+--    :para   := '&para';
+--    :host_name := '&host_name';
+--  end;
+--  /
+
+-- Dbms_Output.Put_Line('passo1');
+
+--
+-- Use report name if specified, otherwise prompt user for output file 
+-- name (specify default), then begin spooling
+
+set termout off;
+-- column dflt_name new_value dflt_name noprint;
+-- select 'sp_'||:bid||'_'||:eid dflt_name from dual;
+set termout on;
+
+-- prompt
+-- prompt Specify the Report Name
+-- prompt ~~~~~~~~~~~~~~~~~~~~~~~
+-- prompt The default report file name is &dflt_name..  To use this name, 
+-- prompt press <return> to continue, otherwise enter an alternative.
+
+set heading off;
+--column report_name new_value report_name noprint;
+--select 'Using the report name ' || nvl('&&report_name','&dflt_name')
+--     , nvl('&&report_name','&dflt_name') report_name
+--  from sys.dual;
+
+spool &vArquivo;
+
+-- set heading on;
+-- prompt
+
+--Dbms_Output.Put_Line('passo20');
+
+--
+--  Verify begin and end snapshot Ids exist for the database, and that
+--  there wasn't an instance shutdown in between the two snapshots 
+--  being taken.
+
+-- set heading off;
+--
+set heading on;
+
+
+--
+--
+--  
+-- set newpage 1 heading on;
+--  
+--  
+--
+--  Call statspack to calculate certain statistics
+--
+-- Dbms_Output.Put_Line('passo1');
+set heading off;
+-- variable lhtr   number;
+-- variable bfwt   number;
+-- variable tran   number;
+-- variable chng   number;
+-- variable ucal   number;
+-- variable urol   number;
+-- variable ucom   number;
+-- variable rsiz   number;
+-- variable phyr   number;
+-- variable phyw   number;
+-- variable prse   number;
+-- variable hprs   number;
+-- variable recr   number;
+-- variable gets   number;
+-- variable rlsr   number;
+-- variable rent   number;
+-- variable srtm   number;
+-- variable srtd   number;
+-- variable srtr   number;
+-- variable strn   number;
+-- variable call   number;
+-- variable lhr    number;
+-- variable sp     varchar2(512);
+-- variable bc     varchar2(512);
+-- variable lb     varchar2(512);
+-- variable bs     varchar2(512);
+-- variable twt    number;
+-- variable logc   number;
+-- variable prscpu number;
+-- variable prsela number;
+-- variable tcpu   number;
+-- variable exe    number;
+-- variable bspm   number;
+-- variable espm   number;
+-- variable bfrm   number;
+-- variable efrm   number;
+-- variable blog   number;
+-- variable elog   number;
+
+-------  ******************************************
+-------  ******************************************
+DECLARE
+-- teste number;
+ lhtr number;
+ bfwt number;
+ tran number;
+ chng number;
+ ucal number;
+ urol number;
+ rsiz number;
+ phyr number;
+ phyw number;
+ prse number;
+ hprs number;
+ recr number;
+ gets number;
+ rlsr number;
+ rent number;
+ srtm number;
+ srtd number;
+ srtr number;
+ strn number;
+ call number;
+ lhr  number;
+ sp   varchar2(512);
+ bc   varchar2(512);
+ lb   varchar2(512);
+ bs   varchar2(512);
+ twt  number;
+ vData varchar2(10);
+ vphyrds number;
+-- vHoras number;
+ vphywrts number;
+-- vdata_inicio date;
+-- vdata_fim date;
+-- 
+ bsnap_id number;
+ bsnap_time date;
+ vsnap_id number;
+ vsnap_time date;
+ vasnap_id number;
+ vasnap_time date;
+--
+--
+Cursor c_periodo_hn (pinicio varchar2,pfim varchar2) IS
+  SELECT snap_id,snap_time
+  FROM 
+     stats$snapshot   
+  WHERE 
+     snap_time >= to_date(pinicio,'dd/mm/yyyy') and  snap_time < (to_date(pfim,'dd/mm/yyyy')+1/12)
+  ORDER BY snap_time;  
+--
+--
+function SYSDIF (i_name varchar2,bid number,eid number) RETURN number is
+
+      /* Returns the difference between statistics for the statistic
+         name specified for the interval between the begin and end
+         snapshot id's (bid, eid)
+      */
+
+      cursor SY (i_snap_id number) is
+      select value
+        from stats$sysstat
+       where snap_id         = i_snap_id
+   --      and dbid            = p_dbid
+  --       and instance_number = p_instance_number
+        and name            = i_name;
+
+      bval number;
+      eval number;
+
+      begin
+         /* Get start value */
+         open SY (bid); fetch SY into bval;
+         if SY%notfound then
+            raise_application_error
+			(-20100,'Missing start value for statistic: '||i_name);
+         end if; close SY;
+
+         /* Get end value */
+         open SY (eid); fetch SY into eval;
+         if SY%notfound then
+            raise_application_error
+			(-20100,'Missing end value for statistic: '||i_name);
+         end if; close SY;
+
+         /* Return difference */
+         return eval - bval;
+      end SYSDIF;
+--
+--
+function WAITDIF (i_name varchar2,bid number,eid number) RETURN number is
+
+      /* Returns the difference between statistics for the statistic
+         name specified for the interval between the begin and end
+         snapshot id's (bid, eid)
+      */
+
+      cursor SY (i_snap_id number) is
+     --    select sum(time_waited)/100 
+
+     select sum(timed)
+      from (
+         select time_waited timed
+         from stats$system_event E
+         where  snap_id         = i_snap_id
+    --      and dbid            = p_dbid
+    --       and instance_number = p_instance_number
+            and  e.event not in
+               ( select event
+                   from stats$idle_event
+               )
+         order by 1 desc
+       )
+      where rownum < 6;
+      
+    --
+    --
+      bval number;
+      eval number;
+
+      begin
+         /* Get start value */
+         open SY (bid); fetch SY into bval;
+         if SY%notfound then
+            raise_application_error
+			(-20100,'Missing start value for statistic: '||i_name);
+         end if; close SY;
+
+         /* Get end value */
+         open SY (eid); fetch SY into eval;
+         if SY%notfound then
+            raise_application_error
+			(-20100,'Missing end value for statistic: '||i_name);
+         end if; close SY;
+
+         /* Return difference */
+         return eval - bval;
+      end WAITDIF;
+
+--
+--
+Procedure  Imprime_Statisticas(pinicio_snap_time date,pfim_snap_time date,pinicio_snap_id number ,pfim_snap_id number) 
+Is 
+-- 
+--
+--
+--
+-- vHitBufCache number;
+--  event_name    stats$system_event.event%type;
+--  waits         stats$system_event.total_waits%type;
+--  wait_time     stats$system_event.time_waited%type;
+--  pct_wait_time number(12,2);
+   hprse     number;
+   prse      number;
+   cputime   number;
+   waittime   number;
+   responsetime   number;
+   cputimeparse   number;
+   cputimerecursive   number;
+   cpuothers number;
+
+Begin
+--
+--  hprse   :=  SYSDIF('parse count (hard)',pinicio_snap_id,pfim_snap_id);
+--  prse    :=  SYSDIF('parse count (total)',pinicio_snap_id,pfim_snap_id);
+   cputime   :=  SYSDIF('CPU used by this session',pinicio_snap_id,pfim_snap_id);
+   cputimeparse   :=  SYSDIF('parse time cpu',pinicio_snap_id,pfim_snap_id);
+   cputimerecursive   :=  SYSDIF('recursive cpu usage',pinicio_snap_id,pfim_snap_id);
+   cpuothers := cputime - ( cputimeparse + cputimerecursive );
+
+--   waittime   := WAITDIF(' ',pinicio_snap_id,pfim_snap_id);
+--   responsetime := cputime + waittime;
+--  
+--
+ --   dbms_output.put_line('----------------------------------------------------------------------------');
+ --   dbms_output.put_line('** Response Time  ** '||to_char(pinicio_snap_time,'dd/mm/yyyy hh24:mi:ss')||' -- ----'||to_char(pfim_snap_time,'hh24:mi:ss')||' **');
+ -- dbms_output.put_line('          Periodo                                        CPU TIME         Total Hard Parse         % --Hard Parse      '); 
+ -- dbms_output.put_line(' ----------------------------------                      ---------          ---------------          ------------      '); 
+--
+    dbms_output.put_line(to_char(pinicio_snap_time,'dd/mm/yyyy hh24:mi:ss')||' -- '||to_char(pfim_snap_time, 'hh24:mi:ss')||lpad(to_char(cputime,'999,999,999,999'),20)||lpad(to_char(cputimeparse,'999,999,999,999'),20)
+                        ||lpad(to_char(cputimerecursive,'999,999,999,999'),24)||lpad(to_char(cpuothers,'999,999,999,999'),24));
+ --   dbms_output.put_line('----------------------------------------------------------------------------');
+End; 
+--
+--
+Begin
+--
+If not c_periodo_hn%ISOPEN then open c_periodo_hn('&vDataInicio','&vDataFim'); end if;
+fetch c_periodo_hn into bsnap_id, bsnap_time;
+ dbms_output.put_line('--');
+ dbms_output.put_line('----------------------------------------------------------------------------------------------------------------');
+ dbms_output.put_line('                                           Analise Response Time                                                ');  
+ dbms_output.put_line('----------------------------------------------------------------------------------------------------------------');
+dbms_output.put_line('          Periodo                                    CPU TIME            CPU PARSE             CPU RECURSIVE     CPU OTHERS     '); 
+ dbms_output.put_line('-------------------------------------------------------------------------------------------------------------------------------');
+while true Loop
+  Fetch c_periodo_hn Into vsnap_id, vsnap_time;
+  If c_periodo_hn%NOTFOUND then
+     close c_periodo_hn;
+     exit;
+  End if;
+--
+--  STATSPACK.STAT_CHANGES
+--     ( bsnap_id,    vsnap_id
+--     , :dbid,   :inst_num  
+--     , lhtr,   bfwt
+--     , tran,   chng
+--     , ucal,   urol
+--     , rsiz,   phyr
+--     , phyw,   ucom
+--     , prse,   hprs
+--     , recr,   gets
+--     , rlsr,   rent
+--     , srtm,   srtd
+--     , srtr,   strn
+--     , lhr,    bc
+--     , sp,     lb
+--     , bs,     twt
+--     , logc,   prscpu
+--     , tcpu,   exe
+--     , prsela
+--     , bspm,   espm, bfrm, efrm
+ --    , blog,   elog
+--     );
+--     call := ucal + recr;
+--
+--- STATSPACK.STAT_CHANGES
+--   ( bsnap_id,  vsnap_id	
+--   , lhtr, bfwt, tran, chng, ucal, urol, rsiz, phyr, phyw
+--   , prse, hprs
+--   , recr, gets, rlsr, rent, srtm, srtd, srtr, strn
+--   , lhr, bc, sp, lb, bs,   twt
+--   );
+--   call := ucal + recr;
+--
+--
+--
+ --   Dbms_Output.Put_Line('passo10');
+--
+     Imprime_Statisticas(bsnap_time,vsnap_time,bsnap_id,vsnap_id);
+    bsnap_time := vsnap_time;
+    bsnap_id   := vsnap_id;
+--  End If;
+End Loop;
+--    
+-- End If;
+End ;
+/
+
+prompt
+prompt                                 End of Report 
+prompt
+spool off;
+--ed &vArquivo
+set termout off;
+clear columns sql;
+ttitle off;
+btitle off;
+repfooter off;
+set linesize 78 termout on feedback 6;
+undefine begin_snap
+undefine end_snap
+undefine report_name
+undefine top_n_sql
+undefine top_n_events
+-- whenever sqlerror continue;

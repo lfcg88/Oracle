@@ -1,0 +1,46 @@
+SET SERVEROUTPUT ON SIZE 100000
+set linesize 500
+accept vSID prompt 'Informe o Nome do Objeto => '
+DECLARE   
+    CURSOR c_users (v_sid number )  IS
+      select  OWNER,                  
+ SEGMENT_NAME,           
+ SEGMENT_TYPE,           
+ TABLESPACE_NAME,        
+ BYTES,                  
+ BLOCKS,                 
+ EXTENTS,                
+ INITIAL_EXTENT         
+ NEXT_EXTENT            
+ MIN_EXTENTS            
+ MAX_EXTENTS            
+ PCT_INCREASE           
+ FREELISTS     
+
+
+
+     CURSOR c_sql(v_address sys.v_$sqltext.address%type) IS
+       SELECT sql_text
+       FROM sys.v_$sqltext
+       WHERE address=v_address
+       ORDER BY piece;
+BEGIN
+    FOR r_users IN c_users(&vSID) LOOP
+       DBMS_OUTPUT.PUT_LINE('===============================================================');
+       DBMS_OUTPUT.PUT_LINE('USUARIO ORACLE                ==> '||r_users.username||'('||r_users.sid||')');
+       DBMS_OUTPUT.PUT_LINE('MAQUINA                       ==> '||r_users.machine);
+       DBMS_OUTPUT.PUT_LINE('USUARIO S.O.                  ==> '||r_users.osuser);
+       DBMS_OUTPUT.PUT_LINE('PROGRAMA                      ==> '||r_users.PROGRAM);
+       DBMS_OUTPUT.PUT_LINE('PROC SIST. OPERACIONAL        ==> '||r_users.spid);
+       DBMS_OUTPUT.PUT_LINE('---------------------------------------------------------------');
+       FOR r_sql IN c_sql(r_users.sql_address) LOOP
+              DBMS_OUTPUT.PUT_LINE(r_sql.sql_text);
+       END LOOP;
+       DBMS_OUTPUT.PUT_LINE(' ');
+       DBMS_OUTPUT.PUT_LINE(' ');
+    END LOOP;
+END;
+/
+
+
+

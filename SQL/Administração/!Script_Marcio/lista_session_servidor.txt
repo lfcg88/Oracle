@@ -1,0 +1,12 @@
+##### Identificar o SPID e o SID ###########
+
+select a.spid, b.sid, b.username
+ from v$process a, v$session b
+where addr = paddr
+  and b.username is not null
+    
+#### Verificar a query que o SID identificado acima está executando ####
+
+select a.sid, a.username, b.sql_text
+  from v$session a, v$sql b
+ where a.sql_id = b.sql_id 

@@ -1,0 +1,101 @@
+Servidor de Aplicação TST, DSV e DMO: apshom01mtz
+
+1. Parar todos os serviços do People (App server e Process Scheduler)
+D:\PSFT\<instância>\appserv\psadmin.exe
+
+Verificar na lista de sessões da instância se não existem mais usuários conectados.
+
+2. Alterar a senha do SYSADM no banco (máx. de 8 posições)
+
+3. Acessar o Data Mover (App Server) se conectando com o usuário SYSADM (Connection Type >> Oracle)
+
+4. Abrir o script de Ajusta_DB.dms (D:\PSFT\<instância>\scripts)
+
+obs01: esse script sincroniza a senha do usuário sysadm (colocar a senha alterada no passo 2 aqui)
+obs02: colocar a senha do PSEM e de outros usuários desejados
+
+5. Executar o script alterado no passo anterior
+
+6. Testar a conexão em duas camadas atráves do App Designer com o usuário VP1 (People Financeiro) ou PS (People HR)
+
+7. Caso OK, subir o App Server e o Process Scheduler pelo PSAdmin (D:\PSFT\<instância>\appserv). Caso negativo, voltar as senhas.
+
+8. Testar a aplicação via browser com o usuário VP1
+
+9. Para finalizar em caso de clone de databases (exp/imp), executar via Data Mover com usuário SYSADM os scripts:
+
+appmsgpurgeall.dms
+prcsclr.dms
+(D:\PSFT\<instância>\scripts)
+
+X--------------------------X--------------------------X--------------------------X--------------------------X
+
+Script do Ajusta_DB.dms
+
+REM Script para ajuste de senhas do Aplicativo Peoplesoft;
+
+REM Insere quem é o banco e o dono do schema do Aplicativo Peoplesoft;
+
+--INSERT INTO PS.PSDBOWNER VALUES('FS89DMO', 'SYSADM');
+
+REM Ajusta o nome e identificador interno da base;
+
+UPDATE PSOPTIONS SET GUID=' ', SHORTNAME='FS89TST', LONGNAME='FS89TST';
+
+REM Ajusta a senha dos operadores (Usuários da Aplicação Peoplesoft) ;
+
+UPDATE PSOPRDEFN SET SYMBOLICID = 'SYSADM1', OPERPSWD = OPRID, ENCRYPTED = 0;
+--UPDATE PSOPRDEFN SET SYMBOLICID = 'SYSADM1', OPERPSWD = 'gcvp1tst', ENCRYPTED = 0 where OPRID='VP1';
+--UPDATE PSOPRDEFN SET SYMBOLICID = 'SYSADM1', OPERPSWD = 'gcpstst', ENCRYPTED = 0 where OPRID='PS';
+--UPDATE PSOPRDEFN SET SYMBOLICID = 'SYSADM1', OPERPSWD = 'gcemtst', ENCRYPTED = 0 where OPRID='PSEM';
+
+REM Ajusta a senha do usuário OWNER do banco (Access ID);
+
+UPDATE PSACCESSPRFL SET ACCESSID = 'SYSADM', SYMBOLICID = 'SYSADM1', ACCESSPSWD = 'gcsystst', VERSION = 0, ENCRYPTED = 0;
+
+REM Valida os grants do usuário connect id (sempre é o usuário PEOPLE);
+
+GRANT SELECT ON PSSTATUS TO PEOPLE;
+GRANT SELECT ON PSOPRDEFN TO PEOPLE;
+GRANT SELECT ON PSACCESSPRFL TO PEOPLE;
+
+
+REM Encripta a senha dos usuários;
+
+ENCRYPT_PASSWORD *;
+
+X--------------------------X--------------------------X--------------------------X--------------------------X
+
+Script alterado para acerto de senhas usado no dia 25/06/2010:
+
+REM Script para ajuste de senhas do Aplicativo Peoplesoft;
+
+REM Insere quem é o banco e o dono do schema do Aplicativo Peoplesoft;
+
+--INSERT INTO PS.PSDBOWNER VALUES('FS89DMO', 'SYSADM');
+
+REM Ajusta o nome e identificador interno da base;
+
+UPDATE PSOPTIONS SET GUID=' ', SHORTNAME='FS89TST', LONGNAME='FS89TST';
+
+REM Ajusta a senha dos operadores (Usuários da Aplicação Peoplesoft) ;
+
+--UPDATE PSOPRDEFN SET SYMBOLICID = 'SYSADM1', OPERPSWD = OPRID, ENCRYPTED = 0;
+UPDATE PSOPRDEFN SET SYMBOLICID = 'SYSADM1', OPERPSWD = 'gcvp1tst', ENCRYPTED = 0 where OPRID='VP1';
+UPDATE PSOPRDEFN SET SYMBOLICID = 'SYSADM1', OPERPSWD = 'gcpstst', ENCRYPTED = 0 where OPRID='PS';
+UPDATE PSOPRDEFN SET SYMBOLICID = 'SYSADM1', OPERPSWD = 'gcemtst', ENCRYPTED = 0 where OPRID='PSEM';
+
+REM Ajusta a senha do usuário OWNER do banco (Access ID);
+
+UPDATE PSACCESSPRFL SET ACCESSID = 'SYSADM', SYMBOLICID = 'SYSADM1', ACCESSPSWD = 'gcsystst', VERSION = 0, ENCRYPTED = 0;
+
+REM Valida os grants do usuário connect id (sempre é o usuário PEOPLE);
+
+GRANT SELECT ON PSSTATUS TO PEOPLE;
+GRANT SELECT ON PSOPRDEFN TO PEOPLE;
+GRANT SELECT ON PSACCESSPRFL TO PEOPLE;
+
+
+REM Encripta a senha dos usuários;
+
+ENCRYPT_PASSWORD *;

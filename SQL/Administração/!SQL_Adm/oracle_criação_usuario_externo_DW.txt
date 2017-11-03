@@ -1,0 +1,39 @@
+- Criar usuário externo para acessar o DW:
+
+Premissas: 
+- o login do deverá até 10 caracteres
+- poderão ser utilizados letras de A..Z e numeros de 0..9 e o '-'
+       	
+Exemplo utilizando um codigo de usuario 'M123456789':
+       
+1) SQL> SELECT SYS.PKG_PASSWORD_DBA.SET_PASSWORD_ORACLE('M123456789') SENHA FROM DUAL;
+       
+SENHA
+--------------------------------------------------------------------------------
+23241109102817091061
+
+
+2) Criar o usuario M123456789  no DWPROD/DBPROD224 com a senha obtida no passo 1.
+
+3) Testar o login.
+
+4) Para obter a senha a ser atualizada na DWSINISTRO.USUARIO_DW.COD_SENHA (este passo necessita de um 
+prévio cadastro do usuario novo pela Maria Lúcia) :
+	
+SQL> SELECT SYS.PKG_PASSWORD_DBA.SET_PASSWORD_USUARIO('M123456789') SENHA FROM DUAL;
+
+SENHA
+--------------------------------------------------------------------------------
+55060420231214102830
+
+5) Alterar a tabela DWSINISTRO.USUARIO_DW , colocando na coluna COD_SENHA,  a senha obtida no passo 4.
+
+UPDATE DWSINISTRO.USUARIO_DW
+SET COD_SENHA = '55060420231214102830'
+WHERE LOGIN_USUARIO = 'M123456789';
+
+
+
+
+
+

@@ -1,0 +1,52 @@
+SET SERVEROUTPUT ON SIZE 100000
+
+DECLARE   
+    CURSOR c_hithatiobuffer IS
+      select se.username   Username,
+             se.sid sid,
+             se.SQL_ADDRESS endereco , 
+        sum(decode(name, 'consistent gets',value, 0))  "Consis_Gets", 
+        sum(decode(name, 'db block gets',value, 0))  "DB_Blk_Gets", 
+        sum(decode(name, 'physical reads',value, 0))  "Phys_Reads",
+        (sum(decode(name, 'consistent gets',value, 0)) + 
+        sum(decode(name, 'db block gets',value, 0))  - 
+        sum(decode(name, 'physical reads',value, 0)))
+					/
+        (sum(decode(name, 'consistent gets',value, 0))  +
+        sum(decode(name, 'db block gets',value, 0))  )  * 100  Hit_Ratio 
+      from  v$sesstat ss, v$statname sn, v$session se
+        where		ss.sid    = se.sid
+	and		sn.statistic# = ss.statistic#
+	and		value != 0
+        and             username is not null
+	and		sn.name in ('db block gets', 'consistent gets', 'physical reads')
+      group by se.username,se.sid,se.SQL_ADDRESS 
+      having
+        (sum(decode(name, 'consistent gets',value, 0)) + 
+        sum(decode(name, 'db block gets',value, 0))  - 
+        sum(decode(name, 'physical reads',value, 0)))
+					/
+        (sum(decode(name, 'consistent gets',value, 0))  +
+        sum(decode(name, 'db block gets',value, 0))  )  * 100  
+        < 60;
+      CURSOR c_sql(v_address sys.v_$sqltext.address%type) IS
+       SELECT sql_text
+       FROM sys.v_$sqltext
+       WHERE address=v_address
+       ORDER BY piece;
+ BEGIN
+    FOR r_hithatiobuffer IN c_hithatiobuffer LOOP
+       DBMS_OUTPUT.PUT_LINE('===============================================================');
+       DBMS_OUTPUT.PUT_LINE('USUARIO ORACLE         ==> '||r_hithatiobuffer.Username||'('||r_hithatiobuffer.sid||')');
+       DBMS_OUTPUT.PUT_LINE('Hit_Ratio Buffer Cache  ==> '||r_hithatiobuffer.Hit_Ratio);
+       DBMS_OUTPUT.PUT_LINE('---------------------------------------------------------------');
+       FOR r_sql IN c_sql(r_hithatiobuffer.endereco) LOOP      
+         DBMS_OUTPUT.PUT_LINE(r_sql.sql_text);
+       END LOOP;
+       DBMS_OUTPUT.PUT_LINE(' ');
+       DBMS_OUTPUT.PUT_LINE(' ');
+    END LOOP;
+END;
+/
+
+

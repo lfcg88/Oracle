@@ -1,0 +1,37 @@
+##############
+HABILITAR AMM
+##############
+
+alter system set memory_max_target = 400M scope=spfile;
+alter system set memory_target = 400M scope = both;
+alter system set pga_aggregate_target = 0 scope = both;
+alter system set sga_target = 0 scope = both;
+
+###############
+HABILITAR ASMM
+###############
+Executar a query abaixo para obter o valor DA SGA_TARGET
+
+SELECT (
+   (SELECT SUM(value) FROM V$SGA) -
+   (SELECT CURRENT_SIZE FROM V$SGA_DYNAMIC_FREE_MEMORY)
+   ) "SGA_TARGET"
+FROM DUAL;
+
+alter system set SGA_TARGET = 270M scope=both;
+alter system set SHARED_POOL_SIZE=0 scope=both;
+alter system set LARGE_POOL_SIZE=0 scope=both;
+alter system set JAVA_POOL_SIZE=0 scope=both;
+alter system set DB_CACHE_SIZE=0 scope=both;
+alter system set STREAMS_POOL_SIZE=0 scope=both;
+
+
+###########################################
+HABILITAR AUTOMATIC PGA MEMORY MANAGEMENT
+###########################################
+Executar a query abaixo para obter o valor da PGA_AGGREGATE_TARGET, especial atenção deve ser dada a 'maximum PGA allocated';
+
+SELECT NAME, ROUND(VALUE/1024/1024,2) MB FROM V$PGASTAT WHERE UNIT = 'bytes' ORDER BY 2 DESC;
+
+alter system set MEMORY_TARGET = 0 scope = both;
+alter system set PGA_AGGREGATE_TARGET = 100m scope = both;

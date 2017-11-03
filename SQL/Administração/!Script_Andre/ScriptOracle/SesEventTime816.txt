@@ -1,0 +1,156 @@
+/**********************************************************************
+ * File:	sesstime.sql
+ * Type:	SQL*Plus script
+ * Author:	Tim Gorman (SageLogix, Inc)
+ * Date:	25-Mar-02
+ *
+ * Description:
+ *	SQL*Plus script to display total time spent waiting info
+ *	(from V$SESSION_EVENT) along with total time spent processing
+ *	info (from V$SESSTAT for "CPU used by this session" statistic),
+ *	along with a calculation of the percentage of time each session
+ *	spends doing each thing...
+ *
+ * Note:
+ *	Due to use of "analytic" reporting function, this query can only
+ *	be used with v8.1.6 and above...
+ *
+ * Modifications:
+ *********************************************************************/
+break on report on username on sid skip 1
+set pagesize 100 lines 130 trimspool on trimout on verify off recsep off
+set trimspool on trimout on
+
+undef usr
+
+col type format a5 heading "Svc,|Idle,|Wait"
+col username format a12
+col sid format a30
+col name format a35
+col tot_secs_spent format 999,999,999,990.00
+col pct_total format 990.00 heading "%|Total"
+col nonidle_total format 990.00 heading "%|NonIdle"
+
+select	type,
+	username,
+	sid,
+	name,
+	tot_secs_spent,
+	(tot_secs_spent / (sum(tot_secs_spent) over (partition by sid)))*100 pct_total,
+	(nonidle_secs_spent / (sum(nonidle_secs_spent) over (partition by sid)))*100 nonidle_total
+from	(select	decode(event,
+			'rdbms ipc message', 'Idle',
+			'rdbms ipc reply', 'Idle',
+			'SQL*Net message from client', 'Idle',
+			'SQL*Net break/reset to client', 'Idle',
+			'pipe get', 'Idle',
+			'pmon timer', 'Idle',
+			'smon timer', 'Idle',
+			'dispatcher timer', 'Idle',
+			'virtual circuit status', 'Idle',
+			'PX Idle Wait', 'Idle',
+			'PX Deq: Execute Reply', 'Idle',
+			'PX Deq: Execution Msg', 'Idle',
+			'PX Deq: Table Q Normal', 'Idle',
+			'PX Deq Credit: send blkd', 'Idle',
+			'PX Deq Credit: need buffer', 'Idle',
+			'PX Deq: Parse Reply', 'Idle',
+			'PX Deq: Signal ACK', 'Idle',
+			'PX Deq: Join ACK', 'Idle',
+			'PX qref latch', 'Idle',
+			'PX Deq: Msg Fragment', 'Idle',
+			'PL/SQL lock timer', 'Idle',
+			'inactive session', 'Idle',
+				'Wait') type,
+		nvl(s.username, 'SYS') username,
+		s.sid || ' (' || ltrim(s.program) || ')' sid,
+		e.event name,
+		e.time_waited/100 tot_secs_spent,
+		decode(e.event,
+			'rdbms ipc message', 0,
+			'rdbms ipc reply', 0,
+			'SQL*Net message from client', 0,
+			'SQL*Net break/reset to client', 0,
+			'pipe get', 0,
+			'pmon timer', 0,
+			'smon timer', 0,
+			'dispatcher timer', 0,
+			'virtual circuit status', 0,
+			'PX Idle Wait', 0,
+			'PX Deq: Execute Reply', 0,
+			'PX Deq: Execution Msg', 0,
+			'PX Deq: Table Q Normal', 0,
+			'PX Deq Credit: send blkd', 0,
+			'PX Deq Credit: need buffer', 0,
+			'PX Deq: Parse Reply', 0,
+			'PX Deq: Signal ACK', 0,
+			'PX Deq: Join ACK', 0,
+			'PX qref latch', 0,
+			'PX Deq: Msg Fragment', 0,
+			'PL/SQL lock timer', 0,
+			'inactive session', 0,
+				e.time_waited/100) nonidle_secs_spent
+	 from	v$session_event			e,
+		v$session			s
+	 where	e.sid = s.sid
+	 and	nvl(s.username, 'SYS') = decode(upper('&&usr'), '', nvl(s.username, 'SYS'), upper('&&usr'))
+	 and	e.time_waited > 0
+	 union all
+	 select	'Svc' type,
+		nvl(s.username, 'SYS') username,
+		s.sid || ' (' || ltrim(s.program) || ')' sid,
+		sn.name,
+		ss.value/100 tot_secs_spent,
+		ss.value/100 nonidle_secs_spent
+	 from	v$sesstat			ss,
+		v$statname			sn,
+		v$session			s
+	 where	ss.sid = s.sid
+	 and	ss.value > 0
+	 and	sn.statistic# = ss.statistic#
+	 and	sn.name = 'parse time cpu'
+	 and	nvl(s.username, 'SYS') = decode(upper('&&usr'), '', nvl(s.username, 'SYS'), upper('&&usr'))
+	 union all
+	 select	'Svc' type,
+		nvl(s.username, 'SYS') username,
+		s.sid || ' (' || ltrim(s.program) || ')' sid,
+		sn.name,
+		ss.value/100 tot_secs_spent,
+		ss.value/100 nonidle_secs_spent
+	 from	v$sesstat			ss,
+		v$statname			sn,
+		v$session			s
+	 where	ss.sid = s.sid
+	 and	ss.value > 0
+	 and	sn.statistic# = ss.statistic#
+	 and	sn.name = 'recursive cpu usage'
+	 and	nvl(s.username, 'SYS') = decode(upper('&&usr'), '', nvl(s.username, 'SYS'), upper('&&usr'))
+	 union all
+	 select	'Svc' type,
+		nvl(s.username, 'SYS') username,
+		s.sid || ' (' || ltrim(s.program) || ')' sid,
+		'other cpu usage' name,
+		(sst.value - (ssp.value + ssr.value))/100 tot_secs_spent,
+		(sst.value - (ssp.value + ssr.value))/100 nonidle_secs_spent
+	 from	v$sesstat			sst,
+		v$statname			snt,
+	 	v$sesstat			ssp,
+		v$statname			snp,
+	 	v$sesstat			ssr,
+		v$statname			snr,
+		v$session			s
+	 where	sst.sid = s.sid
+	 and	snt.statistic# = sst.statistic#
+	 and	snt.name = 'CPU used by this session'
+	 and	ssp.sid = s.sid
+	 and	snp.statistic# = ssp.statistic#
+	 and	snp.name = 'parse time cpu'
+	 and	ssr.sid = s.sid
+	 and	snr.statistic# = ssr.statistic#
+	 and	snr.name = 'recursive cpu usage'
+	 and	nvl(s.username, 'SYS') = decode(upper('&&usr'), '', nvl(s.username, 'SYS'), upper('&&usr')))
+order by 2, 3, 7 desc, 6 desc, 5 desc, 4
+
+spool sesstime
+/
+spool off

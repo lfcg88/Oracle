@@ -1,0 +1,35 @@
+#!/bin/ksh
+function checkdb {
+TNSNAME=$1
+OUSER=$2
+OPASS=$3
+ 
+ORACLE_HOME=${ORACLE_HOME:=/u01/app/oracle/product/11.2.0/client_1}
+export ORACLE_HOME
+t1="$(date +%s%N)"
+ 
+rt=$($ORACLE_HOME/bin/sqlplus -S ${OUSER}/${OPASS}@${TNSNAME}<< _END
+set heading off
+set linesize 200
+select
+   'Name:'|| tablespace_name,
+   'SizeMB:'||round(TABLESPACE_SIZE*8/1024)||' Used%:',
+   round(used_percent),
+   ';'
+from
+   dba_tablespace_usage_metrics
+order by 3 desc;
+exit;
+_END)
+ 
+t2="$(date +%s%N)"
+echo "db-time= $((($t2 - $t1)/1000000))"
+#remove blank lines,ignore UNDOTBS,get the numeric value by removing tab and spaces
+tbpct=$(echo "$rt" | egrep -v '^$|UNDOTBS' | head -1 | sed 's/.*Used%:\(.*\);/\1/'  |  sed 's/[ \t]*//g')
+#Critical condition: thresh-hold > 95 or non-numeric value returned
+if [ $tbpct -gt 95 ] || [[ "$tbpct" != +(\d) ]] ; then
+ echo "db-status=[CRITICAL]:" $rt
+else
+ echo "db-status=[OK]:" $rt
+fi
+}

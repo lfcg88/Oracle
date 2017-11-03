@@ -1,0 +1,117 @@
+-------------------------------------------------------------------------------------------------------
+-- quicktune.sql
+-------------------------------------------------------------------------------------------------------
+SET FEEDBACK OFF;
+SET HEADING ON;
+SET ECHO OFF;
+SET PAGESIZE 50000;
+SET LINESIZE 122;
+CLEAR SCREEN;
+
+prompt =======================================================================================================
+prompt
+prompt I/O CONTENTION
+prompt
+prompt =======================================================================================================
+prompt
+column TOTALS                     format a44               heading "DATABASE";
+column file_system_name           format a44               heading "File System|Name";
+column tablespace_name            format a44               heading "TableSpace|Name";
+column file_name                  format a44               heading "File|Name";
+column MBytes                     format 9,999,999         heading "Size|(MBytes)";
+column phyblkrd                   format 9,999,999         heading "Number|Blocks|Read|(000's)";
+column phyblkwrt                  format 9,999,999         heading "Number|Blocks|Written|(000's)";
+column read_time_per_block_msec   format 9,999,999         heading "Time|to|Read|1 Block|(msecs)";
+column write_time_per_block_msec  format 9,999,999         heading "Time|to|Write|1 Block|(msecs)";
+column avg_access_time_tot        format 9,999,999         heading "Average|Time|to|Read/Write|1 Block|(msecs/blk)";
+column avg_access_time            format 9,999,999         heading "SORTED|ON THIS|COLUMN|:|Average|Time|to|Read/Write|1 Block|(msecs/blk)";
+column avg_access_speed           format 9,999,999         heading "Average|Speed|to|Read/Write|1 Second|(blks/sec)";
+column avg_estimated_srcer_speed  format 9,999.999         heading "Estimated|Average|SRCER|Perform.|(recs/sec)";
+column avg_estimated_rlser_speed  format 9,999.999         heading "Estimated|Average|RLSER|Perform.|(recs/sec)";
+column tps                        format 9,999.999         heading "ORACLE TRANSACTIONS PER SECOND";
+column spt                        format 9,999.999         heading "     SECONDS PER ORACLE TRANSACTION";
+
+select d.name DATABASE,
+       to_char(sysdate, 'DD-MON-YYYY HH24:MI:SS') DATE_OF_RUN,
+       to_char(open_time, 'DD-MON-YYYY HH24:MI:SS') OPEN_TIME,
+       value BLOCK_SIZE_BYTES
+  from v$database d,
+       v$parameter p,
+       v$thread t
+ where p.name = 'db_block_size';
+
+SET FEEDBACK ON;
+
+select 'TOTALS' TOTALS ,
+       sum(bytes)/(1024*1024) MBytes,
+       sum(phyblkrd)/1000 phyblkrd,
+       sum(phyblkwrt)/1000 phyblkwrt,
+       (sum(readtim)*10)/(sum(phyblkrd)+1) read_time_per_block_msec,
+       (sum(writetim)*10)/(sum(phyblkwrt)+1) write_time_per_block_msec,
+       (((sum(readtim)*10)/(sum(phyblkrd)+1))*(sum(phyblkrd)) + ((sum(writetim)*10)/(sum(phyblkwrt)+1))*(sum(phyblkwrt))) /
+         (sum(phyblkrd) + sum(phyblkwrt) + 1)
+          avg_access_time_tot,
+       (sum(phyblkrd) + sum(phyblkwrt)) /
+         (((((sum(readtim)*10)/(sum(phyblkrd)+1))*(sum(phyblkrd)) + ((sum(writetim)*10)/(sum(phyblkwrt)+1))*(sum(phyblkwrt))) + 1)) * 1000
+          avg_access_speed
+  from v$filestat,
+       dba_data_files
+ where file_id = file#;
+
+select substr(name,1,instr(name,'/',-1))||substr(name,1,instr(name,'\',-1)) file_system_name,
+       sum(bytes)/(1024*1024) MBytes,
+       sum(phyblkrd)/1000 phyblkrd,
+       sum(phyblkwrt)/1000 phyblkwrt,
+       avg((readtim*10)/(phyblkrd+1)) read_time_per_block_msec,
+       avg((writetim*10)/(phyblkwrt+1)) write_time_per_block_msec,
+       (avg((readtim*10)/(phyblkrd+1))*sum(phyblkrd)/1000 + avg((writetim*10)/(phyblkwrt+1))*sum(phyblkwrt)/1000) /
+           (sum(phyblkrd)/1000 + sum(phyblkwrt)/1000 + 1)
+            avg_access_time,
+       ((sum(phyblkrd) + sum(phyblkwrt)) /
+           (avg((readtim*10)/(phyblkrd+1))*sum(phyblkrd) + avg((writetim*10)/(phyblkwrt+1))*sum(phyblkwrt) + 1)) * 1000
+            avg_access_speed
+  from v$datafile a,
+       v$filestat b
+ where a.file# = b.file#
+ group by substr(name,1,instr(name,'/',-1)), substr(name,1,instr(name,'\',-1))
+ order by 7 desc, 6 desc;
+
+select t.tablespace_name,
+       sum(bytes)/(1024*1024) MBytes,
+       sum(phyblkrd)/1000 phyblkrd,
+       sum(phyblkwrt)/1000 phyblkwrt,
+       avg((readtim*10)/(phyblkrd+1)) read_time_per_block_msec,
+       avg((writetim*10)/(phyblkwrt+1)) write_time_per_block_msec,
+       (avg((readtim*10)/(phyblkrd+1))*sum(phyblkrd)/1000 + avg((writetim*10)/(phyblkwrt+1))*sum(phyblkwrt)/1000) /
+           (sum(phyblkrd)/1000 + sum(phyblkwrt)/1000 + 1)
+            avg_access_time,
+       ((sum(phyblkrd) + sum(phyblkwrt)) /
+           (avg((readtim*10)/(phyblkrd+1))*sum(phyblkrd) + avg((writetim*10)/(phyblkwrt+1))*sum(phyblkwrt) + 1)) * 1000
+            avg_access_speed
+  from dba_tablespaces t,
+       v$filestat,
+       dba_data_files d
+ where t.tablespace_name = d.tablespace_name
+   and d.file_id = file#
+ group by t.tablespace_name,
+       t.status
+ order by 7 desc, 6 desc;
+
+select file_name,
+       bytes/(1024*1024) MBytes,
+       phyblkrd/1000 phyblkrd,
+       phyblkwrt/1000 phyblkwrt,
+       (readtim*10)/(phyblkrd+1) read_time_per_block_msec,
+       (writetim*10)/(phyblkwrt+1) write_time_per_block_msec,
+       (((readtim*10)/(phyblkrd+1))*(phyblkrd) + ((writetim*10)/(phyblkwrt+1))*(phyblkwrt)) /
+         (phyblkrd + phyblkwrt + 1)
+          avg_access_time,
+       (phyblkrd + phyblkwrt) /
+         (((((readtim*10)/(phyblkrd+1))*(phyblkrd) + ((writetim*10)/(phyblkwrt+1))*(phyblkwrt)) + 1)) * 1000
+          avg_access_speed
+  from v$filestat,
+       dba_data_files
+ where file_id = file#
+ order by 7 desc, 6 desc;
+
+

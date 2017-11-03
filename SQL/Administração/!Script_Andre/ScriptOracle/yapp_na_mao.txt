@@ -1,0 +1,106 @@
+
+Calculate the total response time
+==================================
+
+This section covers how to retrieve the relevant statistics from the Oracle performance tables
+used to calculate total response time. To restate the original response time formula:
+
+Response Time = Service Time + Wait Time
+
+
+Service Time
+=============
+
+The service time is equal to the statistic “CPU used by this session” which is shown through
+entries in V$SYSSTAT or V$SESSTAT by selecting for this event.
+
+Use v$statname to assist in finding the correct statistic number for “CPU used by this
+session” for each platform and release.
+
+	instance level
+
+	select a.value "Total CPU time"
+	from v$sysstat a
+	where a.name = 'CPU used by this session';
+
+13526221
+
+
+	Session level
+
+	select sid, a.value "Total CPU time"
+	from v$sesstat a
+	where a.statistic# = 12 // statistic # for 'CPU used by	this session' -> obtained from v$statname
+
+
+         1              0
+         2              0
+         3              0
+         4              0
+         5              0
+         6              0
+         7              0
+         8              0
+         9              0
+        10              0
+        11             13
+        16            655
+        20           2638
+        21           1598
+        24         289608
+        25          49555
+        29          14078
+        30         837359
+        39           2276
+
+
+Wait Time
+==========
+
+The wait time is recorded through entries in V$SYSTEM_EVENT or V$SESSION_EVENT,
+
+
+Instance Level
+
+select sum(time_waited) "Total Wait Time"
+from v$system_event
+where event not in ('pmon timer', 'smon timer', 'rdbms ipc
+message', 'parallel dequeue wait', 'virtual circuit', 'SQL*Net
+message from client', 'client message', 'NULL event');
+
+
+2156519418
+
+
+---Note: not a complete list in this sample query
+
+
+Session Level
+
+select sid, sum(time_waited) "Total Time waited"
+from v$session_event
+where event != 'SQL*Net message from client'
+group by sid;
+
+
+         1         174490766
+         2         174395395
+         3         172605496
+         4         174479832
+         5         168697995
+         6         125391960
+         7         174393984
+         8         173872237
+         9         173049369
+        10         167305119
+        16                 7
+        20              1530
+        21              4230
+        24            193764
+        25             76612
+        29             15250
+        30            726945
+        39              1631
+
+
+  

@@ -1,0 +1,103 @@
+set echo on;
+Rem
+Rem 1  - SID = Session identifier
+Rem 2  - SER = Session serial number
+Rem 3  - OSUER = Operating system username
+Rem 4  - OSPID = Operating system process identifier
+Rem 5  - STAT = Status of session (ACT=active INA=Inactive)
+Rem 6  - COM = Command number. Definition listed in table Audit_actions
+Rem 7  - Usuario = Oracle username
+Rem 8  - TYP = Type of process (USE=user BAC=background)
+Rem 9  - %HIT = Hit ratio in percent
+Rem 10 - CPU = CPU being used
+Rem 11 - lockwait = Lock Wait
+-- 11 - BCHNG = Block changes
+-- 12 - CCHNG = Consistent changes
+Rem
+ set echo off
+--set head on;
+
+
+accept vAtivo prompt 'Somente Ativos (S/N) => ';
+
+
+col lockwait  format a4 heading "Lock|Wait"
+column program format a20
+col username  format a10
+col osuser    format a10
+col comando   format a12
+--col lockwait  format a1 heading "L|o|c|k|-|W|a|i|t"
+col sid       format 9999
+col terminal  format a10
+set pagesize 200
+set lines 120
+
+spool c:\session78756765.lst
+select substr(s.sid,1,3) sid,substr(s.serial#,1,5) ser,
+substr(osuser,1,8) osuser,spid ospid,  
+decode(status,'ACTIVE','Act','INACTIVE','Inact','KILLED','Kill', status)      stat,
+upper(decode(nvl(s.command, 0),
+0, '-----',
+1, 'Create Table',
+2, 'Insert ...',
+3, 'Select ...',
+4, 'Create Cluster',
+5, 'Alter Cluster',
+6, 'Update ...',
+7, 'Delete ...',
+8, 'Drop ...',
+9, 'Create Index',
+10, 'Drop Index',
+11, 'Alter Index',
+12, 'Drop Table',
+13, '--',
+14, '--',
+15, 'Alter Table',
+16, '--',
+17, 'Grant',
+18, 'Revoke',
+19, 'Create Synonym',
+20, 'Drop Synonym',
+21, 'Create View',
+22, 'Drop View',
+23, '--',
+24, '--',
+25, '--',
+26, 'Lock Table',
+27, 'No Operation',
+28, 'Rename',
+29, 'Comment',
+30, 'Audit',
+31, 'NoAudit',
+32, 'Create Ext DB',
+33, 'Drop Ext. DB',
+34, 'Create Database',
+35, 'Alter Database',
+36, 'Create RBS',
+37, 'Alter RBS',
+38, 'Drop RBS',
+39, 'Create Tablespace',
+40, 'Alter Tablespace',
+41, 'Drop tablespace',
+42, 'Alter Session',
+43, 'Alter User',
+44, 'Commit',
+45, 'Rollback',
+46, 'Savepoint')) comando,
+substr(schemaname,1,10) Usuario,
+substr(type,1,3) typ,
+p.terminal,
+--s.program,
+substr(decode((consistent_gets+block_gets),0,'None',
+(100*(consistent_gets+block_gets-physical_reads)/
+(consistent_gets+block_gets))
+),1,4) "%HIT",value CPU,
+substr(block_changes,1,9) "BL.Chng",
+--substr(consistent_changes,1,10) "Cons. Chng",
+decode(lockwait,'','N', 'Y') lockwait
+from v$process p, v$SESSTAT t,v$sess_io i ,v$session s
+where i.sid=s.sid and p.addr=paddr(+) and s.sid=t.sid and
+t.statistic#=12 and 
+status like decode(upper('&vAtivo'),'S','ACTIVE','%')
+order by &Chave_Ordenacao desc
+/

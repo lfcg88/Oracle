@@ -1,0 +1,75 @@
+#### estimando o tamanho da tablespace undo ### 16384
+
+show parameter undo;
+------------------------------------------------------
+undo_retention                       integer     1800
+
+
+select to_char(end_time,'yyyy-mm-dd hh24:mi') end_time,
+undoblks blocos_usados_segundos, ssolderrcnt transacoes_perdidas 
+from v$undostat
+order by 1;
+
+END_TIME         BLOCOS_USADOS_SEGUNDOS TRANSACOES_PERDIDAS
+---------------- ---------------------- -------------------
+2013-10-10 12:30                   2534                   0
+2013-10-10 12:40                   2058                   0
+2013-10-10 12:50                   1897                   0
+2013-10-10 13:00                   2481                   0
+2013-10-10 13:10                   1901                   0
+2013-10-10 13:20                   1894                   0
+2013-10-10 13:30                   2460                   0
+2013-10-10 13:40                   2480                   0
+2013-10-10 13:50                   1916                   0
+2013-10-10 14:00                   2517                   0
+2013-10-10 14:10                   1880                   0
+
+
+column tablespace_name format a15
+column autoextend format a10
+select b.tablespace_name, 
+	   b.tbs_size SizeMb, 
+	   a.free_space FreeMb, 
+	   b.tbs_size - a.free_space usedmb,
+	   c.autoextensible autoextend,
+	   a.block_size
+  from (select tablespace_name, 
+			   round(sum(bytes)/1024/1024 ,2) as free_space
+    	  from dba_free_space
+         group by tablespace_name) a,
+              (select tablespace_name, 
+                      sum(bytes)/1024/1024 as tbs_size
+                 from dba_data_files
+                group by tablespace_name) b,
+                      dba_data_files c
+ where a.tablespace_name(+)=b.tablespace_name
+       and c.tablespace_name = a.tablespace_name
+       --and c.autoextensible in 'NO'
+       and a.tablespace_name like '%UNDO%'
+ order by b.tablespace_name;
+
+
+ TABLESPACE_NAME     SIZEMB     FREEMB     USEDMB AUTOEXTEND
+--------------- ---------- ---------- ---------- ----------
+UNDOTBS1             16500    4006.69   12493.31 NO
+
+
+select distinct block_size
+  from dba_tablespaces;
+  
+  
+BLOCK_SIZE
+----------
+     16384
+
+
+5 * 7200 * 16384
+
+Para estimar o tamanho da Tablespace de Undo devemos levar em consideração as informações acima a conta a ser feita deverá ser:
+
+(maior qtde de blocos_usados_segundos/600) * undo_retention * block_size
+
+Então temos:
+
+(2534/600) * 1800 * 16384 = 147.456.000
+

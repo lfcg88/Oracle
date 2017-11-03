@@ -1,0 +1,18 @@
+
+
+
+variable my_rept CLOB;
+BEGIN
+  :my_rept :=DBMS_SQLTUNE.REPORT_SQL_MONITOR();
+END;
+
+
+
+set long 10000000
+set longchunksize 10000000
+set linesize 200
+select dbms_sqltune.report_sql_monitor from dual;
+
+
+
+

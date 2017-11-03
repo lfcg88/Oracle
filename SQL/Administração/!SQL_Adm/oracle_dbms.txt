@@ -1,0 +1,11 @@
+exec dbms_utility.analyze_Schema ('<esquema>','COMPUTE');
+
+set time on;
+set timing on;
+
+exec DBMS_STATS.GATHER_DATABASE_STATS(CASCADE=>TRUE);
+
+
+begin
+dbms_stats.gather_schema_stats(ownname=> 'CORP' , cascade=> TRUE);
+end;

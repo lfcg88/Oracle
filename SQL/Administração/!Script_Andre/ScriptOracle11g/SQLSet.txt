@@ -1,0 +1,21 @@
+
+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+LOAD no SQLSET
+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+Use the LOAD_SQLSET procedure to populate the empty STS with SQL
+statements from the AWR snapshots. In this example, I load the STS from
+the AWR baseline peak baseline. The STS will include the top 20 statements
+from the AWR peak baseline, based on the elapsed time attribute.
+declare
+test_cursor1 dbms_sqltune.sqlset_cursor;
+begin
+open baseline_cursor for
+select value(p) from table (dbms_sqltune.
+select_workload_repository(
+'peak baseline',null,null,'elapsed_time',null,null,null,20)) p;
+dbms_sqlset.load_sqlset (
+sqlset_name => 'testset1',
+populate_cursor => test_cursor1);
+end;
+/

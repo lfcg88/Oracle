@@ -1,0 +1,111 @@
+-- ORACLE DATABASE ADMINISTRATOR
+Disable/enable FK constraints against a specified parent table
+-- Daniel Clamage
+-- 11 Nov 2003
+-- Rating: -3.92- (out of 5)
+-- 
+-- Sometimes you want to truncate a table that has foreign keys in other
+--  tables pointing to the primary key of the table to be truncated. But you can't 
+-- truncate a table that has foreign keys pointing to its primary key, even if the child 
+-- tables are empty! You must first disable the foreign key constraints. Then when you've 
+-- finished reloading data, you can enable the foreign key constraints. This stored procedure
+--  simplifies the task of disabling/enabling foreign key constraints against the specified 
+-- parent table. It has been tested on 8i (8.1.x) and 9i (9.0.x, 9.2.x) databases in development
+--  and production environments.
+-- 
+-- The status parameter can be used by a calling program to determine the success or failure 
+-- of the requested operation. You might use this routine in a batch loading operation. 
+
+
+-- control foreign key constraints for the given table's primary key
+-- only enables/disables the constraint if it's not already
+-- enable_flag: 1 = enable, 0 = disable
+-- status: 0 = success
+--      1001 = invalid enable flag
+--      1002 = no primary key exists for given table
+CREATE OR REPLACE
+PROCEDURE control_fkeys(
+  p_table_name  IN user_constraints.table_name%TYPE
+ ,p_enable_flag IN NUMBER
+ ,p_status      IN OUT NUMERIC)
+IS
+  -- constants
+  k_enable  user_constraints.status%TYPE := 'ENABLE';
+  k_disable user_constraints.status%TYPE := 'DISABLE';
+  -- identify fkeys on pkey for given table
+  CURSOR id_fkeys (
+    c_table_name user_constraints.table_name%TYPE
+   ,c_status user_constraints.status%TYPE)
+  IS
+  SELECT table_name, constraint_name fkey, r_constraint_name pkey, status
+  FROM user_constraints
+  WHERE constraint_type='R'
+    AND status!=c_status
+    AND r_constraint_name IN (
+      SELECT constraint_name
+      FROM user_constraints
+      WHERE table_name=c_table_name
+        AND constraint_type='P')
+  ORDER BY table_name, constraint_name;
+  -- record variables
+  rec_id_fkeys id_fkeys%ROWTYPE;
+  -- variables
+  l_status user_constraints.status%TYPE;
+  l_table_name user_constraints.table_name%TYPE;
+  l_stmt VARCHAR2(255);
+  l_pkey_name user_constraints.constraint_name%TYPE;
+BEGIN
+  p_status := 0;
+  l_table_name := UPPER(p_table_name);
+  IF (p_enable_flag = 1) THEN
+    l_status := k_enable;
+  ELSIF (p_enable_flag = 0) THEN
+    l_status := k_disable;
+  ELSE
+    DBMS_OUTPUT.put_line(
+      '-- control_fkeys: enable_flag must be 1 or 0 [' || p_enable_flag || ']');
+    p_status := 1001;
+  END IF;
+  IF (p_status = 0) THEN  -- validated enable flag
+    -- a primary key for the given table must exist
+    SELECT constraint_name
+    INTO l_pkey_name
+    FROM user_constraints
+    WHERE table_name=l_table_name
+      AND constraint_type='P';
+    DBMS_OUTPUT.put_line(
+      '-- control_fkeys: ' || l_status ||
+      ' foreign key constraints on table ' || l_table_name ||
+      ' whose primary key is ' || l_pkey_name);
+    OPEN id_fkeys(l_table_name, l_status || 'D');
+    LOOP -- process foreign keys
+      FETCH id_fkeys INTO rec_id_fkeys;
+      EXIT WHEN id_fkeys%NOTFOUND;
+      l_stmt := 'ALTER TABLE ' || rec_id_fkeys.table_name || ' ' || l_status ||
+                ' CONSTRAINT ' || rec_id_fkeys.fkey;
+      DBMS_OUTPUT.put_line(l_stmt);
+      EXECUTE IMMEDIATE l_stmt;
+    END LOOP; -- process foreign keys
+    IF (id_fkeys%ROWCOUNT = 0) THEN  -- no fkeys found that weren't enabled/disabled
+      DBMS_OUTPUT.put_line(
+        '-- control_fkeys: No foreign keys found against table ' ||
+        l_table_name || ' to ' || l_status);
+    END IF;  -- no rows found
+    CLOSE id_fkeys;
+  END IF;  -- validated enable flag
+EXCEPTION
+WHEN NO_DATA_FOUND THEN -- primary key lookup failed
+  p_status := 1002;
+  DBMS_OUTPUT.put_line(
+    '-- control_fkeys: no primary key exists for table ' || l_table_name);
+
+WHEN OTHERS THEN
+  p_status := SQLCODE;
+  DBMS_OUTPUT.put_line('-- control_fkeys: ' || SQLERRM(p_status));
+  IF (id_fkeys%ISOPEN) THEN
+    CLOSE id_fkeys;
+  END IF;
+END control_fkeys;
+/
+
+ 

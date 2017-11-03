@@ -1,0 +1,1 @@
+alter database backup controlfile to trace as '/u01/controlfile.trace';

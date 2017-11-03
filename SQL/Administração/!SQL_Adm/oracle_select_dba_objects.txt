@@ -1,0 +1,12 @@
+select object_name, last_ddl_time, created, status, timestamp from dba_objects
+where owner = 'GOLDENCROSS'
+order by last_ddl_time desc;
+
+desc dba_objects;
+
+select count(*) from goldencross.DELIVERY_GERADO_TMP;
+
+select object_name, status
+from dba_objects
+where status='INVALID' and owner = 'GOLDENCROSS'
+order by 1;

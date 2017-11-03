@@ -1,0 +1,29 @@
+-- Desde quando a instância corrente está no ar?
+SELECT instance_name,
+	   shutdown_pending,
+	   TO_CHAR(startup_time, 'dd/mm/yy hh24:mm:ss') tempo
+  FROM v$instance;
+
+-- Há quantas horas a instância corrente está no ar?
+SELECT (SYSDATE-logon_time)*24 "Horas" FROM sys.v_$session WHERE sid=1 ;
+
+ 
+-- Encerrar instância corrente
+shutdown immediate;
+
+-- Iniciar instância (banco ainda permanece fechado, ou "não montado")
+startup nomount
+
+
+-- Abrir banco parcialmente, ou "montar" um banco
+alter database mount;
+
+-- Completar abertura
+alter database open;
+
+-- Utilizando arquivo de parâmetros texto
+shutdown immediate
+startup nomount pfile=initorcl.ora
+show parameters spfile
+shutdown
+startup

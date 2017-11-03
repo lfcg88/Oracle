@@ -1,0 +1,24 @@
+#!/usr/bin/ksh 
+#
+# 
+# SELECT object_name,object_type,owner,status 
+# FROM dba_objects WHERE object_type='JAVA CLASS' AND status='INVALID' and object_name like '%OracleXMLStaticQuery%' 
+# 
+#/109a284b_OracleXMLStaticQuery   JAVA CLASS         SYS                            INVALID  
+# 
+#     
+# SELECT dbms_java.longname('/109a284b_OracleXMLStaticQuery') FROM dual;  
+# DBMS_JAVA.LONGNAME('/109A284B_ORACLEXMLSTATICQUERY')                            
+# ------------------------------------------------------------------
+# oracle/xml/sql/query/OracleXMLStaticQuery    
+#
+#/u00/app/oracle/product/8.1.7> FindJavaClassDentroJar.sh /u00/app/oracle/product/8.1.7/rdbms/jlib OracleXMLStaticQuery                                                
+#
+for f in `ls $1//*.jar` 
+do 
+t=`strings $f | grep $2` 
+if test ! -z "$t" 
+then 
+echo "$2 is found in $f" 
+fi 
+done 

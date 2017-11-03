@@ -1,0 +1,36 @@
+#!/bin/bash
+NLS_LANG=american_america.WE8ISO8859P1
+ORACLE_SID=or1
+ORACLE_BASE=/opt/app/oracle
+PATH=/usr/kerberos/bin:/usr/local/bin:/bin:/usr/bin:/home/oracle/bin:/opt/app/oracle/product/10.2.0/db_1/bin
+ORACLE_HOME=/opt/app/oracle/product/10.2.0/db_1
+export NLS_LANG ORACLE_SID ORACLE_BASE ORACLE_HOME PATH
+
+rman target / nocatalog log=/home/oracle/bin/rman.log << EOF
+CONFIGURE RETENTION POLICY TO REDUNDANCY 1; # default
+CONFIGURE BACKUP OPTIMIZATION ON; # default
+CONFIGURE DEFAULT DEVICE TYPE TO DISK; # default
+CONFIGURE CONTROLFILE AUTOBACKUP ON; # default
+CONFIGURE CONTROLFILE AUTOBACKUP FORMAT FOR DEVICE TYPE DISK TO '%F'; # default
+CONFIGURE DEVICE TYPE DISK PARALLELISM 1 BACKUP TYPE TO BACKUPSET; # default
+CONFIGURE DATAFILE BACKUP COPIES FOR DEVICE TYPE DISK TO 1; # default
+CONFIGURE ARCHIVELOG BACKUP COPIES FOR DEVICE TYPE DISK TO 1; # default
+CONFIGURE MAXSETSIZE TO 20G; # default
+CONFIGURE SNAPSHOT CONTROLFILE NAME TO '/opt/app/oracle/product/10.2.0/db_1/dbs/snapcf_rm.f'; # default
+
+crosscheck backup;
+crosscheck archivelog all;
+delete noprompt backup;
+delete noprompt archivelog until time 'sysdate-1';
+delete noprompt obsolete;
+sql 'alter system switch logfile';
+sql 'alter system switch logfile';
+sql 'alter system switch logfile';
+backup as compressed backupset format '/u02/app/oracle/backup/BkpOR1_DBF_%U.bak' database ;
+sql 'alter system switch logfile';
+sql 'alter system switch logfile';
+sql 'alter system switch logfile';
+backup format '/u02/app/oracle/backup/BkpOR1_CTL_%U.bak' current controlfile;
+quit
+
+EOF

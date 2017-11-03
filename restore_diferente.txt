@@ -1,0 +1,95 @@
+Instancia Fonte = otcdb01
+Instancia Alvo = otcdb02
+
+Transferir os arquivos de backup para o novo servidor
+Transfirir e alterar o arquivo init.ora alterando as ocorrências de otcdb01 por otcdb02 com execeção do parametro "*.db_name=".
+Adicionar no init.ora, caso não tenha, o parametro db_unique_name='otcdb02'
+Criar os diretórios conforme presentes no init.ora
+Criar o arquivo de senhas
+$ orapwd file=orapwotcdb02 password=oracle entries=5
+
+$export ORACLE_SID=otcdb02
+$sqlplus / as sysdba 
+
+SQL> STARTUP NOMOUNT
+SQL> CREATE SPFILE FROM PFILE;
+SQL> SHUTDOWN IMMEDIATE;
+
+$rman target /
+
+RMAN> STARTUP NOMOUNT
+RMAN> restore controlfile from '/u04/orabackup/rman_controlfile/otcdb01/rman_ctl_OTCDB01_20_851772584_1.ctl';
+RMAN> ALTER DATABASE MOUNT;
+
+# Caso o diretório de backup seja diferente entre os servidores devemos excluir os backups antigos logicamente do RMAN e catalogarmos os novos, atravé dos passos abaixo:
+
+RMAN>
+run {
+crosscheck backup;
+delete noprompt expired backup; 
+crosscheck archivelog all;
+delete noprompt expired archivelog all;
+}
+
+RMAN> list backup;
+
+RMAN> catalog start with '/u04/orabackup/';
+
+RMAN> list backup of database;
+
+RMAN> list backup of archivelog all;
+
+LIST BACKUP SUMMARY;
+
+# Verificar a incarnação que o banco de dados se encontra
+
+RMAN> LIST INCARNATION;
+
+RMAN> RESET DATABASE TO INCARNATION 4;
+
+RMAN> RESTORE DATABASE PREVIEW;
+
+RMAN>
+run
+{
+allocate channel c1 device type disk;
+allocate channel c2 device type disk;
+allocate channel c3 device type disk;
+SET NEWNAME FOR DATAFILE 1 TO '/u01/app/oracle/oradata/otcdb02/system01.dbf';
+SET NEWNAME FOR DATAFILE 2 TO '/u01/app/oracle/oradata/otcdb02/sysaux01.dbf';
+SET NEWNAME FOR DATAFILE 3 TO '/u01/app/oracle/oradata/otcdb02/undotbs01.dbf';
+SET NEWNAME FOR DATAFILE 4 TO '/u01/app/oracle/oradata/otcdb02/users01.dbf';
+SET NEWNAME FOR TEMPFILE 1 TO '/u01/app/oracle/oradata/otcdb02/temp01.dbf';
+SET NEWNAME FOR TEMPFILE 2 TO '/u01/app/oracle/oradata/otcdb02/temp02.dbf';
+SQL "alter database rename file ''/u01/app/oracle/oradata/otcdb01/redo03.log'' to ''/u01/app/oracle/oradata/otcdb02/redo03.log''";
+ SQL "alter database rename file ''/u01/app/oracle/oradata/otcdb01/redo02.log'' to ''/u01/app/oracle/oradata/otcdb02/redo02.log''";
+ SQL "alter database rename file ''/u01/app/oracle/oradata/otcdb01/redo01.log'' to ''/u01/app/oracle/oradata/otcdb02/redo01.log''";
+set until scn 1153083; ### ATENÇÃO - Caso não consiga obter todos os archives de produção, configurar o valor do scn para o ultimo valor adquirido através do comando "list backup of archivelog all;"
+RESTORE DATABASE;
+SWITCH DATAFILE ALL;
+SWITCH TEMPFILE ALL;
+RECOVER DATABASE;
+}
+
+RMAN> RECOVER DATABASE PREVIEW;
+RMAN> RECOVER DATABASE;
+RMAN> ALTER DATABASE OPEN RESETLOGS;
+
+# Aterar o nome da instancia
+
+SQL> SELECT NAME FROM V$DATABASE;
+SQL> SHUTDOWN IMMEDIATE
+SQL> STARTUP MOUNT
+
+# Mudar o id do banco de dados conforme o novo nome usando o utililitário "nid"
+
+$ nid TARGET=SYS/oracle dbname=otcdb02
+
+# Mudar o parametro "db_name" para o novo nome.
+
+SQL> STARTUP NOMOUNT;
+SQL> ALTER SYSTEM SET db_name=otcdb02 SCOPE=SPFILE;
+SQL> SHUTDOWN IMMEDIATE
+SQL> startup mount;
+SQL> ALTER DATABASE OPEN RESETLOGS;
+SQL> SELECT name, open_mode FROM v$database;

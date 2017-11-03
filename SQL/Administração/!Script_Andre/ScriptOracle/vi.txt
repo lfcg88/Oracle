@@ -1,0 +1,5 @@
+
+comando para substituir palavras no texto inteiro
+==================================================
+
+g/stodes2/s//stotrn1/g

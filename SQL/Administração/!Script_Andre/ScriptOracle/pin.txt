@@ -1,0 +1,81 @@
+/**********************************************************************
+ * File:	gen_pin.sql
+ * Type:	SQL*Plus script
+ * Author:	Tim Gorman (Evergreen Database Technologies, Inc.)
+ * Date:	21-Oct-98
+ *
+ * Description:
+ *	SQL*Plus script which uses the technique of "SQL-generating-SQL"
+ *	to pin appropriate objects into the Shared Pool of the Oracle
+ *	SGA using the DBMS_SHARED_POOL.KEEP packaged procedure.
+ *
+ *	The script is designed on the following concepts:
+ *		- it is good to pin objects that are executed frequently,
+ *		  especially if they are large (i.e. larger than 4Kb)
+ *		- it is OK to periodically unpin objects which have been
+ *		  pinned previously but which have not been executed
+ *	This script is intended to be run periodically to do exactly
+ *	that.  It generates another (temporary) SQL*Plus script to
+ *	actually run the KEEP and UNKEEP procedures, to allow you to
+ *	review before running...
+ *
+ * Modifications:
+ *	TGorman	21oct98	written for Oracle7 v7.3
+ *	TGorman	15feb01	modified rules of selection and added UNKEEP
+ *			logic...
+ *	TGorman	04jun01	added another UNION'd subquery to KEEP/UNKEEP
+ *			frequently executed cursors (TYPE='INVALID TYPE'
+ *			in v8.0.x and TYPE='CURSOR' in v8.1.x)...
+ *********************************************************************/
+set tab off echo off feedback off timing off trimout on pause off
+set trimspool on pages 0 lines 500 verify off
+
+col instance new_value V_INSTANCE noprint
+select	lower(replace(t.instance,chr(0),'')) instance
+from	sys.v_$thread        t,
+	sys.v_$parameter     p
+where	p.name = 'thread'
+and	t.thread# = to_number(decode(p.value,'0','1',p.value));
+
+col sort0 noprint
+col sort1 noprint
+col sort2 noprint
+col sort3 noprint
+
+spool run_pin_&&V_INSTANCE..sql
+prompt whenever sqlerror exit failure
+prompt set echo on feedback on timing on pagesize 100
+prompt spool run_pin_&&V_INSTANCE
+select	decode(kept, 'YES', 'unkeep', 'keep') sort0,
+	type sort1,
+	owner sort2,
+	name sort3,
+	'exec dbms_shared_pool.' ||
+	decode(kept, 'YES', 'unkeep', 'keep') || '(''' ||
+	owner || '.' || name || ''',''' ||
+	decode(type,	'TYPE', 'T',
+			'TRIGGER', 'R',
+			'SEQUENCE', 'Q', 'P') || ''');' text
+from	sys.v_$db_object_cache
+where	((executions >= 100 and kept = 'NO')
+    or   (executions < 50 and kept = 'YES'))
+and	type in ('PACKAGE','PACKAGE BODY','PROCEDURE','FUNCTION','TYPE',
+		 'TRIGGER','SEQUENCE')
+union
+select distinct decode(o.kept, 'YES', 'unkeep', 'keep') sort0,
+	o.type sort1,
+	o.owner sort2,
+	o.name sort3,
+	'exec dbms_shared_pool.' ||
+	decode(o.kept, 'YES', 'unkeep', 'keep') || '(''' ||
+	a.address || ', ' || a.hash_value || ''');' text
+from	sys.v_$db_object_cache	o,
+	sys.v_$sqlarea		a
+where	((o.executions >= 100 and o.kept = 'NO')
+    or   (o.executions < 50 and o.kept = 'YES'))
+and	o.type in ('CURSOR', 'INVALID TYPE')
+and	a.sql_text = o.name
+order by 1 desc, 2 asc, 3 asc, 4 asc;
+prompt spool off
+spool off
+REM start run_pin_&&V_INSTANCE

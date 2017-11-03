@@ -1,0 +1,36 @@
+set pagesize 100 
+set lines 200 
+column  pct_used format 999.9 
+column  pct_used heading "%|Used"
+column  name    format a36      heading "Tablespace Name"
+column  bytes   format 999,999,999,999,999    heading "Total Bytes"
+column  maxbytes   format 999,999,999,999,999    heading "Max Bytes"
+column  used    format 999,999,999,999,999   heading "Used"
+column  free    format 999,999,999,999,999  heading "Free"
+column  name    justify left
+column  bytes   justify right
+column  used    justify right
+column  free    justify right
+column  pct_used justify right
+column dummy noprint 
+break on report 
+compute sum label 'Total Bytes' of bytes on report 
+compute sum of free on report 
+compute sum of used on report 
+compute sum of maxbytes on report 
+  
+select a.tablespace_name as name, 
+b.tablespace_name as dummy, 
+sum(b.bytes)/count( distinct a.file_id||'.'||a.block_id )/1024/1024 as bytes, 
+sum(b.bytes)/count( distinct a.file_id||'.'||a.block_id )/1024/1024 - 
+sum(a.bytes)/count( distinct b.file_id )/1024/1024 as used, 
+sum(b.maxbytes)/count( distinct a.file_id||'.'||a.block_id )/1024/1024 as maxbytes, 
+sum(a.bytes)/count( distinct b.file_id )/1024/1024 as free, 
+100 * ( (sum(b.bytes)/count( distinct a.file_id||'.'||a.block_id )) - 
+(sum(a.bytes)/count( distinct b.file_id ) )) / 
+(sum(b.bytes)/count( distinct a.file_id||'.'||a.block_id )) as pct_used 
+from sys.dba_free_space a, sys.dba_data_files b 
+where a.tablespace_name = b.tablespace_name 
+group by a.tablespace_name, b.tablespace_name 
+order by pct_used, bytes 
+/ 

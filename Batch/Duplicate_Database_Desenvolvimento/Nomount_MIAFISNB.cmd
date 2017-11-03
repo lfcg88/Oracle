@@ -1,0 +1,1 @@
+sqlplus /nolog @nomount_MIAFISNB.sql

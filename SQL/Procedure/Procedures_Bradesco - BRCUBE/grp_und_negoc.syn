@@ -1,0 +1,3 @@
+create or replace synonym SGPB_PROC.GRP_UND_NEGOC
+  for CPVO.GRP_UND_NEGOC;
+

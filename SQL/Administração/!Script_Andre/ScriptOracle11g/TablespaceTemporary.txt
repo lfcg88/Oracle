@@ -1,0 +1,10 @@
+You can query the new DBA_TEMP_FREE_SPACE view to get information
+about temporary tablespace usage, as shown in this example:
+
+
+SQL> select * from dba_temp_free_space;
+
+TABLESPACE_NAME TABLESPACE_SIZE ALLOCATED_SPACE FREE_SPACE
+--------------- --------------- --------------- -----------
+TEMP 41943040 41943040 40894464
+SQL>

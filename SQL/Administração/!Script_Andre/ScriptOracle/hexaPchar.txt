@@ -1,0 +1,61 @@
+rem =========================================================================
+rem 
+rem                     hxtoch.sql
+rem 
+rem     Copyright (C) Oriole Software, 2000
+rem 
+rem     Downloaded from http://www.oriolecorp.com
+rem 
+rem     This script for Oracle database administration is free software; you
+rem     can redistribute it and/or modify it under the terms of the GNU General
+rem     Public License as published by the Free Software Foundation; either
+rem     version 2 of the License, or any later version.
+rem 
+rem     This script is distributed in the hope that it will be useful,
+rem     but WITHOUT ANY WARRANTY; without even the implied warranty of
+rem     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+rem     GNU General Public License for more details.
+rem 
+rem     You should have received a copy of the GNU General Public License
+rem     along with this program; if not, write to the Free Software
+rem     Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+rem 
+rem =========================================================================
+rem
+rem    Utility function : conversion to characters of an hexadecimal
+rem                       string. Unprintable characters are replaced
+rem                       by dots.
+rem
+create or replace function hextochar(hexstring in varchar2)
+return varchar2
+as
+  converted_string   varchar2(32000) := '';
+  hexcodes           varchar2(16) := '0123456789ABCDEF';
+  i                  number;
+
+  function htoc(hexcode in varchar2)
+  return char
+  as
+    dec_code number;
+  begin
+    dec_code := (instr(hexcodes, upper(substr(hexcode, 1, 1))) - 1) * 16
+               + instr(hexcodes, upper(substr(hexcode, 2, 1))) - 1;
+    if (dec_code < 32)
+    then
+      dec_code := ascii('.');
+    end if;
+    return(chr(dec_code));
+  end;
+
+begin
+  i := 1;
+  while (i < length(hexstring))
+  loop
+    converted_string := converted_string || htoc(substr(hexstring, i, 2));
+    i := i + 2;
+  end loop;
+  return converted_string;
+end;
+/
+
+

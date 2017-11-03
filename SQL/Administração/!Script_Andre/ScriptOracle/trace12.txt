@@ -1,0 +1,110 @@
+/**********************************************************************
+ * File:	trclvl12.sql
+ * Type:	SQL*Plus script
+ * Author:	Tim Gorman (Evergreen Database Technologies, Inc.)
+ * Date:	14-Jun-95
+ *
+ * Description:
+ *	SQL*Plus script to use the TRCLVL12 stored procedure.
+ *
+ * Modifications:
+ *********************************************************************/
+
+/**********************************************************************
+ * File:	trclvl12.sql
+ * Type:	SQL*Plus script
+ * Author:	Tim Gorman (Evergreen Database Technologies, Inc.)
+ * Date:	14-Jun-95
+ *
+ * Description:
+ *	DDL script to create the TRCLVL12 stored procedure, which uses
+ *	the DBMS_SYSTEM.SET_EV procedure to enable the SQL Trace event
+ *	(10046) to level 12 (i.e. display tracing information, bind
+ *	variable values, and wait events).
+ *
+ * Modifications:
+ *********************************************************************/
+
+whenever oserror exit failure
+whenever sqlerror exit failure
+
+set echo on feedback on timing on
+
+--spool trclvl12
+
+--show user
+--show release
+
+create or replace procedure trclvl12(in_sid in number,
+					 in_serial_nbr in number)
+is
+	v_outstring	 varchar2(200);
+begin
+	--
+	select	substr(m.value || '/ora_' || p.spid || '.trc', 1, 200)
+	into	v_outstring
+	from	v_$session	s,
+		v_$process	p,
+		v_$parameter	m
+	where	s.sid = in_sid
+	and	s.serial# = in_serial_nbr
+	and	p.addr = s.paddr
+	and	m.name = 'user_dump_dest';
+	--
+	dbms_system.set_ev(in_sid, in_serial_nbr, 10046, 12, '');
+	--
+	dbms_output.put_line('Trace output file is "' || v_outstring || '"');
+	--
+exception
+	when no_data_found then
+		raise_application_error(-20001,
+					'No session with this SID/SERIAL#');
+end;
+/
+
+show errors
+
+
+set verify off serveroutput on size 1000000
+
+col sid format a9 heading "SID and|SERIAL#"
+col username format a8 heading "Oracle|USERNAME" truncate
+col osuser format a8 heading "Unix|USERNAME" truncate
+col status format a8 heading "Status" truncate
+col program format a30 heading "Client-side|Program" truncate
+col machine format a10 heading "Client-side|Hostname" truncate
+
+prompt
+prompt Enable SQL Tracing at level 12 for another Oracle session.  "Level 12"
+prompt is SQL trace with (default) performance statistics, WAIT events, and
+prompt BIND variable values.  The latter two types of information do not affect
+prompt TKPROF report output, and can be viewed only in the raw ".trc" file...
+prompt
+accept V_NAME prompt "Enter the Oracle or Unix username running the session: "
+prompt
+
+select	sid || ',' || serial# sid,
+	username,
+	osuser,
+	status,
+	program,
+	machine
+from	v$session
+where	(username like '%' || upper('&&V_NAME') || '%'
+   or	 osuser like '%' || lower('&&V_NAME') || '%')
+and	type = 'USER'
+and	audsid <> userenv('SESSIONID')
+/
+
+prompt
+prompt Enter the "SID,SERIAL#" pair for the session you want to trace.  For
+prompt example, enter:         ===>  NNN,MMM
+prompt where NNN is the SID and MMM is the SERIAL# displayed from the query
+prompt above.  Don't forget the "comma"...
+accept V_SID prompt "===> "
+prompt
+
+exec trclvl12(&&V_SID)
+
+set verify on serveroutput off
+prompt

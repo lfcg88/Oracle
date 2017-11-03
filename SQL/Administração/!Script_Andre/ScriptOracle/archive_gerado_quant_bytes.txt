@@ -1,0 +1,8 @@
+PROMPT Redo gerado por dia - 30 ultimos dias
+col mb for 99999999.99
+col dia for a20
+select TO_CHAR(FIRST_TIME,'DD-MON-YYYY') dia, sum(blocks*block_size/1024/1024) mb, count(*) 
+FROM V$ARCHIVED_LOG
+WHERE FIRST_TIME > SYSDATE - 30 and name is not null
+group by TO_CHAR(FIRST_TIME,'DD-MON-YYYY')
+ORDER BY TO_DATE(TO_CHAR(FIRST_TIME,'DD-MON-YYYY'));

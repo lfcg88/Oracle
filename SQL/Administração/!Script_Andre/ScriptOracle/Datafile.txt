@@ -1,0 +1,109 @@
+
+ttitle skip center "*** DATAFILE USAGE ***"
+clear computes
+clear breaks
+set pages 1000
+set lines 132
+set trims on
+col tablespace_name format a15            heading "Tablespace Name"
+col file_name       format a45            heading "File Name"
+col total_size_KB   format 999999999      heading "Size KB"
+col free_space_KB   format 999999999      heading "Free KB"
+col total_size      format 9,999.00       heading "Size MB"
+col free_space      format 9,999.00       heading "Free MB"
+col pct_used        format 999.00         heading "%|Used"
+
+clear breaks
+
+select /*+ ORDERED */
+       df.tablespace_name
+,      df.file_name
+,      df.bytes/1024                             total_size_KB
+,      nvl(fr.bytes/1024,0)                      free_space_KB
+,      df.bytes/1024/1024                        total_size
+,      nvl(fr.bytes/1024/1024,0)                 free_space
+,      ((df.bytes-nvl(fr.bytes,0))/df.bytes)*100 pct_used
+from   (select sum(bytes) bytes
+        ,      file_id
+        from   dba_free_space
+        group by file_id)     fr
+,       dba_data_files        df
+where df.file_id = fr.file_id(+)
+order by 1, df.file_id
+
+ttitle skip 2 center "*** DATAFILE AUTOEXTEND ***"
+clear computes
+clear breaks
+
+break on tabsp_name skip 1
+col file_name	format a40		heading "Data File Name"
+col tabsp_name	format a15		heading "Tablespace Name"
+col max_size	format 999,999.99	heading "Max|Size MB"
+col inc_by	format 999.99 		heading "Inc|By MB"
+col unallocated	format 999,999.99		heading "Unalloc|MB"
+col cur_size	format 999,999.99	heading "Current|Size MB"
+compute sum of max_size cur_size unallocated on tabsp_name
+
+
+select	/*+ ORDERED */
+        tn.name						   tabsp_name
+,	fn.name						   file_name
+,	ddf.bytes/1024/1024                                cur_size
+,	decode(fex.maxextend,
+                NULL,ddf.bytes/1024/1024
+                    ,fex.maxextend*tn.blocksize/1024/1024) max_size
+,       nvl(fex.maxextend,0)*tn.blocksize/1024/1024 -
+        decode(fex.maxextend,NULL,0,ddf.bytes/1024/1024)   unallocated
+,	nvl(fex.inc,0)*tn.blocksize/1024/1024		   inc_by
+from	sys.v_$dbfile	fn
+,	sys.ts$		tn
+,	sys.filext$	fex
+,	sys.file$	ft
+,	dba_data_files	ddf
+where	fn.file# = ft.file#
+and	fn.file# = ddf.file_id
+and	tn.ts# = ft.ts#
+and	fn.file# = fex.file#(+)
+order by tn.name
+
+/
+
+
+
+ttitle skip center "*** DATAFILE AUTOEXTEND BY MOUNT POINT ***"
+clear computes
+clear breaks
+
+break on mount_point skip 1
+col mount_point format a10 heading "Mnt"
+compute sum of max_size cur_size unallocated on mount_point
+
+select	/*+ ORDERED */
+        DISTINCT
+        SUBSTR(fn.name,1,DECODE(INSTR(fn.name,'/',2),0,INSTR(fn.name,':',1),INSTR(fn.name,'/',2))) mount_point
+,       tn.name						   tabsp_name
+,	fn.name						   file_name
+,	ddf.bytes/1024/1024				   cur_size
+,	decode(fex.maxextend,
+                NULL,ddf.bytes/1024/1024
+                    ,fex.maxextend*tn.blocksize/1024/1024) max_size
+,       nvl(fex.maxextend,0)*tn.blocksize/1024/1024 -
+        decode(fex.maxextend,NULL,0,ddf.bytes/1024/1024)   unallocated
+,	nvl(fex.inc,0)*tn.blocksize/1024/1024		   inc_by
+from	sys.v_$dbfile	fn
+,	sys.ts$		tn
+,	sys.filext$	fex
+,	sys.file$	ft
+,	dba_data_files	ddf
+where	fn.file# = ft.file#
+and	fn.file# = ddf.file_id
+and	tn.ts# = ft.ts#
+and	fn.file# = fex.file#(+)
+and     SUBSTR(fn.name,1,DECODE(INSTR(fn.name,'/',2),0,INSTR(fn.name,':',1),INSTR(fn.name,'/',2)))
+                            IN (SELECT DISTINCT
+                                   SUBSTR(file_name,1,DECODE(INSTR(file_name,'/',2),0,INSTR(file_name,':',1),INSTR(file_name,'/',2)))
+                                FROM dba_data_Files
+                                                               )
+order by SUBSTR(fn.name,1,5)
+/
+

@@ -1,0 +1,11 @@
+select 'exec sys.dbms_ijob.broken (' || JOB || ', TRUE);'
+  from dba_jobs;
+ 
+select 'exec sys.dbms_ijob.broken (' || JOB || ', FALSE);'
+  from dba_jobs;
+  
+select 'EXEC DBMS_SCHEDULER.disable (job_name =>' || '''' || owner || '.' || job_name || ''');'
+  from dba_scheduler_jobs;
+
+select 'EXEC DBMS_SCHEDULER.enable (job_name =>' || '''' || owner || '.' || job_name || ''');'
+  from dba_scheduler_jobs;

@@ -1,0 +1,39 @@
+18. set BACKUP_LOC_PREFIX=%BACKUP_MOUNTPOINT%\loc
+19. set TMPDIR=C:\temp
+20. set NLS_DATE_FORMAT="MM/DD/YY HH24:MI:SS"
+21. realdate /d /s="set curdate=" > %TOOLHOME%\tmp_dt.bat
+22. realdate /t /s="set curtime=" > %TOOLHOME%\tmp_tm.bat
+23. call %TOOLHOME%\tmp_dt.bat
+24. call %TOOLHOME%\tmp_tm.bat
+25. ::
+26. ::
+27. set LOG=%TOOLHOME%\%ORACLE_SID%_%BACKUP_TYPE%_%BACKUP_MEDIA% ?_
+%CURDATE%_%CURTIME%.log
+28. set TMPLOG=%TOOLHOME%\tmplog.$$
+29. ::
+30. :: Build the Command File
+31. set FORMATSTRING=%BACKUP_LOC_PREFIX%1\%ORACLE_SID%_%%u_%%p.rman
+32. set CMDFILE=%TOOLHOME%\%ORACLE_SID%.rman
+33. echo run { > %CMDFILE%
+34. echo  allocate channel c1 type disk >> %CMDFILE%
+35. echo    format '%FORMATSTRING%' >> %CMDFILE%
+36. echo    maxpiecesize %MAXPIECESIZE%; >> %CMDFILE%
+37. echo  backup >> %CMDFILE%
+38. echo    tablespace users; >> %CMDFILE%
+39. echo  release channel c1; >> %CMDFILE%
+40. echo } >> %CMDFILE%
+41. :: End of Command File Generation
+42. ::
+43. echo Starting the script > %LOG%
+44. %ORACLE_HOME%\bin\rman target=/ catalog=%CATALOG_CONN% @%CMDFILE% ?
+msglog=%TMPLOG%
+45. ::
+46. :: Merge the Logfiles
+47. type %TMPLOG% >> %LOG%
+48. :: Check for errors
+49. ::
+50. echo THE OUTPUT WAS %ERRORLEVEL% >> %LOG%
+51. findstr /i "error" %LOG%
+52. if errorlevel 0 if not errorlevel 1 bmail -s %MS%  -t %DBAPAGER% ?
+-f "Database" -m %LOG%
+53. @echo on
