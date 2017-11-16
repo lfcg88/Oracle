@@ -3,7 +3,7 @@ function checkdb {
 TNSNAME=$1
 OUSER=$2
 OPASS=$3
- 
+ j
 ORACLE_HOME=${ORACLE_HOME:=/u01/app/oracle/product/11.2.0/client_1}
 export ORACLE_HOME
 t1="$(date +%s%N)"
