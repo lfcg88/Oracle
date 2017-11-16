@@ -22,6 +22,4 @@ call %ORACLE_HOME%\bin\webcachemon start
 call %ORACLE_SCRIPTS%\sleep40.bat
 call %ORACLE_HOME%\bin\webcachectl start
 call %ORACLE_SCRIPTS%\sleep40.bat
-ll
-d
 
